@@ -1,0 +1,7 @@
+*.aux
+*.log
+report.pdf
+report.tex
+munge.exe
+munge.o
+*.fdb_latexmk
