@@ -1,0 +1,82 @@
+Latexmk: This is Latexmk, John Collins, 25 May 2018, version: 4.56.
+Rule 'pdflatex': File changes, etc:
+   Changed files, or newly in use since previous run(s):
+      'report.tex'
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -recorder  "report.tex"'
+------------
+Latexmk: applying rule 'pdflatex'...
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit)
+entering extended mode
+(report.tex
+LaTeX2e <2017-04-15>
+Babel <3.17> and hyphenation patterns for 75 language(s) loaded.
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\report.cls"
+Document Class: report 2014/09/29 v1.4h Standard LaTeX document class
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\size10.clo")) (holtexbasic.sty
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\amssymb.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\amsfonts.sty"))
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\makeidx.sty")
+("C:\Program Files\MiKTeX 2.9\tex\latex\underscore\underscore.sty")
+("C:\Program Files\MiKTeX 2.9\tex\latex\fancyvrb\fancyvrb.sty"
+Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix 
+<2008/02/07> (tvz) ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+))) (report.aux) ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd")
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd") [1{C:/ProgramData/Mi
+KTeX/2.9/pdftex/config/pdftex.map}]
+Underfull \hbox (badness 10000) in paragraph at lines 25--34
+
+[1] [2] [3] [4]
+Overfull \hbox (25.43427pt too wide) in paragraph at lines 217--218
+[]\OT1/cmr/m/n/10 Note that in the goal, we ex-press $\OML/cmm/m/it/10 []\OT1/
+cmr/m/n/10 (\OMS/cmsy/m/n/10 H\OT1/cmr/m/n/10 )$ as $([] \OT1/cmr/m/it/10 f [] 
+[] h\OML/cmm/m/it/10 :[]\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 :[]$\OT1/cmr/m/n/10 ,
+
+
+Overfull \hbox (48.02357pt too wide) in paragraph at lines 232--235
+\OT1/cmr/m/n/10 We take the $(\OT1/cmr/m/it/10 g\OML/cmm/m/it/10 ; \OT1/cmr/m/i
+t/10 h\OT1/cmr/m/n/10 )$ in the first the-o-rem to be $[] \OT1/cmr/m/it/10 f \O
+T1/cmr/m/n/10 ([] \OT1/cmr/m/it/10 f [] [] h\OML/cmm/m/it/10 :[]\OT1/cmr/m/n/10
+ ) []$
+[5]
+Overfull \hbox (5.93254pt too wide) in paragraph at lines 271--272
+[]\OT1/cmr/m/n/10 And also, ap-ply-ing the sec-ond lemma with $\OT1/cmr/m/it/10
+ g  \OT1/cmr/m/n/10 =  [] \OT1/cmr/m/it/10 f [] [] h\OML/cmm/m/it/10 :[]$
+[6] [7] ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\ueuf.fd") [8] [9]
+[10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24]
+[25]
+Overfull \hbox (17.18182pt too wide) in paragraph at lines 1171--1172
+[]\OT1/cmr/m/n/10 If we use \OT1/cmtt/m/n/10 qexists_-tac \OT1/cmr/m/n/10 to sp
+ec-ify the bisim-u-la-tion $\OML/cmm/m/it/10  [][] []: \OMS/cmsy/m/n/10 8 []\O
+ML/cmm/m/it/10 : [] \U/euf/m/n/10 M [] \OML/cmm/m/it/10    \OMS/cmsy/m/n/10 (
+[])
+[26] [27] [28] (report.aux) )
+(see the transcript file for additional information)<C:/Program Files/MiKTeX 2.
+9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/
+type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pu
+blic/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/ams
+fonts/cm/cmmi12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
+/cmmi7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pf
+b><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Pro
+gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Program File
+s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Program Files/MiKTeX 2
+.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
+ype1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publi
+c/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmss9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cms
+y10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy5.pfb><
+C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Progra
+m Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files/M
+iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.
+9/fonts/type1/public/amsfonts/cm/cmti7.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
+ype1/public/amsfonts/cm/cmtt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pub
+lic/amsfonts/euler/eufm10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/a
+msfonts/symbols/msam10.pfb>
+Output written on report.pdf (29 pages, 333703 bytes).
+Transcript written on report.log.
+Latexmk: Log file says output to 'report.pdf'
+=== TeX engine is 'pdfTeX'
+Latexmk: All targets (report.pdf) are up-to-date

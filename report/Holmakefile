@@ -1,0 +1,26 @@
+INCLUDES = .. ../../algebra/algebra/group
+
+CORRES = ../../algebra/algebra/group/corresTheory.uo
+
+TEXDIR = $(HOLDIR)/src/TeX
+
+report.pdf: report.tex
+	latexmk -pdf report
+
+
+munge.exe: ../chap2Theory.uo $(CORRES) foo.ML ppLib.uo
+	$(HOLDIR)/bin/buildheap.exe ../chap2Theory.uo ppLib.uo $(CORRES)  $(TEXDIR)/mungeTools \
+          $(TEXDIR)/munger.lex.sml $(TEXDIR)/holindex $(TEXDIR)/mkmunger.sml \
+          $(TEXDIR)/poly-mkmunger.ML foo.ML
+	cc -o $@ munge.o -L/usr/local/lib -lpolymain -lpolyml
+
+EXTRA_CLEANS = munge.o munge.exe report.tex report.pdf report.aux report.fls report.log \
+              holtexbasic.sty
+
+
+holtexbasic.sty: $(TEXDIR)/holtexbasic.sty
+	$(CP) $< $@
+
+report.tex: report.htex munge.exe holtexbasic.sty overrides
+	./munge.exe -m\; overrides < $< > $@
+
