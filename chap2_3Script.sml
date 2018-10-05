@@ -718,6 +718,7 @@ val (height_rules, height_ind, height_cases) = Hol_reln`
        heightLE M x M' v (n + 1))
 `;
 
+(*
 val height_def = Define`height M x w = MIN_SET {n | heightLE M x w n}`;
                         
 val mheight_def = Define`
@@ -1133,4 +1134,5 @@ rw[] >> qexists_tac `FLT M (subforms phi)` >> qexists_tac `EC_REP (subforms phi)
 
 *)
 
+*)
 val _ = export_theory();
