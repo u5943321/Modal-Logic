@@ -604,8 +604,5 @@ val KG_provable_G = store_thm(
     fs[KG_provable_def] >> rw[SUBSET_DEF] >>
     qexists_tac `[]` >> metis_tac[KGproof_rules]);
 
-
-val foo = save_thm("foo", TRUTH)
-
 val _ = export_theory();
 
