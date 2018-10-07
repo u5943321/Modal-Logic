@@ -13,6 +13,9 @@ open chap2_2Theory;
 open IBCDNFTheory;
 open equiv_on_partitionTheory;
 
+
+(* open chap2_3Theory; *)
+
 val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "chap2_3";
@@ -251,7 +254,11 @@ val IBC_SUBSET = store_thm(
 
 *)
 
-
+val IBC_SUBSET = store_thm(
+    "IBC_SUBSET",
+    ``!f fs. IBC f fs ==> !gs. fs SUBSET gs ==> IBC f gs``,
+    Induct_on `IBC` >> rw[]
+    >> metis_tac[SUBSET_DEF,IBC_cases]);
 
       
 val FINITE_FINITE_IBC = store_thm(
@@ -353,70 +360,60 @@ val equiv_DIAM = store_thm(
 *)
 
 
+
+
 val equiv_add_predecessor = store_thm(
   "equiv_add_predecessor",
   ``!M w f. w IN M.frame.world ==>
             (satis M w f <=>
             satis <| frame := <| world := 0 INSERT {n + 1 | n IN M.frame.world};
-                           rel := λn1 n2. (M.frame.rel (n1 - 1) (n2 - 1)) \/ (n1 = 0 /\ n2 = w) |>;
-                   valt := λa b. (M.valt a (b - 1)) |> (w + 1) f)``
-  Induct_on `f` >> rw[] >> eq_tac >> rw[] 
-  >- fs[satis_def,IN_DEF]
-  >- fs[satis_def,IN_DEF]
-  >- metis_tac[satis_def]
-  >- fs[satis_def]
-  >- metis_tac[satis_def]
-  >- metis_tac[satis_def]
-  >- (`(satis M w f ⇔
-          satis
-            <|frame :=
-                <|world := 0 INSERT {n + 1 | n ∈ M.frame.world};
-                  rel :=
-                    (λn1 n2.
-                        M.frame.rel (n1 − 1) (n2 − 1) ∨
-                        n1 = 0 ∧ n2 = w)|>;
-              valt := (λa b. M.valt a (b − 1))|> (w + 1) f)` by metis_tac[] >>
-     metis_tac[satis_def] >>
-     `¬satis M w f` by metis_tac[satis_def] >>
-     `¬satis
-        <|frame :=
-            <|world := 0 INSERT {n + 1 | n ∈ M.frame.world};
-              rel :=
-                (λn1 n2.
-                    M.frame.rel (n1 − 1) (n2 − 1) ∨ n1 = 0 ∧ n2 = w)|>;
-          valt := (λa b. M.valt a (b − 1))|> (w + 1) f` by metis_tac[satis_def] >>
-     rw[satis_def])
-  >- (`¬satis
-        <|frame :=
-            <|world := 0 INSERT {n + 1 | n ∈ M.frame.world};
-              rel :=
-                (λn1 n2.
-                    M.frame.rel (n1 − 1) (n2 − 1) ∨ n1 = 0 ∧ n2 = w)|>;
-          valt := (λa b. M.valt a (b − 1))|> (w + 1) f` by metis_tac[satis_def] >>
-     `¬satis M w f` by metis_tac[] >> rw[satis_def])
-  >- `?v. M.frame.rel w v /\ v IN M.frame.world /\ satis M v f` by metis_tac[satis_def] >>
-     qabbrev_tac `M' = <|frame :=
-      <|world := 0 INSERT {n + 1 | n ∈ M.frame.world};
-        rel :=
-          (λn1 n2. M.frame.rel (n1 − 1) (n2 − 1) ∨ n1 = 0 ∧ n2 = w)|>;
-    valt := (λa b. M.valt a (b − 1))|>` >>
-     `M'.frame.rel (w + 1) (v + 1)` by fs[Abbr`M'`] >>
-     first_x_assum drule >> rw[] >> rw[satis_def,Abbr`M'`] >> qexists_tac `v + 1` >> rw[] >> fs[]
-     
-
+                           rel := λn1 n2. ((n1 >= 1 /\ n2 >= 1) /\ (n1 - 1) IN M.frame.world /\ (n2 - 1) IN M.frame.world /\
+			   M.frame.rel (n1 - 1) (n2 - 1)) \/ (n1 = 0 /\ n2 = w + 1) |>;
+                   valt := λa b. (M.valt a (b - 1)) |> (w + 1) f)``,
+  rw[] >> qmatch_abbrev_tac `satis M w f ⇔ satis M' (w + 1) f` >>
+  `bounded_mor (\a. a + 1) M M'` by (rw[bounded_mor_def] 
+  >- fs[Abbr`M'`]
+  >- (fs[Abbr`M'`] >>rw[satis_def] >> fs[IN_DEF])
+  >- fs[Abbr`M'`]
+  >- (qexists_tac `v' - 1` >> rw[] (* 3 *) >> fs[Abbr`M'`]))
+  >> `satis M w f <=> satis M' ((\a. a + 1) w) f` by fs[prop_2_14] >> fs[]);
 
 
 val equiv_DIAM_lemma = store_thm(
+  "equiv_DIAM_lemma",
   ``!f g. ¬(equiv f g) ==> ¬(equiv (DIAM f) (DIAM g))``,
-  fs[equiv_def] >> rw[] >>
- `!M w f. w IN M.frame.world ==>
-            (satis M w f <=>
-            satis <| frame := <| world := (n INSERT M.frame.world);
-                           rel := λn1 n2. (M.frame.rel n1 n2) \/ (n1 = n /\ n2 = w) |>;
-                   valt := λa b. (M.valt a b) |> w f)` by cheat >>
+  rw[EQ_equiv_def] >>
+  `(satis M w f /\ ¬satis M w g) \/ (¬satis M w f /\ satis M w g)` by metis_tac[]
+  >- (qexists_tac `<| frame := <| world := 0 INSERT {n + 1 | n IN M.frame.world};
+                           rel := λn1 n2. ((n1 >= 1 /\ n2 >= 1) /\ (n1 - 1) IN M.frame.world /\ (n2 - 1) IN M.frame.world /\
+			   M.frame.rel (n1 - 1) (n2 - 1)) \/ (n1 = 0 /\ n2 = w + 1) |>;
+                   valt := λa b. (M.valt a (b - 1)) |>` >>
+    qmatch_abbrev_tac `?w'. w' IN M'.frame.world /\ (satis M' w' (DIAM f) ⇎ satis M' w' (DIAM g))` >> qexists_tac `0` >> rw[]
+    >- fs[Abbr`M'`]
+    >- (`satis M' 0 (DIAM f) /\ ¬satis M' 0 (DIAM g)` suffices_by metis_tac[] >> rw[satis_def]
+       >- fs[Abbr`M'`]
+       >- (qexists_tac `w + 1` >> fs[Abbr`M'`] >> metis_tac[equiv_add_predecessor])
+       >- (`!v. M'.frame.rel 0 v /\ v IN M'.frame.world ==> ¬satis M' v g` suffices_by metis_tac[] >> rw[] >>
+          fs[Abbr`M'`] (* 2 *) >- fs[] >- metis_tac[equiv_add_predecessor])))
+  >> (qexists_tac `<| frame := <| world := 0 INSERT {n + 1 | n IN M.frame.world};
+                           rel := λn1 n2. ((n1 >= 1 /\ n2 >= 1) /\ (n1 - 1) IN M.frame.world /\ (n2 - 1) IN M.frame.world /\
+			   M.frame.rel (n1 - 1) (n2 - 1)) \/ (n1 = 0 /\ n2 = w + 1) |>;
+                   valt := λa b. (M.valt a (b - 1)) |>` >>
+    qmatch_abbrev_tac `?w'. w' IN M'.frame.world /\ (satis M' w' (DIAM f) ⇎ satis M' w' (DIAM g))` >> qexists_tac `0` >> rw[]
+    >- fs[Abbr`M'`]
+    >- (`¬satis M' 0 (DIAM f) /\ satis M' 0 (DIAM g)` suffices_by metis_tac[] >> rw[satis_def]
+       >- (`!v. M'.frame.rel 0 v /\ v IN M'.frame.world ==> ¬satis M' v f` suffices_by metis_tac[] >> rw[] >>
+          fs[Abbr`M'`] (* 2 *) >- fs[] >- metis_tac[equiv_add_predecessor])
+       >- fs[Abbr`M'`]
+       >- (qexists_tac `w + 1` >> fs[Abbr`M'`] >> metis_tac[equiv_add_predecessor]))));
   
-
-
+       
+val equiv_DIAM = store_thm(
+    "equiv_DIAM",
+    ``!f g. equiv (DIAM f) (DIAM g) <=> equiv f g``,
+    rw[EQ_IMP_THM]
+    >- (SPOSE_NOT_THEN ASSUME_TAC >> metis_tac[equiv_DIAM_lemma])
+    >- fs[equiv_def,satis_def]);
 
 
 
@@ -427,8 +424,8 @@ strip_tac >> Induct_on `n` >> simp[]
 >- (`FINITE (partition equiv {f:'a form | propform f})` by metis_tac[FINITE_equiv_partition] >>
    `{f: 'a form | DEG f = 0} = {f | propform f}` by (fs[EXTENSION] >> metis_tac[DEG_0_propform]) >> fs[])
 >> (* step case *)
-`SUC n = n + 1` by fs[] >> rw[] >>
-`{f | DEG f ≤ n + 1} = {phi | IBC phi ({VAR v | T} UNION {DIAM psi | DEG psi <= n})}` by (fs[EXTENSION] >> metis_tac[DEG_IBC]) >> simp[] >>
+   `SUC n = n + 1` by fs[] >> rw[] >>
+   `{f | DEG f ≤ n + 1} = {phi | IBC phi ({VAR v | T} UNION {DIAM psi | DEG psi <= n})}` by (fs[EXTENSION] >> metis_tac[DEG_IBC]) >> simp[] >>
    Cases_on `({VAR v | T} ∪ {◇ psi | DEG psi ≤ n}) = {}`
    >- (fs[] >> fs[partition_def] >>
       `{t | ∃x. IBC x ∅ ∧ t = {y | IBC y ∅ ∧ equiv x y}} = {{f | IBC f {} /\ equiv f TRUE};{f | IBC f {} /\ equiv f FALSE}}` by
@@ -445,33 +442,30 @@ strip_tac >> Induct_on `n` >> simp[]
       >- (qexists_tac `FALSE` >> rw[]
          >- rw[Once IBC_cases] 
 	 >- (rw[EXTENSION,EQ_IMP_THM] >> metis_tac[equiv_SYM]))) >> fs[])
-   >- irule FINITE_FINITE_IBC
-      >- `({VAR v | T} ∪ {◇ psi | DEG psi ≤ n})//e = ({VAR v | T}//e) ∪ ({◇ psi | DEG psi ≤ n}//e)` by
+   >- (irule FINITE_FINITE_IBC (* 2 *)
+      >- (`({VAR v | T} ∪ {◇ psi | DEG psi ≤ n})//e = ({VAR v | T}//e) ∪ ({◇ psi | DEG psi ≤ n}//e)` by
          (irule equiv_on_disjoint_parition
 	 >- (rw[] >> metis_tac[NOT_equiv_VAR_DIAM])
          >- metis_tac[equiv_equiv_on_form]
-	 >- metis_tac[equiv_equiv_on_form]) >> rw[]
+	 >- metis_tac[equiv_equiv_on_form]) (* by tactic ends *)
+	 >> rw[] (* 2 *)
 	    >- (`FINITE {VAR v | T}` suffices_by metis_tac[FINITE_partition] >>
 	       `SURJ VAR (𝕌(:α)) {VAR v | T}` suffices_by metis_tac[FINITE_SURJ] >> rw[SURJ_DEF])
-	    >- qabbrev_tac `A = {f | DEG f ≤ n}//e` >> 
+	    >- (qabbrev_tac `A = {f | DEG f ≤ n}//e` >> 
 	       qabbrev_tac `B = {◇ psi | DEG psi ≤ n}//e` >>
 	       `?ff. SURJ ff A B` suffices_by metis_tac[FINITE_SURJ] >>
 	       qexists_tac `\s. {DIAM t | t IN s}` >> rw[SURJ_DEF] (* 2 *)
-               >- fs[Abbr`B`] >> rw[Once EXTENSION,partition_def] >> fs[PULL_EXISTS] >> fs[Abbr`A`,partition_def] >>
-	          qexists_tac `x` >> rw[] >> eq_tac >> rw[]
-		  >- metis_tac[equiv_DIAM]
-		  >- cheat
-
-               >- fs[Abbr`A`,Abbr`B`]
-	          >- fs[partition_def] >> fs[PULL_EXISTS] >>
-		     qexists_tac `psi` >> fs[] >> rw[EXTENSION] >> eq_tac >> rw[]
-		     >- 
+               >- (fs[Abbr`B`] >> rw[Once EXTENSION,partition_def] >> fs[PULL_EXISTS] >> fs[Abbr`A`,partition_def] >>
+	          qexists_tac `x` >> rw[] >> eq_tac >> rw[] (* 4 *) >> metis_tac[equiv_DIAM])
+	       >- (fs[Abbr`A`,Abbr`B`] (* 2 *)
+	          >> (fs[partition_def] >> fs[PULL_EXISTS] >>
+		     qexists_tac `psi` >> fs[] >> rw[EXTENSION] >> eq_tac >> rw[] (* 2 *) >> metis_tac[equiv_DIAM]))))
+      >- rw[]));
 
 
 
 
-
-    >- fs[]       
+    
 
 
 
