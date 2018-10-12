@@ -552,41 +552,7 @@ rpt strip_tac >> Induct_on `n` >> rpt strip_tac
    metis_tac[]));
 
 
-val prop_2_31_half1 = store_thm(
-"prop_2_31_half1",
-``!M M' f n w w'. FINITE univ (:'a) ==> nbisim M M' f n w w' ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi))``,
-gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
->- (rpt strip_tac >>
-    `DEG phi = 0` by simp[] >>
-    `w IN M.frame.world /\ w' IN M'.frame.world` by metis_tac[nbisim_def] >>
-    Induct_on `phi` >> rpt strip_tac 
-    >- (`(f 0) w w'` by metis_tac[nbisim_def] >> fs[nbisim_def])
-    >- (fs[DEG_def] >> metis_tac[satis_def])
-    >- metis_tac[satis_def]
-    >- (fs[DEG_def] >> metis_tac[satis_def])
-    >- metis_tac[DIAM_DEG_NOT_ZERO])
->- (rw[] >>
-    Induct_on `phi` >> simp[DEG_def]
-    >- (gen_tac >> first_x_assum irule >> rw[DEG_def] >> metis_tac[suc_bisim,ADD1])
-    >- rw[satis_def]
-    >- rw[satis_def]
-    >- (rw[satis_def] >> metis_tac[nbisim_def]) >>
-    simp[ADD1, satis_def] >> rw[EQ_IMP_THM] 
-    >- metis_tac[nbisim_def]
-    >- (`M.frame.rel w v` by fs[IN_DEF] >>
-        fs[ADD1] >>
-        `?v'. M'.frame.rel w' v' /\ nbisim M M' f n v v' /\ v' ∈ M'.frame.world`
-           by metis_tac[ADD1,suc_nbisim_rel] >>
-        metis_tac[IN_DEF])
-    >- metis_tac[nbisim_def]
-    >- (rename [`satis M1 v phi`, `v IN M1.frame.world`, `v IN M1.frame.rel w`,
-                `nbisim M2 M1 _ _ w' w`] >>
-        `M1.frame.rel w v` by fs[IN_DEF] >>
-        fs[ADD1] >>
-        `?v'. M2.frame.rel w' v' /\ nbisim M2 M1 f n v' v /\
-              v' ∈ M2.frame.world`
-           by metis_tac[suc_nbisim_rel_SYM] >>
-        metis_tac[IN_DEF])));
+
 
 val prop_2_31_half1 = store_thm(
 "prop_2_31_half1",
@@ -746,7 +712,7 @@ val (heightLE_rules, heightLE_ind, heightLE_cases) = Hol_reln`
        heightLE M x M' v (n + 1))
 `;
 
-(*
+
 val height_def = Define`height M x M' w = MIN_SET {n | heightLE M x M' w n}`;
                         
 val model_height_def = Define`
@@ -759,6 +725,8 @@ hrestriction M x M' n =
                  rel := λn1 n2. M.frame.rel n1 n2 |>;
      valt := λphi n. M.valt phi n |>`;
 
+(*
+
 val lemma_2_33 = store_thm(
 "lemma_2_33",
 ``!M x M' k. rooted_model M x M' ==>
@@ -770,7 +738,7 @@ rw[] >> qexists_tac `λn w1 w2. w1 = w2` >> rw[nbisim_def]
 >- fs[hrestriction_def]
 >- fs[hrestriction_def] >> fs[height_def] >> 
 
-
+*)
 
 
 (* finite model property via filtration *)
