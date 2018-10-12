@@ -683,53 +683,87 @@ rpt strip_tac
 
 (*
 
+
 val prop_2_31_half2 = store_thm(
 "prop_2_31_half2",
 ``!M M' n w w'. (FINITE univ (:'a) /\ w IN M.frame.world /\ w' IN M'.frame.world) ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi)) ==> ?f. nbisim M M' f n w w'``,
 rpt strip_tac
 >> rw[nbisim_def]
->> qexists_tac `λn n1 n2. (!(phi: 'a form). DEG phi <= n ==> (satis M n1 phi <=> satis M' n2 phi))`
->> rpt strip_tac >> fs[IN_DEF]
+>> qexists_tac `λn n1 n2. (!(phi: 'a form). DEG phi <= n ==> (satis M n1 phi <=> satis M' n2 phi))` >> rw[]
 >- metis_tac[DEG_def]
->- SPOSE_NOT_THEN ASSUME_TAC
+>- SPOSE_NOT_THEN ASSUME_TAC >>
+   `?u'. u' IN M'.frame.world /\ M'.frame.rel v' u'` by (
+   `¬(!u'. u' IN M'.frame.world ==> ¬M'.frame.rel v' u')` suffices_by metis_tac[]
+   >> rpt strip_tac
+   >> `satis M' v' (BOX FALSE)` by metis_tac[box_vac_true] 
+   >> `DEG (□ ⊥) = 1` by (rw[DEG_def,BOX_def]) 
+   >> `DEG (□ ⊥) <= i + 1` by fs[]
+   >> `satis M v (BOX FALSE)` by metis_tac[]
+   >> `satis M v (NOT (DIAM TRUE))` by metis_tac[BOX_def,TRUE_def,satis_def]
+   >> `¬(satis M v (DIAM TRUE))` by metis_tac[satis_def]
+   >> `satis M v (DIAM TRUE)` by metis_tac[diam_exist_true]
+   )
+   >> `u' IN {u' | u' ∈ M'.frame.world ∧ M'.frame.rel v' u'}` by simp[]
+   >> `{u' | u' ∈ M'.frame.world ∧ M'.frame.rel v' u'} <> {}` by metis_tac[MEMBER_NOT_EMPTY]
+   >> `∀u'.
+          u' ∈ M'.frame.world ⇒ M'.frame.rel v' u' ==>
+          ¬(∀form. DEG form <= i ==> (satis M u form ⇔ satis M' u' form))` by metis_tac[]
+   >> `∀u'.
+          u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
+          ¬(∀form. DEG form <= i ==> (satis M u form ⇔ satis M' u' form))` by metis_tac[]
+   >> `∀u'.
+          u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
+          ¬(∀form. DEG form <= i ==> (¬(¬(satis M u form ⇔ satis M' u' form))))` by metis_tac[]
+   >> `∀u'.
+          u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
+          (?form. DEG form <= i /\ ¬(satis M u form ⇔ satis M' u' form))` by metis_tac[]
+   >> `∀u'.
+          u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
+          (?form. DEG form <= i /\ satis M u form /\ ¬satis M' u' form)` by (rw[] >>
+	  `∃form. DEG form ≤ i ∧ (satis M u form ⇎ satis M' u'' form)` by (metis_tac[] >>
+	  Cases_on `satis M u form`
+	  >- (`¬satis M' u'' form` by metis_tac[] >> qexists_tac `form` >> rw[])
+	  >- (`satis M' u'' form` by metis_tac[] >> qexists_tac `¬form` >> rw[satis_def,DEG_def]))
+   >> `FINITE {f | DEG f <= i}//e` by metis_tac[prop_2_29] >> fs[partition_def]
+   >> (* for each u' in M', such that R' v' u', by the existence, we can choose a formula f of degree no more than i where satis M u f /\ ¬satis M' u' form, and we form a set. such a set is finite "up to equivalence",so we can conjunct these formulas, and for this conjuncted formula c, satis M u DIAM c /\ ¬satis M' u DIAM c, but DIAM c has degree no more then i + 1. I think given some time maybe I can solve it by mself, but is it any method to avoid getting the CHOICE messed up? *)
 
+
+
+
+`equiv equiv_on {f | DEG f <= i}` by metis_tac[equiv_equiv_on_form] >>
+       `!p. p IN {f | DEG f <= i}//e ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
+       
+       
+       
 
 
 
 *)
 
-
-val (height_rules, height_ind, height_cases) = Hol_reln`
-  (!n. heightLE M x x n) /\
-  (!v. (!w. M.frame.rel w v ==> heightLE M x w n) ==>
-       heightLE M x v (n + 1))
-`;
-
-
-val (height_rules, height_ind, height_cases) = Hol_reln`
-  (!n. heightLE M x M' x n) /\
+val (heightLE_rules, heightLE_ind, heightLE_cases) = Hol_reln`
+  (!n. heightLE (M:'a model) x (M':'a model) x n) /\
   (!v. (!w. M.frame.rel w v ==> heightLE M x M' w n) ==>
        heightLE M x M' v (n + 1))
 `;
 
 (*
-val height_def = Define`height M x w = MIN_SET {n | heightLE M x w n}`;
+val height_def = Define`height M x M' w = MIN_SET {n | heightLE M x M' w n}`;
                         
-val mheight_def = Define`
-mheight M x = MAX_SET {n | ?w. w IN M.frame.world /\ height M x w = n}`;
+val model_height_def = Define`
+model_height (M:'a model) x (M':'a model) = MAX_SET {n | ?w. w IN M.frame.world /\ height M x M' w = n}`;
 
 
 val hrestriction_def = Define`
-hrestriction M x n =
-  <| frame := <| world := {w | w IN M.frame.world /\ height M x w <= n};
+hrestriction M x M' n =
+  <| frame := <| world := {w | w IN M.frame.world /\ height M x M' w <= n};
                  rel := λn1 n2. M.frame.rel n1 n2 |>;
      valt := λphi n. M.valt phi n |>`;
 
 val lemma_2_33 = store_thm(
 "lemma_2_33",
 ``!M x M' k. rooted_model M x M' ==>
-  !w. w IN (hrestriction M x k).frame.world ==> ?f. nbisim (hrestriction M x k) M f (k - height M x w) w w``,
-rw[] >> qexists_tac `λn w1 w2. if n = 0 then (w1 = w2 /\ w2 = w)` >> rw[nbisim_def]
+  !w. w IN (hrestriction M x M' k).frame.world ==> ?f. nbisim (hrestriction M x M' k) M f (k - height M x M' w) w w``,
+rw[] >> qexists_tac `λn w1 w2. w1 = w2` >> rw[nbisim_def]
 >- fs[hrestriction_def]
 >- fs[satis_def,hrestriction_def,IN_DEF]
 >- fs[hrestriction_def]
@@ -959,21 +993,9 @@ qexists_tac `λw. RESTRICT_tau_theory Σ M w` >> rw[INJ_DEF]
 `EC_CUS Σ M w = EC_CUS Σ M w'` by metis_tac[tau_EC] >> metis_tac[]));
 
 
-(* ?????????????????????????????????
-val CARD_FINITE = store_thm(
-"CARD_FINITE",
-``!a s. CARD s = a ==> FINITE s``,
-Induct_on `a` >> rw[] >-
-(Cases_on `s` >- metis_tac[FINITE_EMPTY] >- metis_tac
-
-Induct_on `a` >> Induct_on `s`
-;
-
-????????????????????????????? *)
-
 val prop_2_38 = store_thm(
 "prop_2_38",
-``!Σ M. FINITE Σ /\ filtration M Σ FLT ==> CARD (FLT.frame.world) <= 2 ** (CARD (Σ))``,
+``!Σ M FLT. FINITE Σ /\ filtration M Σ FLT ==> CARD (FLT.frame.world) <= 2 ** (CARD (Σ))``,
 rpt strip_tac >>
 `CARD (POW Σ) = 2 ** CARD Σ` by simp[CARD_POW] >>
 `CARD FLT.frame.world ≤ CARD (POW Σ)` suffices_by rw[] >>
@@ -1103,8 +1125,8 @@ val subforms_FINITE = store_thm(
 ``FINITE (subforms phi)``,
 Induct_on `phi` >> fs[subforms_def]);
 
-(*
 val thm_2_41 = store_thm(
+  "thm_2_41",
 ``!phi. satis M w phi ==> ?M' w'. w' IN M'.frame.world /\ satis M' w' phi /\ FINITE (M'.frame.world)``,
 rw[] >> qexists_tac `FLT M (subforms phi)` >> qexists_tac `EC_REP (subforms phi) M w` >> rw[]
 >- (`w IN M.frame.world` by metis_tac[satis_in_world] >> fs[FLT_def,EC_REP_SET_def] >> qexists_tac `w` >> fs[])
@@ -1113,20 +1135,13 @@ rw[] >> qexists_tac `FLT M (subforms phi)` >> qexists_tac `EC_REP (subforms phi)
    `phi IN (subforms phi)` by metis_tac[subforms_phi_phi] >>
    `w IN M.frame.world` by metis_tac[satis_in_world] >>
    metis_tac[thm_2_39])
->- `CUS (subforms phi)` by metis_tac[subforms_phi_CUS] >>
+>- (`CUS (subforms phi)` by metis_tac[subforms_phi_CUS] >>
    `filtration M (subforms phi) (FLT M (subforms phi))` by metis_tac[FLT_EXISTS] >>
    `FINITE (subforms phi)` by metis_tac[subforms_FINITE] >> 
    `CARD (FLT M (subforms phi)).frame.world ≤ 2 ** CARD (subforms phi)` by metis_tac[prop_2_38] >>
+
+   drule_all (GEN_ALL prop_2_38_lemma) >> strip_tac >>
+   imp_res_tac FINITE_INJ >> rfs[FINITE_POW]));
   
- ∀phi. CUS (subforms phi)
 
- ∀M Σ. CUS Σ ⇒ filtration M Σ (FLT M Σ)
-
-
- FINITE Σ ∧ filtration M Σ FLT ⇒ CARD FLT.frame.world ≤ 2 ** CARD Σ:
-
-
-*)
-
-*)
 val _ = export_theory();
