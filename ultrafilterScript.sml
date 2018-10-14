@@ -99,12 +99,7 @@ rw[ultrafilter_def]
    fs[]))
 >- (eq_tac >> fs[principle_UF_def] >> rw[] >> fs[POW_DEF]));
 
-(* val UF_FINITE_principle = store_thm(
-"UF_FINITE_principle",
-``!U S.(ultrafilter U (S:'a -> bool) /\ (?X. X IN U /\ FINITE X)) ==> ?w. w IN S /\ U = principle_UF w S``,
-rw[] >>
 
-*)
 
 
 val empty_improper_filter = store_thm(
@@ -304,38 +299,80 @@ rw[filter_def]
 >- (qexists_tac `s` >> metis_tac[]));
    
 
-val partial_order_SUBSET = store_thm(
-"partial_order_SUBSET",
-``!s. partial_order (λ(s1, s2). (s1 SUBSET s2) /\ s1 IN s /\ s2 IN s) s``,
-rw[partial_order_def,SUBSET_DEF]
->- (fs[domain_def] >> fs[IN_DEF])
->- fs[range_def,IN_DEF]
->- fs[transitive_def,IN_DEF]
->- fs[reflexive_def,IN_DEF]
->- (fs[antisym_def,IN_DEF]
->> (rw[SUBSET_DEF,SET_EQ_SUBSET] >> metis_tac[IN_DEF])));
 
 
-
-(* val filter_chain_upper_bound = store_thm(
-"filter_chain_upper_bound",
-``!t. chain t (λ(s1, s2). (s1 SUBSET s2) /\ s1 IN s /\ s2 IN s)
-
-
-
-val zorn_lemma_applied = store_thm(
-"zorn_lemma_applied",
-``!W. ?x. x IN maximal_elements {U | filter U M} (λ(s1, s2). (s1 SUBSET s2) /\ s1 IN {U | filter U M} /\ s2 IN {U | filter U M})``,
-rw[] >> irule zorns_lemma
->- rw[] >> `?x. x IN upper_bounds t (λ(s1,s2). s1 ⊆ s2 ∧ filter s1 M ∧ filter s2 M)` suffices_by simp[MEMBER_NOT_EMPTY] >> simp[upper_bounds_def] >> rw[range_def] >> 
-
+val UNION_proper_proper = store_thm(
+  "UNION_proper_proper",
+  ``∀W U.
+     W ≠ ∅ ∧ U ≠ ∅ ∧ (∀A. A ∈ U ⇒ proper_filter A W) ∧
+     (∀A B. A ∈ U ∧ B ∈ U ⇒ A ⊆ B ∨ B ⊆ A) ⇒
+     proper_filter (BIGUNION U) W``,
+  rw[proper_filter_def]
+  >- metis_tac[UNION_filter_filter]
+  >- (rw[BIGUNION] >> SPOSE_NOT_THEN ASSUME_TAC >>
+     `POW W' SUBSET ({x | ∃s. s ∈ U ∧ x ∈ s})` by metis_tac[EQ_SUBSET_SUBSET] >>
+     `!p. p IN (POW W') ==> p IN {x | ∃s. s ∈ U ∧ x ∈ s}` by metis_tac[SUBSET_DEF] >> `{} IN (POW W')` by rw[POW_DEF,SUBSET_DEF,EMPTY_SUBSET] >> fs[] >>
+     `∃s. s ∈ U ∧ {} ∈ s` by metis_tac[] >>
+     `filter s W' ∧ s ≠ POW W'` by metis_tac[] >> metis_tac[empty_improper_filter]));
+     
+     
+    
+  
 
 
 val ultrafilter_theorem = store_thm(
 "ultrafilter_theorem",
-``!S W. filter S W ==> ?U. ultrafilter U W /\ S SUBSET U``,
+``!f w. proper_filter f w ==> ?U. ultrafilter U w /\ f SUBSET U``,
+rpt strip_tac >>
+qabbrev_tac
+  `r = { (s1,s2) | proper_filter s2 w /\ proper_filter s1 w /\ f SUBSET s1 /\ s1 ⊆ s2}` >>
+qabbrev_tac `s = { g | proper_filter g w /\ f ⊆ g }` >>
+`partial_order r s`
+  by (simp[Abbr`r`, Abbr`s`, partial_order_def, reflexive_def, transitive_def,
+           domain_def, range_def] >> rw[] >> simp[]
+      >- (rw[SUBSET_DEF] >> metis_tac[])
+      >- (rw[SUBSET_DEF] >> metis_tac[])
+      >- metis_tac[SUBSET_TRANS]
+      >- (simp[antisym_def] >> rw[] >> fs[] >> metis_tac[SUBSET_ANTISYM])) >>
+`s ≠ ∅` by (simp[EXTENSION, Abbr`s`] >> metis_tac[SUBSET_REFL]) >>
+`∀t. chain t r ==> upper_bounds t r ≠ ∅`
+  by (rw[] >> Cases_on `t = {}`
+        >- (simp[chain_def, upper_bounds_def, Abbr`r`] >> rw[] >>
+            simp[Once EXTENSION] >>
+            qexists_tac `f` >>
+            simp[range_def] >> qexists_tac `f` >> rw[])
+        >- (simp[chain_def, upper_bounds_def, Abbr`r`] >> rw[] >>
+            simp[Once EXTENSION] >>
+            qexists_tac `BIGUNION t` >> rw[]
+          >- (* BIGUNION is in (range of) relation *)
+             (* BIGUNION is proper filter *)
+	     (simp[range_def] >> qexists_tac `f` >> rw[]
+	     (* is proper filter *)
+	    >- (irule UNION_proper_proper
+	      >- (fs[chain_def] >> metis_tac[])
+	      >- (fs[chain_def] >> metis_tac[])
+	      >- metis_tac[proper_filter_def,filter_def]
+	      >- rw[])
+             (* contain f *)
+	    >- (fs[chain_def,Abbr`s`] >> rw[SUBSET_DEF] >>
+	      `?a. a IN t` by metis_tac[MEMBER_NOT_EMPTY] >> qexists_tac `a` >> rw[] >> metis_tac[SUBSET_DEF]))
+             (* indeed upper bound *)
+          >- (`y IN t ==> proper_filter (BIGUNION t) w ∧ proper_filter y w ∧ f ⊆ y ∧ y ⊆ BIGUNION t` suffices_by metis_tac[] >> rw[]
+	    >- (irule UNION_proper_proper >> rw[]
+	        >- (fs[chain_def] >> metis_tac[])
+	        >- (fs[chain_def] >> metis_tac[])
+	        >- metis_tac[proper_filter_def,filter_def])
+	    >- (fs[chain_def] >> metis_tac[])
+	    >- (fs[chain_def] >> metis_tac[])
+	    >- (rw[SUBSET_DEF,BIGUNION] >> metis_tac[])))) >>
+ `?x. x IN maximal_elements s r` by metis_tac[zorns_lemma] >>
+ fs[maximal_elements_def,Abbr`r`,Abbr`s`] >> qexists_tac `x` >> rw[] >>
+ irule maximal_ultrafilter >> rw[] >> SPOSE_NOT_THEN ASSUME_TAC >>
+ `proper_filter S' w` by metis_tac[proper_filter_def] >>
+ `x <> S'` by metis_tac[PSUBSET_DEF] >>
+ `x = S'` by (first_x_assum irule >> fs[] (* 2 *)
+ >> metis_tac[PSUBSET_DEF,SUBSET_TRANS]));
+ 
 
-
-*)
 
 val _ = export_theory();
