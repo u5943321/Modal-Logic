@@ -723,9 +723,6 @@ hrestriction M x M' n =
                  rel := λn1 n2. M.frame.rel n1 n2 |>;
      valt := λphi n. M.valt phi n |>`;
 
-
-(* !M x M' w n does not work but !w n works, it cannot realize that ! is associative? *)
-
 val heightLE_rel = store_thm(
   "heightLE_rel",
   ``!w n. heightLE M x M' w n ==> w IN M.frame.world /\ rooted_model M x M' ==> (!w'. M.frame.rel w w' /\ w' IN M.frame.world ==> heightLE M x M' w' (n + 1))``,
@@ -870,7 +867,8 @@ rw[] >> qexists_tac `λn w1 w2. w1 = w2 /\ height M x M' w1 <= k - n` >> rw[nbis
    `k > n`
        by (`k - n >= 1` suffices_by fs[] >> fs[]) >> fs[]));
    
- 
+
+
 
 
 (* finite model property via filtration *)

@@ -767,4 +767,17 @@ rpt strip_tac
 >- (rw[tree_like_model_def] >> qexists_tac `(nlist_of [x])` >> `x ∈ M.frame.world` by metis_tac[root_in_rooted_model] >> metis_tac[prop_2_15_half1]));
 
 
+val prop_2_15_corollary = store_thm(
+  "prop_2_15_corollary",
+  ``!M x M' w form. rooted_model M x M' /\ w IN M.frame.world /\ satis M w form ==>
+  ?MODEL. tree_like_model MODEL /\ ?v. v IN MODEL.frame.world /\ satis MODEL v form``,
+  rw[] >>
+  `?f MODEL. bounded_mor_image f MODEL M /\ tree_like_model MODEL` by metis_tac[prop_2_15] >>
+  qexists_tac `MODEL` >> rw[] >>
+  fs[bounded_mor_image_def] >>
+  `?a. a IN MODEL.frame.world /\ f a = w` by metis_tac[SURJ_DEF] >>
+  qexists_tac `a` >> rw[] >>
+  metis_tac[prop_2_14]);
+
+
 val _ = export_theory();
