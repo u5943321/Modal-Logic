@@ -1,12 +1,9 @@
 open HolKernel Parse boolLib bossLib;
 open chap1Theory;
-open numpairTheory;
 open pred_setTheory;
 open relationTheory;
-open listTheory;
 open arithmeticTheory;
 open set_relationTheory;
-open pairTheory;
 
 open chap2_1Theory;
 open chap2_2Theory;
@@ -507,30 +504,7 @@ gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
        metis_tac[]))));
 
 
-(* ATTEMPTING USE WLOG 
 
-``!Z.
-  (!M M' i w w'. Z M M' i w w' ==> Z M' M i w' w) ==>
-  ∀M M' n w w'.
-     w ∈ M.frame.world ∧ w' ∈ M'.frame.world ∧
-     (∀m a b.
-         a ∈ M.frame.world ∧ b ∈ M'.frame.world ⇒
-         m + 1 ≤ n ⇒
-         Z M M' (m + 1) a b ⇒
-         Z M M' m a b) ∧ Z M M' n w w' ∧
-     (∀v v'.
-         v ∈ M.frame.world ∧ v' ∈ M'.frame.world ⇒
-         Z M M' 0 v v' ⇒
-         ∀p. satis M v (VAR p) ⇔ satis M' v' (VAR p)) ∧
-     (∀v v' u i.
-         i + 1 ≤ n ∧ v ∈ M.frame.world ∧ v' ∈ M'.frame.world ∧
-         u ∈ M.frame.world ∧ M.frame.rel v u ∧ Z M M' (i + 1) v v' ⇒
-         ∃u'. u' ∈ M'.frame.world ∧ M'.frame.rel v' u' ∧ Z M M' i u u')
-	 ==> nbisim M M' (Z M M') n w w'``,
-  rw[nbisim_def] >- metis_tac[] >> `Z M' M (i + 1) v' v` by metis_tac[] >> 
-
-
-*)
 
 
 
@@ -603,8 +577,7 @@ val BIGCONJ_EXISTS_DEG = store_thm(
      >- rw[]
      >> metis_tac[]));
 
-
-
+  
 val prop_2_31_half2 = store_thm(
 "prop_2_31_half2",
 ``!M M' n w w'. (FINITE univ (:'a) /\ w IN M.frame.world /\ w' IN M'.frame.world) ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi)) ==> ?f. nbisim M M' f n w w'``,
@@ -613,70 +586,42 @@ rpt strip_tac
 >> qexists_tac `λn n1 n2. (!(phi: 'a form). DEG phi <= n ==> (satis M n1 phi <=> satis M' n2 phi))` >> rw[]
 >- metis_tac[DEG_def]
 >- (SPOSE_NOT_THEN ASSUME_TAC >>
-   `?u'. u' IN M'.frame.world /\ M'.frame.rel v' u'` by 
-   (`¬(!u'. u' IN M'.frame.world ==> ¬M'.frame.rel v' u')` suffices_by metis_tac[] >>
-   rpt strip_tac >>
-   `satis M' v' (BOX FALSE)` by metis_tac[box_vac_true] >>
-   `DEG (□ ⊥) = 1` by rw[DEG_def,BOX_def] >>
-   `DEG (□ ⊥) <= i + 1` by fs[] >>
-   `satis M v (BOX FALSE)` by metis_tac[] >>
-   `satis M v (NOT (DIAM TRUE))` by metis_tac[BOX_def,TRUE_def,satis_def] >>
-   `¬(satis M v (DIAM TRUE))` by metis_tac[satis_def] >>
-   `satis M v (DIAM TRUE)` by metis_tac[diam_exist_true]) >>
-   `u' IN {u' | u' ∈ M'.frame.world ∧ M'.frame.rel v' u'}` by simp[] >>
-   `∀u'.
-          u' ∈ M'.frame.world ⇒ M'.frame.rel v' u' ==>
-          ¬(∀form. DEG form <= i ==> (satis M u form ⇔ satis M' u' form))` by metis_tac[] >>
-   `∀u'.
+    `∀u'.
           u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
-          ¬(∀form. DEG form <= i ==> (satis M u form ⇔ satis M' u' form))` by metis_tac[] >>
-   `∀u'.
-          u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
-          ¬(∀form. DEG form <= i ==> (¬(¬(satis M u form ⇔ satis M' u' form))))` by metis_tac[] >>
-   `∀u'.
-          u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
-          (?form. DEG form <= i /\ ¬(satis M u form ⇔ satis M' u' form))` by metis_tac[] >>
-   `∀u'.
-          u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
-          (?form. DEG form <= i /\ satis M u form /\ ¬satis M' u' form)` by
-       (rw[] >>
-       `∃form. DEG form ≤ i ∧ (satis M u form ⇎ satis M' u'' form)` by metis_tac[] >>
-       Cases_on `satis M u form`
-       >- (`¬satis M' u'' form` by metis_tac[] >> qexists_tac `form` >> rw[])
-       >- (`satis M' u'' form` by metis_tac[] >> qexists_tac `¬form` >> rw[satis_def,DEG_def])) >> 
-   qabbrev_tac `s = {f | DEG f <= i /\ ?u'. u' IN M'.frame.world /\ M'.frame.rel v' u' /\ satis M u f /\ ¬satis M' u' f}` >>
+          (?form. DEG form <= i /\ satis M u form /\ ¬satis M' u' form)`
+      by metis_tac[satis_def, DEG_def] >>
+    qabbrev_tac `
+      s = {f | DEG f <= i /\ ?u'. u' IN M'.frame.world /\
+               M'.frame.rel v' u' /\ satis M u f /\ ¬satis M' u' f}` >>
    `s ⊆ {f| DEG f <= i}` by (fs[Abbr`s`,SUBSET_DEF]) >>
    `equiv equiv_on {f | DEG f ≤ i}` by metis_tac[equiv_equiv_on_form] >>
    `FINITE s//e` by metis_tac[prop_2_29,FINITE_partition_SUBSET] >>
-   `FINITE (IMAGE CHOICE s//e)` by
-   (`equiv equiv_on s` by metis_tac[equiv_equiv_on_form] >>
-   `BIJ CHOICE s//e (IMAGE CHOICE s//e)` by metis_tac[CHOICE_BIJ_partition] >>
-   metis_tac[FINITE_BIJ]) >>
+   `FINITE (IMAGE CHOICE s//e)` by metis_tac[IMAGE_FINITE] >>
    `equiv equiv_on s` by metis_tac[equiv_equiv_on_form] >> 
    `!p. p IN s//e ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
    `!p. p IN s//e ==> (CHOICE p) IN p` by metis_tac[CHOICE_DEF] >>
-   `!f. f IN (IMAGE CHOICE s//e) ==> DEG f <= i` by
-   (fs[IMAGE_DEF] >> rw[] >> `(CHOICE x) IN x` by metis_tac[] >>
-   `x SUBSET s` by fs[partition_def,SUBSET_DEF] >>
-   `(CHOICE x) IN s` by metis_tac[SUBSET_DEF] >>
-   fs[Abbr`s`]) >>
+   `!f. f IN (IMAGE CHOICE s//e) ==> DEG f <= i`
+     by (dsimp[] >> rw[] >> `(CHOICE x) IN x` by metis_tac[] >>
+         `x SUBSET s` by fs[partition_def,SUBSET_DEF] >>
+         `(CHOICE x) IN s` by metis_tac[SUBSET_DEF, partition_def] >>
+         fs[Abbr`s`]) >>
    `∃ff.
         DEG ff ≤ i ∧
         ∀w M.
            w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ (IMAGE CHOICE s//e) ⇒ satis M w f)` by fs[BIGCONJ_EXISTS_DEG] >>
-   `∀f. f ∈ IMAGE CHOICE s//e ⇒ satis M u f` by
-   (rw[IMAGE_DEF] >>
-   `x <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
-   `(CHOICE x) IN x` by metis_tac[CHOICE_DEF] >> fs[partition_def,Abbr`s`] >> rw[] >> fs[]) >>
+   `∀f. f ∈ IMAGE CHOICE s//e ⇒ satis M u f`
+     by (rw[] >>
+        `(CHOICE x) IN x` by metis_tac[] >>
+	fs[partition_def,Abbr`s`] >> rw[] >> fs[]) >>
    `satis M u ff` by metis_tac[] >>
    `satis M v (DIAM ff)` by metis_tac[satis_def] >>
    `DEG (DIAM ff) <= i + 1` by fs[DEG_def] >>
-   `¬satis M' v' (DIAM ff)` suffices_by metis_tac[] >> rw[satis_def] >>
-   `M'.frame.rel v' v'' /\ v'' IN M'.frame.world ==> ¬satis M' v'' ff` suffices_by metis_tac[satis_def] >>
-   simp[PULL_EXISTS] >> rw[] >>
-   `∃form. DEG form ≤ i ∧ satis M u form ∧ ¬satis M' v'' form` by metis_tac[] >>
+   `¬satis M' v' (DIAM ff)` suffices_by metis_tac[] >>
+   `∀u'. M'.frame.rel v' u' /\ u' ∈ M'.frame.world ==> ¬satis M' u' ff`
+      suffices_by metis_tac[satis_def] >>
    rw[partition_def,PULL_EXISTS] >>
-   `form IN s` by (fs[Abbr`s`] >> qexists_tac `v''` >> rw[]) >>
+   `∃form. DEG form ≤ i ∧ satis M u form ∧ ¬satis M' u' form` by metis_tac[] >>
+   `form IN s` by (fs[Abbr`s`] >> qexists_tac `u'` >> rw[]) >>
    qexists_tac `form` >> rw[] >>
    `equiv form form` by metis_tac[equiv_REFL] >> `form IN {y | y ∈ s ∧ equiv form y}` by fs[] >>
    `{y | y ∈ s ∧ equiv form y} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
@@ -692,7 +637,7 @@ rpt strip_tac
    `¬(satis M v (DIAM TRUE))` by metis_tac[satis_def] >>
    `satis M' v' (DIAM TRUE)` by metis_tac[diam_exist_true] >>
    `DEG (DIAM TRUE) <= i + 1` by fs[TRUE_def,DEG_def] >>
-   metis_tac[]) >>
+   metis_tac[]) >> 
    `u IN {u | u ∈ M.frame.world ∧ M.frame.rel v u}` by simp[] >>
    `∀u.
           u ∈ M.frame.world ⇒ M.frame.rel v u ==>
@@ -761,7 +706,7 @@ rpt strip_tac
 
 val (heightLE_rules, heightLE_ind, heightLE_cases) = Hol_reln`
   (!n. heightLE (M:'a model) x (M':'a model) x n) /\
-  (!v. (!w. M.frame.rel w v ==> heightLE M x M' w n) ==>
+  (!v. (?w. w IN M.frame.world /\ M.frame.rel w v /\ heightLE M x M' w n) ==>
        heightLE M x M' v (n + 1))
 `;
 
@@ -778,20 +723,154 @@ hrestriction M x M' n =
                  rel := λn1 n2. M.frame.rel n1 n2 |>;
      valt := λphi n. M.valt phi n |>`;
 
-(*
+
+(* !M x M' w n does not work but !w n works, it cannot realize that ! is associative? *)
+
+val heightLE_rel = store_thm(
+  "heightLE_rel",
+  ``!w n. heightLE M x M' w n ==> w IN M.frame.world /\ rooted_model M x M' ==> (!w'. M.frame.rel w w' /\ w' IN M.frame.world ==> heightLE M x M' w' (n + 1))``,
+  Induct_on `heightLE` >> rw[]
+  >- (rw[Once heightLE_cases] >>
+     `∃w. w ∈ M.frame.world ∧ M.frame.rel w w' ∧ heightLE M x M' w n` suffices_by metis_tac[] >>
+     qexists_tac `x` >> rw[] >> metis_tac[heightLE_cases])
+  >- (`heightLE M x M' w (n + 1)` by metis_tac[] >>
+     rw[Once heightLE_cases] >>
+     `∃n'.
+     n + 2 = n' + 1 ∧
+     ∃w. w ∈ M.frame.world ∧ M.frame.rel w w'' ∧ heightLE M x M' w n'` suffices_by metis_tac[] >>
+     qexists_tac `n + 1` >> rw[] >> qexists_tac `w` >> rw[]));
+
+val heightLE_RTC = store_thm(
+  "heightLE_RTC",
+  ``!w n. heightLE M x M' w n ==>
+  rooted_model M x M' ==> (RESTRICT M'.frame.rel M'.frame.world)^* x w``,
+  Induct_on `heightLE` >> rw[] >>
+  `(RESTRICT M'.frame.rel M'.frame.world)^* x w'` by metis_tac[] >>
+  fs[rooted_model_def] >>
+  metis_tac[RTC_CASES2]);
+
+
+val rooted_have_height = store_thm(
+  "rooted_have_height",
+  ``!x w. (RESTRICT M'.frame.rel M'.frame.world)^* x w ==> rooted_model M x M' /\ w IN M'.frame.world ==>
+    ?n. heightLE M x M' w n``,
+  ho_match_mp_tac RTC_INDUCT_RIGHT1 >> rw[]
+  >- (qexists_tac `0` >> rw[Once heightLE_cases])
+  >- (`w IN M'.frame.world` by metis_tac[RESTRICT_def] >>
+     `∃n. heightLE M x M' w n` by metis_tac[] >>
+     qexists_tac `n + 1` >> rw[Once heightLE_cases] >>
+     `∃w. w ∈ M.frame.world ∧ M.frame.rel w w' ∧ heightLE M x M' w n` suffices_by metis_tac[] >>
+     qexists_tac `w` >> rw[]
+     >- (`(RESTRICT M'.frame.rel M'.frame.world)^* x w` by
+        metis_tac[heightLE_RTC] >>
+        metis_tac[rooted_model_def])
+     >-	metis_tac[rooted_model_def]));
+
+val rooted_have_height_applied = store_thm(
+  "rooted_have_height_applied",
+  ``!x w. rooted_model M x M' /\ w IN M.frame.world ==>
+  {n| heightLE M x M' w n} <> {}``,
+  rw[] >>
+  `(RESTRICT M'.frame.rel M'.frame.world)^* x w /\ w IN M'.frame.world` by
+  metis_tac[rooted_model_def] >>
+  `?n. heightLE M x M' w n` by metis_tac[rooted_have_height] >>
+  `n IN {n | heightLE M x M' w n}` by fs[] >>
+  metis_tac[MEMBER_NOT_EMPTY]);
+
+val heightLE_MIN_SET_IN = store_thm(
+  "heightLE_MIN_SET_IN",
+  ``!x w. rooted_model M x M' /\ w IN M.frame.world ==>
+  MIN_SET {n| heightLE M x M' w n} IN {n| heightLE M x M' w n}``,
+  rpt strip_tac >>
+  `{n| heightLE M x M' w n} <> {}` by metis_tac[rooted_have_height_applied] >> 
+  metis_tac[MIN_SET_LEM]);
+  
+
+
+val height_heightLE = store_thm(
+  "height_heightLE",
+  ``!M x M' w n. rooted_model M x M' ==> 
+  w IN M.frame.world ==> height M x M' w = n ==> heightLE M x M' w n``,
+  rpt strip_tac >>
+  fs[height_def] >>
+  `w ∈ M'.frame.world ∧
+  (RESTRICT M'.frame.rel M'.frame.world)^* x w` by metis_tac[rooted_model_def] >>
+  `?n. heightLE M x M' w n` by metis_tac[rooted_have_height] >>
+  `n' IN {n | heightLE M x M' w n}` by fs[] >>
+  `{n | heightLE M x M' w n} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
+  `(MIN_SET {n | heightLE M x M' w n}) IN {n | heightLE M x M' w n}` by metis_tac[MIN_SET_LEM] >>
+  fs[] >> rw[]);
 
 val lemma_2_33 = store_thm(
-"lemma_2_33",
-``!M x M' k. rooted_model M x M' ==>
+  "lemma_2_33",
+  ``!M x M' k. rooted_model M x M' ==>
   !w. w IN (hrestriction M x M' k).frame.world ==> ?f. nbisim (hrestriction M x M' k) M f (k - height M x M' w) w w``,
-rw[] >> qexists_tac `λn w1 w2. w1 = w2` >> rw[nbisim_def]
+rw[] >> qexists_tac `λn w1 w2. w1 = w2 /\ height M x M' w1 <= k - n` >> rw[nbisim_def] (* 9 *)
 >- fs[hrestriction_def]
+>- (`height M x M' w <= k` by fs[hrestriction_def] >>
+   `k - (k − height M x M' w) = height M x M' w` by fs[] >>
+   fs[])
 >- fs[satis_def,hrestriction_def,IN_DEF]
 >- fs[hrestriction_def]
 >- fs[hrestriction_def]
->- fs[hrestriction_def] >> fs[height_def] >> 
-
-*)
+>- (fs[hrestriction_def,height_def] >>
+   `(RESTRICT M'.frame.rel M'.frame.world)^* x w1'` by metis_tac[rooted_model_def] >>
+   `w1' IN M'.frame.world` by metis_tac[rooted_model_def] >>
+   `{n | heightLE M x M' w1' n} <> {}`
+       by (`?n. heightLE M x M' w1' n` by metis_tac[rooted_have_height] >>
+          `n' IN {n | heightLE M x M' w1' n}` by fs[] >>
+	  metis_tac[MEMBER_NOT_EMPTY]) >>
+   `{n | heightLE M x M' w2 n} <> {}`
+       by (`w2 IN M'.frame.world` by metis_tac[rooted_model_def] >>
+          `(RESTRICT M'.frame.rel M'.frame.world)^* x w2` by metis_tac[rooted_model_def] >>
+          `?n. heightLE M x M' w2 n` by metis_tac[rooted_have_height] >>
+          `n' IN {n | heightLE M x M' w2 n}` by fs[] >>
+	  metis_tac[MEMBER_NOT_EMPTY]) >>
+   `(MIN_SET {n | heightLE M x M' w2 n}) IN {n | heightLE M x M' w2 n}` by metis_tac[MIN_SET_LEM] >>
+   fs[] >>
+   `heightLE M x M' w1' ((MIN_SET {n | heightLE M x M' w2 n}) + 1)`
+       by (rw[Once heightLE_cases] >> metis_tac[]) >>
+   `(MIN_SET {n | heightLE M x M' w2 n} + 1) IN
+   {n | heightLE M x M' w1' n}` by fs[] >>
+   `(MIN_SET {n | heightLE M x M' w1' n}) <=
+   (MIN_SET {n | heightLE M x M' w2 n} + 1)` by metis_tac[MIN_SET_LEM] >>
+   qabbrev_tac `a = MIN_SET {n | heightLE M x M' w2 n}` >>
+   qabbrev_tac `b = MIN_SET {n | heightLE M x M' w1' n}` >>
+   `b <= k − (n + 1) + 1` by fs[] >>
+   `k > n` suffices_by rw[] >>
+   `k - n >= 1` suffices_by fs[] >>
+   fs[])
+>- (fs[hrestriction_def] >>
+   `k > n`
+       by (`k - n >= 1` suffices_by fs[] >> fs[]) >>
+   `k - (n + 1) + 1 = k - n` by fs[] >>
+   `height M x M' w2' <= k - n` suffices_by fs[] >>
+   fs[height_def] >>
+   qabbrev_tac `a = MIN_SET {n | heightLE M x M' w2 n}` >>
+   qabbrev_tac `b = MIN_SET {n | heightLE M x M' w2' n}` >>
+   `a IN {n | heightLE M x M' w2 n}` by metis_tac[Abbr`a`,heightLE_MIN_SET_IN] >>
+   fs[] >>
+   `heightLE M x M' w2' (a + 1)` by metis_tac[heightLE_rel] >>
+   `(a + 1) IN {n | heightLE M x M' w2' n}` by fs[] >>
+   `{n | heightLE M x M' w2' n} <> {}` by metis_tac[rooted_have_height_applied] >> 
+   `b <= a + 1` by metis_tac[Abbr`b`,MIN_SET_LEM] >>
+   fs[])
+>- fs[hrestriction_def]
+>- (fs[hrestriction_def,height_def] >>
+   qabbrev_tac `a = MIN_SET {n | heightLE M x M' w2 n}` >>
+   qabbrev_tac `b = MIN_SET {n | heightLE M x M' w2' n}` >>
+   `b <= a + 1`
+       by (`{n | heightLE M x M' w2 n} <> {}` by metis_tac[rooted_have_height_applied] >>
+          `a IN {n | heightLE M x M' w2 n}` by metis_tac[Abbr`b`,MIN_SET_LEM] >>
+	  fs[] >>
+	  `heightLE M x M' w2' (a + 1)` by metis_tac[heightLE_rel] >>
+	  `{n | heightLE M x M' w2' n} <> {}` by metis_tac[rooted_have_height_applied] >>
+	  `(a + 1) IN {n | heightLE M x M' w2' n}` by fs[] >>
+	  metis_tac[Abbr`b`,MIN_SET_LEM]) >>
+   `k > n`
+       by (`k - n >= 1` suffices_by fs[] >> fs[]) >> fs[]));
+   
+ 
 
 
 (* finite model property via filtration *)
