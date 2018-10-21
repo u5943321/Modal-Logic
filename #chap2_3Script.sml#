@@ -877,7 +877,7 @@ val thm_2_34 = store_thm(
   ``!M w phi. satis M w phi ==> ?FM v. FINITE (FM.frame.world) /\ v IN FM.frame.world /\ satis FM v phi``,
   rw[] >>
   qabbrev_tac `k = DEG phi` >>
-  
+  drule prop_2_15_corollary
 
 
 

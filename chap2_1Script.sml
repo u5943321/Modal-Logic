@@ -76,7 +76,7 @@ val SUBMODEL_def = Define`
 val GENSUBMODEL_def = Define`
 !M1 M2. GENSUBMODEL M1 M2 <=> SUBMODEL M1 M2 /\
                      (!w1. w1 IN M1.frame.world ==>
-                     (!w2. M2.frame.rel w1 w2 ==> w2 IN M1.frame.world))`;
+                     (!w2. w2 IN M2.frame.world /\ M2.frame.rel w1 w2 ==> w2 IN M1.frame.world))`;
 
 
 
@@ -767,17 +767,64 @@ rpt strip_tac
 >- (rw[tree_like_model_def] >> qexists_tac `(nlist_of [x])` >> `x ∈ M.frame.world` by metis_tac[root_in_rooted_model] >> metis_tac[prop_2_15_half1]));
 
 
+
+val point_GENSUBMODEL_def = Define`
+  point_GENSUBMODEL M w =
+   <| frame := <| world := {v | v IN M.frame.world /\ (RESTRICT M.frame.rel M.frame.world)^* w v };
+rel := λw1 w2. w1 IN M.frame.world /\ w2 IN M.frame.world /\ M.frame.rel w1 w2|>;
+          valt := M.valt |>`;
+
+val point_GENSUBMODEL_GENSUBMODEL = store_thm(
+  "point_GENSUBMODEL_GENSUBMODEL",
+  ``!M w. w IN M.frame.world ==> GENSUBMODEL (point_GENSUBMODEL M w) M``,
+  rw[GENSUBMODEL_def,point_GENSUBMODEL_def] (* 2 *)
+  >- (rw[SUBMODEL_def] >> fs[SUBSET_DEF])
+  >- (simp[Once RTC_CASES2] >>
+     `∃u. (RESTRICT M.frame.rel M.frame.world)^* w u ∧ RESTRICT M.frame.rel M.frame.world u w2` suffices_by metis_tac[] >>
+     qexists_tac `w1` >> simp[Once RESTRICT_def]));
+
+
+val point_GENSUBMODEL_rooted = store_thm(
+  "point_GENSUBMODEL_rooted",
+  ``!M w. w IN M.frame.world ==> rooted_model (point_GENSUBMODEL M w) w M``,
+  rw[rooted_model_def] >> eq_tac >> rw[] (* 7 *)
+  >- fs[point_GENSUBMODEL_def]
+  >- fs[point_GENSUBMODEL_def]
+  >- fs[point_GENSUBMODEL_def]
+  >- (fs[point_GENSUBMODEL_def] >> metis_tac[RESTRICT_def])
+  >- (fs[point_GENSUBMODEL_def] >> metis_tac[RESTRICT_def])
+  >- fs[point_GENSUBMODEL_def]
+  >- fs[point_GENSUBMODEL_def]);
+
+val point_GENSUBMODEL_satis = store_thm(
+  "point_GENSUBMODEL_satis",
+  ``!M w f. satis M w f ==> satis (point_GENSUBMODEL M w) w f``,
+  rw[] >>
+  `w IN M.frame.world` by metis_tac[satis_in_world] >>
+  `GENSUBMODEL (point_GENSUBMODEL M w) M` by metis_tac[point_GENSUBMODEL_GENSUBMODEL] >>
+  `(RESTRICT M.frame.rel M.frame.world)^* w w` by metis_tac[RTC_CASES2] >>
+  `w IN (point_GENSUBMODEL M w).frame.world` by fs[point_GENSUBMODEL_def] >>
+  metis_tac[prop_2_6]);
+
 val prop_2_15_corollary = store_thm(
   "prop_2_15_corollary",
-  ``!M x M' w form. rooted_model M x M' /\ w IN M.frame.world /\ satis M w form ==>
-  ?MODEL. tree_like_model MODEL /\ ?v. v IN MODEL.frame.world /\ satis MODEL v form``,
+  ``!M x w form. w IN M.frame.world /\ satis M w form ==>
+  ?MODEL. tree_like_model MODEL /\ ?v. satis MODEL v form``,
   rw[] >>
-  `?f MODEL. bounded_mor_image f MODEL M /\ tree_like_model MODEL` by metis_tac[prop_2_15] >>
+  `satis (point_GENSUBMODEL M w) w form` by metis_tac[point_GENSUBMODEL_satis] >>
+  `rooted_model (point_GENSUBMODEL M w) w M` by metis_tac[point_GENSUBMODEL_rooted] >>
+  `∃f MODEL. bounded_mor_image f MODEL (point_GENSUBMODEL M w) ∧ tree_like_model MODEL` by metis_tac[prop_2_15] >>
   qexists_tac `MODEL` >> rw[] >>
   fs[bounded_mor_image_def] >>
-  `?a. a IN MODEL.frame.world /\ f a = w` by metis_tac[SURJ_DEF] >>
-  qexists_tac `a` >> rw[] >>
-  metis_tac[prop_2_14]);
+  `(RESTRICT M.frame.rel M.frame.world)^* w w` by metis_tac[RTC_CASES2] >>
+  `w IN (point_GENSUBMODEL M w).frame.world` by fs[point_GENSUBMODEL_def] >>
+  `?v. v IN MODEL.frame.world /\ f v = w` by fs[SURJ_DEF] >>
+  qexists_tac `v` >> metis_tac[prop_2_14]);
+
+
+
+
+
 
 
 val _ = export_theory();
