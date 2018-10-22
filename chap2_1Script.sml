@@ -766,19 +766,21 @@ rpt strip_tac
 >- metis_tac[prop_2_15_half2]
 >- (rw[tree_like_model_def] >> qexists_tac `(nlist_of [x])` >> `x ∈ M.frame.world` by metis_tac[root_in_rooted_model] >> metis_tac[prop_2_15_half1]));
 
-(*
 
 
-val prop_2_15 = store_thm(
+val prop_2_15_strengthen = store_thm(
 "prop_2_15",
-``!M x M'. rooted_model M x M' ==> ?f MODEL. bounded_mor_image f MODEL M /\ tree MODEL.frame (f x)``,
+``!M x M'. rooted_model M x M' ==> ?f MODEL s. bounded_mor_image f MODEL M /\ tree MODEL.frame s /\ f s = x``,
 rpt strip_tac
->> map_every qexists_tac [`nlast`,`bounded_preimage_rooted M x`]
+>> map_every qexists_tac [`nlast`,`bounded_preimage_rooted M x`] >> qexists_tac `ncons x 0`
 >> rpt strip_tac
 >- metis_tac[prop_2_15_half2]
->- (rw[tree_like_model_def] >> qexists_tac `(nlist_of [x])` >> `x ∈ M.frame.world` by metis_tac[root_in_rooted_model] >> metis_tac[prop_2_15_half1]));
+>- (`x ∈ M.frame.world` by metis_tac[root_in_rooted_model] >>
+   `tree (bounded_preimage_rooted M x).frame (nlist_of [x])` by metis_tac[prop_2_15_half1] >>
+   fs[])
+>- fs[Once nlast_def]);
 
-*)
+
 
 
 (*
@@ -856,21 +858,6 @@ val in_world_RTC_RESTRICT_EQ = store_thm(
   ``(RESTRICT R s)^* x y ==> R^* x y``,
   ho_match_mp_tac RTC_STRONG_INDUCT_RIGHT1
 
-
-val tree_like_model_rooted = store_thm(
-  "tree_like_model_rooted",
-  ``!M. tree_like_model M ==> ?M' x. rooted_model M x M'``,
-  rw[rooted_model_def,tree_like_model_def,tree_def] >>
-  qexists_tac `<| frame := <| world := univ (:num);
-rel := λw1 w2. M.frame.rel w1 w2|>;
-          valt := M.valt |>` >>
-  qexists_tac `x` >> rw[] >> eq_tac >> rw[]
-  >- (`RESTRICT (λw1 w2. M.frame.rel w1 w2) 𝕌(:num) = M.frame.rel` by
-     rw[FUN_EQ_THM,RESTRICT_def] >> rw[] >>
-     `(RESTRICT M.frame.rel M.frame.world)^* x a` by metis_tac[] >>
-     irule RTC_MONOTONE >> qexists_tac `RESTRICT M.frame.rel M.frame.world` >> rw[] >>
-     metis_tac[RESTRICT_def])
-  >-
 
 
 val tree_like_model_rooted = store_thm(

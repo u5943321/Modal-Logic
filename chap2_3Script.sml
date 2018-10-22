@@ -915,6 +915,15 @@ val point_GENSUBMODEL_satis = store_thm(
   metis_tac[prop_2_6]);
 
 
+val root_height_0 = store_thm(
+  "root_height_0",
+  ``!M x M'. rooted_model M x M' ==> height M x M' x = 0``,
+  rw[Once heightLE_cases,height_def] >>
+  `0 IN 𝕌(:num)` by fs[] >>
+  `𝕌(:num) <> {}` by fs[] >>
+  `MIN_SET 𝕌(:num) <= 0` by metis_tac[MIN_SET_LEM] >> fs[]);
+ 
+
 val thm_2_34 = store_thm( 
   "thm_2_34",
   ``!M w phi. satis M w phi ==> ?FM v. FINITE (FM.frame.world) /\ v IN FM.frame.world /\ satis FM v phi``,
@@ -922,7 +931,27 @@ val thm_2_34 = store_thm(
   qabbrev_tac `k = DEG phi` >>
   `satis (point_GENSUBMODEL M w) w phi` by metis_tac[point_GENSUBMODEL_satis] >>
   qabbrev_tac `M2 = (point_GENSUBMODEL M w)` >>
-  `ro
+  qabbrev_tac `M3 = hrestriction M2 w M k` >>
+  `w IN M.frame.world` by metis_tac[satis_in_world] >>
+  `rooted_model M2 w M` by metis_tac[point_GENSUBMODEL_rooted,Abbr`M2`] >>
+  `w IN M3.frame.world`
+      by (fs[Abbr`M3`,hrestriction_def] >> fs[point_GENSUBMODEL_def,Abbr`M2`] >>
+          `height
+            <|frame :=
+                     <|world :=
+                      {v |
+                          v ∈ M.frame.world ∧
+                          (RESTRICT M.frame.rel M.frame.world)^* w v};
+              rel :=
+                   (λw1 w2.
+                    w1 ∈ M.frame.world ∧ w2 ∈ M.frame.world ∧
+                     M.frame.rel w1 w2)|>; valt := M.valt|> w M w = 0` by metis_tac[root_height_0] >> fs[]) >>
+   `∃f. nbisim M3 M2 f (k − height M2 w M w) w w` by 
+   fs[Abbr`M3`] >> irule lemma_2_33 >> (* 2 *) rw[] >>
+   `height M2 w M w = 0` by metis_tac[root_height_0] >> fs[] >>
+   `DEG phi <= k` by fs[] >>
+   `satis M3 w phi` by metis_tac[prop_2_31_half1]
+   
   
 
 
