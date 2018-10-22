@@ -701,12 +701,9 @@ rpt strip_tac
   
 
 
-
-
-
 val (heightLE_rules, heightLE_ind, heightLE_cases) = Hol_reln`
   (!n. heightLE (M:'a model) x (M':'a model) x n) /\
-  (!v. (?w. w IN M.frame.world /\ M.frame.rel w v /\ heightLE M x M' w n) ==>
+  (!v. v IN M.frame.world /\ (?w. w IN M.frame.world /\ M.frame.rel w v /\ heightLE M x M' w n) ==>
        heightLE M x M' v (n + 1))
 `;
 
@@ -743,8 +740,9 @@ val heightLE_RTC = store_thm(
   rooted_model M x M' ==> (RESTRICT M'.frame.rel M'.frame.world)^* x w``,
   Induct_on `heightLE` >> rw[] >>
   `(RESTRICT M'.frame.rel M'.frame.world)^* x w'` by metis_tac[] >>
-  fs[rooted_model_def] >>
-  metis_tac[RTC_CASES2]);
+  `RESTRICT M'.frame.rel M'.frame.world w' w` suffices_by metis_tac[RTC_CASES2] >>
+  metis_tac[RESTRICT_def,rooted_model_def]);
+
 
 
 val rooted_have_height = store_thm(
@@ -756,12 +754,18 @@ val rooted_have_height = store_thm(
   >- (`w IN M'.frame.world` by metis_tac[RESTRICT_def] >>
      `∃n. heightLE M x M' w n` by metis_tac[] >>
      qexists_tac `n + 1` >> rw[Once heightLE_cases] >>
+     `w' IN M.frame.world`
+         by (`(RESTRICT M'.frame.rel M'.frame.world)^* x w` by metis_tac[heightLE_RTC] >>
+	     `(RESTRICT M'.frame.rel M'.frame.world)^* x w'` by metis_tac[RTC_CASES2] >>
+	     metis_tac[rooted_model_def]) >>
      `∃w. w ∈ M.frame.world ∧ M.frame.rel w w' ∧ heightLE M x M' w n` suffices_by metis_tac[] >>
      qexists_tac `w` >> rw[]
      >- (`(RESTRICT M'.frame.rel M'.frame.world)^* x w` by
         metis_tac[heightLE_RTC] >>
         metis_tac[rooted_model_def])
-     >-	metis_tac[rooted_model_def]));
+     >- (`w IN M.frame.world` suffices_by metis_tac[rooted_model_def] >>
+	`(RESTRICT M'.frame.rel M'.frame.world)^* x w` suffices_by metis_tac[rooted_model_def] >>
+	metis_tac[heightLE_RTC])));
 
 val rooted_have_height_applied = store_thm(
   "rooted_have_height_applied",
@@ -868,15 +872,57 @@ rw[] >> qexists_tac `λn w1 w2. w1 = w2 /\ height M x M' w1 <= k - n` >> rw[nbis
        by (`k - n >= 1` suffices_by fs[] >> fs[]) >> fs[]));
 
 
+
 (* incompleted construction of thm 2.34
 
-  ``!phi. 
+
+val point_GENSUBMODEL_def = Define`
+  point_GENSUBMODEL M w =
+   <| frame := <| world := {v | v IN M.frame.world /\ (RESTRICT M.frame.rel M.frame.world)^* w v };
+rel := λw1 w2. w1 IN M.frame.world /\ w2 IN M.frame.world /\ M.frame.rel w1 w2|>;
+          valt := M.valt |>`;
+
+val point_GENSUBMODEL_GENSUBMODEL = store_thm(
+  "point_GENSUBMODEL_GENSUBMODEL",
+  ``!M w. w IN M.frame.world ==> GENSUBMODEL (point_GENSUBMODEL M w) M``,
+  rw[GENSUBMODEL_def,point_GENSUBMODEL_def] (* 2 *)
+  >- (rw[SUBMODEL_def] >> fs[SUBSET_DEF])
+  >- (simp[Once RTC_CASES2] >>
+     `∃u. (RESTRICT M.frame.rel M.frame.world)^* w u ∧ RESTRICT M.frame.rel M.frame.world u w2` suffices_by metis_tac[] >>
+     qexists_tac `w1` >> simp[Once RESTRICT_def]));
+
+
+val point_GENSUBMODEL_rooted = store_thm(
+  "point_GENSUBMODEL_rooted",
+  ``!M w. w IN M.frame.world ==> rooted_model (point_GENSUBMODEL M w) w M``,
+  rw[rooted_model_def] >> eq_tac >> rw[] (* 7 *)
+  >- fs[point_GENSUBMODEL_def]
+  >- fs[point_GENSUBMODEL_def]
+  >- fs[point_GENSUBMODEL_def]
+  >- (fs[point_GENSUBMODEL_def] >> metis_tac[RESTRICT_def])
+  >- (fs[point_GENSUBMODEL_def] >> metis_tac[RESTRICT_def])
+  >- fs[point_GENSUBMODEL_def]
+  >- fs[point_GENSUBMODEL_def]);
+
+val point_GENSUBMODEL_satis = store_thm(
+  "point_GENSUBMODEL_satis",
+  ``!M w f. satis M w f ==> satis (point_GENSUBMODEL M w) w f``,
+  rw[] >>
+  `w IN M.frame.world` by metis_tac[satis_in_world] >>
+  `GENSUBMODEL (point_GENSUBMODEL M w) M` by metis_tac[point_GENSUBMODEL_GENSUBMODEL] >>
+  `(RESTRICT M.frame.rel M.frame.world)^* w w` by metis_tac[RTC_CASES2] >>
+  `w IN (point_GENSUBMODEL M w).frame.world` by fs[point_GENSUBMODEL_def] >>
+  metis_tac[prop_2_6]);
+
 
 val thm_2_34 = store_thm( 
   "thm_2_34",
   ``!M w phi. satis M w phi ==> ?FM v. FINITE (FM.frame.world) /\ v IN FM.frame.world /\ satis FM v phi``,
   rw[] >>
   qabbrev_tac `k = DEG phi` >>
+  `satis (point_GENSUBMODEL M w) w phi` by metis_tac[point_GENSUBMODEL_satis] >>
+  qabbrev_tac `M2 = (point_GENSUBMODEL M w)` >>
+  `ro
   
 
 

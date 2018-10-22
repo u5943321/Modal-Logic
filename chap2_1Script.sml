@@ -6,7 +6,7 @@ open relationTheory;
 open listTheory;
 open arithmeticTheory;
 open set_relationTheory;
-open pairTheory;
+open pairTheory; 
 
 open nlistTheory
 
@@ -347,7 +347,8 @@ Cases_on `t0 = t1` >-
 val rooted_model_def = Define`
 !M x M'. rooted_model M x M' <=> x IN M'.frame.world /\
                                  (!a. a IN M.frame.world <=> (a IN M'.frame.world /\ (RTC (RESTRICT M'.frame.rel M'.frame.world)) x a)) /\
-                                 (!n1 n2. M.frame.rel n1 n2 <=> (RESTRICT M'.frame.rel M'.frame.world) n1 n2) /\
+                                 (!n1 n2. n1 IN M.frame.world /\ n2 IN M.frame.world ==>
+				   (M.frame.rel n1 n2 <=> (RESTRICT M'.frame.rel M'.frame.world) n1 n2)) /\
                                  (!v n. M.valt v n <=> M'.valt v n)`;
 
 
@@ -686,14 +687,13 @@ val rooted_model_RTC_eq = store_thm(
 "rooted_model_RTC_eq",
 ``!x x'. RTC (RESTRICT M'.frame.rel M'.frame.world) x x' ==> (rooted_model M x M' ==> (RESTRICT M.frame.rel M.frame.world)^* x x')``,
 ho_match_mp_tac RTC_STRONG_INDUCT_RIGHT1 >> rpt strip_tac >- metis_tac[RTC_CASES1]
->- (`RESTRICT M.frame.rel M.frame.world x' x''` suffices_by metis_tac[RTC_CASES2]
-  >> `M.frame.rel x' x''` by metis_tac[rooted_model_def]
-  >> `(RESTRICT M'.frame.rel M'.frame.world)^* x x''` by metis_tac[RTC_CASES2]
-  >> `x' IN M'.frame.world` by metis_tac[RESTRICT_def]
-  >> `x'' IN M'.frame.world` by metis_tac[RESTRICT_def]
-  >> `x' IN M.frame.world` by metis_tac[rooted_model_def]
-  >> `x'' IN M.frame.world` by metis_tac[rooted_model_def]
-  >> metis_tac[RESTRICT_def]));
+>- (`RESTRICT M.frame.rel M.frame.world x' x''` suffices_by metis_tac[RTC_CASES2] >>
+   `x' IN M'.frame.world` by metis_tac[RESTRICT_def] >>
+   `x'' IN M'.frame.world` by metis_tac[RESTRICT_def] >>
+   `(RESTRICT M'.frame.rel M'.frame.world)^* x x''` by metis_tac[RTC_CASES2] >>
+   `x' IN M.frame.world` by metis_tac[rooted_model_def] >>
+   `x'' IN M.frame.world` by metis_tac[rooted_model_def] >>
+   metis_tac[rooted_model_def,RESTRICT_def]));
 
 
 
@@ -766,7 +766,22 @@ rpt strip_tac
 >- metis_tac[prop_2_15_half2]
 >- (rw[tree_like_model_def] >> qexists_tac `(nlist_of [x])` >> `x ∈ M.frame.world` by metis_tac[root_in_rooted_model] >> metis_tac[prop_2_15_half1]));
 
+(*
 
+
+val prop_2_15 = store_thm(
+"prop_2_15",
+``!M x M'. rooted_model M x M' ==> ?f MODEL. bounded_mor_image f MODEL M /\ tree MODEL.frame (f x)``,
+rpt strip_tac
+>> map_every qexists_tac [`nlast`,`bounded_preimage_rooted M x`]
+>> rpt strip_tac
+>- metis_tac[prop_2_15_half2]
+>- (rw[tree_like_model_def] >> qexists_tac `(nlist_of [x])` >> `x ∈ M.frame.world` by metis_tac[root_in_rooted_model] >> metis_tac[prop_2_15_half1]));
+
+*)
+
+
+(*
 
 val point_GENSUBMODEL_def = Define`
   point_GENSUBMODEL M w =
@@ -821,10 +836,75 @@ val prop_2_15_corollary = store_thm(
   `?v. v IN MODEL.frame.world /\ f v = w` by fs[SURJ_DEF] >>
   qexists_tac `v` >> metis_tac[prop_2_14]);
 
+val in_world_RESTRICT_EQ = store_thm(
+  "in_world_RESTRICT_EQ",
+  ``!R s x y. x IN s /\ y IN s ==> R x y = RESTRICT R s x y``,
+  metis_tac[RESTRICT_def]);
+
+
+val RESTRICT_UNRESTRICT = store_thm(
+  "RESTRICT_UNRESTRICT",
+  ``!
+
+val SUBREL_RESTRICT_RTC = store_thm(
+  "SUBREL_RESTRICT_RTC",
+  ``!R x y. R^* x y ==> !R'. (R' x y ==> R x y) ==> R'^* x y``,
+  ho_match_mp_tac relationTheory.RTC_STRONG_INDUCT_RIGHT1
+
+val in_world_RTC_RESTRICT_EQ = store_thm(
+  "in_world_RTC_RESTRICT_EQ",
+  ``(RESTRICT R s)^* x y ==> R^* x y``,
+  ho_match_mp_tac RTC_STRONG_INDUCT_RIGHT1
+
+
+val tree_like_model_rooted = store_thm(
+  "tree_like_model_rooted",
+  ``!M. tree_like_model M ==> ?M' x. rooted_model M x M'``,
+  rw[rooted_model_def,tree_like_model_def,tree_def] >>
+  qexists_tac `<| frame := <| world := univ (:num);
+rel := λw1 w2. M.frame.rel w1 w2|>;
+          valt := M.valt |>` >>
+  qexists_tac `x` >> rw[] >> eq_tac >> rw[]
+  >- (`RESTRICT (λw1 w2. M.frame.rel w1 w2) 𝕌(:num) = M.frame.rel` by
+     rw[FUN_EQ_THM,RESTRICT_def] >> rw[] >>
+     `(RESTRICT M.frame.rel M.frame.world)^* x a` by metis_tac[] >>
+     irule RTC_MONOTONE >> qexists_tac `RESTRICT M.frame.rel M.frame.world` >> rw[] >>
+     metis_tac[RESTRICT_def])
+  >-
+
+
+val tree_like_model_rooted = store_thm(
+  "tree_like_model_rooted",
+  ``!M. tree_like_model M ==> ?x. rooted_model M x M``,
+  rw[rooted_model_def,tree_like_model_def,tree_def] >>
+  qexists_tac `M` >>
+  qexists_tac `x` >> rw[] >> eq_tac >> rw[]
+  >- (`RESTRICT (λw1 w2. M.frame.rel w1 w2) 𝕌(:num) = M.frame.rel` by
+     rw[FUN_EQ_THM,RESTRICT_def] >> rw[] >>
+     `(RESTRICT M.frame.rel M.frame.world)^* x a` by metis_tac[] >>
+     irule RTC_MONOTONE >> qexists_tac `RESTRICT M.frame.rel M.frame.world` >> rw[] >>
+     metis_tac[RESTRICT_def])
+  >- 
+     
 
 
 
+val prop_2_15_corollary_2_34_applied = store_thm(
+  "prop_2_15_corollary",
+  ``!M x w form. w IN M.frame.world /\ satis M w form ==>
+  ?MODEL v. rooted_model MODEL v MODEL /\ tree_like_model MODEL /\ satis MODEL v form``,
+  rw[] >>
+  `satis (point_GENSUBMODEL M w) w form` by metis_tac[point_GENSUBMODEL_satis] >>
+  `rooted_model (point_GENSUBMODEL M w) w M` by metis_tac[point_GENSUBMODEL_rooted] >>
+  `∃f MODEL. bounded_mor_image f MODEL (point_GENSUBMODEL M w) ∧ tree_like_model MODEL` by metis_tac[prop_2_15] >>
+  qexists_tac `MODEL` >> rw[] >>
+  fs[bounded_mor_image_def] >>
+  `(RESTRICT M.frame.rel M.frame.world)^* w w` by metis_tac[RTC_CASES2] >>
+  `w IN (point_GENSUBMODEL M w).frame.world` by fs[point_GENSUBMODEL_def] >>
+  `?v. v IN MODEL.frame.world /\ f v = w` by fs[SURJ_DEF] >>
+  qexists_tac `v` >> metis_tac[prop_2_14]);
 
-
+*)
 
 val _ = export_theory();
+
