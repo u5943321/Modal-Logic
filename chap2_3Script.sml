@@ -472,6 +472,8 @@ rpt strip_tac >> Induct_on `n` >> rpt strip_tac
    metis_tac[]));
 
 
+(*
+
 val prop_2_31_half1 = store_thm(
 "prop_2_31_half1",
 ``!M M' n w w'. FINITE univ (:'a) ==>(?f. nbisim M M' f n w w') ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi))``,
@@ -504,7 +506,38 @@ gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
        metis_tac[]))));
 
 
+*)
 
+val prop_2_31_half1 = store_thm(
+"prop_2_31_half1",
+``!M M' n w w'. (?f. nbisim M M' f n w w') ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi))``,
+gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
+>- (rpt strip_tac >>
+    `DEG phi = 0` by simp[] >>
+    `w IN M.frame.world /\ w' IN M'.frame.world` by metis_tac[nbisim_def] >>
+    Induct_on `phi` >> rpt strip_tac 
+    >- (`(f 0) w w'` by metis_tac[nbisim_def] >> fs[nbisim_def])
+    >- (fs[DEG_def] >> metis_tac[satis_def])
+    >- metis_tac[satis_def]
+    >- (fs[DEG_def] >> metis_tac[satis_def])
+    >- metis_tac[DIAM_DEG_NOT_ZERO])
+>- (rw[] >>
+    Induct_on `phi` >> simp[DEG_def]
+    >- (gen_tac >> first_x_assum irule >> rw[DEG_def] >> metis_tac[suc_bisim,ADD1])
+    >- rw[satis_def]
+    >- rw[satis_def]
+    >- (rw[satis_def] >> metis_tac[nbisim_def]) 
+    >- (simp[ADD1, satis_def] >> rw[EQ_IMP_THM] 
+      >- metis_tac[nbisim_def]
+      >- (`M.frame.rel w v` by fs[IN_DEF] >>
+        fs[ADD1] >>
+        `?v'. M'.frame.rel w' v' /\ nbisim M M' f n v v' /\ v' ∈ M'.frame.world`
+           by metis_tac[ADD1,suc_nbisim_rel] >>
+        metis_tac[IN_DEF])
+      >- metis_tac[nbisim_def]
+      >- (fs[ADD1] >>
+       `∃p. p ∈ M.frame.world ∧ M.frame.rel w p ∧ nbisim M M' f n p v` by metis_tac[suc_nbisim_rel_SYM] >>
+       metis_tac[]))));
 
 
 
@@ -946,11 +979,12 @@ val thm_2_34 = store_thm(
                    (λw1 w2.
                     w1 ∈ M.frame.world ∧ w2 ∈ M.frame.world ∧
                      M.frame.rel w1 w2)|>; valt := M.valt|> w M w = 0` by metis_tac[root_height_0] >> fs[]) >>
-   `∃f. nbisim M3 M2 f (k − height M2 w M w) w w` by 
-   fs[Abbr`M3`] >> irule lemma_2_33 >> (* 2 *) rw[] >>
-   `height M2 w M w = 0` by metis_tac[root_height_0] >> fs[] >>
-   `DEG phi <= k` by fs[] >>
-   `satis M3 w phi` by metis_tac[prop_2_31_half1]
+   `∃f. nbisim M3 M2 f (k − height M2 w M w) w w`
+       by (fs[Abbr`M3`] >> irule lemma_2_33 >> (* 2 *) rw[] >>
+          `height M2 w M w = 0` by metis_tac[root_height_0] >> fs[] >>
+          `DEG phi <= k` by fs[] >>
+          `satis M3 w phi` by metis_tac[prop_2_31_half1]) >>
+   
    
   
 

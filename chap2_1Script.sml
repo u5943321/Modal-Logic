@@ -781,10 +781,6 @@ rpt strip_tac
 >- fs[Once nlast_def]);
 
 
-
-
-(*
-
 val point_GENSUBMODEL_def = Define`
   point_GENSUBMODEL M w =
    <| frame := <| world := {v | v IN M.frame.world /\ (RESTRICT M.frame.rel M.frame.world)^* w v };
@@ -823,75 +819,24 @@ val point_GENSUBMODEL_satis = store_thm(
   `w IN (point_GENSUBMODEL M w).frame.world` by fs[point_GENSUBMODEL_def] >>
   metis_tac[prop_2_6]);
 
+
+
 val prop_2_15_corollary = store_thm(
   "prop_2_15_corollary",
-  ``!M x w form. w IN M.frame.world /\ satis M w form ==>
-  ?MODEL. tree_like_model MODEL /\ ?v. satis MODEL v form``,
+  ``!M w form. w IN M.frame.world /\ satis M w form ==>
+  ?MODEL s. tree MODEL.frame s /\ satis MODEL s form``,
   rw[] >>
   `satis (point_GENSUBMODEL M w) w form` by metis_tac[point_GENSUBMODEL_satis] >>
   `rooted_model (point_GENSUBMODEL M w) w M` by metis_tac[point_GENSUBMODEL_rooted] >>
-  `∃f MODEL. bounded_mor_image f MODEL (point_GENSUBMODEL M w) ∧ tree_like_model MODEL` by metis_tac[prop_2_15] >>
-  qexists_tac `MODEL` >> rw[] >>
+  `?f MODEL s. bounded_mor_image f MODEL (point_GENSUBMODEL M w) /\ tree MODEL.frame s /\ f s = w` by metis_tac[prop_2_15_strengthen] >>
+  qexists_tac `MODEL` >> rw[] >> qexists_tac `s` >> rw[] >>
   fs[bounded_mor_image_def] >>
-  `(RESTRICT M.frame.rel M.frame.world)^* w w` by metis_tac[RTC_CASES2] >>
-  `w IN (point_GENSUBMODEL M w).frame.world` by fs[point_GENSUBMODEL_def] >>
-  `?v. v IN MODEL.frame.world /\ f v = w` by fs[SURJ_DEF] >>
-  qexists_tac `v` >> metis_tac[prop_2_14]);
-
-val in_world_RESTRICT_EQ = store_thm(
-  "in_world_RESTRICT_EQ",
-  ``!R s x y. x IN s /\ y IN s ==> R x y = RESTRICT R s x y``,
-  metis_tac[RESTRICT_def]);
-
-
-val RESTRICT_UNRESTRICT = store_thm(
-  "RESTRICT_UNRESTRICT",
-  ``!
-
-val SUBREL_RESTRICT_RTC = store_thm(
-  "SUBREL_RESTRICT_RTC",
-  ``!R x y. R^* x y ==> !R'. (R' x y ==> R x y) ==> R'^* x y``,
-  ho_match_mp_tac relationTheory.RTC_STRONG_INDUCT_RIGHT1
-
-val in_world_RTC_RESTRICT_EQ = store_thm(
-  "in_world_RTC_RESTRICT_EQ",
-  ``(RESTRICT R s)^* x y ==> R^* x y``,
-  ho_match_mp_tac RTC_STRONG_INDUCT_RIGHT1
+  `s IN MODEL.frame.world` by metis_tac[tree_def] >> metis_tac[prop_2_14]);
+  
+  
 
 
 
-val tree_like_model_rooted = store_thm(
-  "tree_like_model_rooted",
-  ``!M. tree_like_model M ==> ?x. rooted_model M x M``,
-  rw[rooted_model_def,tree_like_model_def,tree_def] >>
-  qexists_tac `M` >>
-  qexists_tac `x` >> rw[] >> eq_tac >> rw[]
-  >- (`RESTRICT (λw1 w2. M.frame.rel w1 w2) 𝕌(:num) = M.frame.rel` by
-     rw[FUN_EQ_THM,RESTRICT_def] >> rw[] >>
-     `(RESTRICT M.frame.rel M.frame.world)^* x a` by metis_tac[] >>
-     irule RTC_MONOTONE >> qexists_tac `RESTRICT M.frame.rel M.frame.world` >> rw[] >>
-     metis_tac[RESTRICT_def])
-  >- 
-     
-
-
-
-val prop_2_15_corollary_2_34_applied = store_thm(
-  "prop_2_15_corollary",
-  ``!M x w form. w IN M.frame.world /\ satis M w form ==>
-  ?MODEL v. rooted_model MODEL v MODEL /\ tree_like_model MODEL /\ satis MODEL v form``,
-  rw[] >>
-  `satis (point_GENSUBMODEL M w) w form` by metis_tac[point_GENSUBMODEL_satis] >>
-  `rooted_model (point_GENSUBMODEL M w) w M` by metis_tac[point_GENSUBMODEL_rooted] >>
-  `∃f MODEL. bounded_mor_image f MODEL (point_GENSUBMODEL M w) ∧ tree_like_model MODEL` by metis_tac[prop_2_15] >>
-  qexists_tac `MODEL` >> rw[] >>
-  fs[bounded_mor_image_def] >>
-  `(RESTRICT M.frame.rel M.frame.world)^* w w` by metis_tac[RTC_CASES2] >>
-  `w IN (point_GENSUBMODEL M w).frame.world` by fs[point_GENSUBMODEL_def] >>
-  `?v. v IN MODEL.frame.world /\ f v = w` by fs[SURJ_DEF] >>
-  qexists_tac `v` >> metis_tac[prop_2_14]);
-
-*)
 
 val _ = export_theory();
 
