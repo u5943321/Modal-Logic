@@ -109,9 +109,47 @@ rw[] >>
 `s' IN partition R s` by fs[INSERT_SUBSET,SET_EQ_SUBSET,SUBSET_DEF] >>
 metis_tac[equiv_on_parition_NOT_R]);
 
-val CHOICE_BIJ_parition = store_thm(
-    "CHOICE_BIJ_parition",
-    ``R equiv_on s ==>
+
+val FINITE_partition_SUBSET = store_thm(
+  "FINITE_partition_SUBSET",
+  ``!R s. R equiv_on s ==> FINITE (partition R s) ==> !a. a ⊆ s ==> FINITE (partition R a)``,
+  rw[partition_def] >>
+  `?f. INJ f {t | ∃x. x ∈ a ∧ t = {y | y ∈ a ∧ R x y}} {t | ∃x. x ∈ s ∧ t = {y | y ∈ s ∧ R x y}}` suffices_by metis_tac[FINITE_INJ] >>
+  qexists_tac `\p. {y | y IN s /\ ?r. r IN p /\ R r y}`	>> rw[INJ_DEF]
+  >- (qexists_tac `x` >> rw[]
+     >- fs[SUBSET_DEF]
+     >- (rw[Once EXTENSION] >> eq_tac >> rw[]
+        >- (`x IN s` by metis_tac[SUBSET_DEF] >>
+	   `r IN s` by metis_tac[SUBSET_DEF] >>
+	   `∀x y z. x ∈ s ∧ y ∈ s ∧ z ∈ s ∧ R x y ∧ R y z ⇒ R x z` by fs[equiv_on_def] >> metis_tac[])
+	>- (qexists_tac `x` >> rw[] >>
+	   `x IN s` by metis_tac[SUBSET_DEF] >>
+	   fs[equiv_on_def])))
+  >- (rw[Once EXTENSION] >> eq_tac >> rw[]
+     >- (`{y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x y} ∧ R r y} =
+         {y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x' y} ∧ R r y} ==> R x' x''` suffices_by metis_tac[] >>
+        simp[Once EXTENSION,EQ_IMP_THM] >> rw[] >>
+	`x'' IN s` by fs[SUBSET_DEF] >>
+	`R x'' x''` by fs[equiv_on_def] >>
+	`∃r. (r ∈ a ∧ R x' r) ∧ R r x''` by metis_tac[] >>
+	fs[equiv_on_def] >>
+	`r IN s` by fs[SUBSET_DEF] >>
+	`x' IN s` by fs[SUBSET_DEF] >>
+	metis_tac[])
+     >- (`{y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x y} ∧ R r y} =
+         {y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x' y} ∧ R r y} ==> R x x''` suffices_by metis_tac[] >>
+        simp[Once EXTENSION,EQ_IMP_THM] >> rw[] >>
+	`x'' IN s` by fs[SUBSET_DEF] >>
+	`R x'' x''` by fs[equiv_on_def] >>
+	`∃r. (r ∈ a ∧ R x r) ∧ R r x''` by metis_tac[] >>
+	fs[equiv_on_def] >>
+	`r IN s` by fs[SUBSET_DEF] >>
+	`x' IN s` by fs[SUBSET_DEF] >>
+	`x IN s` by fs[SUBSET_DEF] >> metis_tac[])));
+
+val CHOICE_BIJ_partition = store_thm(
+    "CHOICE_BIJ_partition",
+    ``!R s. R equiv_on s ==>
     BIJ CHOICE (partition R s) (IMAGE CHOICE (partition R s))``,
     rw[BIJ_DEF,INJ_DEF,SURJ_DEF] >>
     `x <> {} /\ y <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
@@ -121,5 +159,6 @@ val CHOICE_BIJ_parition = store_thm(
     fs[partition_def] >>
     `{y | y ∈ s ∧ R x'' y} <> {}` by (`x'' IN  {y | y ∈ s ∧ R x'' y}` by fs[equiv_on_def] >> metis_tac[MEMBER_NOT_EMPTY]) >>
     `CHOICE {y | y ∈ s ∧ R x'' y} IN {y | y ∈ s ∧ R x'' y}` by metis_tac[CHOICE_DEF] >> fs[]);
+
 
 val _ = export_theory();

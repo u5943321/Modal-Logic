@@ -20,8 +20,6 @@ val _ = new_theory "chap2_3";
 (* finite model property via selection *)
 
 
-(* prop 2.29 *)
-
 val DEG_def =
   Define
     `DEG (VAR p) = 0 /\
@@ -30,40 +28,126 @@ val DEG_def =
      DEG (DISJ form1 form2) = MAX (DEG form1) (DEG form2) /\
      DEG (DIAM form) = (DEG form) + 1`;
 
+
+val DEG_0_propform = store_thm(
+"DEG_0_propform",
+``!f. DEG f = 0 <=> propform f``,
+Induct_on `f` >> fs[DEG_def,propform_def]);
+
+
 (* base case *)
-val FUNSPACE_def = Define`
-FUNSPACE s t = {f| (!x. x IN s ==> (f x) IN t) /\ (!x. x NOTIN s ==> (f x) = ARB)}`;
 
-val FUNSPACE_INJ_POW_CROSS = store_thm(
-"FUNSPACE_INJ_POW_CROSS",
-``INJ (λf. {(x, (f x))| x IN s}) (FUNSPACE s t) (POW (s CROSS t))``,
-rw[INJ_DEF,FUNSPACE_def]
->- (simp[IN_POW,SUBSET_DEF,PULL_EXISTS])
->- (rw[FUN_EQ_THM] >> fs[EXTENSION] >> metis_tac[pairTheory.PAIR_EQ]));
+val subforms_def = Define`
+  subforms (VAR a) = {VAR a} /\
+  subforms (FALSE) = {FALSE} /\
+  subforms (NOT f) = NOT f INSERT subforms f /\
+  subforms (DISJ f1 f2) = DISJ f1 f2 INSERT subforms f1 UNION subforms f2 /\
+  subforms (DIAM f) = DIAM f INSERT subforms f
+  `;
 
-val FINITE_FUNSPACE = store_thm(
-"FINITE_FUNSPACE",
-``!s t. FINITE s /\ FINITE t ==> FINITE (FUNSPACE s t)``,
-metis_tac[FINITE_POW,FINITE_CROSS,FINITE_INJ,FUNSPACE_INJ_POW_CROSS]);
+val subforms_phi_phi = store_thm(
+"subforms_phi_phi",
+``!phi. phi IN subforms phi``,
+Induct_on `phi` >> fs[subforms_def]);
 
-val univ_FUNSPACE = store_thm(
-"univ_FUNSPACE",
-``univ (:'a -> 'b) = FUNSPACE (univ (:'a)) (univ (:'b))``,
-rw[FUNSPACE_def,EXTENSION]);
+val subforms_DISJ = store_thm(
+"subforms_DISJ",
+``f1 IN (subforms (DISJ f1 f2)) /\ f2 IN (subforms (DISJ f1 f2))``,
+rw[subforms_def,subforms_phi_phi]);
+
+val subforms_NOT = store_thm(
+"subforms_NOT",
+``f IN (subforms (NOT f))``,
+rw[subforms_def,subforms_phi_phi]);
+
+val subforms_DIAM = store_thm(
+"subforms_DIAM",
+``f IN (subforms (DIAM f))``,
+rw[subforms_def,subforms_phi_phi]);
+
+val subforms_trans = store_thm(
+"subforms_trans",
+``!f. f IN subforms phi /\ phi IN subforms psi ==> f IN subforms psi``,
+rw[] >> Induct_on `psi` >> rw[] >> fs[subforms_def] 
+>> fs[subforms_def]);
+
+val subforms_FINITE = store_thm(
+"subforms_FINITE",
+``FINITE (subforms phi)``,
+Induct_on `phi` >> fs[subforms_def]);
+
+val peval_satis_strengthen = store_thm(
+"peval_satis_strengthen",
+``!M w f. propform f /\ (∀a. VAR a ∈ subforms f ⇒ a ∈ s) /\ w IN M.frame.world ==> (satis M w f <=> peval ((λa. w IN M.valt a) INTER s) f)``,
+Induct_on `f` >> rw[]
+>- (`(VAR a) IN subforms (VAR a)` by fs[subforms_def] >>
+   `a IN s` by fs[] >> metis_tac[satis_def])
+>- (simp[satis_def] >> 
+   `(∀a. VAR a ∈ subforms f ⇒ a ∈ s)`
+          by (`∀a. VAR a ∈ subforms f ⇒ (VAR a) IN subforms (DISJ f f')` suffices_by metis_tac[] >>
+	      `f IN (subforms (DISJ f f'))` by fs[subforms_def,subforms_phi_phi] >>
+	      metis_tac[subforms_trans]) >>
+   `(∀a. VAR a ∈ subforms f' ⇒ a ∈ s)`
+          by (`∀a. VAR a ∈ subforms f' ⇒ (VAR a) IN subforms (DISJ f f')` suffices_by metis_tac[] >>
+	      `f' IN (subforms (DISJ f f'))` by fs[subforms_def,subforms_phi_phi] >>
+	      metis_tac[subforms_trans]) >> metis_tac[])
+>- metis_tac[satis_def]
+>- (simp[satis_def] >>
+   `(∀a. VAR a ∈ subforms f ⇒ a ∈ s)`
+          by (`∀a. VAR a ∈ subforms f ⇒ (VAR a) IN subforms (¬f)` suffices_by metis_tac[] >>
+	      `f IN (subforms (¬f))` by fs[subforms_def,subforms_phi_phi] >>
+	      metis_tac[subforms_trans]) >> metis_tac[]));
+
+
+val equiv_peval_strengthen = store_thm(
+"equiv_peval_strengthen",
+``!f1 f2. propform f1 /\ propform f2 /\
+(∀a. VAR a ∈ subforms f1 ⇒ a ∈ s) /\
+(∀a. VAR a ∈ subforms f2 ⇒ a ∈ s) ==>
+(!σ. σ IN (POW s) ==> peval σ f1 = peval σ f2) ==> (!M w. satis M w f1 <=> satis M w f2)``,
+rw[] >> eq_tac >> rw[] >> `w IN M.frame.world` by metis_tac[satis_in_world]
+>- (`peval ((λa. w IN M.valt a) INTER s) f2` suffices_by metis_tac[peval_satis_strengthen,satis_in_world] >>
+   `peval ((λa. w IN M.valt a) INTER s) f1` by metis_tac[peval_satis_strengthen] >>
+   `((λa. w IN M.valt a) INTER s) IN (POW s)` by fs[POW_DEF,INTER_DEF,SUBSET_DEF] >>
+   metis_tac[])
+>- (`peval ((λa. w IN M.valt a) INTER s) f1` suffices_by metis_tac[peval_satis_strengthen,satis_in_world] >>
+   `peval ((λa. w IN M.valt a) INTER s) f2` by metis_tac[peval_satis_strengthen] >>
+   `((λa. w IN M.valt a) INTER s) IN (POW s)` by fs[POW_DEF,INTER_DEF,SUBSET_DEF] >>
+   metis_tac[]));
+
+
+
+val peval_restriction = store_thm(
+  "peval_restriction",
+  ``!f. propform f ==> (∀a. VAR a ∈ subforms f ⇒ a ∈ s) ==> !σ. peval σ f = peval (σ INTER s) f``,
+  Induct_on `f` 
+  >- (rw[] >>
+     `(VAR a) ∈ subforms (VAR a)`  by fs[subforms_def] >>
+     `a IN s` by fs[] >> fs[IN_DEF])
+  >- (rw[] >>
+     `(∀a. VAR a ∈ subforms f' ⇒ a ∈ s)`
+         by (`∀a. VAR a ∈ subforms f' ⇒ (VAR a) IN subforms (DISJ f f')` suffices_by metis_tac[] >>
+	      `f' IN (subforms (DISJ f f'))` by fs[subforms_def,subforms_phi_phi] >>
+	      metis_tac[subforms_trans]) >>
+     `(∀a. VAR a ∈ subforms f ⇒ a ∈ s)`
+         by (`∀a. VAR a ∈ subforms f ⇒ (VAR a) IN subforms (DISJ f f')` suffices_by metis_tac[] >>
+	      `f IN (subforms (DISJ f f'))` by fs[subforms_def,subforms_phi_phi] >>
+	      metis_tac[subforms_trans]) >>
+     metis_tac[])
+  >- fs[peval_def]
+  >- (rw[] >>
+   `(∀a. VAR a ∈ subforms f ⇒ a ∈ s)`
+       by (`∀a. VAR a ∈ subforms f ⇒ (VAR a) IN subforms (¬f)` suffices_by metis_tac[] >>
+	      `f IN (subforms (¬f))` by fs[subforms_def,subforms_phi_phi] >>
+	      metis_tac[subforms_trans]) >> metis_tac[])
+  >- fs[propform_def]);
+
 
 val peval_satis = store_thm(
 "peval_satis",
 ``!M w f. propform f /\ w IN M.frame.world ==> (satis M w f <=> peval (λa. w IN M.valt a) f)``,
 Induct_on `f` >> rw[] 
 >> metis_tac[satis_def]);
-
-
-val equiv_peval = store_thm(
-"equiv_peval",
-``!f1 f2. propform f1 /\ propform f2 /\ (!σ. peval σ f1 = peval σ f2) ==> (!M w. satis M w f1 <=> satis M w f2)``,
-rw[] >> eq_tac >> rw[] >>
-`w IN M.frame.world` by metis_tac[satis_in_world]
->> metis_tac[peval_satis,satis_in_world]);
 
 val peval_equiv = store_thm(
 "peval_equiv",
@@ -106,61 +190,119 @@ val partition_to_peval_well_defined = store_thm(
 ``!f1 f2. (propform f1 /\ propform f2 /\ equiv f1 f2) ==> ((λf s. peval s f) f1) = ((λf s. peval s f) f2)``,
 rw[equiv_def] >> simp[FUN_EQ_THM] >> metis_tac[peval_equiv]);
 
-val IMAGE_peval_singlton = store_thm(
-"IMAGE_peval_singlton",
-``!x form. x IN (partition equiv {f | propform f}) /\ form IN x ==>
-IMAGE (λf s. peval s f) x = {λs. (peval s form)}``,
+
+
+val IMAGE_peval_singlton_strengthen = store_thm(
+"IMAGE_peval_singlton_strengthen",
+``!x form. x IN {f | propform f /\ ∀a. (VAR a) IN (subforms f) ⇒ a ∈ s}//e /\ form IN x ==>
+IMAGE (λf. {σ | peval σ f} ∩ POW s) x = {{σ | (peval σ form)} INTER (POW s)}``,
 rw[partition_def] >> rw[IMAGE_DEF] >>
 `!f. propform f /\ (equiv x' f) ==> ((λs. peval s f) = (λs. peval s form))` by
 (rw[] >> fs[] >> `equiv f form` by metis_tac[equiv_def] >> simp[FUN_EQ_THM] >> metis_tac[partition_to_peval_well_defined]) >>
 simp[Once EXTENSION] >> rw[] >> eq_tac >> rw[]
->- metis_tac[]
->- (qexists_tac `form` >> fs[]));
+>- fs[EXTENSION]
+>- (qexists_tac `form` >> fs[EXTENSION]));
 
-val INJ_peval_partition = store_thm(
-"INJ_peval_partition",
-``INJ (IMAGE (λf s. peval s f)) (partition equiv {f| propform f}) (univ (:(('a -> bool) -> bool) -> bool))``,
-rw[INJ_DEF,UNIV_FUN_TO_BOOL] >> fs[partition_def] >> simp[EXTENSION] >> 
-`x IN (partition equiv {f | propform f})` by
-(rw[partition_def] >> qexists_tac `x'` >> fs[]) >>
-`y IN (partition equiv {f | propform f})` by
-(rw[partition_def] >> qexists_tac `x''` >> fs[]) >>
-`equiv x' x'` by metis_tac[equiv_def] >> `x' IN x` by simp[] >>
-`equiv x'' x''` by metis_tac[equiv_def] >> `x'' IN y` by simp[] >>
-`IMAGE (λf s. peval s f) x = {λs. (peval s x')}` by metis_tac[IMAGE_peval_singlton] >>
-`IMAGE (λf s. peval s f) y = {λs. (peval s x'')}` by metis_tac[IMAGE_peval_singlton] >> fs[] >>
-`∀s. peval s x' ⇔ peval s x''` by fs[FUN_EQ_THM] >>
-`equiv x' x''` by metis_tac[equiv_peval,equiv_def] >>
-metis_tac[equiv_def]);
+val INTER_EQ = store_thm(
+  "INTER_EQ",
+  ``!a b c. a ∩ c = b ∩ c ==>
+  (!x. x IN c ==> (x IN a <=> x IN b))``,
+  rw[EQ_IMP_THM]
+  >- (`x IN (a ∩ c)` by fs[INTER_DEF] >>
+     `x IN (b ∩ c)` by (fs[EXTENSION] >> metis_tac[]) >>
+     `x IN b` by fs[INTER_DEF])
+  >- (`x IN (b ∩ c)` by fs[INTER_DEF] >>
+     `x IN (a ∩ c)` by (fs[EXTENSION] >> metis_tac[]) >>
+     fs[INTER_DEF]));
 
-val FINITE_equiv_partition = store_thm(
-"FINITE_equiv_partition",
-``FINITE univ (:'a) ==> FINITE (partition equiv {(f :'a form) | propform f})``,
-rw[] >>
-`FINITE (univ (:(('a -> bool) -> bool) -> bool))` by (rw[UNIV_FUN_TO_BOOL] >> metis_tac[FINITE_POW]) >> metis_tac[FINITE_INJ,INJ_peval_partition]);
+val INJ_peval_partition_strengthen = store_thm(
+  "INJ_peval_partition_strengthen",
+  ``INJ
+  (\eqc. ((IMAGE (λf. {s| peval s f} INTER (POW s)) eqc)))
+  {f | propform f /\ ∀a. (VAR a) IN (subforms f) ⇒ a ∈ s}//e
+  (POW (POW (POW s)))``, 
+  rw[INJ_DEF] >> fs[partition_def] >> simp[EXTENSION] >> fs[]
+  >- (rw[IMAGE_DEF] >> fs[POW_DEF,SUBSET_DEF] >> rw[] >> fs[INTER_DEF])
+  >- (rw[EQ_IMP_THM] >>
+      `equiv x x'` suffices_by metis_tac[equiv_SYM,equiv_TRANS] >>
+        `{y |
+              (propform y ∧ ∀a. VAR a ∈ subforms y ⇒ a ∈ s) ∧
+              equiv x y} IN
+         {f | propform f /\ ∀a. (VAR a) IN (subforms f) ⇒ a ∈ s}//e`
+            by (rw[partition_def] >> qexists_tac `x` >> rw[]) >>
+	`x IN {y |
+         (propform y ∧ ∀a. VAR a ∈ subforms y ⇒ a ∈ s) ∧ equiv x y}` by fs[equiv_REFL] >>
+	`{y |
+              (propform y ∧ ∀a. VAR a ∈ subforms y ⇒ a ∈ s) ∧
+              equiv x' y} IN
+         {f | propform f /\ ∀a. (VAR a) IN (subforms f) ⇒ a ∈ s}//e`
+            by (rw[partition_def] >> qexists_tac `x'` >> rw[]) >>
+	`x' IN {y |
+         (propform y ∧ ∀a. VAR a ∈ subforms y ⇒ a ∈ s) ∧ equiv x' y}` by fs[equiv_REFL] >>
+        `IMAGE (λf. {σ | peval σ f} ∩ POW s) {y | (propform y ∧ ∀a. VAR a ∈ subforms y ⇒ a ∈ s) ∧ equiv x y} =
+     {{σ | peval σ x} ∩ POW s}` by metis_tac[IMAGE_peval_singlton_strengthen] >>
+        `IMAGE (λf. {σ | peval σ f} ∩ POW s) {y | (propform y ∧ ∀a. VAR a ∈ subforms y ⇒ a ∈ s) ∧ equiv x' y} =
+     {{σ | peval σ x'} ∩ POW s}` by metis_tac[IMAGE_peval_singlton_strengthen] >> fs[] >>
+        `!σ. σ IN (POW s) ==> (σ IN {s | peval s x} <=> σ IN {s | peval s x'})` by metis_tac[INTER_EQ] >> fs[] >> rw[equiv_def] >>
+	irule equiv_peval_strengthen >- (qexists_tac `s` >> rw[])
+	                             >> rw[] >> qexists_tac `s` >> rw[]));
 
 
-val DEG_0_propform = store_thm(
-"DEG_0_propform",
-``!f. DEG f = 0 <=> propform f``,
-Induct_on `f` >> fs[DEG_def,propform_def]);
 
-val DEG_IBC = store_thm(
-"DEG_IBC",
-``!phi. DEG phi <= n + 1 <=> IBC phi ({VAR v | T} UNION {DIAM psi | DEG psi <= n})``,
-Induct_on `phi` >> rw[DEG_def]
->- (irule (last (CONJUNCTS IBC_rules)) >> simp[])
->- simp[SimpRHS,Once IBC_cases]
->- simp[IBC_rules]
->- simp[SimpRHS,Once IBC_cases]
->- simp[SimpRHS,Once IBC_cases]);
 
+val DEG_IBC_strengthen = store_thm(
+  "DEG_IBC_strengthen",
+  ``∀x.
+   DEG x ≤ n + 1 ∧ (∀a. (VAR a) IN subforms x ⇒ a ∈ s) ⇔
+   IBC x
+     ({VAR v | v ∈ s} ∪
+      {◇ psi | DEG psi ≤ n ∧ ∀a. (VAR a) IN subforms psi ⇒ a ∈ s})``,
+Induct_on `x` >> rw[DEG_def]
+>- (simp[SimpRHS,Once IBC_cases] >> rw[subforms_def])
+>- (`IBC (DISJ x x')
+  ({VAR v | v ∈ s} ∪
+   {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s}) ==>
+   IBC x 
+  ({VAR v | v ∈ s} ∪
+   {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s})`
+       by rw[Once IBC_cases] >>
+   `(∀a. VAR a ∈ subforms (DISJ x x') ⇒ a ∈ s) ==>
+   (∀a. VAR a ∈ subforms x ⇒ a ∈ s)` by rw[subforms_def] >>
+   `IBC (DISJ x x')
+  ({VAR v | v ∈ s} ∪
+   {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s}) ==>
+   IBC x' 
+  ({VAR v | v ∈ s} ∪
+   {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s})`
+       by rw[Once IBC_cases] >>
+   `(∀a. VAR a ∈ subforms (DISJ x x') ⇒ a ∈ s) ==>
+   (∀a. VAR a ∈ subforms x' ⇒ a ∈ s)` by rw[subforms_def] >>
+   rw[EQ_IMP_THM]
+   >- metis_tac[IBC_cases]
+   >- metis_tac[IBC_cases]
+   >- metis_tac[IBC_cases]
+   >- (`(∀a. VAR a ∈ subforms x' ⇒ a ∈ s)` by metis_tac[] >>
+      `(∀a. VAR a ∈ subforms x ⇒ a ∈ s)` by metis_tac[] >>
+      fs[subforms_def]))
+>- fs[subforms_def,Once IBC_cases]
+>- (`IBC (¬x)
+  ({VAR v | v ∈ s} ∪
+   {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s}) ==>
+   IBC x 
+  ({VAR v | v ∈ s} ∪
+   {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s})`
+       by rw[Once IBC_cases] >>
+   `(∀a. VAR a ∈ subforms (¬x) ⇒ a ∈ s) ==>
+   (∀a. VAR a ∈ subforms x ⇒ a ∈ s)` by rw[subforms_def] >>
+   rw[EQ_IMP_THM]
+   >- metis_tac[IBC_cases]
+   >- metis_tac[IBC_cases]
+   >- fs[subforms_def])
+>- fs[Once IBC_cases,subforms_def]);
 
 val IBC_EMPTY_lemma = prove(
   ``∀f s. IBC f s ==> s = {} ==> equiv f TRUE \/ equiv f FALSE``,
   Induct_on `IBC` >> rw[] >> fs[equiv_def,satis_def,TRUE_def]);
-
-
 
 val equiv_equiv_on_form = store_thm(
 "equiv_equiv_on_form",
@@ -355,17 +497,23 @@ val equiv_DIAM = store_thm(
     >- fs[equiv_def,satis_def]);
 
 
-
-val prop_2_29 = store_thm(
-"prop_2_29",
-``FINITE univ (:'a) ==> !n. FINITE (partition equiv {f:'a form | DEG f <= n})``,
-strip_tac >> Induct_on `n` >> simp[]
->- (`FINITE (partition equiv {f:'a form | propform f})` by metis_tac[FINITE_equiv_partition] >>
-   `{f: 'a form | DEG f = 0} = {f | propform f}` by (fs[EXTENSION] >> metis_tac[DEG_0_propform]) >> fs[])
+val prop_2_29_strengthen = store_thm(
+  "prop_2_29_strengthen",
+  ``!s. FINITE s ==> !n. FINITE (partition equiv {f| DEG f <= n /\
+                                                   (!a. (VAR a) IN (subforms f) ==> a IN s)})``,gen_tac >> strip_tac >>
+Induct_on `n` 
+>- (`{f | DEG f ≤ 0 ∧ ∀a. VAR a ∈ subforms f ⇒ a ∈ s} =
+   {f | propform f ∧ ∀a. VAR a ∈ subforms f ⇒ a ∈ s}` by (simp[EXTENSION] >> metis_tac[DEG_0_propform]) >> fs[] >>
+   `FINITE (POW (POW (POW s)))` by metis_tac[FINITE_POW] >>
+   metis_tac[INJ_peval_partition_strengthen,FINITE_INJ])
 >> (* step case *)
    `SUC n = n + 1` by fs[] >> rw[] >>
-   `{f | DEG f ≤ n + 1} = {phi | IBC phi ({VAR v | T} UNION {DIAM psi | DEG psi <= n})}` by (fs[EXTENSION] >> metis_tac[DEG_IBC]) >> simp[] >>
-   Cases_on `({VAR v | T} ∪ {◇ psi | DEG psi ≤ n}) = {}`
+   `{f | DEG f ≤ n + 1 ∧ ∀a. (VAR a) IN subforms f ⇒ a ∈ s} = {phi | IBC phi ({VAR v | v IN s} UNION {DIAM psi | DEG psi <= n /\ ∀a. (VAR a) IN subforms psi ⇒ a ∈ s})}`
+       by (fs[EXTENSION] >> rw[EQ_IMP_THM] (* 3 *)
+           >> metis_tac[DEG_IBC_strengthen]) >> simp[] >>
+   Cases_on `{VAR v | v ∈ s} ∪
+      {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s} = {}`
+   (* empty case *)
    >- (fs[] >> fs[partition_def] >>
       `{t | ∃x. IBC x ∅ ∧ t = {y | IBC y ∅ ∧ equiv x y}} = {{f | IBC f {} /\ equiv f TRUE};{f | IBC f {} /\ equiv f FALSE}}` by
       (simp[Once EXTENSION] >> rw[] >> eq_tac >> rw[] (* 3 *)
@@ -381,17 +529,19 @@ strip_tac >> Induct_on `n` >> simp[]
       >- (qexists_tac `FALSE` >> rw[]
          >- rw[Once IBC_cases] 
 	 >- (rw[EXTENSION,EQ_IMP_THM] >> metis_tac[equiv_SYM]))) >> fs[])
+   (* nonempty case *)
    >- (irule FINITE_FINITE_IBC (* 2 *)
-      >- (`({VAR v | T} ∪ {◇ psi | DEG psi ≤ n})//e = ({VAR v | T}//e) ∪ ({◇ psi | DEG psi ≤ n}//e)` by
-         (irule equiv_on_disjoint_parition
-	 >- (rw[] >> metis_tac[NOT_equiv_VAR_DIAM])
-         >- metis_tac[equiv_equiv_on_form]
-	 >- metis_tac[equiv_equiv_on_form]) (* by tactic ends *)
-	 >> rw[] (* 2 *)
-	    >- (`FINITE {VAR v | T}` suffices_by metis_tac[FINITE_partition] >>
-	       `SURJ VAR (𝕌(:α)) {VAR v | T}` suffices_by metis_tac[FINITE_SURJ] >> rw[SURJ_DEF])
-	    >- (qabbrev_tac `A = {f | DEG f ≤ n}//e` >> 
-	       qabbrev_tac `B = {◇ psi | DEG psi ≤ n}//e` >>
+      >- (`({VAR v | v ∈ s} ∪ {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s})//e =
+          {VAR v | v ∈ s}//e ∪ {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s}//e`
+	     by (irule equiv_on_disjoint_parition
+	        >- (rw[] >> metis_tac[NOT_equiv_VAR_DIAM])
+                >- metis_tac[equiv_equiv_on_form]
+	        >- metis_tac[equiv_equiv_on_form])
+	        >> rw[] (* 2 *)
+          >-  (`FINITE {VAR v | v IN s}` suffices_by metis_tac[FINITE_partition] >>
+	       `SURJ VAR s {VAR v | v IN s}` suffices_by metis_tac[FINITE_SURJ] >> rw[SURJ_DEF])
+	  >- (qabbrev_tac `A = {psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s}//e` >> 
+	       qabbrev_tac `B = {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s}//e` >>
 	       `?ff. SURJ ff A B` suffices_by metis_tac[FINITE_SURJ] >>
 	       qexists_tac `\s. {DIAM t | t IN s}` >> rw[SURJ_DEF] (* 2 *)
                >- (fs[Abbr`B`] >> rw[Once EXTENSION,partition_def] >> fs[PULL_EXISTS] >> fs[Abbr`A`,partition_def] >>
@@ -399,7 +549,14 @@ strip_tac >> Induct_on `n` >> simp[]
 	       >- (fs[Abbr`A`,Abbr`B`] (* 2 *)
 	          >> (fs[partition_def] >> fs[PULL_EXISTS] >>
 		     qexists_tac `psi` >> fs[] >> rw[EXTENSION] >> eq_tac >> rw[] (* 2 *) >> metis_tac[equiv_DIAM]))))
-      >- rw[]));
+       >- rw[]));
+	  
+
+val prop_2_29 = store_thm(
+"prop_2_29",
+``FINITE univ (:'a) ==> !n. FINITE (partition equiv {f:'a form | DEG f <= n})``,
+rw[] >> drule prop_2_29_strengthen >> rw[]);
+
 
 
 (* n-bisimulation *)
@@ -472,42 +629,6 @@ rpt strip_tac >> Induct_on `n` >> rpt strip_tac
    metis_tac[]));
 
 
-(*
-
-val prop_2_31_half1 = store_thm(
-"prop_2_31_half1",
-``!M M' n w w'. FINITE univ (:'a) ==>(?f. nbisim M M' f n w w') ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi))``,
-gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
->- (rpt strip_tac >>
-    `DEG phi = 0` by simp[] >>
-    `w IN M.frame.world /\ w' IN M'.frame.world` by metis_tac[nbisim_def] >>
-    Induct_on `phi` >> rpt strip_tac 
-    >- (`(f 0) w w'` by metis_tac[nbisim_def] >> fs[nbisim_def])
-    >- (fs[DEG_def] >> metis_tac[satis_def])
-    >- metis_tac[satis_def]
-    >- (fs[DEG_def] >> metis_tac[satis_def])
-    >- metis_tac[DIAM_DEG_NOT_ZERO])
->- (rw[] >>
-    Induct_on `phi` >> simp[DEG_def]
-    >- (gen_tac >> first_x_assum irule >> rw[DEG_def] >> metis_tac[suc_bisim,ADD1])
-    >- rw[satis_def]
-    >- rw[satis_def]
-    >- (rw[satis_def] >> metis_tac[nbisim_def]) 
-    >- (simp[ADD1, satis_def] >> rw[EQ_IMP_THM] 
-      >- metis_tac[nbisim_def]
-      >- (`M.frame.rel w v` by fs[IN_DEF] >>
-        fs[ADD1] >>
-        `?v'. M'.frame.rel w' v' /\ nbisim M M' f n v v' /\ v' ∈ M'.frame.world`
-           by metis_tac[ADD1,suc_nbisim_rel] >>
-        metis_tac[IN_DEF])
-      >- metis_tac[nbisim_def]
-      >- (fs[ADD1] >>
-       `∃p. p ∈ M.frame.world ∧ M.frame.rel w p ∧ nbisim M M' f n p v` by metis_tac[suc_nbisim_rel_SYM] >>
-       metis_tac[]))));
-
-
-*)
-
 val prop_2_31_half1 = store_thm(
 "prop_2_31_half1",
 ``!M M' n w w'. (?f. nbisim M M' f n w w') ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi))``,
@@ -541,58 +662,6 @@ gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
 
 
 
-
-
-val FINITE_partition_SUBSET = store_thm(
-(* SHOULD BE MOVE IN TO partition_equiv *)
-  "FINITE_partition_SUBSET",
-  ``!R s. R equiv_on s ==> FINITE (partition R s) ==> !a. a ⊆ s ==> FINITE (partition R a)``,
-  rw[partition_def] >>
-  `?f. INJ f {t | ∃x. x ∈ a ∧ t = {y | y ∈ a ∧ R x y}} {t | ∃x. x ∈ s ∧ t = {y | y ∈ s ∧ R x y}}` suffices_by metis_tac[FINITE_INJ] >>
-  qexists_tac `\p. {y | y IN s /\ ?r. r IN p /\ R r y}`	>> rw[INJ_DEF]
-  >- (qexists_tac `x` >> rw[]
-     >- fs[SUBSET_DEF]
-     >- (rw[Once EXTENSION] >> eq_tac >> rw[]
-        >- (`x IN s` by metis_tac[SUBSET_DEF] >>
-	   `r IN s` by metis_tac[SUBSET_DEF] >>
-	   `∀x y z. x ∈ s ∧ y ∈ s ∧ z ∈ s ∧ R x y ∧ R y z ⇒ R x z` by fs[equiv_on_def] >> metis_tac[])
-	>- (qexists_tac `x` >> rw[] >>
-	   `x IN s` by metis_tac[SUBSET_DEF] >>
-	   fs[equiv_on_def])))
-  >- (rw[Once EXTENSION] >> eq_tac >> rw[]
-     >- (`{y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x y} ∧ R r y} =
-         {y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x' y} ∧ R r y} ==> R x' x''` suffices_by metis_tac[] >>
-        simp[Once EXTENSION,EQ_IMP_THM] >> rw[] >>
-	`x'' IN s` by fs[SUBSET_DEF] >>
-	`R x'' x''` by fs[equiv_on_def] >>
-	`∃r. (r ∈ a ∧ R x' r) ∧ R r x''` by metis_tac[] >>
-	fs[equiv_on_def] >>
-	`r IN s` by fs[SUBSET_DEF] >>
-	`x' IN s` by fs[SUBSET_DEF] >>
-	metis_tac[])
-     >- (`{y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x y} ∧ R r y} =
-         {y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x' y} ∧ R r y} ==> R x x''` suffices_by metis_tac[] >>
-        simp[Once EXTENSION,EQ_IMP_THM] >> rw[] >>
-	`x'' IN s` by fs[SUBSET_DEF] >>
-	`R x'' x''` by fs[equiv_on_def] >>
-	`∃r. (r ∈ a ∧ R x r) ∧ R r x''` by metis_tac[] >>
-	fs[equiv_on_def] >>
-	`r IN s` by fs[SUBSET_DEF] >>
-	`x' IN s` by fs[SUBSET_DEF] >>
-	`x IN s` by fs[SUBSET_DEF] >> metis_tac[])));
-
-val CHOICE_BIJ_partition = store_thm(
-    "CHOICE_BIJ_partition",
-    ``!R s. R equiv_on s ==>
-    BIJ CHOICE (partition R s) (IMAGE CHOICE (partition R s))``,
-    rw[BIJ_DEF,INJ_DEF,SURJ_DEF] >>
-    `x <> {} /\ y <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
-    `CHOICE x IN x /\ CHOICE y IN y` by metis_tac[CHOICE_DEF] >>
-    `CHOICE x IN y` by fs[] >>
-    irule equiv_partition_unique >> map_every qexists_tac [`R`,`s`,`CHOICE x`] >> rw[] >>
-    fs[partition_def] >>
-    `{y | y ∈ s ∧ R x'' y} <> {}` by (`x'' IN  {y | y ∈ s ∧ R x'' y}` by fs[equiv_on_def] >> metis_tac[MEMBER_NOT_EMPTY]) >>
-    `CHOICE {y | y ∈ s ∧ R x'' y} IN {y | y ∈ s ∧ R x'' y}` by metis_tac[CHOICE_DEF] >> fs[]);
 
 val BIGCONJ_EXISTS_DEG = store_thm(
   "BIGCONJ_EXISTS_DEG",
@@ -955,6 +1024,8 @@ val root_height_0 = store_thm(
   `0 IN 𝕌(:num)` by fs[] >>
   `𝕌(:num) <> {}` by fs[] >>
   `MIN_SET 𝕌(:num) <= 0` by metis_tac[MIN_SET_LEM] >> fs[]);
+
+
  
 
 val thm_2_34 = store_thm( 
@@ -984,6 +1055,15 @@ val thm_2_34 = store_thm(
           `height M2 w M w = 0` by metis_tac[root_height_0] >> fs[] >>
           `DEG phi <= k` by fs[] >>
           `satis M3 w phi` by metis_tac[prop_2_31_half1]) >>
+   qabbrev_tac `s = {a | (VAR a) IN subforms phi}` >>
+   `FINITE s`
+       by (fs[Abbr`s`] >>
+          `FINITE (subforms phi)` by metis_tac[subforms_FINITE] >>
+	  `INJ VAR {a | VAR a ∈ subforms phi} (subforms phi)` suffices_by metis_tac[FINITE_INJ] >>
+	  rw[INJ_DEF]) >>
+   drule prop_2_29_cheated >> rw[] >>
+   
+                 
    
    
   
@@ -1296,39 +1376,6 @@ rw[filtration_def] >- fs[FLT_def]
 >- fs[FLT_def]);
 
 
-val subforms_def = Define`
-  subforms (VAR a) = {VAR a} /\
-  subforms (FALSE) = {FALSE} /\
-  subforms (NOT f) = NOT f INSERT subforms f /\
-  subforms (DISJ f1 f2) = DISJ f1 f2 INSERT subforms f1 UNION subforms f2 /\
-  subforms (DIAM f) = DIAM f INSERT subforms f
-  `;
-
-val subforms_phi_phi = store_thm(
-"subforms_phi_phi",
-``!phi. phi IN subforms phi``,
-Induct_on `phi` >> fs[subforms_def]);
-
-val subforms_DISJ = store_thm(
-"subforms_DISJ",
-``f1 IN (subforms (DISJ f1 f2)) /\ f2 IN (subforms (DISJ f1 f2))``,
-rw[subforms_def,subforms_phi_phi]);
-
-val subforms_NOT = store_thm(
-"subforms_NOT",
-``f IN (subforms (NOT f))``,
-rw[subforms_def,subforms_phi_phi]);
-
-val subforms_DIAM = store_thm(
-"subforms_DIAM",
-``f IN (subforms (DIAM f))``,
-rw[subforms_def,subforms_phi_phi]);
-
-val subforms_trans = store_thm(
-"subforms_trans",
-``!f. f IN subforms phi /\ phi IN subforms psi ==> f IN subforms psi``,
-rw[] >> Induct_on `psi` >> rw[] >> fs[subforms_def] 
->> fs[subforms_def]);
 
 
 
@@ -1341,10 +1388,7 @@ rw[CUS_def] >> fs[subforms_def,UNION_DEF]
 >- (`f IN (subforms (NOT f))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans])
 >- (`f IN (subforms (DIAM f))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans]));
 
-val subforms_FINITE = store_thm(
-"subforms_FINITE",
-``FINITE (subforms phi)``,
-Induct_on `phi` >> fs[subforms_def]);
+
 
 val thm_2_41 = store_thm(
   "thm_2_41",
