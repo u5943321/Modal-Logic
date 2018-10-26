@@ -74,16 +74,16 @@ val subst_box = store_thm(
 (* Def 1.19 *)
 (* definition of frame: is a pair (W,R) *)
 val _ = Hol_datatype`
-  frame = <| world: num set;
-             rel: num -> num -> bool;
+  frame = <| world: 'a set;
+             rel: 'a -> 'a -> bool;
             |>`;
 
 
 (* prereq of Def 1.20 *)
 (* definition of model *)
 val _ = Hol_datatype`
-  model = <| frame: frame;
-              valt: 'a -> num -> bool;
+  model = <| frame: 'b frame;
+              valt: 'a -> 'b -> bool;
             |>`;
 
 
@@ -135,6 +135,8 @@ val refutable_def = Define`
 
 (* Def 1.28 *)
 (* definitions involves validness *)
+
+
 val valid_frame_state_def = Define`
     valid_frame_state f w form = !M. M.frame = f ==> satis M w form`;
 
@@ -146,7 +148,7 @@ val valid_class_frame_def = Define`
 
 val valid_def = Define`
     valid (form:'v form)  =
-      !f:frame. valid_frame f form`;
+      !f:num frame. valid_frame f form`;
 
 val logic_def = Define`
     LOGIC C = {form | valid_class C form}`
@@ -156,7 +158,7 @@ val logic_def = Define`
 (* Def 1.35 *)
 val local_semantic_conseq = Define`
     LSC Σ S form <=>
-    !(M:'a model) w.
+    !(M:('a,'b) model) w.
        M IN S /\ satis_set M w Σ ==>
        satis M w form`;
 

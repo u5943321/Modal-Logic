@@ -15,7 +15,7 @@ val _ = new_theory "IBCDNF";
 (* Basics of equiv *)
 
 val equiv_def = Define`
-  equiv f1 f2 <=> !M w. satis M w f1 <=> satis M w f2
+  equiv f1 f2 <=> !M w:num. satis M w f1 <=> satis M w f2
 `;
 
 val satis_in_world = store_thm(
@@ -837,9 +837,9 @@ val NOT_equiv_OPPO = store_thm(
 "NOT_equiv_OPPO",
 ``!e. ¬(equiv (¬e) e)``,
 SPOSE_NOT_THEN ASSUME_TAC >> fs[equiv_def,satis_def] >> rw[] >>
-`!M w. w ∈ M.frame.world ∧ ¬satis M w e ==> satis M w e` by metis_tac[] >>
-`!M w. ¬(w ∈ M.frame.world ∧ ¬satis M w e) \/ satis M w e` by metis_tac[] >>
-`!M w. ¬(w ∈ M.frame.world) \/ satis M w e` by metis_tac[] >>
+`!M w:num. w ∈ M.frame.world ∧ ¬satis M w e ==> satis M w e` by metis_tac[] >>
+`!M w:num. ¬(w ∈ M.frame.world ∧ ¬satis M w e) \/ satis M w e` by metis_tac[] >>
+`!M w:num. ¬(w ∈ M.frame.world) \/ satis M w e` by metis_tac[] >>
 `1 IN <| frame := <| world := {1};
                            rel := λn1 n2. (n1 = 1 /\ n2 = 1) |>;
                    valt := λe w. T|>.frame.world` by fs[] >>
@@ -1654,17 +1654,17 @@ val NEQ_lsets_FALSE = store_thm(
 val equiv_negation_satis = store_thm(
     "equiv_negation_satis",
     ``!f1 f2. equiv f1 ¬f2 <=>
-              (!M w. w IN M.frame.world ==>
+              (!M w:num. w IN M.frame.world ==>
 	            (satis M w f1 <=> satis M w ¬f2))``,
     rw[equiv_def,satis_def] >> metis_tac[satis_in_world]);
 
 
 val dsatis_ALL_POSSIBLE_VALUE = store_thm(
     "dsatis_ALL_POSSIBLE_VALUE",
-    ``!fs. FINITE fs ==> fs <> {} ==> !M w. w IN M.frame.world ==> dsatis M w {c | is_lset c fs}``,
+    ``!fs. FINITE fs ==> fs <> {} ==> !M w:num. w IN M.frame.world ==> dsatis M w {c | is_lset c fs}``,
     Induct_on `FINITE fs` >> rw[] >>
     Cases_on `fs <> {}`
-    >- (`∀M w. w ∈ M.frame.world ⇒ dsatis M w {c | is_lset c fs}` by metis_tac[] >>
+    >- (`∀M w:num. w ∈ M.frame.world ⇒ dsatis M w {c | is_lset c fs}` by metis_tac[] >>
        `dsatis M w {c | is_lset c fs}` by metis_tac[] >>
        fs[dsatis_def] >> Cases_on `satis M w e`
        >- (qexists_tac `(e,T) INSERT c` >> rw[] 
@@ -1690,7 +1690,7 @@ val dsatis_is_lset_complement = store_thm(
     "dsatis_is_lset_complement",
     ``!cs fs. FINITE fs /\ fs <> {} /\
              (!c. c IN cs ==> is_lset c fs) ==>
-          (!M w. w IN M.frame.world ==>
+          (!M w:num. w IN M.frame.world ==>
 	         (dsatis M w cs <=> ¬(dsatis M w ({c | is_lset c fs} DIFF cs))))``,
    rw[] >> eq_tac >> rw[]
    >- (fs[dsatis_def] >>
@@ -1704,12 +1704,11 @@ val dsatis_is_lset_complement = store_thm(
       fs[dsatis_def] >>
       metis_tac[]));
 
-
 		   
 		     
 val satis_model_world_EXISTS = store_thm(
     "satis_model_world_EXISTS",
-    ``!f. ¬(equiv f FALSE) ==> ?M w. satis M w f``,
+    ``!f. ¬(equiv f FALSE) ==> ?M w:num. satis M w f``,
     rw[equiv_def] >> SPOSE_NOT_THEN ASSUME_TAC >> rw[] >> metis_tac[satis_def]);
     
 
@@ -1718,21 +1717,21 @@ val is_lset_DNF_OF_EXISTS = store_thm(
   ``!s. FINITE s ==>
             !fs. FINITE fs /\ fs <> {} ==> (!c. c IN s ==> is_lset c fs) ==>
             ?f.
-	       (!M w. w IN M.frame.world ==> (satis M w f <=> dsatis M w s)) /\
+	       (!M w:num. w IN M.frame.world ==> (satis M w f <=> dsatis M w s)) /\
 	       DNF_OF f fs``,
    Induct_on `FINITE s` >> rw[]
    >- (qexists_tac `FALSE` >> rw[]
       >- metis_tac[NOT_IN_EMPTY,satis_def,dsatis_def]
       >- rw[DNF_OF_def,DISJ_OF_def])
    >- (`∃f.
-            (∀M w. w ∈ M.frame.world ⇒ (satis M w f ⇔ dsatis M w s)) ∧
+            (∀M w:num. w ∈ M.frame.world ⇒ (satis M w f ⇔ dsatis M w s)) ∧
             DNF_OF f fs` by metis_tac[] >>
       `is_lset e fs` by metis_tac[] >>
       `CARD fs <> 0` by metis_tac[CARD_EQ_0] >>
       `CARD e <> 0` by metis_tac[is_lset_def] >>
       `FINITE e` by metis_tac[is_lset_def] >>
       `e <> {}` by metis_tac[CARD_EQ_0] >>
-      drule is_lset_CONJ_OF_EXISTS >> rw[] >>
+      drule (is_lset_CONJ_OF_EXISTS |> INST_TYPE [beta |-> ``:num``]) >> rw[] >>
       `f = FALSE \/ DISJ_OF0 f {c | CONJ_OF c fs}` by metis_tac[DNF_OF_def,DISJ_OF_def]
       >- (qexists_tac `f'` >> rw[] (* 2 *)
          >- (`(satis M w ⊥ ⇔ dsatis M w s)` by metis_tac[] >>
@@ -1763,10 +1762,10 @@ val is_lset_DNF_OF_EXISTS = store_thm(
 	    SPOSE_NOT_THEN ASSUME_TAC >>
 	    `f' IN {c | CONJ_OF c fs}` by fs[] >>
 	    `?p. DISJ_OF p ({c | CONJ_OF c fs} DELETE f') /\ equiv f (DISJ f' p)` by metis_tac[DISJ_OF0_split] >>
-	    `∀M w. w IN M.frame.world ==> (satis M w f ⇔ satis M w (DISJ f' p))` by metis_tac[equiv_def] >>
-	    `?M w. w IN M.frame.world /\ (satis M w f' /\ ¬(satis M w f))` suffices_by metis_tac[satis_def] >>
-	    `?M w. w IN M.frame.world /\ csatis M w e /\ ¬(dsatis M w s)` suffices_by metis_tac[] >>
-	    `?M w. satis M w f'` by metis_tac[satis_model_world_EXISTS] >>
+	    `∀M w:num. w IN M.frame.world ==> (satis M w f ⇔ satis M w (DISJ f' p))` by metis_tac[equiv_def] >>
+	    `?M w:num. w IN M.frame.world /\ (satis M w f' /\ ¬(satis M w f))` suffices_by metis_tac[satis_def] >>
+	    `?M w:num. w IN M.frame.world /\ csatis M w e /\ ¬(dsatis M w s)` suffices_by metis_tac[] >>
+	    `?M w:num. satis M w f'` by metis_tac[satis_model_world_EXISTS] >>
 	    map_every qexists_tac [`M`, `w`] >>
 	    `w IN M.frame.world` by metis_tac[satis_in_world] >>
 	    `csatis M w e` by metis_tac[] >> rw[]
@@ -1778,7 +1777,7 @@ val is_lset_DNF_OF_EXISTS = store_thm(
 	    
 val EQ_equiv_def = store_thm(
     "EQ_equiv_def",
-    ``!f g. equiv f g <=> !M w. w IN M.frame.world ==> (satis M w f <=> satis M w g)``,
+    ``!f g. equiv f g <=> !M w:num. w IN M.frame.world ==> (satis M w f <=> satis M w g)``,
     rw[equiv_def] >> eq_tac >> rw[] >>
     Cases_on `w IN M.frame.world`
     >- metis_tac[]
@@ -1799,14 +1798,15 @@ val IBC_DNF_EXISTS_case3 = store_thm(
   "IBC_DNF_EXISTS_case3",
   ``!p fs. DNF_OF p fs /\ FINITE fs /\ fs <> {} ==>
            ?f. DNF_OF f fs /\ equiv (¬p) f``,
-  rw[] >> 
-  `∃cs.
+  rw[] >>
+  drule (DNF_OF_cset |> INST_TYPE [beta |-> ``:num``]) >> strip_tac >> 
+(*  `∃cs.
         (∀c. c ∈ cs ⇒ is_lset c fs) ∧
-        ∀M w.
-           w ∈ M.frame.world ⇒ (satis M w p ⇔ ∃c. c ∈ cs ∧ csatis M w c)` by metis_tac[DNF_OF_cset] >>
+        ∀M w:num.
+           w ∈ M.frame.world ⇒ (satis M w p ⇔ ∃c. c ∈ cs ∧ csatis M w c)` by metis_tac[DNF_OF_cset] >> *)
   Cases_on `cs = {c | is_lset c fs}` 
   >- (qexists_tac `FALSE` >> rw[DNF_OF_def,DISJ_OF_def] >>
-  `!M w. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w FALSE)` suffices_by metis_tac[EQ_equiv_def] >> rw[] >>
+  `!M w:num. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w FALSE)` suffices_by metis_tac[EQ_equiv_def] >> rw[] >>
   `dsatis M w {c | is_lset c fs}` by metis_tac[dsatis_ALL_POSSIBLE_VALUE] >>
   `satis M w p` by metis_tac[dsatis_def] >>
   `satis M w (¬p) = F` by metis_tac[satis_def] >>
@@ -1818,10 +1818,10 @@ val IBC_DNF_EXISTS_case3 = store_thm(
   `cs SUBSET {c | is_lset c fs}` by fs[SUBSET_DEF] >>
   `!a. a IN ({c | is_lset c fs} DIFF cs) ==> is_lset a fs` by fs[DIFF_DEF] >>
   `∃f.
-           (∀M w. w ∈ M.frame.world ⇒ (satis M w f ⇔ dsatis M w ({c | is_lset c fs} DIFF cs))) ∧
+           (∀M w:num. w ∈ M.frame.world ⇒ (satis M w f ⇔ dsatis M w ({c | is_lset c fs} DIFF cs))) ∧
            DNF_OF f fs` by metis_tac[is_lset_DNF_OF_EXISTS] >>
   qexists_tac `f` >> rw[] >>
-  `!M w. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w f)` suffices_by metis_tac[EQ_equiv_def] >> rw[] >>
+  `!M w:num. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w f)` suffices_by metis_tac[EQ_equiv_def] >> rw[] >>
   `satis M w p ⇔ dsatis M w cs` by metis_tac[dsatis_def] >>
   `satis M w f ⇔ dsatis M w ({c | is_lset c fs} DIFF cs)` by metis_tac[] >>
   `dsatis M w cs ⇔ ¬dsatis M w ({c | is_lset c fs} DIFF cs)` by metis_tac[dsatis_is_lset_complement] >>

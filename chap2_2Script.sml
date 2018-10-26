@@ -238,13 +238,13 @@ val wlog_lemma = store_thm(
 
 val thm_2_24_lemma = store_thm(
 "thm_2_24_lemma",
-``!M M' w w'. image_finite M /\ image_finite M' /\ w IN M.frame.world /\ w' IN M'.frame.world ==> ((!form. satis M w form <=> satis M' w' form) ==> bisim_world M M' w w')``,
+``!M:('a,'b) model M':('a,'b) model w w'. image_finite M /\ image_finite M' /\ w IN M.frame.world /\ w' IN M'.frame.world ==> ((!form. satis M w form <=> satis M' w' form) ==> bisim_world M M' w w')``,
 rpt strip_tac
 >> rw[bisim_world_def]
 >> qexists_tac `λn1 n2. (!form. satis M n1 form <=> satis M' n2 form)`
 >> rpt strip_tac
 >- (
-  `!M M'. image_finite M /\ image_finite M' ==>
+  `!M:('a,'b) model M':('a,'b) model. image_finite M /\ image_finite M' ==>
      bisim (λn1 n2. ∀form. satis M n1 form ⇔ satis M' n2 form)
            M M'`
      suffices_by metis_tac[] >>
@@ -303,7 +303,7 @@ fs[modal_eq_def,tau_theory_def] >> simp[pred_setTheory.EXTENSION]);
 
 val thm_2_24_half = store_thm(
 "thm_2_24_half",
-``!M M' w w'. image_finite M /\ image_finite M' /\ w IN M.frame.world /\ w' IN M'.frame.world ==> (modal_eq M M' w w'==> bisim_world M M' w w')``,
+``!M M' w:'a w':'a. image_finite M /\ image_finite M' /\ w IN M.frame.world /\ w' IN M'.frame.world ==> (modal_eq M M' w w'==> bisim_world M M' w w')``,
 rpt strip_tac
 >> `!form. satis M w form <=> satis M' w' form` by metis_tac[thm_2_24_lemma2]
 >> metis_tac[thm_2_24_lemma]);
@@ -312,9 +312,10 @@ rpt strip_tac
 
 val thm_2_24 = store_thm(
 "thm_2_24",
-``!M M' w w'. image_finite M /\ image_finite M' /\ w IN M.frame.world /\ w' IN M'.frame.world ==> (modal_eq M M' w w'<=> bisim_world M M' w w')``,
+``!M M' w:'a w':'a. image_finite M /\ image_finite M' /\ w IN M.frame.world /\ w' IN M'.frame.world ==> (modal_eq M M' w w'<=> bisim_world M M' w w')``,
 rpt strip_tac >> eq_tac
 >- (strip_tac >> metis_tac[thm_2_24_half])
 >- (strip_tac >> metis_tac[thm_2_20]));
+
 
 val _ = export_theory();

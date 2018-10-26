@@ -22,7 +22,7 @@ rel := λn1 n2. nfst n1 = nfst n2 /\ nfst n1 IN dom /\ (f (nfst n1)).frame.rel (
 
 
 val M_union_def = Define` 
-M_union (M1:'a model) (M2:'a model) = DU ((λn. if n = 0 then M1 else M2), {x | x = 0 \/ x = 1})`;
+M_union M1 M2 = DU ((λn. if n = 0 then M1 else M2), {x | x = 0 \/ x = 1})`;
 
 
 
@@ -759,7 +759,7 @@ rpt strip_tac >> rw[bounded_mor_image_def]
 
 val prop_2_15 = store_thm(
 "prop_2_15",
-``!M x M'. rooted_model M x M' ==> ?f MODEL. bounded_mor_image f MODEL M /\ tree_like_model MODEL``,
+``!M x M'. rooted_model M x M' ==> ?(f:num->num) MODEL. bounded_mor_image f MODEL M /\ tree_like_model MODEL``,
 rpt strip_tac
 >> map_every qexists_tac [`nlast`,`bounded_preimage_rooted M x`]
 >> rpt strip_tac
@@ -770,7 +770,7 @@ rpt strip_tac
 
 val prop_2_15_strengthen = store_thm(
 "prop_2_15",
-``!M x M'. rooted_model M x M' ==> ?f MODEL s. bounded_mor_image f MODEL M /\ tree MODEL.frame s /\ f s = x``,
+``!M x M'. rooted_model M x M' ==> ?f:num -> num MODEL s. bounded_mor_image f MODEL M /\ tree MODEL.frame s /\ f s = x``,
 rpt strip_tac
 >> map_every qexists_tac [`nlast`,`bounded_preimage_rooted M x`] >> qexists_tac `ncons x 0`
 >> rpt strip_tac
@@ -823,12 +823,12 @@ val point_GENSUBMODEL_satis = store_thm(
 
 val prop_2_15_corollary = store_thm(
   "prop_2_15_corollary",
-  ``!M w form. w IN M.frame.world /\ satis M w form ==>
-  ?MODEL s. tree MODEL.frame s /\ satis MODEL s form``,
+  ``!M (w:num) form. w IN M.frame.world /\ satis M w form ==>
+  ?MODEL s:num. tree MODEL.frame s /\ satis MODEL s form``,
   rw[] >>
   `satis (point_GENSUBMODEL M w) w form` by metis_tac[point_GENSUBMODEL_satis] >>
   `rooted_model (point_GENSUBMODEL M w) w M` by metis_tac[point_GENSUBMODEL_rooted] >>
-  `?f MODEL s. bounded_mor_image f MODEL (point_GENSUBMODEL M w) /\ tree MODEL.frame s /\ f s = w` by metis_tac[prop_2_15_strengthen] >>
+  `?f MODEL s:num. bounded_mor_image f MODEL (point_GENSUBMODEL M w) /\ tree MODEL.frame s /\ f s = w` by metis_tac[prop_2_15_strengthen] >>
   qexists_tac `MODEL` >> rw[] >> qexists_tac `s` >> rw[] >>
   fs[bounded_mor_image_def] >>
   `s IN MODEL.frame.world` by metis_tac[tree_def] >> metis_tac[prop_2_14]);
