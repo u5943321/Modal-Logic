@@ -683,7 +683,7 @@ val BIGCONJ_EXISTS_DEG = store_thm(
 (*
 val prop_2_31_half2 = store_thm(
 "prop_2_31_half2",
-``!M M' n w w'. (FINITE univ (:'a) /\ w IN M.frame.world /\ w' IN M'.frame.world) ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi)) ==> ?f. nbisim M M' f n w w'``,
+``!M M' n w:num w':num. (FINITE univ (:'a) /\ w IN M.frame.world /\ w' IN M'.frame.world) ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi)) ==> ?f. nbisim M M' f n w w'``,
 rpt strip_tac
 >> rw[nbisim_def]
 >> qexists_tac `λn n1 n2. (!(phi: 'a form). DEG phi <= n ==> (satis M n1 phi <=> satis M' n2 phi))` >> rw[]
@@ -716,7 +716,7 @@ rpt strip_tac
      by (rw[] >>
         `(CHOICE x) IN x` by metis_tac[] >>
 	fs[partition_def,Abbr`s`] >> rw[] >> fs[]) >>
-   `satis M u ff` by metis_tac[] >>
+   `satis M u ff` by metis_tac[] >> (*???????????????????????????????????????????? *)
    `satis M v (DIAM ff)` by metis_tac[satis_def] >>
    `DEG (DIAM ff) <= i + 1` by fs[DEG_def] >>
    `¬satis M' v' (DIAM ff)` suffices_by metis_tac[] >>
@@ -730,7 +730,6 @@ rpt strip_tac
    `{y | y ∈ s ∧ equiv form y} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
    `(CHOICE {y | y ∈ s ∧ equiv form y}) IN {y | y ∈ s ∧ equiv form y}` by metis_tac[CHOICE_DEF] >>
    fs[] >>
-   `
    metis_tac[equiv_SYM,equiv_def])
 >- (SPOSE_NOT_THEN ASSUME_TAC >>
    `?u. u IN M.frame.world /\ M.frame.rel v u` by 

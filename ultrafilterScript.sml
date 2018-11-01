@@ -415,5 +415,90 @@ val ultrafilter_theorem_corollary = store_thm(
   `∃U. ultrafilter U W' ∧ V SUBSET U` by metis_tac[ultrafilter_theorem] >>
   qexists_tac `U` >> rw[] >> fs[SUBSET_DEF]);
 
+val BIGINTER_FINITE = store_thm(
+"BIGINTER_FINITE",
+``!s'. FINITE s' ==> s' <> {} /\ s' SUBSET s ==> (∀a b. a ∈ s ∧ b ∈ s ⇒ a ∩ b ∈ s) ==> BIGINTER s' IN s``,
+Induct_on `FINITE s'` >> rw[] >> Cases_on `s' = {}`
+>- fs[]
+>- metis_tac[]);
+
+
+
+
+val FIP_closed_under_intersection = store_thm(
+  "FIP_closed_under_intersection",
+  ``!A B. A SUBSET POW w /\ B SUBSET POW w /\ A <> {} /\ B <> {} /\
+        (!a a'. a IN A /\ a' IN A ==> (a ∩ a') IN A) /\
+	(!b b'. b IN B /\ b' IN B ==> (b ∩ b') IN B) ==>
+	(!a b. a IN A /\ b IN B ==> (a ∩ b) <> {}) ==>
+	FIP (A ∪ B) w``,
+   rw[FIP_def] >>
+   `!s. FINITE s ==> s SUBSET (A ∪ B) /\ s <> {} ==> BIGINTER s <> {}` suffices_by metis_tac[] >>
+   Induct_on `FINITE` >> rw[] (* 2 *)
+   (* case 1 *)
+   >- (Cases_on `s = {}` (* 2 *)
+      >- (fs[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
+         `?b. b IN B` by metis_tac[MEMBER_NOT_EMPTY] >>
+	 `e ∩ b = {}` by fs[EXTENSION] >> metis_tac[])
+      >- (`s = (s ∩ A) ∪ (s ∩ B)` by (rw[EXTENSION,EQ_IMP_THM] >> fs[SUBSET_DEF]) >>
+         `s ∩ A SUBSET A` by fs[SUBSET_DEF] >>
+	 `s ∩ B SUBSET B` by fs[SUBSET_DEF] >>
+	 `FINITE (s ∩ A)` by fs[] >>
+	 `FINITE (s ∩ B)` by fs[] >>
+	 `s ∩ A <> {} ==> BIGINTER (s ∩ A) IN A` by metis_tac[BIGINTER_FINITE] >>
+	 `s ∩ B <> {} ==> BIGINTER (s ∩ B) IN B` by metis_tac[BIGINTER_FINITE] >>
+	 Cases_on `s ∩ A = {}`
+	 >- (`s = s ∩ B` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
+	    `BIGINTER s ∈ B` by metis_tac[] >> metis_tac[])
+	 >- (Cases_on `s ∩ B = {}`
+	    >- (`s = s ∩ A` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
+	       `BIGINTER s ∈ A` by metis_tac[] >>
+	       `e ∩ (BIGINTER s) IN A` by metis_tac[] >>
+	       `{} NOTIN A`
+	           by (SPOSE_NOT_THEN ASSUME_TAC >>
+		       `?b. b IN B` by metis_tac[MEMBER_NOT_EMPTY] >>
+		       `{} ∩ b = {}` by fs[EXTENSION] >> metis_tac[]) >>
+	       metis_tac[])
+	    >- (`BIGINTER (s ∩ A) ∈ A` by metis_tac[] >>
+	       `BIGINTER (s ∩ B) ∈ B` by metis_tac[] >>
+	       `BIGINTER s = BIGINTER ((s ∩ A) ∪ (s ∩ B))` by metis_tac[] >>
+	       fs[BIGINTER_UNION] >>
+	       fs[INTER_ASSOC]))))
+   >- (Cases_on `s = {}` (* 2 *)
+      >- (fs[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
+         `?a. a IN A` by metis_tac[MEMBER_NOT_EMPTY] >>
+	 `e ∩ a = {}` by fs[EXTENSION] >> metis_tac[INTER_COMM])
+      >- (`s = (s ∩ A) ∪ (s ∩ B)` by (rw[EXTENSION,EQ_IMP_THM] >> fs[SUBSET_DEF]) >>
+         `s ∩ A SUBSET A` by fs[SUBSET_DEF] >>
+	 `s ∩ B SUBSET B` by fs[SUBSET_DEF] >>
+	 `FINITE (s ∩ A)` by fs[] >>
+	 `FINITE (s ∩ B)` by fs[] >>
+	 `s ∩ A <> {} ==> BIGINTER (s ∩ A) IN A` by metis_tac[BIGINTER_FINITE] >>
+	 `s ∩ B <> {} ==> BIGINTER (s ∩ B) IN B` by metis_tac[BIGINTER_FINITE] >>
+	 Cases_on `s ∩ B = {}`
+	 >- (`s = s ∩ A` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
+	    `BIGINTER s ∈ A` by metis_tac[] >> metis_tac[INTER_COMM])
+	 >- (Cases_on `s ∩ A = {}`
+	    >- (`s = s ∩ B` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
+	       `BIGINTER s ∈ B` by metis_tac[] >>
+	       `e ∩ (BIGINTER s) IN B` by metis_tac[] >>
+	       `{} NOTIN B`
+	           by (SPOSE_NOT_THEN ASSUME_TAC >>
+		       `?a. a IN A` by metis_tac[MEMBER_NOT_EMPTY] >>
+		       `{} ∩ a = {}` by fs[EXTENSION] >> metis_tac[INTER_COMM]) >>
+	       metis_tac[])
+	    >- (`BIGINTER (s ∩ A) ∈ A` by metis_tac[] >>
+	       `BIGINTER (s ∩ B) ∈ B` by metis_tac[] >>
+	       `BIGINTER s = BIGINTER ((s ∩ A) ∪ (s ∩ B))` by metis_tac[] >>
+	       fs[BIGINTER_UNION] >>
+	       `BIGINTER (s ∩ A) ∩ BIGINTER (s ∩ B) = BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A)` by metis_tac[INTER_COMM] >>
+	       `e ∩ (BIGINTER (s ∩ A) ∩ BIGINTER (s ∩ B)) =
+	       e ∩ (BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A))` by metis_tac[] >>
+	       `e ∩ (BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A)) <> {}` suffices_by metis_tac[] >>
+	       simp[INTER_ASSOC] >>
+	       `e ∩ BIGINTER (s ∩ B) IN B` by metis_tac[] >>
+	       metis_tac[INTER_COMM])))));
+	       
+
 
 val _ = export_theory();

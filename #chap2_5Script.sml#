@@ -410,6 +410,9 @@ val prop_2_59_i = store_thm(
 
 
 
+
+
+
 val prop_2_61 = store_thm(
   "prop_2_61",
   ``M_sat (UE M)``,
