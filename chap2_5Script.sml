@@ -192,5 +192,230 @@ metis_tac[])
 `M.frame.world DIFF (only_see M (M.frame.world DIFF X)) IN u` by metis_tac[] >>
 metis_tac[can_only_dual]));
 
+val UE_def = Define`
+  UE M = <| frame := <| world := {u | ultrafilter u M.frame.world};
+                        rel := UE_rel M |>;
+            valt := \p v. (ultrafilter v M.frame.world /\ ((M.valt p) ∩ M.frame.world) IN v) |>`;
+
+(*
+
+val only_see_INTER = store_thm(
+  "only_see_INTER",
+  ``only_see M (X ∩ Y) = only_see M X ∩ only_see M Y``,
+  rw[only_see_def,EXTENSION] >> eq_tac >> rw[]);
+
+val BIGINTER_FINITE = store_thm(
+"BIGINTER_FINITE",
+``!s'. FINITE s' ==> s' <> {} /\ s' SUBSET s ==> (∀a b. a ∈ s ∧ b ∈ s ⇒ a ∩ b ∈ s) ==> BIGINTER s' IN s``,
+Induct_on `FINITE s'` >> rw[] >> Cases_on `s' = {}`
+>- fs[]
+>- metis_tac[]);
+
+
+val SUBSET_UNION_DIFF = store_thm(
+  "SUBSET_UNION_DIFF",
+``s SUBSET a ∪ b /\ s <> {} /\ ¬(s SUBSET b) ==> s DIFF b <> {}``,
+rw[SUBSET_DEF,DIFF_DEF,EXTENSION]);
+
+
+
+val SUBSET_SING = store_thm(
+  "SUBSET_SING",
+``s <> {} /\ s <> {a} ==> ¬(s SUBSET {a})``,
+rw[SUBSET_DEF] >> SPOSE_NOT_THEN ASSUME_TAC >> fs[EXTENSION] >> metis_tac[]);
+
+
+
+val IN_DIFF = store_thm(
+  "IN_DIFF",
+``a IN s ==> s = (s DIFF {a}) UNION {a}``,
+rw[DIFF_DEF,UNION_DEF,EXTENSION] >> metis_tac[]);
+
+
+val NOTIN_DIFF = store_thm(
+  "NOTIN_DIFF",
+``a NOTIN s ==> s DIFF {a} = s``,
+rw[DIFF_DEF,EXTENSION] >> metis_tac[])
+
+val INTER_ABSORB = store_thm(
+  "INTER_ABSORB",
+  ``a ∩ b ∩ a = a ∩ b``,
+  fs[EXTENSION,INTER_DEF] >> metis_tac[]);
+
+val prop_2_59_i = store_thm(
+  "prop_2_59_i",
+  ``!phi u M. ultrafilter u M.frame.world ==>
+          ({w | w IN M.frame.world /\ satis M w phi} IN u <=> satis (UE M) u phi)``,
+  Induct_on `phi` >> rw[]
+  >- (rw[satis_def,EQ_IMP_THM]
+     >- fs[UE_def]
+     >- (fs[UE_def] >> 
+        `M.valt a ∩ M.frame.world = {w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ w ∈ M.valt a}`
+	    by (rw[EXTENSION] >> metis_tac[]) >> rw[])
+     >- (fs[UE_def] >> 
+        `M.valt a ∩ M.frame.world = {w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ w ∈ M.valt a}`
+	    by (rw[EXTENSION] >> metis_tac[]) >> fs[]))
+  >- (rw[satis_def] >>
+     `{w | w ∈ M.frame.world ∧ (satis M w phi ∨ satis M w phi')} =
+     {w | w ∈ M.frame.world ∧ satis M w phi} ∪ {w | w ∈ M.frame.world ∧ satis M w phi'}` by (simp[EXTENSION] >> metis_tac[]) >>
+     `{w | w ∈ M.frame.world ∧ satis M w phi} SUBSET M.frame.world` by fs[SUBSET_DEF] >>
+     `{w | w ∈ M.frame.world ∧ satis M w phi'} SUBSET M.frame.world` by fs[SUBSET_DEF] >>
+     `{w | w ∈ M.frame.world ∧ (satis M w phi ∨ satis M w phi')} ∈ u ⇔
+     ({w | w ∈ M.frame.world ∧ satis M w phi'} IN u) \/
+     ({w | w ∈ M.frame.world ∧ satis M w phi} IN u)` by metis_tac[ultrafilter_UNION] >>
+     metis_tac[])
+  >- (fs[ultrafilter_def,filter_def,proper_filter_def] >>
+     `(M.frame.world DIFF M.frame.world) ∉ u` by metis_tac[POW_DEF,SUBSET_DEF] >>
+     `M.frame.world DIFF M.frame.world = {}` by fs[DIFF_DEF] >>
+     `{w | w ∈ M.frame.world ∧ satis M w ⊥} = {}` by (rw[EXTENSION] >> metis_tac[satis_def]) >> metis_tac[satis_def])
+  >- (rw[satis_def] >> first_x_assum drule >> rw[] >> fs[ultrafilter_def,proper_filter_def,filter_def] >>
+     `{w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ ¬satis M w phi} IN (POW M.frame.world)` by (rw[Once POW_DEF] >> fs[SUBSET_DEF]) >>
+     `{w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ ¬satis M w phi} =
+     M.frame.world DIFF {w | w IN M.frame.world /\ satis M w phi}`
+         by (simp[EXTENSION,DIFF_DEF] >> metis_tac[]) >>
+     `{w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ ¬satis M w phi} ∈ u <=>
+      M.frame.world DIFF {w | w ∈ M.frame.world ∧ satis M w phi} IN u` by fs[] >>
+     `{w | w ∈ M.frame.world ∧ satis M w phi} IN (POW M.frame.world)` by (rw[Once POW_DEF] >> fs[SUBSET_DEF]) >>
+     `M.frame.world DIFF {w | w ∈ M.frame.world ∧ satis M w phi} IN u <=>
+     {w | w ∈ M.frame.world ∧ satis M w phi} NOTIN u` by metis_tac[] >>
+     `{w | w ∈ M.frame.world ∧ satis M w phi} NOTIN u <=> ¬satis (UE M) u phi` by metis_tac[] >>
+     `u IN (UE M).frame.world` by (rw[UE_def] >> fs[ultrafilter_def,proper_filter_def,filter_def] >> metis_tac[]) >>
+     metis_tac[satis_def])
+  >- (rw[EQ_IMP_THM] (* 2 *)
+     >- (rw[satis_def]
+        >- fs[UE_def]
+	>- (`(UE M).frame.rel = UE_rel M` by fs[UE_def] >> fs[] >>
+	   `?v. {Y | only_see M Y ∈ u ∧ Y ⊆ M.frame.world} ⊆ v /\
+	        v ∈ (UE M).frame.world ∧ satis (UE M) v phi`
+	       suffices_by (rw[] >> qexists_tac `v` >> rw[] >> `ultrafilter v M.frame.world` by fs[UE_def] >>
+	                   metis_tac[exercise_2_5_5]) >>
+	   qabbrev_tac `s = {Y | only_see M Y ∈ u ∧ Y ⊆ M.frame.world}` >>
+	   `!a b. a IN s /\ b IN s ==> a ∩ b IN s`
+	       by (rw[] >> fs[Abbr`s`] >>
+	          `only_see M a ∩ only_see M b IN u` by fs[ultrafilter_def,proper_filter_def,filter_def] >>
+		  `only_see M a ∩ only_see M b = only_see M (a INTER b)` by fs[only_see_INTER] >>
+		  fs[SUBSET_DEF]) >>
+	   `!a. a IN s ==> a ∩ {w | w ∈ M.frame.world ∧ satis M w phi} <> {}`
+	       by (rw[] >> fs[Abbr`s`] >>
+	          `{} NOTIN u` by metis_tac[EMPTY_NOTIN_ultrafilter] >>
+	          `{w | w ∈ M.frame.world ∧ satis M w (◇ phi)} ∩ only_see M a IN u` by fs[ultrafilter_def,proper_filter_def,filter_def] >>
+	          `{w | w ∈ M.frame.world ∧ satis M w (◇ phi)} ∩ only_see M a <> {}` by metis_tac[] >>
+	          `?x. x IN {w | w ∈ M.frame.world ∧ satis M w (◇ phi)} ∩ only_see M a` by metis_tac[MEMBER_NOT_EMPTY] >>
+	          fs[] >>
+	          `?y. y IN M.frame.world /\ satis M y phi /\ M.frame.rel x y` by metis_tac[satis_def] >>
+	          `y IN a` by fs[only_see_def] >>
+	          `y IN a ∩ {w | w ∈ M.frame.world ∧ satis M w phi}` by fs[] >>
+	          metis_tac[MEMBER_NOT_EMPTY]) >>
+           `{} NOTIN s`
+	       by (SPOSE_NOT_THEN ASSUME_TAC >>
+	          `{} ∩ {w | w ∈ M.frame.world ∧ satis M w phi} = ∅` by fs[EXTENSION] >> metis_tac[]) >>
+           (* proof of FIP *)
+	   `FIP (s ∪ {{w | w ∈ M.frame.world ∧ satis M w phi}}) M.frame.world`
+	       by (rw[FIP_def]  (* 3 *)
+	          >- (fs[Abbr`s`] >> rw[POW_DEF,SUBSET_DEF])
+		  >- rw[POW_DEF,SUBSET_DEF]
+		  >- (`!S'. FINITE S' ==> S' ⊆ s ∪ {{w | w ∈ M.frame.world ∧ satis M w phi}} /\ S' ≠ ∅ ==>
+		     BIGINTER S' ≠ ∅` suffices_by metis_tac[] >>
+		     Induct_on `FINITE S'` >> rw[] (* 2 *)
+		     (* base case *)
+		     >- (Cases_on `S'' = {}` (* 2 *)
+		        >- (fs[] >> SPOSE_NOT_THEN ASSUME_TAC >>
+			   `e ∩ {w | w ∈ M.frame.world ∧ satis M w phi} = ∅` by fs[EXTENSION] >> metis_tac[])
+			>- (`BIGINTER S'' ≠ ∅` by metis_tac[] >>
+			   `(S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) SUBSET s`
+			       by (fs[SUBSET_DEF,DIFF_DEF] >> metis_tac[]) >>
+			   `FINITE (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}})` by fs[] >>
+			   Cases_on `S'' = {{w | w ∈ M.frame.world ∧ satis M w phi}}` (* 2 *)
+		           >- fs[BIGINTER]
+			   >- (`¬(S'' SUBSET {{w | w ∈ M.frame.world ∧ satis M w phi}})`
+			          by metis_tac[SUBSET_SING] >>
+			      `S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}} <> {}`
+			          by metis_tac[SUBSET_UNION_DIFF] >> 
+			      Cases_on `{w | w ∈ M.frame.world ∧ satis M w phi} IN S''`
+			      >- (`S'' =
+			         (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) UNION
+				 {{w | w ∈ M.frame.world ∧ satis M w phi}}`
+				     by metis_tac[IN_DIFF] >>
+				 `BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) IN s` by
+				 metis_tac[BIGINTER_FINITE] >>
+				 `e INTER (BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}})) IN s`
+				 by metis_tac[] >>
+				 `BIGINTER ((S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) ∪
+                                           {{w | w ∈ M.frame.world ∧ satis M w phi}}) =
+			          (BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}})) ∩
+                                           {w | w ∈ M.frame.world ∧ satis M w phi}`
+                                     by fs[BIGINTER_UNION] >>
+				 `BIGINTER S'' =
+                                 BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) ∩
+                                 {w | w ∈ M.frame.world ∧ satis M w phi}` by metis_tac[] >> rw[] >>
+				 simp[INTER_ASSOC])
+			      >- (`S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}} = S''`
+			             by metis_tac[NOTIN_DIFF] >>
+				 `BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) IN s` by
+				 metis_tac[BIGINTER_FINITE] >>
+				 `e INTER (BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}})) IN s`
+				     by metis_tac[] >>
+				 `e INTER (BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}})) <> {}`
+				     by metis_tac[] >>
+				 metis_tac[]))))
+		   (* step case *)
+		   >- (Cases_on `{w | w ∈ M.frame.world ∧ satis M w phi} IN S''`
+		      >- (`S'' =
+			 (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) UNION
+		         {{w | w ∈ M.frame.world ∧ satis M w phi}}`
+			     by metis_tac[IN_DIFF] >>
+		         `BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) IN s` by
+			 metis_tac[BIGINTER_FINITE] >>
+			 `BIGINTER ((S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) ∪
+                         {{w | w ∈ M.frame.world ∧ satis M w phi}}) =
+			 (BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}})) ∩
+                         {w | w ∈ M.frame.world ∧ satis M w phi}`
+                             by fs[BIGINTER_UNION] >>
+		         `BIGINTER S'' =
+                         BIGINTER (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) ∩
+                         {w | w ∈ M.frame.world ∧ satis M w phi}` by metis_tac[] >> rw[] >>
+		         simp[INTER_ASSOC] >>
+		         metis_tac[INTER_ABSORB])
+	               >- (`S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}} = S''`
+			      by metis_tac[NOTIN_DIFF] >>
+			  `(S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}}) SUBSET s`
+			      by (fs[SUBSET_DEF,DIFF_DEF] >> metis_tac[]) >>
+			  `FINITE (S'' DIFF {{w | w ∈ M.frame.world ∧ satis M w phi}})` by fs[] >>
+		          Cases_on `S'' = {}`
+			   >- (fs[] >> SPOSE_NOT_THEN ASSUME_TAC >>
+			      `{w | w ∈ M.frame.world ∧ satis M w (◇ phi)} <> {}`
+			          by metis_tac[EMPTY_NOTIN_ultrafilter] >>
+			      `?x. x IN {w | w ∈ M.frame.world ∧ satis M w (◇ phi)}`
+			          by metis_tac[MEMBER_NOT_EMPTY] >> fs[] >>
+			      `?y. y IN M.frame.world /\ satis M y phi` by metis_tac[satis_def] >>
+			      `y IN {w | w ∈ M.frame.world ∧ satis M w phi}` by fs[] >>
+			      metis_tac[MEMBER_NOT_EMPTY])
+		           >- (`S'' SUBSET s` by metis_tac[] >>
+			      `BIGINTER S'' IN s` by metis_tac[BIGINTER_FINITE] >> metis_tac[INTER_COMM]))))) >>
+	 (* proof of FIP ends *)
+	 `M.frame.world <> {}` by fs[ultrafilter_def,proper_filter_def,filter_def] >>
+	 `?u. ultrafilter u M.frame.world /\ (s ∪ {{w | w ∈ M.frame.world ∧ satis M w phi}}) SUBSET u`
+	     by metis_tac[ultrafilter_theorem_corollary] >>
+	 qexists_tac `u'` >> rw[]
+	 >- fs[SUBSET_DEF]
+	 >- fs[UE_def]
+	 >- (`{w | w ∈ M.frame.world ∧ satis M w phi} IN u'` by fs[SUBSET_DEF] >> metis_tac[])))
+     >- (fs[satis_def] >>
+        `UE_rel M u v` by fs[UE_def] >>
+	fs[UE_rel_def] >>
+	`{w | w ∈ M.frame.world ∧ satis M w phi} ∈ v` by metis_tac[] >>
+	`(can_see M {w | w ∈ M.frame.world ∧ satis M w phi}) ∈ u` by metis_tac[] >>
+	`can_see M {w | w ∈ M.frame.world ∧ satis M w phi} =
+	{w | w ∈ M.frame.world ∧ satis M w (◇ phi)}` by metis_tac[valt_can_see] >>
+        fs[satis_def])));
+
+
+
+
+
+      
+*)
+
+
 
 val _ = export_theory();

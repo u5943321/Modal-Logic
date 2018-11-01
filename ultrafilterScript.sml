@@ -82,6 +82,39 @@ rw[filter_def]
 >- (fs[generated_filter_def,filter_def] >> rw[] >> metis_tac[]));
 
 
+
+val ultrafilter_UNION = store_thm(
+  "ultrafilter_UNION",
+  ``!u W. ultrafilter u W ==> (!A B. A SUBSET W /\ B SUBSET W ==> ((A ∪ B) IN u <=> A IN u \/ B IN u))``,
+  rw[EQ_IMP_THM] 
+  >- (fs[ultrafilter_def,proper_filter_def,filter_def] >>
+     `A IN (POW W')` by rw[POW_DEF] >>
+     `B IN (POW W')` by rw[POW_DEF] >>
+     SPOSE_NOT_THEN ASSUME_TAC >>
+     `(W' DIFF A) IN u /\ (W' DIFF B) IN u` by metis_tac[] >>
+     `(W' DIFF A) ∩ (W' DIFF B) IN u` by metis_tac[] >>
+     `(W' DIFF A) ∩ (W' DIFF B) = W' DIFF (A ∪ B)` by (rw[DIFF_DEF,UNION_DEF,EXTENSION] >> metis_tac[]) >>
+     fs[] >>
+     `A ∪ B IN (POW W')` by rw[POW_DEF] >>
+     metis_tac[])
+  >- (fs[ultrafilter_def,proper_filter_def,filter_def] >>
+     `A SUBSET (A ∪ B)` by fs[UNION_DEF,SUBSET_DEF] >>
+     `(A UNION B) SUBSET W'` by fs[UNION_DEF,SUBSET_DEF] >>
+     metis_tac[])
+  >- (fs[ultrafilter_def,proper_filter_def,filter_def] >>
+     `B SUBSET (A ∪ B)` by fs[UNION_DEF,SUBSET_DEF] >>
+     `(A UNION B) SUBSET W'` by fs[UNION_DEF,SUBSET_DEF] >>
+     metis_tac[]));
+     
+val EMPTY_NOTIN_ultrafilter = store_thm(
+  "EMPTY_NOTIN_ultrafilter",
+  ``!W u. ultrafilter u W ==> {} NOTIN u``,
+  fs[ultrafilter_def,proper_filter_def,filter_def] >> rw[]>>
+  `W' IN (POW W')` by rw[POW_DEF] >>
+  `W' DIFF W' = {}` by fs[DIFF_DEF] >> metis_tac[]);
+
+
+
 val principle_UF_def = Define`
 principle_UF w W = {X | X SUBSET W /\ w IN X}`;
 
@@ -372,7 +405,15 @@ qabbrev_tac `s = { g | proper_filter g w /\ f ⊆ g }` >>
  `x <> S'` by metis_tac[PSUBSET_DEF] >>
  `x = S'` by (first_x_assum irule >> fs[] (* 2 *)
  >> metis_tac[PSUBSET_DEF,SUBSET_TRANS]));
- 
+
+
+val ultrafilter_theorem_corollary = store_thm(
+  "ultrafilter_theorem_corollary",
+  ``!s W. FIP s W /\ W <> {} ==> ?u. ultrafilter u W /\ s SUBSET u``,
+  rw[] >>
+  `∃V. proper_filter V W' ∧ s ⊆ V` by metis_tac[FIP_PSUBSET_proper_filter] >>
+  `∃U. ultrafilter U W' ∧ V SUBSET U` by metis_tac[ultrafilter_theorem] >>
+  qexists_tac `U` >> rw[] >> fs[SUBSET_DEF]);
 
 
 val _ = export_theory();
