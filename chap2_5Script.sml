@@ -408,6 +408,12 @@ val prop_2_59_i = store_thm(
 	{w | w ∈ M.frame.world ∧ satis M w (◇ phi)}` by metis_tac[valt_can_see] >>
         fs[satis_def])));
 
+val only_see_whole_world = store_thm(
+  "only_see_whole_world",
+  ``only_see M M.frame.world = M.frame.world``,
+  rw[only_see_def]);
+
+
 
 
 val prop_2_61 = store_thm(
@@ -417,13 +423,49 @@ val prop_2_61 = store_thm(
   >- fs[SUBSET_DEF]
   >- qabbrev_tac
      `d = {{w | w IN M.frame.world /\ !phi. phi IN s ==> satis M w phi}| FINITE s /\ s SUBSET Σ}
-     UNION {Y | only_see M Y ∈ u ∧ Y ⊆ M.frame.world}` >>
+     UNION {Y | only_see M Y ∈ w ∧ Y ⊆ M.frame.world}` >>
      `!a b. a IN {{w | w IN M.frame.world /\ !phi. phi IN s ==> satis M w phi}| FINITE s /\ s SUBSET Σ} /\
-            b IN {Y | only_see M Y ∈ u ∧ Y ⊆ M.frame.world} ==> a ∩ b <> {}`
+            b IN {Y | only_see M Y ∈ w ∧ Y ⊆ M.frame.world} ==> a ∩ b <> {}`
          by (rw[] >> first_x_assum drule >> rw[] >>
 	     `∃ff.
-                 ∀w M.
+                 ∀w:(('b -> bool) -> bool) M.
                       w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)` by metis_tac[BIGCONJ_EXISTS_2] >>
-	     `satis (UE M) x ff` by metis_tac[])
+	     `satis (UE M) x ff` by metis_tac[] >>
+	     `ultrafilter x M.frame.world` by fs[UE_def] >>
+	     `{w | w ∈ M.frame.world ∧ satis M w ff} ∈ x` by metis_tac[prop_2_59_i] >>
+	     `UE_rel M w x` by fs[UE_def] >>
+	     `ultrafilter w M.frame.world` by fs[UE_def] >>
+	     `{Y | only_see M Y ∈ w ∧ Y ⊆ M.frame.world} ⊆ x`
+	         by metis_tac[exercise_2_5_5,UE_def] >>
+             `b IN {Y | only_see M Y ∈ w ∧ Y ⊆ M.frame.world}` by fs[] >>
+	     `b IN x` by fs[SUBSET_DEF] >>
+	     `({w | w ∈ M.frame.world ∧ satis M w ff} ∩ b) IN x`
+	         by metis_tac[ultrafilter_def,filter_def,proper_filter_def] >>
+	     `({w | w ∈ M.frame.world ∧ satis M w ff} ∩ b) <> {}`
+	         by (SPOSE_NOT_THEN ASSUME_TAC  >> metis_tac[EMPTY_NOTIN_ultrafilter]) >>
+             
+	     `{w | w ∈ M.frame.world ∧ ∀phi. phi ∈ s ⇒ satis M w phi} =
+	     {w | w ∈ M.frame.world ∧ satis M w ff}`
+	         by rw[EXTENSION,EQ_IMP_THM] >> metis_tac[] >> cheat
+	     ) >>
+
+
+
+
+
+
+      `{{w | w ∈ M.frame.world ∧ ∀phi. phi ∈ s ⇒ satis M w phi} |
+          FINITE s ∧ s ⊆ Σ} <> {}`
+          by (`{w | w ∈ M.frame.world ∧ ∀phi. phi ∈ {} ⇒ satis M w phi} IN
+	      {{w | w ∈ M.frame.world ∧ ∀phi. phi ∈ s ⇒ satis M w phi} |
+              FINITE s ∧ s ⊆ Σ}`
+	          by (fs[] >> qexists_tac `{}` >> rw[]) >>
+	      metis_tac[MEMBER_NOT_EMPTY]) >>
+      `{Y | only_see M Y ∈ w ∧ Y ⊆ M.frame.world} <> {}`
+          by (`M.frame.world IN {Y | only_see M Y ∈ w ∧ Y ⊆ M.frame.world}`
+	          by (fs[] >> simp[only_see_whole_world] >>
+		     fs[ultrafilter_def,proper_filter_def,filter_def]) >>
+	      metis_tac[MEMBER_NOT_EMPTY])
+
 
 val _ = export_theory();

@@ -23,12 +23,6 @@ val equiv_def = Define`
 
 
 
-
-val satis_in_world = store_thm(
-"satis_in_world",
-``!M w f. satis M w f ==> w IN M.frame.world``,
-Induct_on `f` >> metis_tac[satis_def]);
-
 val equiv_equiv_on = store_thm(
 "equiv_equiv_on",
 ``!n. equiv equiv_on {f | DEG f <= n}``,
