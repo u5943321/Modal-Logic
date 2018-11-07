@@ -832,7 +832,7 @@ Induct_on `l1` >> rw[] >> Cases_on `l1 = []` >> rw[] >>
 Cases_on `l1` >> rw[] >>
 `equiv0 μ (lit_list_to_form2 (h'::(t ⧺ l2))) (DISJ h' (lit_list_to_form2 (t ++ l2)))` by metis_tac[DISJ_list_CONS,equiv0_SYM] >>
 `equiv0 μ (DISJ (DISJ h (lit_list_to_form2 (h'::t))) (lit_list_to_form2 l2))
-(DISJ h (DISJ (lit_list_to_form2 (h'::t)) (lit_list_to_form2 l2)))` by metis_tac[equiv0_DISJ_assoc] >>
+(DISJ h (DISJ (lit_list_to_form2 (h'::t)) (lit_list_to_form2 l2)))` by metis_tac[equiv0_DISJ_ASSOC] >>
 `equiv0 μ (lit_list_to_form2 (h'::(t ⧺ l2))) (DISJ (lit_list_to_form2 (h'::t)) (lit_list_to_form2 l2))` suffices_by metis_tac[equiv0_DISJ_subst,equiv0_SYM,equiv0_TRANS] >>
 metis_tac[equiv0_SYM,equiv0_TRANS]);
 
@@ -1235,7 +1235,7 @@ Induct_on `l1` >> simp[]
 >- (Cases_on `l1` >> simp[]
    >- (Cases_on `l2` >> simp[] >> metis_tac[equiv0_DISJ_F])
    >- (rw[] >>
-      `equiv0 μ (DISJ (DISJ h' (lit_list_to_form2 (h::t))) (lit_list_to_form2 l2)) (DISJ h' (DISJ (lit_list_to_form2 (h::t)) (lit_list_to_form2 l2)))` by metis_tac[equiv0_DISJ_assoc] >>
+      `equiv0 μ (DISJ (DISJ h' (lit_list_to_form2 (h::t))) (lit_list_to_form2 l2)) (DISJ h' (DISJ (lit_list_to_form2 (h::t)) (lit_list_to_form2 l2)))` by metis_tac[equiv0_DISJ_ASSOC] >>
       `equiv0 μ (DISJ h' (DISJ (lit_list_to_form2 (h::t)) (lit_list_to_form2 l2))) (DISJ h' (lit_list_to_form2 (h::(t ⧺ l2))))` suffices_by metis_tac[equiv0_TRANS,equiv0_SYM] >>
       `equiv0 μ (DISJ (lit_list_to_form2 (h::t)) (lit_list_to_form2 l2)) (lit_list_to_form2 (h::t ⧺ l2))` by metis_tac[] >>
       irule equiv0_DISJ_subst >>

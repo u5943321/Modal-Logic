@@ -50,13 +50,13 @@ rpt strip_tac >- (`w' = f w` by metis_tac[] >> rw[] >> fs[satis_def,iso_def,stro
 
 val prop_2_19_ii = store_thm(
 "prop_2_19_ii",
-``!i w f dom. i IN dom /\ w IN (f i).frame.world ==> bisim_world (f i) (DU (f,dom)) w (npair i w)``,
-rpt strip_tac >> rw[bisim_world_def] >> qexists_tac `λa b. (b = npair i a)` >> rw[]
->- (fs[bisim_def] >> rw[] >- fs[satis_def,DU_def,nfst_npair,nsnd_npair,IN_DEF]
-                          >- fs[DU_def,nfst_npair,nsnd_npair,IN_DEF]
-                          >- fs[DU_def,nfst_npair,nsnd_npair,IN_DEF]
-                          >- (qexists_tac `nsnd b'` >> rw[] >> fs[DU_def,nfst_npair,nsnd_npair,IN_DEF]))
->- fs[DU_def,nfst_npair,nsnd_npair,IN_DEF]);
+``!i w f dom. i IN dom /\ w IN (f i).frame.world ==> bisim_world (f i) (DU (f,dom)) w (i,w)``,
+rpt strip_tac >> rw[bisim_world_def] >> qexists_tac `λa b. (b = (i, a))` >> rw[]
+>- (fs[bisim_def] >> rw[] >- fs[satis_def,DU_def,FST,SND,IN_DEF]
+                          >- fs[DU_def,FST,SND,IN_DEF]
+                          >- fs[DU_def,FST,SND,IN_DEF]
+                          >- (qexists_tac `SND b'` >> rw[] >> fs[DU_def,FST,SND,IN_DEF]))
+>- fs[DU_def,FST,SND,IN_DEF]);
 
 
 
@@ -218,39 +218,16 @@ Induct_on `FINITE s` >> rpt strip_tac >- metis_tac[]
 );                       
 
 
-
-val wlog_lemma = store_thm(
-"wlog_lemma",
-``!Z.
-    (!m n. P m n ==> P n m) /\
-    (!M N u v. Z M N u v ==> Z N M v u) /\
-    (!M M'.
-        P M M' ==> ∀w w'.
-        w ∈ M.frame.world ∧ w' ∈ M'.frame.world ∧ Z M M' w w' ⇒
-        (∀a. satis M w (VAR a) ⇔ satis M' w' (VAR a)) ∧
-        ∀v.
-            v ∈ M.frame.world ∧ M.frame.rel w v ⇒
-            ∃v'. v' ∈ M'.frame.world ∧ Z M M' v v' ∧ M'.frame.rel w' v') ==>
-     !M N. P M N ==> bisim (Z M N) M N``,
- rpt strip_tac >> rw[bisim_def] >> metis_tac[])
-
-
-
 val thm_2_24_lemma = store_thm(
 "thm_2_24_lemma",
-``!M:('a,'b) model M':('a,'b) model w w'. image_finite M /\ image_finite M' /\ w IN M.frame.world /\ w' IN M'.frame.world ==> ((!form. satis M w form <=> satis M' w' form) ==> bisim_world M M' w w')``,
+``!M model M' model w w'. image_finite M /\ image_finite M' /\ w IN M.frame.world /\ w' IN M'.frame.world ==> ((!form. satis M w form <=> satis M' w' form) ==> bisim_world M M' w w')``,
 rpt strip_tac
 >> rw[bisim_world_def]
 >> qexists_tac `λn1 n2. (!form. satis M n1 form <=> satis M' n2 form)`
 >> rpt strip_tac
->- (
-  `!M:('a,'b) model M':('a,'b) model. image_finite M /\ image_finite M' ==>
-     bisim (λn1 n2. ∀form. satis M n1 form ⇔ satis M' n2 form)
-           M M'`
-     suffices_by metis_tac[] >>
-  rpt (pop_assum (K all_tac))
- >> ho_match_mp_tac wlog_lemma >>
-  rpt strip_tac >> simp[]
+>-(
+  rw[bisim_def]
+  >- (rpt strip_tac >> simp[]
    >> SPOSE_NOT_THEN ASSUME_TAC
    >> `FINITE {u'| u' IN M'.frame.world /\ M'.frame.rel n2 u'}` by metis_tac[image_finite_def]
    >> `?u. u IN M'.frame.world /\ M'.frame.rel n2 u` by (
@@ -287,7 +264,45 @@ rpt strip_tac
    >> `satis M' n2 (DIAM psi)` by metis_tac[]
    >> `?n2'. n2' IN M'.frame.world /\ M'.frame.rel n2 n2' /\ satis M' n2' psi` by metis_tac[satis_def,IN_DEF]
    >> `∀n2'. n2' ∈ M'.frame.world ∧ M'.frame.rel n2 n2' ⇒ ¬satis M' n2' psi` by simp[]
-   >> metis_tac[]
+   >> metis_tac[])
+  >- (rpt strip_tac >> simp[]
+   >> SPOSE_NOT_THEN ASSUME_TAC
+   >> `FINITE {u'| u' IN M.frame.world /\ M.frame.rel n1 u'}` by metis_tac[image_finite_def]
+   >> `?u. u IN M.frame.world /\ M.frame.rel n1 u` by (
+   `¬(!u. u IN M.frame.world ==> ¬M.frame.rel n1 u)` suffices_by metis_tac[]
+   >> rpt strip_tac
+   >> `satis M n1 (BOX FALSE)` by metis_tac[box_vac_true]
+   >> `satis M' n2 (BOX FALSE)` by metis_tac[]
+   >> `satis M' n2 (NOT (DIAM TRUE))` by metis_tac[BOX_def,TRUE_def,satis_def]
+   >> `¬(satis M' n2 (DIAM TRUE))` by metis_tac[satis_def]
+   >> `satis M' n2 (DIAM TRUE)` by metis_tac[diam_exist_true]
+   )
+   >> `u IN {u' | u' ∈ M.frame.world ∧ M.frame.rel n1 u'}` by simp[]
+   >> `{u' | u' ∈ M.frame.world ∧ M.frame.rel n1 u'} <> {}` by metis_tac[MEMBER_NOT_EMPTY]
+   >> `∀n1'.
+          n1' ∈ M.frame.world ⇒ M.frame.rel n1 n1' ==>
+          ¬(∀form. satis M' n2' form ⇔ satis M n1' form)` by metis_tac[]
+   >> `∀n1'.
+          n1' ∈ M.frame.world /\ M.frame.rel n1 n1' ==>
+          ¬(∀form. satis M' n2' form ⇔ satis M n1' form)` by metis_tac[]
+   >> `∀n1'.
+          n1' ∈ M.frame.world /\ M.frame.rel n1 n1' ==>
+          ¬(∀form. ¬(¬(satis M' n2' form ⇔ satis M n1' form)))` by metis_tac[]
+   >> `∀n1'.
+          n1' ∈ M.frame.world /\ M.frame.rel n1 n1' ==>
+          (?form. ¬(satis M' n2' form ⇔ satis M n1' form))` by metis_tac[]
+   >> `∀n1'.
+          n1' ∈ M.frame.world /\ M.frame.rel n1 n1' ==>
+          (?form. satis M' n2' form /\ ¬satis M n1' form)` by metis_tac[satis_def]
+   >> `∀n1'. n1' IN {u' | u' ∈ M.frame.world ∧ M.frame.rel n1 u'} ==>
+       ∃form. satis M' n2' form ∧ ¬satis M n1' form` by simp[]
+   >> `?psi. satis M' n2' psi /\ (!n1'. n1' IN {u' | u' ∈ M.frame.world ∧ M.frame.rel n1 u'} ==> ¬satis M n1' psi)` by metis_tac[FINITE_BIGCONJ]
+   >> `satis M' n2 (DIAM psi)` by (`n2 ∈ M'.frame.world ∧
+     ∃v. v ∈ M'.frame.rel n2 ∧ v ∈ M'.frame.world ∧ satis M' v psi` suffices_by metis_tac[satis_def] >> metis_tac[IN_DEF])
+   >> `satis M n1 (DIAM psi)` by metis_tac[]
+   >> `?n1'. n1' IN M.frame.world /\ M.frame.rel n1 n1' /\ satis M n1' psi` by metis_tac[satis_def,IN_DEF]
+   >> `∀n1'. n1' ∈ M.frame.world ∧ M.frame.rel n1 n1' ⇒ ¬satis M n1' psi` by simp[]
+   >> metis_tac[])
 )
 >- simp[]
 );

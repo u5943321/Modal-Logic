@@ -472,12 +472,32 @@ val equiv0_add_predecessor = store_thm(
   >> `satis M w f <=> satis M' ((\a. a) w) f` by fs[prop_2_14] >> fs[]);
 
 
+
+val equiv0_add_predecessor = store_thm(
+  "equiv0_add_predecessor",
+  ``!M w f b. b NOTIN M.frame.world /\ w IN M.frame.world ==>
+            (satis M w f <=>
+            satis <| frame := <| world := b INSERT M.frame.world;
+                           rel := λn1 n2. ((n1 <> b /\ n2 <> b) /\ n1 IN M.frame.world /\ n2 IN M.frame.world /\
+			   M.frame.rel n1 n2) \/ (n1 = b /\ n2 = w) |>;
+                   valt := λa b. (M.valt a b) |> w f)``,
+  rw[] >> qmatch_abbrev_tac `satis M w f ⇔ satis M' w f` >>
+  `bounded_mor (\a. a) M M'` by (rw[bounded_mor_def] 
+  >- fs[Abbr`M'`]
+  >- (fs[Abbr`M'`] >>rw[satis_def] >> fs[IN_DEF])
+  >- (fs[Abbr`M'`] >> metis_tac[])
+  >- fs[Abbr`M'`]
+  >- (fs[Abbr`M'`] >> metis_tac[]))
+  >> `satis M w f <=> satis M' ((\a. a) w) f` by fs[prop_2_14] >> fs[]);
+
+
 val equiv0_DIAM_lemma = store_thm(
   "equiv0_DIAM_lemma",
-  ``!f g. ¬(equiv0 f g) ==> ¬(equiv0 (DIAM f) (DIAM g))``,
+  ``!f g. ¬(equiv0 μ f g) ==> ¬(equiv0 μ (DIAM f) (DIAM g))``,
   rw[EQ_equiv0_def] >>
-  `(satis M w f /\ ¬satis M w g) \/ (¬satis M w f /\ satis M w g)` by metis_tac[]
-  >- (qexists_tac `<| frame := <| world := 0 INSERT {n + 1 | n IN M.frame.world};
+  `(satis M w f /\ ¬satis M w g) \/ (¬satis M w f /\ satis M w g)` by metis_tac[] >>
+  Cases_on `?b. 
+  >- (qexists_tac `<| frame := <| world := M.frame.world};
                            rel := λn1 n2. ((n1 >= 1 /\ n2 >= 1) /\ (n1 - 1) IN M.frame.world /\ (n2 - 1) IN M.frame.world /\
 			   M.frame.rel (n1 - 1) (n2 - 1)) \/ (n1 = 0 /\ n2 = w + 1) |>;
                    valt := λa b. (M.valt a (b - 1)) |>` >>

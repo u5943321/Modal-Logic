@@ -57,8 +57,8 @@ rw[partition_def,SUBSET_DEF,equiv_on_def] >> rw[Once EXTENSION,EQ_IMP_THM]
    >- (qexists_tac `{k | k ∈ s ∧ R n k}` >> fs[])
    >- metis_tac[]));
 
-val equiv_on_disjoint_parition = store_thm(
-"equiv_on_disjoint_parition",
+val equiv_on_disjoint_partition = store_thm(
+"equiv_on_disjoint_partition",
 ``R equiv_on s ==> !A B. s = A UNION B /\ (!x. x IN A ==> !y. y IN B ==> ¬R x y) ==> partition R s = (partition R A) UNION (partition R B)``,
 rw[partition_def] >> rw[Once EXTENSION,EQ_IMP_THM]
 >- (`(∃x. x ∈ A ∧ {y | (y ∈ A ∨ y ∈ B) ∧ R x' y} = {y | y ∈ A ∧ R x y})` suffices_by metis_tac[] >>
@@ -68,28 +68,28 @@ rw[partition_def] >> rw[Once EXTENSION,EQ_IMP_THM]
 >- (qexists_tac `x'` >> rw[EXTENSION,EQ_IMP_THM] >> metis_tac[equiv_on_def,UNION_DEF])
 >- (qexists_tac `x'` >> rw[EXTENSION,EQ_IMP_THM] >> fs[equiv_on_def,UNION_DEF] >> metis_tac[]));
 
-val equiv_on_INSERT_parition_UNION = store_thm(
-"equiv_on_INSERT_parition_UNION",
+val equiv_on_INSERT_partition_UNION = store_thm(
+"equiv_on_INSERT_partition_UNION",
 ``R equiv_on s ==>  !e p. e INSERT p = partition R s ==> s = e UNION (BIGUNION p)``,
 rw[] >>
 `BIGUNION (e INSERT p) = s` by metis_tac[BIGUNION_partition] >>
 fs[BIGUNION]);
 
-val equiv_on_parition_NOT_R = store_thm(
-"equiv_on_parition_NOT_R",
+val equiv_on_partition_NOT_R = store_thm(
+"equiv_on_partition_NOT_R",
 ``R equiv_on s ==> !t1 t2. t1 IN partition R s /\ t2 IN partition R s /\ t1 <> t2 ==> !x. x IN t1 ==> !y. y IN t2 ==> ¬R x y``,
 rw[] >> SPOSE_NOT_THEN ASSUME_TAC >>
 metis_tac[equiv_on_same_partition]);
 
 val equiv_on_INSERT_partition = store_thm(
-"equiv_on_INSERT_parition",
+"equiv_on_INSERT_partition",
 ``R equiv_on s ==> !e p. e NOTIN p /\ e INSERT p = partition R s ==> !x. x IN e ==> !y. y IN (BIGUNION p) ==> ¬R x y``,
 rw[] >>
 `!a. a IN p ==>  e <> a` by fs[] >>
 `e <> s'` by metis_tac[] >>
 `e IN partition R s` by fs[INSERT_SUBSET,SET_EQ_SUBSET] >>
 `s' IN partition R s` by fs[INSERT_SUBSET,SET_EQ_SUBSET,SUBSET_DEF] >>
-metis_tac[equiv_on_parition_NOT_R]);
+metis_tac[equiv_on_partition_NOT_R]);
 
 val equiv_on_INSERT_partition_UNION = store_thm(
 "equiv_on_INSERT_partition_UNION",
@@ -100,14 +100,14 @@ fs[BIGUNION]);
 
 
 val equiv_on_INSERT_partition = store_thm(
-"equiv_on_INSERT_parition",
+"equiv_on_INSERT_partition",
 ``R equiv_on s ==> !e p. e NOTIN p /\ e INSERT p = partition R s ==> !x. x IN e ==> !y. y IN (BIGUNION p) ==> ¬R x y``,
 rw[] >>
 `!a. a IN p ==>  e <> a` by fs[] >>
 `e <> s'` by metis_tac[] >>
 `e IN partition R s` by fs[INSERT_SUBSET,SET_EQ_SUBSET] >>
 `s' IN partition R s` by fs[INSERT_SUBSET,SET_EQ_SUBSET,SUBSET_DEF] >>
-metis_tac[equiv_on_parition_NOT_R]);
+metis_tac[equiv_on_partition_NOT_R]);
 
 
 val FINITE_partition_SUBSET = store_thm(
