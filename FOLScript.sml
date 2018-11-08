@@ -33,8 +33,14 @@ val ST_def = Define`
 
 (*
 
-val fsatis_def = Define`
-  fsatis M w fform = 
+val feval_def = Define`
+  (feval M σ (fVrel p (ftv x)) <=> ((σ x) IN M.frame.world /\ M.valt p (σ x))) /\
+  (feval M σ (fRrel (ftv x) (ftv y)) <=> (σ x) IN M.frame.world /\ (σ y) IN M.frame.world /\ M.frame.rel (σ x) (σ y)) /\
+  (feval M σ (fDISJ ff1 ff2) <=> (feval M σ ff1 \/ feval M σ ff2)) /\
+  (feval M σ (fNOT ff) <=> ¬(feval M σ ff)) /\
+  (feval M σ (fEXISTS n ff) <=> (σ n) IN M.frame.world /\ feval M σ ff) /\
+  (feval M σ (fEQ ff1 ff2) <=> ff1 = ff2)`;
+  
 
 
 val fsubst = Define`
