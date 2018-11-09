@@ -19,6 +19,8 @@ val fAND_def = Define`
 val fFORALL_def = Define`
   fFORALL n ff = fNOT (fEXISTS n (fNOT ff))`;
 
+(*
+
 
 val ST_def = Define`
   (ST x (VAR p) <=> fVrel p (ftv x)) /\
@@ -27,7 +29,7 @@ val ST_def = Define`
   (ST x (DISJ phi psi) <=> fDISJ (ST x phi) (ST x psi)) /\
   (ST x (DIAM phi) <=> fEXISTS (x + 1) (fAND (fRrel (ftv x) (ftv (x + 1))) (ST (x + 1) phi)))`;
 
-
+*)
 
 
 
@@ -38,7 +40,8 @@ val feval_def = Define`
   (feval M σ (fRrel (ftv x) (ftv y)) <=> (σ x) IN M.frame.world /\ (σ y) IN M.frame.world /\ M.frame.rel (σ x) (σ y)) /\
   (feval M σ (fDISJ ff1 ff2) <=> (feval M σ ff1 \/ feval M σ ff2)) /\
   (feval M σ (fNOT ff) <=> ¬(feval M σ ff)) /\
-  (feval M σ (fEXISTS n ff) <=> (σ n) IN M.frame.world /\ feval M σ ff) /\
+  (feval M σ (fEXISTS n ff) <=> ?w. w IN M.frame.world /\
+                                feval M ((n =+ w)σ) ff) /\
   (feval M σ (fEQ ff1 ff2) <=> ff1 = ff2)`;
   
 
@@ -53,6 +56,10 @@ val ST_BOX = store_thm(
 EVAL ``ST x (BOX phi)``
 
 *)
+
+
+
+
 
 val _ = export_theory();
 

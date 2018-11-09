@@ -414,7 +414,7 @@ val only_see_whole_world = store_thm(
   rw[only_see_def]);
 
 
-
+(*
 
 val prop_2_61 = store_thm(
   "prop_2_61",
@@ -467,5 +467,7 @@ val prop_2_61 = store_thm(
 		     fs[ultrafilter_def,proper_filter_def,filter_def]) >>
 	      metis_tac[MEMBER_NOT_EMPTY])
 
+
+*)
 
 val _ = export_theory();

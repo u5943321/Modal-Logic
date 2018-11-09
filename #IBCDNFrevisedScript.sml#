@@ -524,6 +524,13 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   term_name = "part_equiv0"}
 val _ = overload_on ("part_equiv0", ``partition (equiv0 μ)``)   
 
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  paren_style = OnlyIfNecessary,
+                  fixity = Infix(NONASSOC, 1900),
+                  pp_elements = [TOK "//E", BreakSpace(1,0)],
+                  term_name = "part_equiv"}
+val _ = overload_on ("part_equiv", ``\s tyi. partition (equiv0 tyi) s``);
+
 (* basics of DISJ *)
 
 val SING_INSERT_11 = store_thm(
@@ -832,7 +839,7 @@ Induct_on `l1` >> rw[] >> Cases_on `l1 = []` >> rw[] >>
 Cases_on `l1` >> rw[] >>
 `equiv0 μ (lit_list_to_form2 (h'::(t ⧺ l2))) (DISJ h' (lit_list_to_form2 (t ++ l2)))` by metis_tac[DISJ_list_CONS,equiv0_SYM] >>
 `equiv0 μ (DISJ (DISJ h (lit_list_to_form2 (h'::t))) (lit_list_to_form2 l2))
-(DISJ h (DISJ (lit_list_to_form2 (h'::t)) (lit_list_to_form2 l2)))` by metis_tac[equiv0_DISJ_ASSOC] >>
+(DISJ h (DISJ (lit_list_to_form2 (h'::t)) (lit_list_to_form2 l2)))` by metis_tac[equiv0_DISJ_assoc] >>
 `equiv0 μ (lit_list_to_form2 (h'::(t ⧺ l2))) (DISJ (lit_list_to_form2 (h'::t)) (lit_list_to_form2 l2))` suffices_by metis_tac[equiv0_DISJ_subst,equiv0_SYM,equiv0_TRANS] >>
 metis_tac[equiv0_SYM,equiv0_TRANS]);
 
@@ -1235,7 +1242,7 @@ Induct_on `l1` >> simp[]
 >- (Cases_on `l1` >> simp[]
    >- (Cases_on `l2` >> simp[] >> metis_tac[equiv0_DISJ_F])
    >- (rw[] >>
-      `equiv0 μ (DISJ (DISJ h' (lit_list_to_form2 (h::t))) (lit_list_to_form2 l2)) (DISJ h' (DISJ (lit_list_to_form2 (h::t)) (lit_list_to_form2 l2)))` by metis_tac[equiv0_DISJ_ASSOC] >>
+      `equiv0 μ (DISJ (DISJ h' (lit_list_to_form2 (h::t))) (lit_list_to_form2 l2)) (DISJ h' (DISJ (lit_list_to_form2 (h::t)) (lit_list_to_form2 l2)))` by metis_tac[equiv0_DISJ_assoc] >>
       `equiv0 μ (DISJ h' (DISJ (lit_list_to_form2 (h::t)) (lit_list_to_form2 l2))) (DISJ h' (lit_list_to_form2 (h::(t ⧺ l2))))` suffices_by metis_tac[equiv0_TRANS,equiv0_SYM] >>
       `equiv0 μ (DISJ (lit_list_to_form2 (h::t)) (lit_list_to_form2 l2)) (lit_list_to_form2 (h::t ⧺ l2))` by metis_tac[] >>
       irule equiv0_DISJ_subst >>

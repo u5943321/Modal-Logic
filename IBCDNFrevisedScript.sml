@@ -524,6 +524,13 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   term_name = "part_equiv0"}
 val _ = overload_on ("part_equiv0", ``partition (equiv0 μ)``)   
 
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  paren_style = OnlyIfNecessary,
+                  fixity = Infix(NONASSOC, 1900),
+                  pp_elements = [TOK "//E", BreakSpace(1,0)],
+                  term_name = "part_equiv"}
+val _ = overload_on ("part_equiv", ``\s tyi. partition (equiv0 tyi) s``);
+
 (* basics of DISJ *)
 
 val SING_INSERT_11 = store_thm(
