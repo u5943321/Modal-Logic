@@ -10,7 +10,7 @@ open pairTheory;
 
 val _ = ParseExtras.tight_equality()
 
-val _ = new_theory "IBCDNF";
+val _ = new_theory "IBCDNFrevised";
 
 (* Basics of equiv *)
 

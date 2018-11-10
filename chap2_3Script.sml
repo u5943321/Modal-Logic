@@ -7,7 +7,6 @@ open set_relationTheory;
 
 open chap2_1Theory;
 open chap2_2Theory;
-open IBCDNFTheory;
 open equiv_on_partitionTheory;
 open IBCDNFrevisedTheory;
 
@@ -76,6 +75,352 @@ val subforms_FINITE = store_thm(
 "subforms_FINITE",
 ``FINITE (subforms phi)``,
 Induct_on `phi` >> fs[subforms_def]);
+
+
+
+
+
+
+(* FMP via filtratition *)
+
+
+
+val CUS_def = Define`
+CUS Σ <=> !f f'. ((DISJ f f') IN Σ ==> f IN Σ /\ f' IN Σ) /\
+                 ((NOT f) IN Σ ==> f IN Σ) /\
+                 ((DIAM f) IN Σ ==> f IN Σ)`;
+
+
+val REL_CUS_def = Define`
+REL_CUS Σ M = λw v. w IN M.frame.world /\
+                    v IN M.frame.world /\
+                    (!phi. phi IN Σ ==> (satis M w phi <=> satis M v phi))`;
+
+val EC_CUS_def = Define`
+EC_CUS Σ M w = {v | (REL_CUS Σ M) w v}`;
+
+val EC_REP_def = Define`
+EC_REP Σ M w = CHOICE (EC_CUS Σ M w)`;
+
+val EC_REP_SET_def = Define`
+EC_REP_SET Σ M = {n | ?w. w IN M.frame.world /\ n = EC_REP Σ M w}`;
+
+val IN_EC_CUS_IN_world = store_thm(
+"IN_EC_CUS_IN_world",
+``!x. x IN EC_CUS Σ M w ==> x IN M.frame.world``,
+rpt strip_tac >> fs[EC_CUS_def,REL_CUS_def]);
+
+val SAME_EC_SAME_tau = store_thm(
+"SAME_EC_SAME_tau",
+``!a b w. a IN EC_CUS Σ M w /\ b IN EC_CUS Σ M w ==> (!phi. phi IN Σ ==> (satis M a phi <=> satis M b phi))``,
+rpt strip_tac >> fs[EC_CUS_def,REL_CUS_def]);
+
+
+
+val REL_CUS_SYMM = store_thm(
+"REL_CUS_SYMM",
+``!w v. REL_CUS Σ M w v <=> REL_CUS Σ M v w``,
+rpt strip_tac >> eq_tac >> strip_tac
+>> fs[REL_CUS_def]);
+
+val REL_CUS_REFL = store_thm(
+"REL_CUS_REFL",
+``!w. w IN M.frame.world ==> REL_CUS Σ M w w``,
+gen_tac >> fs[REL_CUS_def]);
+
+val REL_CUS_TRANS = store_thm(
+"REL_CUS_TRANS",
+``!u v w. u IN M.frame.world /\ v IN M.frame.world /\ w IN M.frame.world /\ REL_CUS Σ M u v /\ REL_CUS Σ M u w ==> REL_CUS Σ M v w``,
+rpt strip_tac >> rw[REL_CUS_def] >>
+`satis M u phi <=> satis M v phi` by metis_tac[REL_CUS_def] >>
+`satis M u phi <=> satis M w phi` by metis_tac[REL_CUS_def] >> metis_tac[]);
+
+val REL_EC = store_thm(
+"REL_EC",
+``!w v. w IN M.frame.world /\ v IN M.frame.world ==> (REL_CUS Σ M) w v ==> (EC_CUS Σ M w = EC_CUS Σ M v)``,
+rpt strip_tac >> simp[SET_EQ_SUBSET,SUBSET_DEF] >> rpt strip_tac
+>- (`REL_CUS Σ M v x` suffices_by fs[EC_CUS_def] >>
+`REL_CUS Σ M w x` by fs[EC_CUS_def] >>
+`x IN M.frame.world` by fs[REL_CUS_def] >>
+metis_tac[REL_CUS_TRANS])
+>- (`REL_CUS Σ M w x` suffices_by fs[EC_CUS_def] >>
+`REL_CUS Σ M v x` by fs[EC_CUS_def] >>
+`x IN M.frame.world` by fs[REL_CUS_def] >> metis_tac[REL_CUS_SYMM,REL_CUS_TRANS]));
+
+val EC_NOT_EMPTY = store_thm(
+"EC_NOT_EMPTY",
+``!w. w IN M.frame.world ==> EC_CUS Σ M w <> {}``,
+rpt strip_tac >>
+`w IN EC_CUS Σ M w` suffices_by metis_tac[MEMBER_NOT_EMPTY,EC_CUS_def] >>
+`(REL_CUS Σ M) w w` by metis_tac[REL_CUS_REFL] >>
+`w IN {v | (REL_CUS Σ M) w v}` by simp[] >> metis_tac[EC_CUS_def]);
+
+val REP_IN_world = store_thm(
+  "REP_IN_world",
+  ``w IN M.frame.world ==> EC_REP Σ M w IN M.frame.world``,
+  rpt strip_tac >>
+  fs[EC_REP_def,EC_CUS_def,REL_CUS_def] >>
+  `(CHOICE {v | v ∈ M.frame.world ∧ ∀phi. phi ∈ Σ ⇒ (satis M w phi ⇔ satis M v phi)}) IN
+  {v | v ∈ M.frame.world ∧ ∀phi. phi ∈ Σ ⇒ (satis M w phi ⇔ satis M v phi)}`
+    by (`{v | v ∈ M.frame.world ∧ ∀phi. phi ∈ Σ ⇒ (satis M w phi ⇔ satis M v phi)} <> {}`
+            suffices_by metis_tac[CHOICE_DEF] >>
+        `w IN {v | v ∈ M.frame.world ∧ ∀phi. phi ∈ Σ ⇒ (satis M w phi ⇔ satis M v phi)}`
+	    suffices_by metis_tac[MEMBER_NOT_EMPTY] >> fs[]) >>
+  fs[]);
+
+
+val REP_IN_EC = store_thm(
+  "REP_IN_EC",
+  ``!w. w IN M.frame.world ==> (EC_REP Σ M w) IN (EC_CUS Σ M w)``,
+  rw[] >> `EC_CUS Σ M w <> {}` by metis_tac[EC_NOT_EMPTY] >> metis_tac[EC_REP_def,CHOICE_DEF]);
+
+
+val RESTRICT_tau_theory = Define`
+RESTRICT_tau_theory Σ M w = {phi | phi IN Σ /\ satis M w phi}`;
+
+val ELEM_IN_EC = store_thm(
+"ELEM_IN_EC",
+``!n. n IN M.frame.world ==> n IN EC_CUS Σ M n``,
+rpt strip_tac >>
+`(REL_CUS Σ M) n n` by metis_tac[REL_CUS_REFL] >>
+`n IN {v | (REL_CUS Σ M) n v}` by simp[] >> metis_tac[EC_CUS_def]);
+
+val REP_W_SAME_tau = store_thm(
+"REP_W_SAME_tau",
+``!phi w. (phi IN Σ /\ w IN M.frame.world) ==> (satis M (EC_REP Σ M w) phi <=> satis M w phi)``,
+rpt strip_tac >>
+`(EC_REP Σ M w) IN (EC_CUS Σ M w) /\ w IN (EC_CUS Σ M w)` suffices_by metis_tac[SAME_EC_SAME_tau] >> metis_tac[REP_IN_EC,ELEM_IN_EC]);
+
+val EC_tau = store_thm(
+"EC_tau",
+``!n1 n2. n1 IN M.frame.world /\ n2 IN M.frame.world ==> (EC_CUS Σ M n1 = EC_CUS Σ M n2 ==>
+RESTRICT_tau_theory Σ M n1 = RESTRICT_tau_theory Σ M n2)``,
+rpt strip_tac >> simp[SET_EQ_SUBSET] >> simp[SUBSET_DEF] >> rpt strip_tac
+>> simp[RESTRICT_tau_theory] >>
+fs[RESTRICT_tau_theory] >>
+`EC_CUS Σ M n1 ⊆ EC_CUS Σ M n2` by simp[SET_EQ_SUBSET] >> fs[SUBSET_DEF] >>
+`n1 IN EC_CUS Σ M n1` by metis_tac[ELEM_IN_EC] >>
+`n1 ∈ EC_CUS Σ M n2` by metis_tac[] >>
+`REL_CUS Σ M n2 n1` by fs[EC_CUS_def] >>
+metis_tac[REL_CUS_def]);
+
+val tau_EC = store_thm(
+"tau_EC",
+``!n1 n2. n1 IN M.frame.world /\ n2 IN M.frame.world ==> (RESTRICT_tau_theory Σ M n1 = RESTRICT_tau_theory Σ M n2 ==> EC_CUS Σ M n1 = EC_CUS Σ M n2)``,
+rpt strip_tac >> simp[SET_EQ_SUBSET] >> simp[SUBSET_DEF] >> rpt strip_tac
+>- (simp[EC_CUS_def] >> simp[REL_CUS_def] >>
+`x IN M.frame.world` by fs[EC_CUS_def,REL_CUS_def] >> rw[] >> eq_tac >> strip_tac
+  >- (`RESTRICT_tau_theory Σ M n2  ⊆ RESTRICT_tau_theory Σ M n1` by simp[SET_EQ_SUBSET] >>
+     `phi IN RESTRICT_tau_theory Σ M n2` by fs[RESTRICT_tau_theory] >>
+     `phi IN RESTRICT_tau_theory Σ M n1` by metis_tac[SUBSET_DEF] >>
+     `satis M n1 phi` by fs[RESTRICT_tau_theory] >>
+     `REL_CUS Σ M n1 x` by fs[EC_CUS_def] >>
+     metis_tac[REL_CUS_def])
+  >- (`RESTRICT_tau_theory Σ M n1  ⊆ RESTRICT_tau_theory Σ M n2` by simp[SET_EQ_SUBSET] >> 
+     `REL_CUS Σ M n1 x` by fs[EC_CUS_def] >>
+     `satis M n1 phi` by metis_tac[REL_CUS_def] >>
+     fs[SUBSET_DEF] >> fs[RESTRICT_tau_theory]))
+>- (simp[EC_CUS_def] >> simp[REL_CUS_def] >>
+`x IN M.frame.world` by fs[EC_CUS_def,REL_CUS_def] >> rw[] >> eq_tac >> strip_tac
+  >- (`REL_CUS Σ M n2 x` by fs[EC_CUS_def] >>
+     `RESTRICT_tau_theory Σ M n1 ⊆ RESTRICT_tau_theory Σ M n2` by metis_tac[SET_EQ_SUBSET] >> fs[SUBSET_DEF,RESTRICT_tau_theory] >>
+     `satis M n2 phi` by metis_tac[] >>
+     metis_tac[REL_CUS_def])
+  >- (`REL_CUS Σ M n2 x` by fs[EC_CUS_def] >>
+     `RESTRICT_tau_theory Σ M n2 ⊆ RESTRICT_tau_theory Σ M n1` by metis_tac[SET_EQ_SUBSET] >> fs[SUBSET_DEF,RESTRICT_tau_theory] >>
+     `satis M n2 phi` by metis_tac[REL_CUS_def] >>
+     metis_tac[]))
+);
+
+val SAME_REP_SAME_tau = store_thm(
+"SAME_REP_SAME_tau",
+``w IN M.frame.world /\ w' IN M.frame.world /\ EC_REP Σ M w = EC_REP Σ M w' ==>
+(!phi. phi IN Σ ==> (satis M w phi <=> satis M w' phi))``,
+rw[] >>
+`EC_REP Σ M w IN EC_CUS Σ M w` by metis_tac[REP_IN_EC] >>
+`w IN EC_CUS Σ M w` by metis_tac[ELEM_IN_EC] >>
+`(satis M w phi <=> satis M (EC_REP Σ M w) phi)` by metis_tac[SAME_EC_SAME_tau] >>
+`EC_REP Σ M w' IN EC_CUS Σ M w'` by metis_tac[REP_IN_EC] >>
+`w' IN EC_CUS Σ M w'` by metis_tac[ELEM_IN_EC] >>
+`(satis M w' phi <=> satis M (EC_REP Σ M w') phi)` by metis_tac[SAME_EC_SAME_tau] >>
+metis_tac[]);
+
+val SAME_REP_SAME_EC = store_thm(
+"SAME_REP_SAME_EC",
+``w IN M.frame.world /\ w' IN M.frame.world /\ EC_REP Σ M w = EC_REP Σ M w' ==> EC_CUS Σ M w = EC_CUS Σ M w'``,
+rw[] >>
+`(!phi. phi IN Σ ==> (satis M w phi <=> satis M w' phi))` by metis_tac[SAME_REP_SAME_tau] >>
+`RESTRICT_tau_theory Σ M w = RESTRICT_tau_theory Σ M w'` by
+(fs[RESTRICT_tau_theory] >> simp[EXTENSION] >> rw[] >> eq_tac >> rw[] >> metis_tac[]) >>
+metis_tac[tau_EC]);
+
+val filtration_def = Define`
+filtration M Σ FLT <=>
+CUS Σ /\
+(FLT.frame.world = EC_REP_SET Σ M) /\
+(!w v. w IN M.frame.world /\ v IN M.frame.world /\ M.frame.rel w v ==> FLT.frame.rel (EC_REP Σ M w) (EC_REP Σ M v)) /\
+(!w v. w IN M.frame.world /\ v IN M.frame.world /\ FLT.frame.rel (EC_REP Σ M w) (EC_REP Σ M v) ==> (!phi psi. (phi IN Σ /\ phi = DIAM psi) ==> (satis M v psi ==> satis M w phi))) /\
+(!p s. FLT.valt p s <=> (?w. s = EC_REP Σ M w /\ satis M w (VAR p)))`;
+
+val FLT_M_world = store_thm(
+"FLT_M_world",
+``!w. filtration M Σ FLT /\ w IN FLT.frame.world ==> w IN M.frame.world``,
+rpt strip_tac >>
+`w IN EC_REP_SET Σ M` by metis_tac[filtration_def] >>
+fs[EC_REP_SET_def] >> fs[EC_REP_def] >>
+`EC_CUS Σ M w' <> {}` by metis_tac[EC_NOT_EMPTY] >>
+`(CHOICE (EC_CUS Σ M w')) IN (EC_CUS Σ M w')` by metis_tac[CHOICE_DEF] >>
+`(EC_CUS Σ M w') SUBSET M.frame.world` suffices_by fs[SUBSET_DEF] >>
+rw[EC_CUS_def,REL_CUS_def] >> fs[SUBSET_DEF]);
+
+
+val EC_CUS_SUBSET_W = store_thm(
+"EC_CUS_SUBSET_W",
+``!w. w IN M.frame.world ==> EC_CUS Σ M w ⊆ M.frame.world``,
+rpt strip_tac >> simp[SUBSET_DEF] >> rpt strip_tac >>
+`REL_CUS Σ M w x` by fs[EC_CUS_def] >> metis_tac[REL_CUS_def]);
+
+val filtration_REP_REFL = store_thm(
+"filtration_REP_REFL",
+``filtration M Σ FLT ==> (!w. w IN FLT.frame.world ==> w = CHOICE (EC_CUS Σ M w))``,
+rpt strip_tac >>
+`w IN EC_REP_SET Σ M` by metis_tac[filtration_def] >> fs[EC_REP_SET_def] >>
+fs[EC_REP_def] >>
+`EC_CUS Σ M w' = EC_CUS Σ M (CHOICE (EC_CUS Σ M w'))` suffices_by metis_tac[] >>
+`EC_CUS Σ M w' <> {}` by metis_tac[EC_NOT_EMPTY] >>
+`w IN (EC_CUS Σ M w')` by metis_tac[CHOICE_DEF] >>
+`w IN M.frame.world` by metis_tac[EC_CUS_SUBSET_W,SUBSET_DEF] >>
+`REL_CUS Σ M w' (CHOICE (EC_CUS Σ M w'))` suffices_by metis_tac[REL_EC] >>
+`!a. a IN (EC_CUS Σ M w') ==> REL_CUS Σ M w' a` by
+(rpt strip_tac >> fs[EC_CUS_def]) >> metis_tac[]);
+
+val prop_2_38_lemma = store_thm(
+"prop_2_38_lemma",
+``!Σ M. FINITE Σ /\ filtration M Σ FLT ==> ?f. INJ f (FLT.frame.world) (POW Σ)``,
+rpt strip_tac >>
+qexists_tac `λw. RESTRICT_tau_theory Σ M w` >> rw[INJ_DEF]
+>- (rw[POW_DEF] >> rw[RESTRICT_tau_theory] >> simp[SUBSET_DEF])
+>- (`w = CHOICE (EC_CUS Σ M w)` by metis_tac[filtration_REP_REFL] >>
+`w' = CHOICE (EC_CUS Σ M w')` by metis_tac[filtration_REP_REFL] >>
+`w IN M.frame.world` by metis_tac[FLT_M_world] >>
+`w' IN M.frame.world` by metis_tac[FLT_M_world] >>
+`EC_CUS Σ M w = EC_CUS Σ M w'` by metis_tac[tau_EC] >> metis_tac[]));
+
+
+val prop_2_38 = store_thm(
+"prop_2_38",
+``!Σ M FLT. FINITE Σ /\ filtration M Σ FLT ==> CARD (FLT.frame.world) <= 2 ** (CARD (Σ))``,
+rpt strip_tac >>
+`CARD (POW Σ) = 2 ** CARD Σ` by simp[CARD_POW] >>
+`CARD FLT.frame.world ≤ CARD (POW Σ)` suffices_by rw[] >>
+irule INJ_CARD
+>- metis_tac[FINITE_POW]
+>- metis_tac[prop_2_38_lemma]);
+
+val thm_2_39 = store_thm(
+"thm_2_39",
+``!phi. phi IN Σ ==> (!w. w IN M.frame.world /\ filtration M Σ FLT ==> (satis M w phi <=> satis FLT (EC_REP Σ M w) phi))``,
+gen_tac >> strip_tac >> Induct_on `phi`
+>- (rw[satis_def] >> eq_tac >> rpt strip_tac
+  >- (`EC_REP Σ M w ∈ EC_REP_SET Σ M ` suffices_by metis_tac[filtration_def] >>
+     fs[EC_REP_SET_def] >> qexists_tac `w` >> metis_tac[])
+  >- (`FLT.valt a (EC_REP Σ M w)` suffices_by fs[IN_DEF] >>
+     `∃w'. (EC_REP Σ M w) = EC_REP Σ M w' ∧ satis M w' (VAR a)` suffices_by fs[filtration_def] >>
+     qexists_tac `w` >>
+     metis_tac[satis_def,IN_DEF])
+  >- (`FLT.valt a (EC_REP Σ M w)` by fs[IN_DEF] >>
+     `∃w'. (EC_REP Σ M w) = EC_REP Σ M w' ∧ satis M w' (VAR a)` by metis_tac[filtration_def] >>
+     `w' IN M.frame.world` by metis_tac[satis_def] >>
+     `EC_CUS Σ M w = EC_CUS Σ M w'` by metis_tac[SAME_REP_SAME_EC] >>
+     `w IN EC_CUS Σ M w` by metis_tac[ELEM_IN_EC] >>
+     `w' IN EC_CUS Σ M w'` by metis_tac[ELEM_IN_EC] >>
+     `w' IN EC_CUS Σ M w` by metis_tac[] >>
+     `satis M w (VAR a)` by metis_tac[SAME_EC_SAME_tau] >> metis_tac[satis_def,IN_DEF]))
+>- (rw[satis_def] >> eq_tac >> rw[]
+  >> `CUS Σ` by metis_tac[filtration_def] >> fs[CUS_def] >>
+     `phi IN Σ /\ phi' IN Σ` by metis_tac[] >> metis_tac[])
+>- rw[satis_def]
+>- (rw[satis_def] >> eq_tac >> rw[]
+  >> `CUS Σ` by metis_tac[filtration_def] >> fs[CUS_def] >>
+  `EC_REP Σ M w IN EC_REP_SET Σ M` by (fs[EC_REP_SET_def] >> qexists_tac `w` >> metis_tac[]) >>
+  metis_tac[filtration_def])
+>- (rw[satis_def] >> eq_tac >> rw[]
+  >- (`EC_REP Σ M w IN EC_REP_SET Σ M` by (fs[EC_REP_SET_def] >> qexists_tac `w` >> metis_tac[]) >>
+  metis_tac[filtration_def])
+  >- (`M.frame.rel w v` by fs[IN_DEF] >>
+     `FLT.frame.rel (EC_REP Σ M w) (EC_REP Σ M v)` by metis_tac[filtration_def] >>
+     `EC_REP Σ M v IN EC_REP_SET Σ M` by (fs[EC_REP_SET_def] >> qexists_tac `v` >> metis_tac[]) >>
+     `EC_REP Σ M v IN FLT.frame.world` by metis_tac[filtration_def] >>
+     qexists_tac `EC_REP Σ M v` >> rw[] 
+     >> (`CUS Σ` by metis_tac[filtration_def] >>
+        `phi IN Σ` by metis_tac[CUS_def] >> metis_tac[]))
+  >- (`CUS Σ` by metis_tac[filtration_def] >>
+     `phi IN Σ` by metis_tac[CUS_def] >>
+     `v IN EC_REP_SET Σ M` by metis_tac[filtration_def] >>
+     fs[EC_REP_SET_def] >>
+     `satis M w' phi` by metis_tac[] >>
+     `satis M w (DIAM phi)` suffices_by metis_tac[satis_def] >>
+     `FLT.frame.rel (EC_REP Σ M w) (EC_REP Σ M w')` by fs[IN_DEF] >> metis_tac[filtration_def])));
+
+val FLT_def = Define`
+FLT M Σ = <| frame := <| world := EC_REP_SET Σ M ;
+                         rel := λn1 n2.
+                         ?w1 w2.
+                         (w1 IN M.frame.world /\ w2 IN M.frame.world /\
+                         n1 = EC_REP Σ M w1 /\ n2 = EC_REP Σ M w2 /\
+                         ?w' v'. w' IN M.frame.world /\ v' IN M.frame.world /\
+                         w' IN EC_CUS Σ M w1 /\ v' IN EC_CUS Σ M w2 /\ M.frame.rel w' v') |>;
+             valt := λp s. ∃w. s = EC_REP Σ M w ∧ satis M w (VAR p) |>`;
+     
+     
+val FLT_EXISTS = store_thm(
+"FLT_EXISTS",
+``!M Σ. CUS Σ ==> filtration M Σ (FLT M Σ)``,
+rw[filtration_def] >- fs[FLT_def]
+>- (fs[FLT_def] >> map_every qexists_tac [`w`,`v`] >> rw[] >> map_every qexists_tac [`w`,`v`] >> rw[] >> metis_tac[ELEM_IN_EC])
+>- (fs[FLT_def] >>
+   `psi IN Σ` by fs[CUS_def] >>
+   `satis M v psi ⇔ satis M w2 psi` by metis_tac[SAME_REP_SAME_tau] >>
+   `satis M v' psi ⇔ satis M w2 psi` by (`w2 IN EC_CUS Σ M w2` by metis_tac[ELEM_IN_EC] >> metis_tac[SAME_EC_SAME_tau]) >>
+   `satis M v' psi` by metis_tac[] >>
+   `satis M w' (DIAM psi)` by (rw[satis_def] >> qexists_tac `v'` >> fs[IN_DEF]) >>
+   `satis M w (DIAM psi) ⇔ satis M w1 (DIAM psi)` by metis_tac[SAME_REP_SAME_tau] >>
+   `satis M w' (DIAM psi) ⇔ satis M w1 (DIAM psi)` by (`w1 IN EC_CUS Σ M w1` by metis_tac[ELEM_IN_EC] >> metis_tac[SAME_EC_SAME_tau]) >> metis_tac[])
+>- fs[FLT_def]);
+
+
+
+
+
+val subforms_phi_CUS = store_thm(
+"subforms_phi_CUS",
+``!phi. CUS (subforms phi)``,
+rw[CUS_def] >> fs[subforms_def,UNION_DEF]
+>- (`f IN (subforms (DISJ f f'))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans])
+>- (`f' IN (subforms (DISJ f f'))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans])
+>- (`f IN (subforms (NOT f))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans])
+>- (`f IN (subforms (DIAM f))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans]));
+
+
+
+val thm_2_41 = store_thm(
+  "thm_2_41",
+``!phi M w. satis M (w:'b) phi ==> ?M' w':'b. w' IN M'.frame.world /\ satis M' w' phi /\ FINITE (M'.frame.world)``,
+rw[] >> qexists_tac `FLT M (subforms phi)` >> qexists_tac `EC_REP (subforms phi) M w` >> rw[]
+>- (`w IN M.frame.world` by metis_tac[satis_in_world] >> fs[FLT_def,EC_REP_SET_def] >> qexists_tac `w` >> fs[])
+>- (`CUS (subforms phi)` by metis_tac[subforms_phi_CUS] >>
+   `filtration M (subforms phi) (FLT M (subforms phi))` by metis_tac[FLT_EXISTS] >>
+   `phi IN (subforms phi)` by metis_tac[subforms_phi_phi] >>
+   `w IN M.frame.world` by metis_tac[satis_in_world] >>
+   metis_tac[thm_2_39])
+>- (`CUS (subforms phi)` by metis_tac[subforms_phi_CUS] >>
+   `filtration M (subforms phi) (FLT M (subforms phi))` by metis_tac[FLT_EXISTS] >>
+   `FINITE (subforms phi)` by metis_tac[subforms_FINITE] >> 
+   `CARD (FLT M (subforms phi)).frame.world ≤ 2 ** CARD (subforms phi)` by metis_tac[prop_2_38] >>
+   drule_all (GEN_ALL prop_2_38_lemma) >> strip_tac >>
+   imp_res_tac FINITE_INJ >> rfs[FINITE_POW]));
+  
+
 
 val peval_satis_strengthen = store_thm(
 "peval_satis_strengthen",
@@ -689,16 +1034,71 @@ gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
        metis_tac[]))));
 
 
+val BIGCONJ_EXISTS_2 = store_thm(
+"BIGCONJ_EXISTS_2",
+``∀s.
+     FINITE s ⇒
+     ?ff.
+     ∀w M.
+        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)``,
+Induct_on `FINITE s` >> rpt strip_tac
+>- (qexists_tac `TRUE` >> rw[] >> metis_tac[satis_def,TRUE_def])
+>- (qexists_tac `AND ff e` >> rw[] >> eq_tac
+   >- (rpt strip_tac >- metis_tac[satis_AND]
+                     >- (`satis M w ff` by metis_tac[satis_AND] >> metis_tac[]))
+   >- (rw[] >> `e = e ==> satis M w e` by metis_tac[] >> `e = e` by metis_tac[] >>
+      `satis M w e` by metis_tac[] >>
+      `!f. f IN s ==> satis M w f` by metis_tac[] >>
+      `satis M w ff` by metis_tac[] >>
+      metis_tac[satis_AND])));
+
+
+val BIGCONJ_EXISTS_2 = store_thm(
+"BIGCONJ_equiv0",
+``∀s.
+     FINITE s ⇒
+     ?ff.
+     ∀w M.
+        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)``,
+Induct_on `FINITE s` >> rpt strip_tac
+>- (qexists_tac `TRUE` >> rw[] >> metis_tac[satis_def,TRUE_def])
+>- (qexists_tac `AND ff e` >> rw[] >> eq_tac
+   >- (rpt strip_tac >- metis_tac[satis_AND]
+                     >- (`satis M w ff` by metis_tac[satis_AND] >> metis_tac[]))
+   >- (rw[] >> `e = e ==> satis M w e` by metis_tac[] >> `e = e` by metis_tac[] >>
+      `satis M w e` by metis_tac[] >>
+      `!f. f IN s ==> satis M w f` by metis_tac[] >>
+      `satis M w ff` by metis_tac[] >>
+      metis_tac[satis_AND])));
+
+val BIGCONJ_EXISTS_DEG = store_thm(
+  "BIGCONJ_EXISTS_DEG",
+  ``∀s.
+     FINITE s ⇒
+     !n. (!f. f IN s ==> DEG f <= n) ==>
+     ?ff. DEG ff <= n /\
+     ∀w M.
+        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)``,
+  Induct_on `FINITE` >> rw[]
+  >- (qexists_tac `TRUE` >> rw[TRUE_def,satis_def,DEG_def])
+  >- (`∀f. f ∈ s ⇒ DEG f ≤ n` by metis_tac[] >>
+     first_x_assum drule >> rw[] >>
+     qexists_tac `AND e ff` >> rw[DEG_def,satis_def,AND_def] >> eq_tac >> rw[]
+     >- rw[]
+     >> metis_tac[]));
+
 
 
 val BIGCONJ_EXISTS_DEG = store_thm(
   "BIGCONJ_EXISTS_DEG",
   ``∀s.
      FINITE s ⇒
-     (!f. f IN s ==> DEG f <= n) ==>
+     !n. (!f:'a form. f IN s ==> DEG f <= n) ==>
      ?ff. DEG ff <= n /\
-     ∀w M.
-        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)``,
+     (∀w:'b M.
+        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)) /\
+     (∀w:'c M.
+        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f))``,
   Induct_on `FINITE` >> rw[]
   >- (qexists_tac `TRUE` >> rw[TRUE_def,satis_def,DEG_def])
   >- (`∀f. f ∈ s ⇒ DEG f ≤ n` by metis_tac[] >>
@@ -744,16 +1144,13 @@ rpt strip_tac
          `x SUBSET s` by fs[partition_def,SUBSET_DEF] >>
          `(CHOICE x) IN s` by metis_tac[SUBSET_DEF, partition_def] >>
          fs[Abbr`s`]) >>
-   `∃ff.
-        DEG ff ≤ i ∧
-        ∀w:'b M.
-           w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ (IMAGE CHOICE s//e) ⇒ satis M w f)` by fs[BIGCONJ_EXISTS_DEG] >>
-   `∀f. f ∈ IMAGE CHOICE s//e ⇒ satis M u f`
+   imp_res_tac BIGCONJ_EXISTS_DEG
+   `∀f. f ∈ IMAGE CHOICE (s//E μ) ⇒ satis M u f`
      by (rw[] >>
         `(CHOICE x) IN x` by metis_tac[] >>
 	fs[partition_def,Abbr`s`] >> rw[] >> fs[]) >>
-   `satis M u ff` by metis_tac[] >> (*???????????????????????????????????????????? *)
-   `satis M v (DIAM ff)` by metis_tac[satis_def] >>
+   `satis M u ff` by metis_tac[] >>
+   `satis M v (DIAM ff)` by (rw[satis_def] >> qexists_tac `u` >> rw[]) >>
    `DEG (DIAM ff) <= i + 1` by fs[DEG_def] >>
    `¬satis M' v' (DIAM ff)` suffices_by metis_tac[] >>
    `∀u'. M'.frame.rel v' u' /\ u' ∈ M'.frame.world ==> ¬satis M' u' ff`
@@ -968,14 +1365,12 @@ val prop_2_31_half2 = store_thm(
   ==> (!(phi: 'a form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi))
       ==> ?f. nbisim M M' f n w w'``,
   rpt strip_tac >>
-  `(equiv0 (:num) f1 f2 ⇔ equiv0 (:'b) f1 f2)` by metis_tac[equiv0_INFINITE_UNIV] >>
-  `(equiv0 (:num) f1 f2 ⇔ equiv0 (:'c) f1 f2)` by metis_tac[equiv0_INFINITE_UNIV] >>
-  `(equiv0 (:'b) f1 f2 ⇔ equiv0 (:'c) f1 f2)` by metis_tac[] >> 
   rw[nbisim_def] >>
-  qexists_tac `λn n1 n2. (!(phi: 'a form). DEG phi <= n ==> (satis M n1 phi <=> satis M' n2 phi))` >> rw[]
+  qexists_tac `λn n1 n2. (!(phi: 'a form). DEG phi <= n ==> (satis M n1 phi <=> satis M' n2 phi))` >> rw[] >>
+  `equiv0 (:'b) = equiv0 (:'c)` by metis_tac[equiv0_equal_for_INFINITE_UNIV]
   >- metis_tac[DEG_def]
   >- (SPOSE_NOT_THEN ASSUME_TAC >>
-    `∀u'.
+     `∀u'.
           u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
           (?form. DEG form <= i /\ satis M u form /\ ¬satis M' u' form)`
         by (rw[satis_def] >>
@@ -991,34 +1386,24 @@ val prop_2_31_half2 = store_thm(
    `s ⊆ {f| DEG f <= i}` by (fs[Abbr`s`,SUBSET_DEF]) >>
    `(equiv0 (μ:'c itself)) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
    `FINITE (partition (equiv0 μ) s)`
-       by (`FINITE {f | DEG f <= i}//e` by metis_tac[prop_2_29] >>
-          `(equiv0 μ) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
+       by (`(equiv0 μ) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
 	  `equiv0 (:'c) = equiv0 (:'b)` by metis_tac[equiv0_equal_for_INFINITE_UNIV] >>
 	  metis_tac[prop_2_29,FINITE_partition_SUBSET]) >>
-        
-
-
-
-
-
-   `FINITE (IMAGE CHOICE s//e)` by metis_tac[IMAGE_FINITE] >>
+   `FINITE (IMAGE CHOICE (s//E μ))` by metis_tac[IMAGE_FINITE] >>
    `(equiv0 μ) equiv_on s` by metis_tac[equiv0_equiv_on] >> 
-   `!p. p IN s//e ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
-   `!p. p IN s//e ==> (CHOICE p) IN p` by metis_tac[CHOICE_DEF] >>
-   `!f. f IN (IMAGE CHOICE s//e) ==> DEG f <= i`
+   `!p. p IN (s//E μ) ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
+   `!p. p IN (s//E μ) ==> (CHOICE p) IN p` by metis_tac[CHOICE_DEF] >>
+   `!f. f IN (IMAGE CHOICE (s//E μ)) ==> DEG f <= i`
      by (dsimp[] >> rw[] >> `(CHOICE x) IN x` by metis_tac[] >>
          `x SUBSET s` by fs[partition_def,SUBSET_DEF] >>
          `(CHOICE x) IN s` by metis_tac[SUBSET_DEF, partition_def] >>
          fs[Abbr`s`]) >>
-   `∃ff.
-        DEG ff ≤ i ∧
-        ∀w:'c M.
-           w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ (IMAGE CHOICE s//e) ⇒ satis M w f)` by fs[BIGCONJ_EXISTS_DEG] >>
-   `∀f. f ∈ IMAGE CHOICE s//e ⇒ satis M u f`
+   imp_res_tac BIGCONJ_EXISTS_DEG >>
+   `∀f. f ∈ IMAGE CHOICE (s//E μ) ⇒ satis M u f`
      by (rw[] >>
         `(CHOICE x) IN x` by metis_tac[] >>
 	fs[partition_def,Abbr`s`] >> rw[] >> fs[]) >>
-   `satis M u ff` by metis_tac[] >> (*???????????????????????????????????????????? *)
+   `satis M u ff` by metis_tac[] >> 
    `satis M v (DIAM ff)` by metis_tac[satis_def] >>
    `DEG (DIAM ff) <= i + 1` by fs[DEG_def] >>
    `¬satis M' v' (DIAM ff)` suffices_by metis_tac[] >>
@@ -1032,9 +1417,69 @@ val prop_2_31_half2 = store_thm(
    `{y | y ∈ s ∧ equiv0 μ form y} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
    `(CHOICE {y | y ∈ s ∧ equiv0 μ form y}) IN {y | y ∈ s ∧ equiv0 μ form y}` by metis_tac[CHOICE_DEF] >>
    fs[] >>
-   `?f. (∃x. f = CHOICE x ∧ x ∈ s//e) /\ satis M' u' f)` suffices_by metis_tac
-   metis_tac[equiv0_SYM,equiv0_def])
+   `¬satis M' u' (CHOICE {y | y ∈ s ∧ equiv0 μ form y})` by metis_tac[equiv0_def] >>
+   `{y | y ∈ s ∧ equiv0 μ form y} IN (s//E μ)`
+       by (rw[partition_def] >> qexists_tac `form` >> rw[]) >> metis_tac[])
 >- (SPOSE_NOT_THEN ASSUME_TAC >>
+     `∀u.
+          u ∈ M.frame.world /\ M.frame.rel v u ==>
+          (?form. DEG form <= i /\ satis M' u' form /\ ¬satis M u form)`
+        by (rw[satis_def] >>
+	   `∃phi. DEG phi ≤ i ∧ (satis M' u' phi ⇎ satis M u phi)` by metis_tac[] >>
+	   Cases_on `satis M' u' phi` >- (qexists_tac `phi` >> metis_tac[])
+	                            >- (qexists_tac `NOT phi` >> rw[]
+				                                >- metis_tac[DEG_def]
+								>> metis_tac[satis_def])) >>
+								
+    qabbrev_tac `
+      s = {f | DEG f <= i /\ ?u. u IN M.frame.world /\
+               M.frame.rel v u /\ satis M' u' f /\ ¬satis M u f}` >>
+   `s ⊆ {f| DEG f <= i}` by (fs[Abbr`s`,SUBSET_DEF]) >>
+   `(equiv0 (μ:'b itself)) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
+   `FINITE (partition (equiv0 μ) s)`
+       by (`(equiv0 μ) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
+	  `equiv0 (:'c) = equiv0 (:'b)` by metis_tac[equiv0_equal_for_INFINITE_UNIV] >>
+	  metis_tac[prop_2_29,FINITE_partition_SUBSET]) >>
+   `FINITE (IMAGE CHOICE (s//E μ))` by metis_tac[IMAGE_FINITE] >>
+   `(equiv0 μ) equiv_on s` by metis_tac[equiv0_equiv_on] >> 
+   `!p. p IN (s//E μ) ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
+   `!p. p IN (s//E μ) ==> (CHOICE p) IN p` by metis_tac[CHOICE_DEF] >>
+   `!f. f IN (IMAGE CHOICE (s//E μ)) ==> DEG f <= i`
+     by (dsimp[] >> rw[] >> `(CHOICE x) IN x` by metis_tac[] >>
+         `x SUBSET s` by fs[partition_def,SUBSET_DEF] >>
+         `(CHOICE x) IN s` by metis_tac[SUBSET_DEF, partition_def] >>
+         fs[Abbr`s`]) >>
+   imp_res_tac BIGCONJ_EXISTS_DEG >>
+   `∀f. f ∈ IMAGE CHOICE (s//E μ) ⇒ satis M' u' f`
+     by (rw[] >>
+        `(CHOICE x) IN x` by metis_tac[] >>
+	fs[partition_def,Abbr`s`] >> rw[] >> fs[]) >>
+   `satis M' u' ff` by metis_tac[] >> 
+   `satis M' v' (DIAM ff)` by metis_tac[satis_def] >>
+   `DEG (DIAM ff) <= i + 1` by fs[DEG_def] >>
+   `¬satis M v (DIAM ff)` suffices_by metis_tac[] >>
+   `∀u. M.frame.rel v u /\ u ∈ M.frame.world ==> ¬satis M u ff`
+      suffices_by metis_tac[satis_def] >>
+   rw[partition_def,PULL_EXISTS] >>
+   `∃form. DEG form ≤ i ∧ satis M' u' form ∧ ¬satis M u form` by metis_tac[] >>
+   `form IN s` by (fs[Abbr`s`] >> qexists_tac `u` >> rw[]) >>
+   rw[] >>
+   `equiv0 μ form form` by metis_tac[equiv0_REFL] >> `form IN {y | y ∈ s ∧ equiv0 μ form y}` by fs[] >>
+   `{y | y ∈ s ∧ equiv0 μ form y} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
+   `(CHOICE {y | y ∈ s ∧ equiv0 μ form y}) IN {y | y ∈ s ∧ equiv0 μ form y}` by metis_tac[CHOICE_DEF] >>
+   fs[] >>
+   `¬satis M u (CHOICE {y | y ∈ s ∧ equiv0 μ form y})` by metis_tac[equiv0_def] >>
+   `{y | y ∈ s ∧ equiv0 μ form y} IN (s//E μ)`
+       by (rw[partition_def] >> qexists_tac `form` >> rw[]) >> metis_tac[]));
+
+
+
+
+
+
+
+
+(SPOSE_NOT_THEN ASSUME_TAC >>
    `?u. u IN M.frame.world /\ M.frame.rel v u` by 
    (`¬(!u. u IN M.frame.world ==> ¬M.frame.rel v u)` suffices_by metis_tac[] >>
    rpt strip_tac >>
@@ -1391,342 +1836,5 @@ val thm_2_34 = store_thm(
 
 
 
-(* finite model property via filtration *)
-
-val CUS_def = Define`
-CUS Σ <=> !f f'. ((DISJ f f') IN Σ ==> f IN Σ /\ f' IN Σ) /\
-                 ((NOT f) IN Σ ==> f IN Σ) /\
-                 ((DIAM f) IN Σ ==> f IN Σ)`;
-
-
-val REL_CUS_def = Define`
-REL_CUS Σ M = λw v. w IN M.frame.world /\
-                    v IN M.frame.world /\
-                    (!phi. phi IN Σ ==> (satis M w phi <=> satis M v phi))`;
-
-val EC_CUS_def = Define`
-EC_CUS Σ M w = {v | (REL_CUS Σ M) w v}`;
-
-val EC_REP_def = Define`
-EC_REP Σ M w = CHOICE (EC_CUS Σ M w)`;
-
-val EC_REP_SET_def = Define`
-EC_REP_SET Σ M = {n | ?w. w IN M.frame.world /\ n = EC_REP Σ M w}`;
-
-val IN_EC_CUS_IN_world = store_thm(
-"IN_EC_CUS_IN_world",
-``!x. x IN EC_CUS Σ M w ==> x IN M.frame.world``,
-rpt strip_tac >> fs[EC_CUS_def,REL_CUS_def]);
-
-val SAME_EC_SAME_tau = store_thm(
-"SAME_EC_SAME_tau",
-``!a b w. a IN EC_CUS Σ M w /\ b IN EC_CUS Σ M w ==> (!phi. phi IN Σ ==> (satis M a phi <=> satis M b phi))``,
-rpt strip_tac >> fs[EC_CUS_def,REL_CUS_def]);
-
-
-
-val REL_CUS_SYMM = store_thm(
-"REL_CUS_SYMM",
-``!w v. REL_CUS Σ M w v <=> REL_CUS Σ M v w``,
-rpt strip_tac >> eq_tac >> strip_tac
->> fs[REL_CUS_def]);
-
-val REL_CUS_REFL = store_thm(
-"REL_CUS_REFL",
-``!w. w IN M.frame.world ==> REL_CUS Σ M w w``,
-gen_tac >> fs[REL_CUS_def]);
-
-val REL_CUS_TRANS = store_thm(
-"REL_CUS_TRANS",
-``!u v w. u IN M.frame.world /\ v IN M.frame.world /\ w IN M.frame.world /\ REL_CUS Σ M u v /\ REL_CUS Σ M u w ==> REL_CUS Σ M v w``,
-rpt strip_tac >> rw[REL_CUS_def] >>
-`satis M u phi <=> satis M v phi` by metis_tac[REL_CUS_def] >>
-`satis M u phi <=> satis M w phi` by metis_tac[REL_CUS_def] >> metis_tac[]);
-
-val REL_EC = store_thm(
-"REL_EC",
-``!w v. w IN M.frame.world /\ v IN M.frame.world ==> (REL_CUS Σ M) w v ==> (EC_CUS Σ M w = EC_CUS Σ M v)``,
-rpt strip_tac >> simp[SET_EQ_SUBSET,SUBSET_DEF] >> rpt strip_tac
->- (`REL_CUS Σ M v x` suffices_by fs[EC_CUS_def] >>
-`REL_CUS Σ M w x` by fs[EC_CUS_def] >>
-`x IN M.frame.world` by fs[REL_CUS_def] >>
-metis_tac[REL_CUS_TRANS])
->- (`REL_CUS Σ M w x` suffices_by fs[EC_CUS_def] >>
-`REL_CUS Σ M v x` by fs[EC_CUS_def] >>
-`x IN M.frame.world` by fs[REL_CUS_def] >> metis_tac[REL_CUS_SYMM,REL_CUS_TRANS]));
-
-val EC_NOT_EMPTY = store_thm(
-"EC_NOT_EMPTY",
-``!w. w IN M.frame.world ==> EC_CUS Σ M w <> {}``,
-rpt strip_tac >>
-`w IN EC_CUS Σ M w` suffices_by metis_tac[MEMBER_NOT_EMPTY,EC_CUS_def] >>
-`(REL_CUS Σ M) w w` by metis_tac[REL_CUS_REFL] >>
-`w IN {v | (REL_CUS Σ M) w v}` by simp[] >> metis_tac[EC_CUS_def]);
-
-val REP_IN_world = store_thm(
-  "REP_IN_world",
-  ``w IN M.frame.world ==> EC_REP Σ M w IN M.frame.world``,
-  rpt strip_tac >>
-  fs[EC_REP_def,EC_CUS_def,REL_CUS_def] >>
-  `(CHOICE {v | v ∈ M.frame.world ∧ ∀phi. phi ∈ Σ ⇒ (satis M w phi ⇔ satis M v phi)}) IN
-  {v | v ∈ M.frame.world ∧ ∀phi. phi ∈ Σ ⇒ (satis M w phi ⇔ satis M v phi)}`
-    by (`{v | v ∈ M.frame.world ∧ ∀phi. phi ∈ Σ ⇒ (satis M w phi ⇔ satis M v phi)} <> {}`
-            suffices_by metis_tac[CHOICE_DEF] >>
-        `w IN {v | v ∈ M.frame.world ∧ ∀phi. phi ∈ Σ ⇒ (satis M w phi ⇔ satis M v phi)}`
-	    suffices_by metis_tac[MEMBER_NOT_EMPTY] >> fs[]) >>
-  fs[]);
-
-
-val REP_IN_EC = store_thm(
-  "REP_IN_EC",
-  ``!w. w IN M.frame.world ==> (EC_REP Σ M w) IN (EC_CUS Σ M w)``,
-  rw[] >> `EC_CUS Σ M w <> {}` by metis_tac[EC_NOT_EMPTY] >> metis_tac[EC_REP_def,CHOICE_DEF]);
-
-
-val RESTRICT_tau_theory = Define`
-RESTRICT_tau_theory Σ M w = {phi | phi IN Σ /\ satis M w phi}`;
-
-val ELEM_IN_EC = store_thm(
-"ELEM_IN_EC",
-``!n. n IN M.frame.world ==> n IN EC_CUS Σ M n``,
-rpt strip_tac >>
-`(REL_CUS Σ M) n n` by metis_tac[REL_CUS_REFL] >>
-`n IN {v | (REL_CUS Σ M) n v}` by simp[] >> metis_tac[EC_CUS_def]);
-
-val REP_W_SAME_tau = store_thm(
-"REP_W_SAME_tau",
-``!phi w. (phi IN Σ /\ w IN M.frame.world) ==> (satis M (EC_REP Σ M w) phi <=> satis M w phi)``,
-rpt strip_tac >>
-`(EC_REP Σ M w) IN (EC_CUS Σ M w) /\ w IN (EC_CUS Σ M w)` suffices_by metis_tac[SAME_EC_SAME_tau] >> metis_tac[REP_IN_EC,ELEM_IN_EC]);
-
-val EC_tau = store_thm(
-"EC_tau",
-``!n1 n2. n1 IN M.frame.world /\ n2 IN M.frame.world ==> (EC_CUS Σ M n1 = EC_CUS Σ M n2 ==>
-RESTRICT_tau_theory Σ M n1 = RESTRICT_tau_theory Σ M n2)``,
-rpt strip_tac >> simp[SET_EQ_SUBSET] >> simp[SUBSET_DEF] >> rpt strip_tac
->> simp[RESTRICT_tau_theory] >>
-fs[RESTRICT_tau_theory] >>
-`EC_CUS Σ M n1 ⊆ EC_CUS Σ M n2` by simp[SET_EQ_SUBSET] >> fs[SUBSET_DEF] >>
-`n1 IN EC_CUS Σ M n1` by metis_tac[ELEM_IN_EC] >>
-`n1 ∈ EC_CUS Σ M n2` by metis_tac[] >>
-`REL_CUS Σ M n2 n1` by fs[EC_CUS_def] >>
-metis_tac[REL_CUS_def]);
-
-val tau_EC = store_thm(
-"tau_EC",
-``!n1 n2. n1 IN M.frame.world /\ n2 IN M.frame.world ==> (RESTRICT_tau_theory Σ M n1 = RESTRICT_tau_theory Σ M n2 ==> EC_CUS Σ M n1 = EC_CUS Σ M n2)``,
-rpt strip_tac >> simp[SET_EQ_SUBSET] >> simp[SUBSET_DEF] >> rpt strip_tac
->- (simp[EC_CUS_def] >> simp[REL_CUS_def] >>
-`x IN M.frame.world` by fs[EC_CUS_def,REL_CUS_def] >> rw[] >> eq_tac >> strip_tac
-  >- (`RESTRICT_tau_theory Σ M n2  ⊆ RESTRICT_tau_theory Σ M n1` by simp[SET_EQ_SUBSET] >>
-     `phi IN RESTRICT_tau_theory Σ M n2` by fs[RESTRICT_tau_theory] >>
-     `phi IN RESTRICT_tau_theory Σ M n1` by metis_tac[SUBSET_DEF] >>
-     `satis M n1 phi` by fs[RESTRICT_tau_theory] >>
-     `REL_CUS Σ M n1 x` by fs[EC_CUS_def] >>
-     metis_tac[REL_CUS_def])
-  >- (`RESTRICT_tau_theory Σ M n1  ⊆ RESTRICT_tau_theory Σ M n2` by simp[SET_EQ_SUBSET] >> 
-     `REL_CUS Σ M n1 x` by fs[EC_CUS_def] >>
-     `satis M n1 phi` by metis_tac[REL_CUS_def] >>
-     fs[SUBSET_DEF] >> fs[RESTRICT_tau_theory]))
->- (simp[EC_CUS_def] >> simp[REL_CUS_def] >>
-`x IN M.frame.world` by fs[EC_CUS_def,REL_CUS_def] >> rw[] >> eq_tac >> strip_tac
-  >- (`REL_CUS Σ M n2 x` by fs[EC_CUS_def] >>
-     `RESTRICT_tau_theory Σ M n1 ⊆ RESTRICT_tau_theory Σ M n2` by metis_tac[SET_EQ_SUBSET] >> fs[SUBSET_DEF,RESTRICT_tau_theory] >>
-     `satis M n2 phi` by metis_tac[] >>
-     metis_tac[REL_CUS_def])
-  >- (`REL_CUS Σ M n2 x` by fs[EC_CUS_def] >>
-     `RESTRICT_tau_theory Σ M n2 ⊆ RESTRICT_tau_theory Σ M n1` by metis_tac[SET_EQ_SUBSET] >> fs[SUBSET_DEF,RESTRICT_tau_theory] >>
-     `satis M n2 phi` by metis_tac[REL_CUS_def] >>
-     metis_tac[]))
-);
-
-val SAME_REP_SAME_tau = store_thm(
-"SAME_REP_SAME_tau",
-``w IN M.frame.world /\ w' IN M.frame.world /\ EC_REP Σ M w = EC_REP Σ M w' ==>
-(!phi. phi IN Σ ==> (satis M w phi <=> satis M w' phi))``,
-rw[] >>
-`EC_REP Σ M w IN EC_CUS Σ M w` by metis_tac[REP_IN_EC] >>
-`w IN EC_CUS Σ M w` by metis_tac[ELEM_IN_EC] >>
-`(satis M w phi <=> satis M (EC_REP Σ M w) phi)` by metis_tac[SAME_EC_SAME_tau] >>
-`EC_REP Σ M w' IN EC_CUS Σ M w'` by metis_tac[REP_IN_EC] >>
-`w' IN EC_CUS Σ M w'` by metis_tac[ELEM_IN_EC] >>
-`(satis M w' phi <=> satis M (EC_REP Σ M w') phi)` by metis_tac[SAME_EC_SAME_tau] >>
-metis_tac[]);
-
-val SAME_REP_SAME_EC = store_thm(
-"SAME_REP_SAME_EC",
-``w IN M.frame.world /\ w' IN M.frame.world /\ EC_REP Σ M w = EC_REP Σ M w' ==> EC_CUS Σ M w = EC_CUS Σ M w'``,
-rw[] >>
-`(!phi. phi IN Σ ==> (satis M w phi <=> satis M w' phi))` by metis_tac[SAME_REP_SAME_tau] >>
-`RESTRICT_tau_theory Σ M w = RESTRICT_tau_theory Σ M w'` by
-(fs[RESTRICT_tau_theory] >> simp[EXTENSION] >> rw[] >> eq_tac >> rw[] >> metis_tac[]) >>
-metis_tac[tau_EC]);
-
-val filtration_def = Define`
-filtration M Σ FLT <=>
-CUS Σ /\
-(FLT.frame.world = EC_REP_SET Σ M) /\
-(!w v. w IN M.frame.world /\ v IN M.frame.world /\ M.frame.rel w v ==> FLT.frame.rel (EC_REP Σ M w) (EC_REP Σ M v)) /\
-(!w v. w IN M.frame.world /\ v IN M.frame.world /\ FLT.frame.rel (EC_REP Σ M w) (EC_REP Σ M v) ==> (!phi psi. (phi IN Σ /\ phi = DIAM psi) ==> (satis M v psi ==> satis M w phi))) /\
-(!p s. FLT.valt p s <=> (?w. s = EC_REP Σ M w /\ satis M w (VAR p)))`;
-
-val FLT_M_world = store_thm(
-"FLT_M_world",
-``!w. filtration M Σ FLT /\ w IN FLT.frame.world ==> w IN M.frame.world``,
-rpt strip_tac >>
-`w IN EC_REP_SET Σ M` by metis_tac[filtration_def] >>
-fs[EC_REP_SET_def] >> fs[EC_REP_def] >>
-`EC_CUS Σ M w' <> {}` by metis_tac[EC_NOT_EMPTY] >>
-`(CHOICE (EC_CUS Σ M w')) IN (EC_CUS Σ M w')` by metis_tac[CHOICE_DEF] >>
-`(EC_CUS Σ M w') SUBSET M.frame.world` suffices_by fs[SUBSET_DEF] >>
-rw[EC_CUS_def,REL_CUS_def] >> fs[SUBSET_DEF]);
-
-
-val EC_CUS_SUBSET_W = store_thm(
-"EC_CUS_SUBSET_W",
-``!w. w IN M.frame.world ==> EC_CUS Σ M w ⊆ M.frame.world``,
-rpt strip_tac >> simp[SUBSET_DEF] >> rpt strip_tac >>
-`REL_CUS Σ M w x` by fs[EC_CUS_def] >> metis_tac[REL_CUS_def]);
-
-val filtration_REP_REFL = store_thm(
-"filtration_REP_REFL",
-``filtration M Σ FLT ==> (!w. w IN FLT.frame.world ==> w = CHOICE (EC_CUS Σ M w))``,
-rpt strip_tac >>
-`w IN EC_REP_SET Σ M` by metis_tac[filtration_def] >> fs[EC_REP_SET_def] >>
-fs[EC_REP_def] >>
-`EC_CUS Σ M w' = EC_CUS Σ M (CHOICE (EC_CUS Σ M w'))` suffices_by metis_tac[] >>
-`EC_CUS Σ M w' <> {}` by metis_tac[EC_NOT_EMPTY] >>
-`w IN (EC_CUS Σ M w')` by metis_tac[CHOICE_DEF] >>
-`w IN M.frame.world` by metis_tac[EC_CUS_SUBSET_W,SUBSET_DEF] >>
-`REL_CUS Σ M w' (CHOICE (EC_CUS Σ M w'))` suffices_by metis_tac[REL_EC] >>
-`!a. a IN (EC_CUS Σ M w') ==> REL_CUS Σ M w' a` by
-(rpt strip_tac >> fs[EC_CUS_def]) >> metis_tac[]);
-
-val prop_2_38_lemma = store_thm(
-"prop_2_38_lemma",
-``!Σ M. FINITE Σ /\ filtration M Σ FLT ==> ?f. INJ f (FLT.frame.world) (POW Σ)``,
-rpt strip_tac >>
-qexists_tac `λw. RESTRICT_tau_theory Σ M w` >> rw[INJ_DEF]
->- (rw[POW_DEF] >> rw[RESTRICT_tau_theory] >> simp[SUBSET_DEF])
->- (`w = CHOICE (EC_CUS Σ M w)` by metis_tac[filtration_REP_REFL] >>
-`w' = CHOICE (EC_CUS Σ M w')` by metis_tac[filtration_REP_REFL] >>
-`w IN M.frame.world` by metis_tac[FLT_M_world] >>
-`w' IN M.frame.world` by metis_tac[FLT_M_world] >>
-`EC_CUS Σ M w = EC_CUS Σ M w'` by metis_tac[tau_EC] >> metis_tac[]));
-
-
-val prop_2_38 = store_thm(
-"prop_2_38",
-``!Σ M FLT. FINITE Σ /\ filtration M Σ FLT ==> CARD (FLT.frame.world) <= 2 ** (CARD (Σ))``,
-rpt strip_tac >>
-`CARD (POW Σ) = 2 ** CARD Σ` by simp[CARD_POW] >>
-`CARD FLT.frame.world ≤ CARD (POW Σ)` suffices_by rw[] >>
-irule INJ_CARD
->- metis_tac[FINITE_POW]
->- metis_tac[prop_2_38_lemma]);
-
-val thm_2_39 = store_thm(
-"thm_2_39",
-``!phi. phi IN Σ ==> (!w. w IN M.frame.world /\ filtration M Σ FLT ==> (satis M w phi <=> satis FLT (EC_REP Σ M w) phi))``,
-gen_tac >> strip_tac >> Induct_on `phi`
->- (rw[satis_def] >> eq_tac >> rpt strip_tac
-  >- (`EC_REP Σ M w ∈ EC_REP_SET Σ M ` suffices_by metis_tac[filtration_def] >>
-     fs[EC_REP_SET_def] >> qexists_tac `w` >> metis_tac[])
-  >- (`FLT.valt a (EC_REP Σ M w)` suffices_by fs[IN_DEF] >>
-     `∃w'. (EC_REP Σ M w) = EC_REP Σ M w' ∧ satis M w' (VAR a)` suffices_by fs[filtration_def] >>
-     qexists_tac `w` >>
-     metis_tac[satis_def,IN_DEF])
-  >- (`FLT.valt a (EC_REP Σ M w)` by fs[IN_DEF] >>
-     `∃w'. (EC_REP Σ M w) = EC_REP Σ M w' ∧ satis M w' (VAR a)` by metis_tac[filtration_def] >>
-     `w' IN M.frame.world` by metis_tac[satis_def] >>
-     `EC_CUS Σ M w = EC_CUS Σ M w'` by metis_tac[SAME_REP_SAME_EC] >>
-     `w IN EC_CUS Σ M w` by metis_tac[ELEM_IN_EC] >>
-     `w' IN EC_CUS Σ M w'` by metis_tac[ELEM_IN_EC] >>
-     `w' IN EC_CUS Σ M w` by metis_tac[] >>
-     `satis M w (VAR a)` by metis_tac[SAME_EC_SAME_tau] >> metis_tac[satis_def,IN_DEF]))
->- (rw[satis_def] >> eq_tac >> rw[]
-  >> `CUS Σ` by metis_tac[filtration_def] >> fs[CUS_def] >>
-     `phi IN Σ /\ phi' IN Σ` by metis_tac[] >> metis_tac[])
->- rw[satis_def]
->- (rw[satis_def] >> eq_tac >> rw[]
-  >> `CUS Σ` by metis_tac[filtration_def] >> fs[CUS_def] >>
-  `EC_REP Σ M w IN EC_REP_SET Σ M` by (fs[EC_REP_SET_def] >> qexists_tac `w` >> metis_tac[]) >>
-  metis_tac[filtration_def])
->- (rw[satis_def] >> eq_tac >> rw[]
-  >- (`EC_REP Σ M w IN EC_REP_SET Σ M` by (fs[EC_REP_SET_def] >> qexists_tac `w` >> metis_tac[]) >>
-  metis_tac[filtration_def])
-  >- (`M.frame.rel w v` by fs[IN_DEF] >>
-     `FLT.frame.rel (EC_REP Σ M w) (EC_REP Σ M v)` by metis_tac[filtration_def] >>
-     `EC_REP Σ M v IN EC_REP_SET Σ M` by (fs[EC_REP_SET_def] >> qexists_tac `v` >> metis_tac[]) >>
-     `EC_REP Σ M v IN FLT.frame.world` by metis_tac[filtration_def] >>
-     qexists_tac `EC_REP Σ M v` >> rw[] 
-     >> (`CUS Σ` by metis_tac[filtration_def] >>
-        `phi IN Σ` by metis_tac[CUS_def] >> metis_tac[]))
-  >- (`CUS Σ` by metis_tac[filtration_def] >>
-     `phi IN Σ` by metis_tac[CUS_def] >>
-     `v IN EC_REP_SET Σ M` by metis_tac[filtration_def] >>
-     fs[EC_REP_SET_def] >>
-     `satis M w' phi` by metis_tac[] >>
-     `satis M w (DIAM phi)` suffices_by metis_tac[satis_def] >>
-     `FLT.frame.rel (EC_REP Σ M w) (EC_REP Σ M w')` by fs[IN_DEF] >> metis_tac[filtration_def])));
-
-val FLT_def = Define`
-FLT M Σ = <| frame := <| world := EC_REP_SET Σ M ;
-                         rel := λn1 n2.
-                         ?w1 w2.
-                         (w1 IN M.frame.world /\ w2 IN M.frame.world /\
-                         n1 = EC_REP Σ M w1 /\ n2 = EC_REP Σ M w2 /\
-                         ?w' v'. w' IN M.frame.world /\ v' IN M.frame.world /\
-                         w' IN EC_CUS Σ M w1 /\ v' IN EC_CUS Σ M w2 /\ M.frame.rel w' v') |>;
-             valt := λp s. ∃w. s = EC_REP Σ M w ∧ satis M w (VAR p) |>`;
-     
-     
-val FLT_EXISTS = store_thm(
-"FLT_EXISTS",
-``!M Σ. CUS Σ ==> filtration M Σ (FLT M Σ)``,
-rw[filtration_def] >- fs[FLT_def]
->- (fs[FLT_def] >> map_every qexists_tac [`w`,`v`] >> rw[] >> map_every qexists_tac [`w`,`v`] >> rw[] >> metis_tac[ELEM_IN_EC])
->- (fs[FLT_def] >>
-   `psi IN Σ` by fs[CUS_def] >>
-   `satis M v psi ⇔ satis M w2 psi` by metis_tac[SAME_REP_SAME_tau] >>
-   `satis M v' psi ⇔ satis M w2 psi` by (`w2 IN EC_CUS Σ M w2` by metis_tac[ELEM_IN_EC] >> metis_tac[SAME_EC_SAME_tau]) >>
-   `satis M v' psi` by metis_tac[] >>
-   `satis M w' (DIAM psi)` by (rw[satis_def] >> qexists_tac `v'` >> fs[IN_DEF]) >>
-   `satis M w (DIAM psi) ⇔ satis M w1 (DIAM psi)` by metis_tac[SAME_REP_SAME_tau] >>
-   `satis M w' (DIAM psi) ⇔ satis M w1 (DIAM psi)` by (`w1 IN EC_CUS Σ M w1` by metis_tac[ELEM_IN_EC] >> metis_tac[SAME_EC_SAME_tau]) >> metis_tac[])
->- fs[FLT_def]);
-
-
-
-
-
-val subforms_phi_CUS = store_thm(
-"subforms_phi_CUS",
-``!phi. CUS (subforms phi)``,
-rw[CUS_def] >> fs[subforms_def,UNION_DEF]
->- (`f IN (subforms (DISJ f f'))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans])
->- (`f' IN (subforms (DISJ f f'))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans])
->- (`f IN (subforms (NOT f))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans])
->- (`f IN (subforms (DIAM f))` by (fs[subforms_def] >> metis_tac[subforms_phi_phi]) >> metis_tac[subforms_trans]));
-
-
-
-val thm_2_41 = store_thm(
-  "thm_2_41",
-``!phi M w. satis M (w:'b) phi ==> ?M' w':'b. w' IN M'.frame.world /\ satis M' w' phi /\ FINITE (M'.frame.world)``,
-rw[] >> qexists_tac `FLT M (subforms phi)` >> qexists_tac `EC_REP (subforms phi) M w` >> rw[]
->- (`w IN M.frame.world` by metis_tac[satis_in_world] >> fs[FLT_def,EC_REP_SET_def] >> qexists_tac `w` >> fs[])
->- (`CUS (subforms phi)` by metis_tac[subforms_phi_CUS] >>
-   `filtration M (subforms phi) (FLT M (subforms phi))` by metis_tac[FLT_EXISTS] >>
-   `phi IN (subforms phi)` by metis_tac[subforms_phi_phi] >>
-   `w IN M.frame.world` by metis_tac[satis_in_world] >>
-   metis_tac[thm_2_39])
->- (`CUS (subforms phi)` by metis_tac[subforms_phi_CUS] >>
-   `filtration M (subforms phi) (FLT M (subforms phi))` by metis_tac[FLT_EXISTS] >>
-   `FINITE (subforms phi)` by metis_tac[subforms_FINITE] >> 
-   `CARD (FLT M (subforms phi)).frame.world ≤ 2 ** CARD (subforms phi)` by metis_tac[prop_2_38] >>
-   drule_all (GEN_ALL prop_2_38_lemma) >> strip_tac >>
-   imp_res_tac FINITE_INJ >> rfs[FINITE_POW]));
-  
 
 val _ = export_theory();
