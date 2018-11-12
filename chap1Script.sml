@@ -123,14 +123,14 @@ val satis_set_def =
 
 (* Def 1.21 *)
 (* definition of universally true/ satisfiable/ falsiable *)
-val univ_true_def = Define`
-    univ_true M form <=> !w. satis M w form`;
+val universal_true_def = Define`
+    universal_true M form <=> (!w. w IN M.frame.world ==> satis M w form)`;
 
-val stfable_def = Define`
-    stfable M form = ?w. satis M w form`;
+val satisfiable_def = Define`
+    stfable M form = (?w. satis M w form)`;
 
 val refutable_def = Define`
-    refutable M form = ?w. satis M w (NOT form)`;
+    refutable M form = (?w. satis M w (NOT form))`;
 
 
 (* Def 1.28 *)

@@ -490,8 +490,5 @@ val prop_2_61 = store_thm(
 	{{w | w ∈ M.frame.world ∧ ∀phi. phi ∈ s ⇒ satis M w phi} | FINITE s ∧ s ⊆ Σ}` suffices_by fs[Abbr`d`] >>
 	fs[] >> qexists_tac `{form}` >> rw[])));
      
-                       
-
-      
-
+                      
 val _ = export_theory();
