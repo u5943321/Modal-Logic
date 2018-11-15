@@ -421,7 +421,15 @@ rw[] >> qexists_tac `FLT M (subforms phi)` >> qexists_tac `EC_REP (subforms phi)
    `CARD (FLT M (subforms phi)).frame.world ≤ 2 ** CARD (subforms phi)` by metis_tac[prop_2_38] >>
    drule_all (GEN_ALL prop_2_38_lemma) >> strip_tac >>
    imp_res_tac FINITE_INJ >> rfs[FINITE_POW]));
-  
+
+val REL_2_42_def = Define`
+    REL_2_42 Σ M = \a b. (?w. w IN M.frame.world /\ a = EC_CUS Σ M w) /\
+                         (?v. v IN M.frame.world /\ b = EC_CUS Σ M v) /\
+                         (!phi. (DIAM phi) IN Σ /\ satis M v (DISJ phi (DIAM phi)) ==> satis M w (DIAM phi)))`;
+
+
+
+(* FMP via selection *)
 
 
 val peval_satis_strengthen = store_thm(
