@@ -1714,7 +1714,9 @@ val thm_2_34 = store_thm(
 	     metis_tac[IMAGE_FINITE])))
    >- (fs[Abbr`M4`,Abbr`W4`] >> simp[PULL_EXISTS] >> qexists_tac `0` >> fs[] >> simp[Abbr`ss`,PRIM_REC_THM])
    >- `?f. nbisim M4 M3 f k w w`
-          suffices_by (rw[] >> `DEG phi <= k` by fs[Abbr`k`] >> metis_tac[prop_2_31_half1]) >>
+          suffices_by (rw[] >> `DEG phi <= k` by fs[Abbr`k`] >> metis_tac[prop_2_31_half1]) >> 
+   qexists_tac `\n w1 w2. !w. w IN M3.frame.world /\ M3.frame.rel w w1 /\
+                              M3.frame.rel w w2 ==> (!psi. satis M3 w (DIAM psi) ==> )
       
 
 

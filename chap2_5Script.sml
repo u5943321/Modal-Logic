@@ -15,6 +15,26 @@ val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "chap2_5";
 
+
+
+
+val BIGCONJ_EXISTS_DIST_TYPE = store_thm(
+  "BIGCONJ_EXISTS_DIST_TYPE",
+  ``∀s.
+     FINITE s ⇒
+     ?ff. 
+     (∀w:'b M.
+        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)) /\
+     (∀w:'c M.
+        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f))``,
+  Induct_on `FINITE` >> rw[]
+  >- (qexists_tac `TRUE` >> rw[TRUE_def,satis_def])
+  >- (qexists_tac `AND e ff` >> rw[satis_def,AND_def] >> eq_tac >> rw[]
+     >- rw[]
+     >> metis_tac[]));
+
+
+
 (* ultrafilter extensions *)
 
 val HM_class_def = Define`
