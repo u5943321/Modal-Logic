@@ -1126,7 +1126,7 @@ gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
        metis_tac[]))));
 
 
-val BIGCONJ_EXISTS_2 = store_thm(
+val BIGCONJ_EXISTS_2_2 = store_thm(
 "BIGCONJ_EXISTS_2",
 ``∀s.
      FINITE s ⇒

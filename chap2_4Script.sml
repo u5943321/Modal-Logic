@@ -9,21 +9,55 @@ open set_relationTheory;
 val _ = new_theory "chap2_4";
 
 
+
 val _ = Datatype`
-	fform = fRrel num num
-	       | fVrel 'a num
+        fterm = fVar num
+	       | fConst num ;
+	fform = fRrel fterm fterm
+	       | fVrel 'a fterm
 	       | fDISJ fform fform
 	       | fNOT fform
 	       | fEXISTS num fform
-	       | fEQ num num`;
+	       | fEQ fterm fterm`;
 
-val count_fvar_def = Define`
-  count_fvar (fRrel n1 n2) = {n1;n2} /\
-  count_fvar (fVrel a n) = {n} /\
-  count_fvar (fDISJ ff1 ff2) = (count_fvar ff1) ∪ (count_fvar ff2) /\
-  count_fvar (fNOT ff) = count_fvar ff /\
-  count_fvar (fEXISTS n ff) = n INSERT (count_fvar ff) /\
-  count_fvar (fEQ n1 n2) = {n1;n2}`;
+
+
+
+
+val tvars_def = Define`
+  tvars (fVar a) = {a} /\
+  tvars (fConst a) = {}`;
+
+val fvars_def = Define`
+  fvars (fRrel t1 t2) = tvars t1 ∪ tvars t2 /\
+  fvars (fVrel a t) = tvars t /\
+  fvars (fDISJ ff1 ff2) = (fvars ff1) ∪ (fvars ff2) /\
+  fvars (fNOT ff) = fvars ff /\
+  fvars (fEXISTS n ff) = n INSERT (fvars ff) /\
+  fvars (fEQ t1 t2) = tvars t1 ∪ tvars t2`;
+
+
+val tconsts_def = Define`
+  tconsts (fVar a) = {} /\
+  tconsts (fConst a) = {a}`;
+
+val fconsts_def = Define`
+  fconsts (fRrel t1 t2) = tconsts t1 ∪ tconsts t2 /\
+  fconsts (fVrel a t) = tconsts t /\
+  fconsts (fDISJ ff1 ff2) = (fconsts ff1) ∪ (fconsts ff2) /\
+  fconsts (fNOT ff) = fconsts ff /\
+  fconsts (fEXISTS n ff) = n INSERT (fconsts ff) /\
+  fconsts (fEQ t1 t2) = tconsts t1 ∪ tconsts t2`;
+
+
+val freevars_def = Define`
+  freevars (fRrel t1 t2) = tvars t1 ∪ tvars t2 /\
+  freevars (fVrel a t) = tvars t /\
+  freevars (fDISJ ff1 ff2) = freevars ff1 ∪ freevars ff2 /\
+  freevars (fNOT ff) = freevars ff /\
+  freevars (fEXISTS n ff) = freevars ff DELETE n /\
+  freevars (fEQ t1 t2) = tvars t1 ∪ tvars t2`;
+
 
 val fAND_def = Define`
   fAND ff1 ff2 = fNOT (fDISJ (fNOT ff1) (fNOT ff2))`;
@@ -35,23 +69,29 @@ val fIMP_def = Define`
   fIMP ff1 ff2 = fDISJ (fNOT ff1) ff2`;
 
 val ST_def = Define`
-  (ST x (VAR p) <=> fVrel p x) /\
-  (ST x (FALSE) <=> fNOT (fEQ x x)) /\
+  (ST x (VAR p) <=> fVrel p (fVar x)) /\
+  (ST x (FALSE) <=> fNOT (fEQ (fVar x) (fVar x))) /\
   (ST x (NOT phi) <=> fNOT (ST x phi)) /\
   (ST x (DISJ phi psi) <=> fDISJ (ST x phi) (ST x psi)) /\
-  (ST x (DIAM phi) <=> fEXISTS (x + 1) (fAND (fRrel x (x + 1)) (ST (x + 1) phi)))`;
+  (ST x (DIAM phi) <=> fEXISTS (x + 1) (fAND (fRrel (fVar x) (fVar (x + 1))) (ST (x + 1) phi)))`;
 
+val fteval_def = Define`
+  fteval σ c (fVar n) = σ n /\
+  fteval σ c (fConst n) = c n`;
+  
 val feval_def = Define`
-  (feval M σ (fVrel p x) <=> M.valt p (σ x)) /\
-  (feval M σ (fRrel x y) <=> M.frame.rel (σ x) (σ y)) /\
-  (feval M σ (fDISJ ff1 ff2) <=> (feval M σ ff1 \/ feval M σ ff2)) /\
-  (feval M σ (fNOT ff) <=> ¬(feval M σ ff)) /\
-  (feval M σ (fEXISTS n ff) <=> ?w. w IN M.frame.world /\
-                                feval M ((n =+ w)σ) ff) /\
-  (feval M σ (fEQ ff1 ff2) <=> ff1 = ff2)`;
+  (feval M c σ (fVrel p t) <=> M.valt p (fteval σ c t)) /\
+  (feval M c σ (fRrel t1 t2) <=> M.frame.rel (fteval σ c t1) (fteval σ c t2)) /\
+  (feval M c σ (fDISJ ff1 ff2) <=> (feval M c σ ff1 \/ feval M c σ ff2)) /\
+  (feval M c σ (fNOT ff) <=> ¬(feval M c σ ff)) /\
+  (feval M c σ (fEXISTS n ff) <=> ?w. w IN M.frame.world /\
+                                feval M c ((n =+ w)σ) ff) /\
+  (feval M c σ (fEQ t1 t2) <=> fteval σ c t1 = fteval σ c t2)`;
 
 val fsatis_def = Define`
-  fsatis M σ fform <=> (IMAGE σ univ(:num)) SUBSET M.frame.world /\ feval M σ fform`;
+  fsatis M c σ fform <=> (IMAGE σ univ(:num)) SUBSET M.frame.world /\
+                         (IMAGE c univ(:num)) SUBSET M.frame.world /\
+                         feval M c σ fform`;
 
 val fsatis_AND = store_thm(
   "fsatis_AND",
