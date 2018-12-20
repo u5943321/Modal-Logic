@@ -14,6 +14,25 @@ val isLang_def = Define`
   isLang cset phiset <=> !phi. phi IN phiset ==> fconsts phi ⊆ cset`;
 
 
+val _ = Datatype`
+        folmodel = <| domain : 'a set ;
+	              fnsyms : 'f -> 'a list -> 'a;
+		      predsyms : 'p -> 'a list -> bool;
+		      |>`;
+
+
+val mm2folm_def = Define`
+  mm2folm M = <| domain := M.frame.world ;
+                 fnsyms := \x y. ARB;
+		 predsyms := \p. case p of
+		             NONE => (\as. case as of [w1;w2] =>
+			             M.frame.rel w1 w2 /\
+				     w1 IN M.frame.world /\ w2 IN M.frame.world)
+			     | SOME pv => \as. case as of [w] =>
+			             M.valt p w |>`;
+
+
+
 
 val _ = export_theory();
 

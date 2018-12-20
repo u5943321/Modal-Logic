@@ -1126,7 +1126,7 @@ gen_tac >> gen_tac >> gen_tac >> Induct_on `n`
        metis_tac[]))));
 
 
-val BIGCONJ_EXISTS_2 = store_thm(
+val BIGCONJ_EXISTS_2_2 = store_thm(
 "BIGCONJ_EXISTS_2",
 ``∀s.
      FINITE s ⇒
@@ -1715,13 +1715,16 @@ val thm_2_34 = store_thm(
    >- (fs[Abbr`M4`,Abbr`W4`] >> simp[PULL_EXISTS] >> qexists_tac `0` >> fs[] >> simp[Abbr`ss`,PRIM_REC_THM])
    >- `?f. nbisim M4 M3 f k w w`
           suffices_by (rw[] >> `DEG phi <= k` by fs[Abbr`k`] >> metis_tac[prop_2_31_half1]) >> 
-   qexists_tac `\n w1 w2. !w. w IN M3.frame.world /\ M3.frame.rel w w1 /\
-                              M3.frame.rel w w2 ==> (!psi. satis M3 w (DIAM psi) ==> )
+      qexists_tac `\n w1 w2. w1 IN M4.frame.world /\ w2 IN M3.frame.world /\
+                  (!phi. DEG phi <= n ==> (satis M3 w1 phi <=> satis M3 w2 phi))` >>
+     rw[nbisim_def]
+     >- cheat
+       SPOSE_NOT_THEN ASSUME_TAC >>
+       `?phi. DEG phi ≤ n + 1 /\ (satis M3 w1 phi /\ ¬satis M3 w2 phi)` suffices_by metis_tac[] >>
+       cheat
+
+      SPOSE_NOT_THEN ASSUME_TAC >> 
       
-
-
-
-
 
 
 val _ = export_theory();
