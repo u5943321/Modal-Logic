@@ -1646,7 +1646,8 @@ val
   >- (qexists_tac `w` >> metis_tac[satis_in_world,root_height_0])
   >- Induct_on `f` >> rw[] (* 5 *)
      >- fs[DEG_def]
-     >- 
+     >- fs[DEG_def] >>
+        `(DEG
 
 
 
