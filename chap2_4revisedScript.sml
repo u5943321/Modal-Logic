@@ -146,7 +146,7 @@ val fconsts_def = Define`
   fconsts (fPrel a t) = tconsts t /\
   fconsts (fDISJ ff1 ff2) = (fconsts ff1) ∪ (fconsts ff2) /\
   fconsts (fNOT ff) = fconsts ff /\
-  fconsts (fEXISTS n ff) = n INSERT (fconsts ff) /\
+  fconsts (fEXISTS n ff) = fconsts ff /\
   fconsts (fEQ t1 t2) = tconsts t1 ∪ tconsts t2`;
 
 
@@ -192,9 +192,56 @@ val n_saturated_def = Define`
 
 val countably_saturated_def = Define`
   countably_saturated M <=> !n. n_saturated M n`;
-			     
-                      
 
+
+val no_constant_fsatis_lemma = store_thm(
+  "no_constant_fsatis_lemma",
+  ``!M1 M2. (M1.domain = M2.domain /\
+            M1.predsyms = M2.predsyms /\
+	    M1.relsyms = M2.relsyms)
+            ==> !phi. fconsts phi = {} ==> !σ. IMAGE σ univ(:num) SUBSET M1.domain ==>
+            fsatis M1 σ phi = fsatis M2 σ phi``,
+  strip_tac >> strip_tac >> strip_tac >> 
+  Induct_on `phi` >> rw[fsatis_def,feval_def] (* 6 *)
+  >- (Cases_on `f` >> rw[] (* 2 *)
+     >- (Cases_on `f0` >> rw[] (* 2 *)
+        >- fs[interpret_def]
+	>- fs[fconsts_def,tconsts_def])
+     >- fs[fconsts_def,tconsts_def])
+  >- (Cases_on `f` >> rw[] (* 2 *)
+     >- fs[interpret_def]
+     >- fs[fconsts_def,tconsts_def])
+  >- (fs[fconsts_def] >> metis_tac[fsatis_def])
+  >- (fs[fconsts_def] >> metis_tac[fsatis_def])
+  >- (fs[fconsts_def,fsatis_def] >> rw[EQ_IMP_THM] (* 2 same *)
+     >- (qexists_tac `x` >> rw[] >>
+        `IMAGE ((n =+ x) σ) 𝕌(:num) ⊆ M1.domain` suffices_by metis_tac[] >>
+	rw[IMAGE_DEF,SUBSET_DEF] >> Cases_on `x'' = n` >> rw[] (* 2 *)
+	>- fs[APPLY_UPDATE_THM]
+	>- (fs[APPLY_UPDATE_THM,IMAGE_DEF,SUBSET_DEF] >> metis_tac[]))
+     >- (qexists_tac `x` >> rw[] >>
+        `IMAGE ((n =+ x) σ) 𝕌(:num) ⊆ M1.domain` suffices_by metis_tac[] >>
+	rw[IMAGE_DEF,SUBSET_DEF] >> Cases_on `x'' = n` >> rw[] (* 2 *)
+	>- fs[APPLY_UPDATE_THM]
+	>- (fs[APPLY_UPDATE_THM,IMAGE_DEF,SUBSET_DEF] >> metis_tac[])))
+  >- (fs[fconsts_def] >> Cases_on `f` >> rw[] (* 2 *)
+     >- (Cases_on `f0` >> rw[] (* 2 *)
+        >- fs[interpret_def]
+	>- fs[tconsts_def])
+     >- fs[tconsts_def]));
+
+val ST_no_constant = store_thm(
+  "ST_no_constant",
+  ``!f x u. fconsts (ST x u f) = {}``,
+  Induct_on `f` >> rw[ST_def,fconsts_def,tconsts_def] (* 5 *) >>
+  `() = u` by fs[] >> fs[fAND_def,fconsts_def,tconsts_def,ST_def]);
+  
+                      
+val ST_one_freevar = store_thm(
+  "ST_one_freevar",
+  ``!f x u. freevars (ST x u f) SUBSET {x}``,
+  Induct_on `f` >> rw[ST_def,freevars_def,fvars_def,tvars_def,fAND_def] >>
+  `(freevars (ST (x + 1) () f)) SUBSET {x + 1}` by metis_tac[] >> fs[DELETE_DEF,DIFF_DEF,SUBSET_DEF] >> metis_tac[]);
 
 val thm_2_65 = store_thm(
   "thm_2_65",
@@ -209,7 +256,7 @@ val thm_2_65 = store_thm(
   `consistent MA Σ'`
       by rw[consistent_def] >> fs[fin_satisfiable_in_def] >>
          Cases_on `(fRrel () (fConst 0) (fVar x)) IN G0` (* 2 *)
-	 >- `G0 =  (fRrel () (fConst 0) (fVar x)) INSERT (G0 DELETE (fRrel () (fConst 0) (fVar x)))` by metis_tac[INSERT_DELETE] >>
+	 >- (`G0 =  (fRrel () (fConst 0) (fVar x)) INSERT (G0 DELETE (fRrel () (fConst 0) (fVar x)))` by metis_tac[INSERT_DELETE] >>
 	    `!f. f IN G0 ==> f = fRrel () (fConst 0) (fVar x) \/ f IN (IMAGE (ST x ()) Σ)`
 	       by (rpt strip_tac >>
 	          `f <> fRrel () (fConst 0) (fVar x) ==> f ∈ IMAGE (ST x ()) Σ` suffices_by metis_tac[] >>
@@ -224,10 +271,10 @@ val thm_2_65 = store_thm(
 	    `∃x. (x ∈ M.frame.world ∧ M.frame.rel w x) ∧ ∀form. form ∈ ps ⇒ satis M x form` by metis_tac[] >>
 	    qexists_tac `\n. x'` >> rw[fsatis_def] (* 2 *)
 	    >- (rw[Abbr`MA`] >> rw[IMAGE_DEF,SUBSET_DEF])
-	    >- `IMAGE (λn. x') 𝕌(:num) ⊆ MA.domain` by (rw[Abbr`MA`] >> rw[IMAGE_DEF,SUBSET_DEF]) >>
+	    >- (`IMAGE (λn. x') 𝕌(:num) ⊆ MA.domain` by (rw[Abbr`MA`] >> rw[IMAGE_DEF,SUBSET_DEF]) >>
 	       Cases_on `phi = fRrel () (fConst 0) (fVar x)` (* 2 *)
 	       >- (fs[] >> rw[feval_def,interpret_def,Abbr`MA`])
-	       >- `∃t. phi = ST x () t ∧ t ∈ ps` by cheat >>
+	       >- (`∃t. phi = ST x () t ∧ t ∈ ps` by cheat >>
 	          `satis M x' t` by metis_tac[] >>
 		  `(λn. x') x = x'` by fs[] >>
 		  `() = u` by fs[] >>
@@ -235,6 +282,46 @@ val thm_2_65 = store_thm(
 		  imp_res_tac prop_2_47_i >>
 		  `satis M ((λn. x') x) t` by metis_tac[] >>
                   `fsatis (mm2folm M) (λn. x') (ST x u t)` by fs[] >>
+		  `fconsts (ST x u t) = {}` by metis_tac[ST_no_constant] >>
+		  `(mm2folm M).domain = MA.domain` by fs[mm2folm_def,Abbr`MA`] >>
+		  `(mm2folm M).predsyms = MA.predsyms` by fs[mm2folm_def,Abbr`MA`] >>
+		  `(mm2folm M).relsyms = MA.relsyms` by fs[mm2folm_def,Abbr`MA`] >>
+		  `fsatis MA (λn. x') phi` by metis_tac[no_constant_fsatis_lemma] >>
+		  fs[fsatis_def])))
+	  >- cheat
+ 
+   `FINITE {w}` by fs[] >>
+   `CARD {w} <= 1` by fs[] >>
+   `{w} SUBSET (mm2folm M).domain` by fs[SUBSET_DEF,mm2folm_def] >>
+   `expansion (mm2folm M) {w} MA`
+       by (rw[expansion_def] >> map_every qexists_tac [`{0}`,`\n.w`] >> rw[] (* 3 *)
+          >- fs[mm2folm_def]
+	  >- fs[BIJ_DEF,INJ_DEF,SURJ_DEF]
+	  >- (fs[Abbr`MA`,mm2folm_def] >> rw[fmap_EXT] >> `FINITE {0}` by fs[] >> fs[FUN_FMAP_DEF]))
+   `Σ' SUBSET {phi |ok_form MA phi}` by cheat >>
+   `ftype x Σ'` by cheat >>
+   `frealizes MA x Σ'` by metis_tac[] >>
+   fs[frealizes_def] >>
+   rw[satisfiable_in_def] (* 2 *)
+   >- rw[SUBSET_DEF]
+   >- qexists_tac `w'` >> rw[] (* 3 *)
+      >- fs[Abbr`MA`]`
+      >- (`(fRrel () (fConst 0) (fVar x)) IN Σ'` by fs[Abbr`Σ'`] >>
+         `IMAGE (\n. w') univ(:num) SUBSET MA.domain`
+	     by fs[SUBSET_DEF,IMAGE_DEF,Abbr`MA`,mm2folm_def] >>
+	 `fsatis MA ((x =+ w') (λn. w')) (fRrel () (fConst 0) (fVar x))` by metis_tac[] >>
+	 fs[fsatis_def,feval_def,APPLY_UPDATE_THM,interpret_def,Abbr`MA`])
+      >- `IMAGE (\n. w') univ(:num) SUBSET MA.domain`
+	     by fs[SUBSET_DEF,IMAGE_DEF,Abbr`MA`,mm2folm_def] >>
+	 `(ST x () form) IN Σ'` by cheat >>
+	 `fsatis MA ((x =+ w') (λn. w')) (ST x () form)` by metis_tac[] >>
+	 `(IMAGE ((x =+ w') (λn. w')) univ(:num)) SUBSET M.frame.world` by cheat >>
+	 `fconsts (ST x u form) = ∅` by metis_tac[ST_no_constant] >>
+	 `fsatis (mm2folm M) ((x =+ w') (λn. w')) (ST x () form)` by cheat >>
+	 `(x =+ w') (λn. w') x = w'` by fs[APPLY_UPDATE_THM] >>
+	 metis_tac[prop_2_47_i]
+	     
+		  
 		  
 	       
 	          
