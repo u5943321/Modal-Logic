@@ -1641,7 +1641,7 @@ val tree_like_model_rooted = store_thm(
 
 val
 
-  ``!n. DEG f = n ==> !M w. rooted_model M w M ==> satis M w f ==> ?w'. height M w M w' = n /\ w' IN M.frame.world``,
+  ``!n. DEG f = n ==> !M r. tree M.frame r ==> !w. satis M w f ==> ?w'. height M w M w' = n /\ w' IN M.frame.world``,
   Induct_on `n` >> rw[] (* 2 *)
   >- (qexists_tac `w` >> metis_tac[satis_in_world,root_height_0])
   >- Induct_on `f` >> rw[] (* 5 *)
@@ -1652,7 +1652,29 @@ val
 
 val tree_height_DEG_lemma = store_thm(
   "tree_height_DEG_lemma",
-  ``!M r. tree M.frame r ==> !w f. satis M w f ==> DEG f <= model_height M r M - height M r M w``,
+  ``!M r. tree M.frame r ==> !n w f. satis M w f ==> DEG f <= model_height M r M - height M r M w``,
+  strip_tac >> strip_tac >> strip_tac >> Induct_on `n` >> rw[]
+  fs[model_height_def,tree_def] >>
+
+
+
+
+
+  ``!M r. tree M.frame r ==> !n w. model_height M r M - height M r M w = n ==>
+                                   !f. satis M w f ==> DEG f <= n``
+   strip_tac >> strip_tac >> strip_tac >> Induct_on `n` >> rw[]
+   >- `w IN M.frame.world` by metis_tac[satis_in_world] >>
+      fs[model_height_def] >> 
+
+
+
+
+  >- `?w0. M.frame.rel w0 w /\ height M r M w0 = n` by cheat >>
+     Induct_on `f` >> rw[]
+     >- fs[DEG_def]
+     >- fs[satis_def] (* 2 *)
+        >- 
+  
   rw[] >> `rooted_model M r M` by fs[tree_like_model_rooted] >>
   fs[tree_def] >> `w IN M.frame.world` by metis_tac[satis_in_world] >>
   `(RESTRICT M.frame.rel M.frame.world)^* r w` by metis_tac[] >>
@@ -1661,7 +1683,9 @@ val tree_height_DEG_lemma = store_thm(
   >- `height M r M r = 0` by metis_tac[root_height_0] >> fs[] >> rw[model_height_def] >>
      
      
-     
+
+
+``
   
 
 
@@ -1846,13 +1870,13 @@ val thm_2_34 = store_thm(
 	      >- fs[Abbr`distfp`]
 	      >- (`phi' IN phis` by (fs[Abbr`phis`] >> qexists_tac `v` >> rw[]) >>
 	          `phi' IN (s ∩ phis)` by metis_tac[IN_INTER] >> metis_tac[MEMBER_NOT_EMPTY]))
-           >- `s ∩ phis <> {}`
+           >- (`s ∩ phis <> {}`
 	          by (`phi' IN phis` by (fs[Abbr`phis`] >> qexists_tac `v` >> rw[]) >>
 	             `phi' IN (s ∩ phis)` by metis_tac[IN_INTER] >> metis_tac[MEMBER_NOT_EMPTY]) >>
 	      `(CHOICE (s ∩ phis)) IN (s ∩ phis)` by metis_tac[CHOICE_DEF] >>
 	      `(CHOICE (s ∩ phis)) IN s` by metis_tac[INTER_SUBSET,SUBSET_DEF] >>
 	      `equiv0 μ phi' (CHOICE (s ∩ phis))` by metis_tac[partition_elements_interrelate] >>
-	      fs[equiv0_def]))
+	      fs[equiv0_def])))
      >- qabbrev_tac `phis = {phi | DEG phi <= n /\ satis M3 w2' phi}` >>
         qabbrev_tac `rs = IMAGE CHOICE ((IMAGE (\s. s INTER phis) distfp) DELETE {})` >>
         `FINITE rs` 
@@ -1882,7 +1906,7 @@ val thm_2_34 = store_thm(
 	`DEG (DIAM ff) <= n + 1` by fs[DEG_def] >>
 	`satis M3 w1 (DIAM ff)` by metis_tac[] >>
 	rw[Abbr`M4`,Abbr`W4`] >> simp[PULL_EXISTS] >>
-	simp[Abbr`ss`] >> qexists_tac `CHOICE 
+	simp[PULL_EXISTS] >> map_every qexists_tac [`CHOICE {u | M3.frame.rel w1 u /\ satis M3 u ff}`,`n 
         
 
 
