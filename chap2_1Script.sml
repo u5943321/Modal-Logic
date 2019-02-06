@@ -771,11 +771,13 @@ val point_GENSUBMODEL_satis = store_thm(
 
 
 
+
 val prop_2_15_corollary = store_thm(
   "prop_2_15_corollary",
-  ``!M (w:'b) form. w IN M.frame.world /\ satis M w form ==>
+  ``!M (w:'b) form. satis M w form ==>
   ?MODEL (s:'b list). tree MODEL.frame s /\ satis MODEL s form``,
   rw[] >>
+  `w IN M.frame.world` by metis_tac[satis_in_world] >>
   `satis (point_GENSUBMODEL M w) w form` by metis_tac[point_GENSUBMODEL_satis] >>
   `rooted_model (point_GENSUBMODEL M w) w M` by metis_tac[point_GENSUBMODEL_rooted] >>
   drule prop_2_15_strengthen >> rw[] >>
