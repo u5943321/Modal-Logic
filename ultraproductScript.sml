@@ -1,7 +1,14 @@
 open HolKernel Parse boolLib bossLib;
 open ultrafilterTheory;
-open ultrafilterTheory;
+open HolKernel Parse boolLib bossLib;
+open chap1Theory;
+open pred_setTheory;
+open relationTheory;
+open arithmeticTheory;
+open set_relationTheory;
+open pairTheory;
 
+val _ = ParseExtras.tight_equality()
 val _ = new_theory "ultraproduct";
 
 val Cart_prod_def = Define`
@@ -37,13 +44,20 @@ val ultraproduct_model_def = Define`
 					                      {i | i IN I /\ (MS i).frame.rel (f i) (g i)} IN U) |>;
 			          valt := \p fu. (?f. f IN fu /\ {i | i IN I /\ (f i) IN (MS i).valt p} IN U) |>`;
 
+(*
+val ultraproduct_worlds = store_thm(
+  "ultraproduct_worlds",
+  ``v ∈ (ultraproduct_model U J Ms).frame.world <=>
+    ?f. ...
+
 val _ = hide "I"
 
 val _ = reveal "I"
 val prop_2_71 = store_thm(
   "prop_2_71",
   ``!U I MS. (!i. i IN I ==> (MS i) = M) /\ ultrafilter U I ==>
-         !phi. satis M w phi <=> satis (ultraproduct_model U I MS) {fw | Uequiv U I (models2worlds MS) (\i.w) fw} phi``,
+         !phi w. w IN M.frame.world ==>
+         (satis (ultraproduct_model U I MS) {fw | Uequiv U I (models2worlds MS) (\i.w) fw} phi <=>  satis M w phi)``,
   strip_tac >> strip_tac >> strip_tac >> strip_tac >> Induct_on `phi` >> rw[] (* 5 *)
   >- (rw[EQ_IMP_THM,satis_def] (* 4 *)
      >- (rw[ultraproduct_model_def,ultraproduct_def] >> rw[partition_def] >>
@@ -104,7 +118,22 @@ val prop_2_71 = store_thm(
   >- rw[satis_def,EQ_IMP_THM] (* 4 *)
      >- (rw[ultraproduct_model_def,ultraproduct_def] >> rw[partition_def,Uequiv_def,Cart_prod_def,models2worlds_def] >>
         qexists_tac `\i.w` >> rw[] >> simp[EXTENSION] >> metis_tac[])
-     >- rw[ultraproduct_model_def] >> simp[PULL_EXISTS] >> rw[ultraproduct_def,partition_def,Cart_prod_def] >>
+     >-
+
+
+
+
+
+rw[satis_def] >> pop_assum (ASSUME_TAC o GSYM) >> simp[]
+
+
+
+
+
+
+
+
+rw[ultraproduct_model_def] >> simp[PULL_EXISTS] >> rw[ultraproduct_def,partition_def,Cart_prod_def] >>
         simp[PULL_EXISTS] >>
 	map_every qexists_tac [`\i.w`,`\i.v`,`\i.v`] >> rw[] (* 6 *)
 	>- (`(Uequiv U I' (models2worlds MS)) equiv_on (Cart_prod I' (models2worlds MS))` by metis_tac[prop_A_16] >>
@@ -259,7 +288,7 @@ fs[ultraproduct_model_def] >>
 	   >- metis_tac[models2worlds_def]
 	   >- 
 	   
-	
+*)	
 
   
 

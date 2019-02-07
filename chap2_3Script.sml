@@ -1573,6 +1573,7 @@ rw[] >> qexists_tac `λn w1 w2. w1 = w2 /\ height M x M' w1 <= k - n` >> rw[nbis
 
 
 
+
 val point_GENSUBMODEL_def = Define`
   point_GENSUBMODEL M w =
    <| frame := <| world := {v | v IN M.frame.world /\ (RESTRICT M.frame.rel M.frame.world)^* w v };

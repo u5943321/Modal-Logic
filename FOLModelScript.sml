@@ -4,6 +4,7 @@ open FOLSyntaxTheory;
 
 val _ = new_theory "FOLModel";
 
+(*
 
 val _ = Datatype`
         folmodel = <| domain : 'a set ;
@@ -25,6 +26,9 @@ val Models_def = Define`
   Models M σ (fNOT f) = ¬(Models M σ f) /\
   Models M σ (fEXISTS n f) = (?x. x IN M.domain /\ Models M ((n=+x)σ) f) /\
   Models M σ (fEQ t1 t2) = (interpret M σ t1 = interpret M σ t2)`;
+
+
+*)
 
 val _ = export_theory();
 

@@ -1,5 +1,8 @@
 open HolKernel Parse boolLib bossLib;
 
+
+
+val _ = ParseExtras.tight_equality()
 val _ = new_theory "FOLSyntax";
 
 val _ = Datatype`
