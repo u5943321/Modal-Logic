@@ -1571,7 +1571,6 @@ rw[] >> qexists_tac `λn w1 w2. w1 = w2 /\ height M x M' w1 <= k - n` >> rw[nbis
 
 
 
-(* incompleted construction of thm 2.34
 
 
 val point_GENSUBMODEL_def = Define`
@@ -1763,30 +1762,6 @@ val tree_hrestriction_tree = store_thm(
 
 
 
-
-`M4.frame.world SUBSET M3.frame.world`
-		    by (rw[SUBSET_DEF] >>
-		       `x IN W4` by fs[Abbr`M4`] >>  fs[Abbr`W4`] >>
-		       Induct_on `i` >> rw[]
-		       >- fs[Abbr`ss`,PRIM_REC_THM]
-		       >- (fs[Abbr`ss`,PRIM_REC_THM] >>
-		          `?u. M3.frame.rel v u /\ u IN M3.frame.world /\ satis M3 u phi''`
-			  by (fs[satis_def] >> qexists_tac `v'` >> metis_tac[]) >>
-			  `{u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi''} <> {}`
-			  by (`u IN {u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi''}` by fs[] >>
-			     metis_tac[MEMBER_NOT_EMPTY]) >>
-			  `(CHOICE {u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi''}) IN
-			  {u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi''}`
-			  by metis_tac[CHOICE_DEF] >> fs[])) >>
-
-
-
-
-
-
-
-
-
 val thm_2_34 = store_thm( 
   "thm_2_34",
   ``!M1 w1:'b phi:'a form. univ(:'a) = {a| (VAR a) IN (subforms phi)} /\ satis M1 w1 phi ==> ?FM v:'b list. FINITE (FM.frame.world) /\ v IN FM.frame.world /\ satis FM v phi``,
@@ -1836,11 +1811,9 @@ val thm_2_34 = store_thm(
 	      `{u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
 	      `(CHOICE {u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'})
 	      IN {u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'}` by metis_tac[CHOICE_DEF] >> fs[])) >>
-
-(* height ss issue *)
-`!i a. a IN ss i ==> height M3 w2 M3 a = i`
-    by (Induct_on `i` >> rw[]
-(* 2 *)
+  (* height ss issue *)
+  `!i a. a IN ss i ==> height M3 w2 M3 a = i`
+    by (Induct_on `i` >> rw[] (* 2 *)
        >- (fs[Abbr`ss`,PRIM_REC_THM] >>
           `tree (hrestriction M2 w2 M2 k).frame w2` by metis_tac[tree_hrestriction_tree] >>
           `rooted_model M3 w2 M3` by metis_tac[Abbr`M3`,tree_like_model_rooted] >>
@@ -1859,15 +1832,6 @@ val thm_2_34 = store_thm(
           `tree (hrestriction M2 w2 M2 k).frame w2` by metis_tac[tree_hrestriction_tree] >>
           `tree M3.frame w2` by fs[Abbr`M3`] >>
           `v IN M3.frame.world` by metis_tac[satis_in_world] >> metis_tac[tree_height_rel_lemma])) >>
-   
-   
-
-
-
-
-
-
-
   map_every qexists_tac [`M4`,`w2`] >>
   rpt conj_tac (* 3 *)
   >- (simp[Abbr`M4`,Abbr`W4`] >> rw[] (* 2 *)
@@ -1897,7 +1861,7 @@ val thm_2_34 = store_thm(
 	     metis_tac[IMAGE_FINITE])))
   >- (fs[Abbr`M4`,Abbr`W4`] >> simp[PULL_EXISTS] >> qexists_tac `0` >> fs[] >> simp[Abbr`ss`,PRIM_REC_THM])
   (* the following is the critical part *)
-  >- `?f. nbisim M4 M3 f k w2 w2`
+  >- (`?f. nbisim M4 M3 f k w2 w2`
          suffices_by (rw[] >> `DEG phi <= k` by fs[Abbr`k`] >> metis_tac[prop_2_31_half1]) >> 
      qexists_tac `\n a1 a2. a1 IN M4.frame.world /\ a2 IN M3.frame.world /\
                   height M3 w2 M3 a1 = height M3 w2 M3 a2 /\
@@ -1993,7 +1957,7 @@ val thm_2_34 = store_thm(
 	      `(CHOICE (s ∩ phis)) IN s` by metis_tac[INTER_SUBSET,SUBSET_DEF] >>
 	      `equiv0 μ phi' (CHOICE (s ∩ phis))` by metis_tac[partition_elements_interrelate] >>
 	      fs[equiv0_def])))
-     >- qabbrev_tac `phis = {phi | DEG phi <= n /\ satis M3 a2' phi}` >>
+     >- (qabbrev_tac `phis = {phi | DEG phi <= n /\ satis M3 a2' phi}` >>
         qabbrev_tac `rs = IMAGE CHOICE ((IMAGE (\s. s INTER phis) distfp) DELETE {})` >>
         `FINITE rs` 
 	    by (`FINITE (IMAGE (λs. s ∩ phis) distfp)` by metis_tac[IMAGE_FINITE] >>
@@ -2021,7 +1985,7 @@ val thm_2_34 = store_thm(
 	simp[Abbr`M4`,Abbr`W4`] >> simp[PULL_EXISTS] >>
 	map_every qexists_tac [`CHOICE {u | M3.frame.rel a1 u /\ satis M3 u ff}`,`height M3 w2 M3 a1 + 1`,`height M3 w2 M3 a1 + 1`] >>
 	rw[] (* 6 *)
-        >- `(height M3 w2 M3 a2 + 1) = SUC (height M3 w2 M3 a2)` by fs[] >>
+        >- (`(height M3 w2 M3 a2 + 1) = SUC (height M3 w2 M3 a2)` by fs[] >>
 	   rw[Abbr`ss`,PRIM_REC_THM] >>
 	   qexists_tac `{u | M3.frame.rel a1 u ∧ satis M3 u ff}` >> rw[] >> simp[PULL_EXISTS] >>
 	   `∃v s phi'.
@@ -2060,59 +2024,9 @@ val thm_2_34 = store_thm(
 	      `satis M3 a1 x` by metis_tac[] >>
 	      `(DIAM d0) ∈ {y | DEG y ≤ k ∧ ∀M w:'b list. satis M w (DIAM ff) ⇔ satis M w y}` by metis_tac[] >> fs[])
 	   >- rw[Abbr`distfp`]
-	   >- `height M3 w2 M3 a1 = i` by metis_tac[] >>
-
-
-(* two bigsets are equal issue *)
-
-`!s0 n'. {CHOICE uset |
-       ∃phi' v s.
-          satis M3 v (◇ phi') ∧
-          ◇ phi' = CHOICE (s ∩ {d | ∃d0. d = ◇ d0}) ∧ s ∈ distfp ∧
-          s ∩ {d | ∃d0. d = ◇ d0} ≠ ∅ ∧ v ∈ s0 ∧
-          uset =
-          {u |
-           M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'}} =
-{CHOICE uset |
-                 ∃phi v.
-                    satis M3 v (◇ phi) ∧
-                    (∃x.
-                        ◇ phi = CHOICE x ∧
-                        (∃s. x = s ∩ {d | ∃d0. d = ◇ d0} ∧ s ∈ distfp) ∧
-                        x ≠ ∅) ∧ v ∈ s0 ∧
-                    uset =
-                    {u |
-                     M3.frame.rel v u ∧ u ∈ M3.frame.world ∧
-                     satis M3 u phi}}`
-by (rw[Once EXTENSION,Once EQ_IMP_THM] (* 2 *)
->- (qexists_tac `{u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'}` >> rw[] >> map_every qexists_tac [`phi'`,`v`] >> rw[] >>
-   qexists_tac `(s ∩ {d | ∃d0. d = ◇ d0})` >> rw[] >> qexists_tac `s` >> rw[])
->- (qexists_tac `{u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'}` >> rw[] >> map_every qexists_tac [`phi'`,`v`,`s`] >> rw[])) >>
-`(λs0 n'.
-      {CHOICE uset |
-                 ∃phi v.
-                    satis M3 v (◇ phi) ∧
-                    (∃x.
-                        ◇ phi = CHOICE x ∧
-                        (∃s. x = s ∩ {d | ∃d0. d = ◇ d0} ∧ s ∈ distfp) ∧
-                        x ≠ ∅) ∧ v ∈ s0 ∧
-                    uset =
-                    {u |
-                     M3.frame.rel v u ∧ u ∈ M3.frame.world ∧
-                     satis M3 u phi}}) =
-(λs0 n'.
-      {CHOICE uset |
-       ∃phi' v s.
-          satis M3 v (◇ phi') ∧
-          ◇ phi' = CHOICE (s ∩ {d | ∃d0. d = ◇ d0}) ∧ s ∈ distfp ∧
-          s ∩ {d | ∃d0. d = ◇ d0} ≠ ∅ ∧ v ∈ s0 ∧
-          uset =
-          {u |
-           M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'}})`
-    by cheat ????????? 
-
-
-            >- (`(DIAM d0) IN (s' ∩ {d | ∃d0. d = ◇ d0})` by metis_tac[CHOICE_DEF] >>
+	   >- (`height M3 w2 M3 a1 = i` by metis_tac[] >>
+              fs[PULL_EXISTS])
+	   >- (`(DIAM d0) IN (s' ∩ {d | ∃d0. d = ◇ d0})` by metis_tac[CHOICE_DEF] >>
 	       `(DIAM d0) IN s'` by metis_tac[IN_INTER] >>
 	       fs[partition_def] >>
 	       `◇ ff ∈ {y | DEG y ≤ k ∧ equiv0 μ x y} /\ ◇ d0 IN {y | DEG y ≤ k ∧ equiv0 μ x y}` by metis_tac[] >> fs[] >>
@@ -2120,7 +2034,7 @@ by (rw[Once EXTENSION,Once EQ_IMP_THM] (* 2 *)
 	       `equiv0 μ (DIAM ff) (DIAM d0)` by metis_tac[equiv0_def] >>
 	       `INFINITE univ(:'b list)` by metis_tac[INFINITE_LIST_UNIV] >>
 	       `equiv0 μ ff d0` by metis_tac[equiv0_DIAM] >>
-	       fs[equiv0_def] >> rw[Once EXTENSION,Once EQ_IMP_THM] >> metis_tac[satis_in_world])
+	       fs[equiv0_def] >> rw[Once EXTENSION,Once EQ_IMP_THM] >> metis_tac[satis_in_world]))
           (* one out of 6 solved*)
 (* 2nd of 6 *)
 >- (fs[satis_def] >> `{u | M3.frame.rel a1 u ∧ satis M3 u ff} <> {}` by (`?u. u IN {u | M3.frame.rel a1 u ∧ satis M3 u ff}`
@@ -2128,10 +2042,59 @@ by (rw[Once EXTENSION,Once EQ_IMP_THM] (* 2 *)
    `(CHOICE {u | M3.frame.rel a1 u ∧ satis M3 u ff}) IN {u | M3.frame.rel a1 u ∧ satis M3 u ff}` by metis_tac[CHOICE_DEF] >>
    `!c. c IN {u | M3.frame.rel a1 u ∧ satis M3 u ff} ==> M3.frame.rel a1 c` suffices_by metis_tac[] >> rw[])
 (* 3rd out of 6 *)
->- same as 1 ??? cheat
+>-  (`(height M3 w2 M3 a2 + 1) = SUC (height M3 w2 M3 a2)` by fs[] >>
+	   rw[Abbr`ss`,PRIM_REC_THM] >>
+	   qexists_tac `{u | M3.frame.rel a1 u ∧ satis M3 u ff}` >> rw[] >> simp[PULL_EXISTS] >>
+	   `∃v s phi'.
+           satis M3 v (◇ phi') ∧ ◇ phi' = CHOICE (s ∩ {d | ∃d0. d = ◇ d0}) ∧
+           s ∈ distfp ∧ s ∩ {d | ∃d0. d = ◇ d0} ≠ ∅ ∧
+            v ∈
+              PRIM_REC {w2}
+             (λs0 n'.
+             {CHOICE uset |
+             ∃phi' v s.
+             satis M3 v (◇ phi') ∧
+             ◇ phi' = CHOICE (s ∩ {d | ∃d0. d = ◇ d0}) ∧ s ∈ distfp ∧
+             s ∩ {d | ∃d0. d = ◇ d0} ≠ ∅ ∧ v ∈ s0 ∧
+             uset =
+             {u |
+              M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'}})
+             (height M3 w2 M3 a2) ∧
+             {u | M3.frame.rel a1 u ∧ satis M3 u ff} =
+             {u | M3.frame.rel v u ∧ u ∈ M3.frame.world ∧ satis M3 u phi'}` suffices_by metis_tac[] >>
+           qexists_tac `a1` >>
+	   `equiv0 μ equiv_on {f | DEG f ≤ k}` by metis_tac[equiv0_equiv_on] >>
+	   `BIGUNION (partition (equiv0 μ) {f | DEG f ≤ k}) = {f | DEG f ≤ k}` by metis_tac[BIGUNION_partition] >>
+	   fs[BIGUNION] >>
+	   `DEG (DIAM ff) <= k` by fs[DEG_def] >>
+	   `(DIAM ff) IN {f | DEG f <= k}` by fs[] >> 
+	   `(DIAM ff) IN {x | ∃s. s ∈ {f | DEG f ≤ k}//E μ ∧ x ∈ s}` by metis_tac[] >> fs[] >>
+	   qexists_tac `s'` >> rw[] >>
+	   `s' ∩ {d | ∃d0. d = ◇ d0} <> {}`
+	       by (`(DIAM ff) IN (s' ∩ {d | ∃d0. d = ◇ d0})` by fs[IN_INTER,IN_DEF] >> metis_tac[MEMBER_NOT_EMPTY]) >>
+	   `(CHOICE (s' ∩ {d | ∃d0. d = ◇ d0})) IN (s' ∩ {d | ∃d0. d = ◇ d0})`
+	       by metis_tac[CHOICE_DEF] >>
+	   fs[] >> rw[] (* 4 *)
+	   >- (fs[equiv0_def,partition_def] >>
+	      `(◇ ff) ∈ {y | DEG y ≤ k ∧ ∀M w:'b list. satis M w x ⇔ satis M w y}` by metis_tac[] >>
+	      fs[] >>
+	      `satis M3 a1 x` by metis_tac[] >>
+	      `(DIAM d0) ∈ {y | DEG y ≤ k ∧ ∀M w:'b list. satis M w (DIAM ff) ⇔ satis M w y}` by metis_tac[] >> fs[])
+	   >- rw[Abbr`distfp`]
+	   >- (`height M3 w2 M3 a1 = i` by metis_tac[] >>
+              fs[PULL_EXISTS])
+	   >- (`(DIAM d0) IN (s' ∩ {d | ∃d0. d = ◇ d0})` by metis_tac[CHOICE_DEF] >>
+	       `(DIAM d0) IN s'` by metis_tac[IN_INTER] >>
+	       fs[partition_def] >>
+	       `◇ ff ∈ {y | DEG y ≤ k ∧ equiv0 μ x y} /\ ◇ d0 IN {y | DEG y ≤ k ∧ equiv0 μ x y}` by metis_tac[] >> fs[] >>
+	       `(DIAM ff) IN {f | DEG f ≤ k} /\ (DIAM d0) IN {f | DEG f ≤ k}` by fs[] >>
+	       `equiv0 μ (DIAM ff) (DIAM d0)` by metis_tac[equiv0_def] >>
+	       `INFINITE univ(:'b list)` by metis_tac[INFINITE_LIST_UNIV] >>
+	       `equiv0 μ ff d0` by metis_tac[equiv0_DIAM] >>
+	       fs[equiv0_def] >> rw[Once EXTENSION,Once EQ_IMP_THM] >> metis_tac[satis_in_world]))
 (* 4th out of 6 *)
 >- (fs[satis_def] >> `{u | M3.frame.rel a1 u ∧ satis M3 u ff} <> {}` by (`?u. u IN {u | M3.frame.rel a1 u ∧ satis M3 u ff}`
-   suffices_by metis_tac[MEMBER_NOT_EMPTY] >> qexists_tac `v'` >> rw[] >>
+   suffices_by metis_tac[MEMBER_NOT_EMPTY] >> qexists_tac `v'` >> rw[]) >>
    `(CHOICE {u | M3.frame.rel a1 u ∧ satis M3 u ff}) IN {u | M3.frame.rel a1 u ∧ satis M3 u ff}` by metis_tac[CHOICE_DEF] >>
    `!c. c IN {u | M3.frame.rel a1 u ∧ satis M3 u ff} ==> height M3 w2 M3 c = height M3 w2 M3 a2'` suffices_by metis_tac[] >> rw[] >>
    `tree (hrestriction M2 w2 M2 k).frame w2` by metis_tac[tree_hrestriction_tree] >>
@@ -2200,64 +2163,14 @@ by (rw[Once EXTENSION,Once EQ_IMP_THM] (* 2 *)
 	 `phi' ∈ {y | DEG y ≤ k ∧ equiv0 μ x y} /\ f' IN {y | DEG y ≤ k ∧ equiv0 μ x y}` by metis_tac[] >>
 	 fs[] >>
 	 `f' IN {f | DEG f ≤ k} /\ (phi') IN {f | DEG f ≤ k}` by fs[] >>
-	 fs[equiv0_def])) (* by tactic ends *)
+	 fs[equiv0_def])) (* by tactic ends *) >>
       `c IN M3.frame.world` by metis_tac[satis_in_world] >>
       `satis M3 c r` by metis_tac[] >>
-      `satis M3 c phi'` by metis_tac[equiv0_def])) 
+      `satis M3 c phi'` by metis_tac[equiv0_def])))));
       
    
    
-   
-
-
-
-	      
-
-
-
-
-
-
-
-       
-      SPOSE_NOT_THEN ASSUME_TAC
-      Cases_on `satis M3 u phi'` >>
-      >- `¬satis M3 a2' phi'` by metis_tac[] >>
-         `satis M3 a2' (NOT phi')` by metis_tac[satis_def] >>
-	 `(NOT phi') IN phis`
-	     by (fs[Abbr`phis`] >> fs[DEG_def]) >>
-	 `?r. r IN rs /\ equiv0 (l:'b list itself) r (NOT phi')` by cheat >>
-	 `u IN M3.frame.world` by metis_tac[satis_in_world] >>
-	 `satis M3 u r` by metis_tac[] >>
-	 `satis M3 u (NOT phi')` by metis_tac[equiv0_def] >>
-	 metis_tac[satis_def]
-
-
-
-
-    >- `satis M3 a2' phi'` by metis_tac[] >>
-       `phi' IN phis` by fs[Abbr`phis`] >>
-       `?r. r IN rs /\ equiv0 (l:'b list itself) r phi'` by cheat >>
-       
-	               `
-
-
-           `equiv0 μ equiv_on {f | DEG f ≤ k}` by metis_tac[equiv0_equiv_on] >>
-	   `BIGUNION (partition (equiv0 μ) {f | DEG f ≤ k}) = {f | DEG f ≤ k}` by metis_tac[BIGUNION_partition] >>
-	   fs[BIGUNION] >> `n <= k` by fs[] >>
-	   `DEG ff <= k` by fs[] >>
-	   `ff IN {f | DEG f <= k}` by fs[] >> 
-	   `ff IN {x | ∃s. s ∈ {f | DEG f ≤ k}//E μ ∧ x ∈ s}` by metis_tac[] >> fs[] >>
-	   
-	  
-
-
-
-  `!w. w IN M3.frame.world /\ 
-
-
-
-
+  
 
 
 

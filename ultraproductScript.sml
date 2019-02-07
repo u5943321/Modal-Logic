@@ -37,6 +37,9 @@ val ultraproduct_model_def = Define`
 					                      {i | i IN I /\ (MS i).frame.rel (f i) (g i)} IN U) |>;
 			          valt := \p fu. (?f. f IN fu /\ {i | i IN I /\ (f i) IN (MS i).valt p} IN U) |>`;
 
+val _ = hide "I"
+
+val _ = reveal "I"
 val prop_2_71 = store_thm(
   "prop_2_71",
   ``!U I MS. (!i. i IN I ==> (MS i) = M) /\ ultrafilter U I ==>
@@ -115,9 +118,7 @@ val prop_2_71 = store_thm(
 	   rw[models2worlds_def,Cart_prod_def])
 	>- (`{i | i ∈ I' ∧ (MS i).frame.rel w v} = I'` suffices_by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >> simp[EXTENSION] >> `I' <> {}` by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
 	   metis_tac[MEMBER_NOT_EMPTY])
-	>- rw[models2worlds_def]
-	>- 
-	
+	>- rw[models2worlds_def
 
 
 
@@ -211,7 +212,29 @@ val prop_2_71 = store_thm(
         `I' <> {}` by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
 	`?i. i IN I'` by metis_tac[MEMBER_NOT_EMPTY] >>
 	metis_tac[])
-     >- fs[ultraproduct_model_def] >>
+     >- 
+
+
+
+
+
+
+
+
+
+
+
+
+`v IN (ultraproduct_model U I' MS).frame.world ==>
+        ∃v.
+         M.frame.rel w v ∧ v ∈ M.frame.world ∧
+         satis (ultraproduct_model U I' MS)
+         {fw | Uequiv U I' (models2worlds MS) (λi. v) fw} phi` suffices_by metis_tac[] >>
+	
+
+
+
+fs[ultraproduct_model_def] >>
         `{i | i ∈ I' ∧ (MS i).frame.rel (f i) (g i)} <> {}` by metis_tac[EMPTY_NOTIN_ultrafilter] >>
 	fs[Uequiv_def,ultraproduct_def,Cart_prod_def] >>
 	`({i | i ∈ I' ∧ w = f i} INTER {i | i ∈ I' ∧ (MS i).frame.rel (f i) (g i)}) IN U`
