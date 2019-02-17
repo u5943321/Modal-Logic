@@ -49,12 +49,13 @@ val countably_saturated_def = Define`
   countably_saturated M <=> !n. n_saturated M n`;
 
 
+
 val no_constant_fsatis_lemma = store_thm(
   "no_constant_fsatis_lemma",
   ``!M1 M2. (M1.domain = M2.domain /\
             M1.predsyms = M2.predsyms /\
 	    M1.relsyms = M2.relsyms)
-            ==> !phi. fconsts phi = {} ==> !σ. IMAGE σ univ(:num) SUBSET M1.domain ==>
+            ==> !phi σ. fconsts phi = {} ==>
             fsatis M1 σ phi = fsatis M2 σ phi``,
   strip_tac >> strip_tac >> strip_tac >> 
   Induct_on `phi` >> rw[fsatis_def,feval_def] (* 6 *)
@@ -84,6 +85,10 @@ val no_constant_fsatis_lemma = store_thm(
         >- fs[interpret_def]
 	>- fs[tconsts_def])
      >- fs[tconsts_def]));
+
+
+
+
 
 val ST_no_constant = store_thm(
   "ST_no_constant",
