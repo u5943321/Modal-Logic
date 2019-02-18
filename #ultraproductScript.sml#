@@ -572,7 +572,7 @@ val lemma_2_73_modal = store_thm(
   >- `G ⊆ G` by fs[SUBSET_DEF] >>
      `?σ. !phi. phi IN G ==> fsatis M' σ phi` by metis_tac[] >>
      qexists_tac `σ x` >> rw[] (* 2 *)
-     >- 
+     >- fs[fsatis_def]
   qabbrev_tac `Xs = \n. if n = 0 then Is 0
                         else (Is n) ∩ {i| i IN J /\ ?fu. !si. fsatis (mm2folm (Ms i)) }
   
