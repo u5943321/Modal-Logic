@@ -269,6 +269,14 @@ val thm_2_65 = store_thm(
 	 metis_tac[prop_2_47_i])));
 
 
+val thm_2_65_corollary = store_thm(
+  "thm_2_65_corollary",
+  ``∀M M' w:'b w':'c.
+       countably_saturated (mm2folm M) /\ countably_saturated (mm2folm M') ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world ⇒
+       modal_eq M M' w w' ⇒
+       bisim_world M M' w w'``,
+   rw[] >> `M_sat M /\ M_sat M'` by metis_tac[thm_2_65] >> metis_tac[prop_2_54_DIST_TYPE]);
+
 
 
 

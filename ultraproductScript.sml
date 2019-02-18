@@ -464,5 +464,190 @@ val prop_2_71 = store_thm(
 	rw[EXTENSION,EQ_IMP_THM])));
 
 
+
+val _ = Datatype`
+        folmodel = <| domain : 'a set ;
+	              consts : num |-> 'a;
+	              fnsyms : num -> 'a list -> 'a;
+		      predsyms : 'p -> 'a -> bool;
+		      relsyms : 'r -> 'a -> 'a -> bool;
+		      |>`;
+
+val mm2folm_def = Define`
+  mm2folm M = <| domain := M.frame.world ;
+                 consts := FEMPTY;
+                 fnsyms := \x y. ARB;
+		 predsyms := \p w. (w IN M.frame.world /\ M.valt p w);
+		 relsyms := \ (u:unit) w1 w2. (M.frame.rel w1 w2 /\ w1 IN M.frame.world /\ w2 IN M.frame.world) |>`;
+
+val folmodel2domains_def = Define`
+ folmodel2domains Ms = (\i. (Ms i).domain)`;
+
+
+
+val ultraproduct_folmodel = Define`
+  ultraproduct_folmodel U I MS =
+              <| domain := ultraproduct U I (folmodel2domains Ms);
+                 consts := FEMPTY;
+                 fnsyms := \x y. ARB;
+		 predsyms := \p w. (w IN M.frame.world /\ M.valt p w);
+		 relsyms := \ (u:unit) w1 w2. (M.frame.rel w1 w2 /\ w1 IN M.frame.world /\ w2 IN M.frame.world) |>`
+
+
+
+
+      <|frame :=
+          <|world := ultraproduct U I (folmodel2domains Ms);
+            rel :=
+              (\fu gu.
+                  ?f g.
+                     f IN fu /\ g IN gu /\
+                     {i | i IN I /\ (MS i).frame.rel (f i) (g i)} IN
+                     U)|>;
+        valt :=
+          (\p fu.
+              ?f.
+                 f IN fu /\ {i | i IN I /\ f i IN (MS i).valt p} IN U)|>
+
+
+
+
+
+
+``mm2folm (ultraproduct_model U J Ms) = ultraproduct_folmodel U J (\i. mm2folm (Ms i))``,
+
+
+val Los_one_free_var_thm = store_thm(
+  "Los_one_free_var_thm",
+  ``!U J Ms. ultrafilter U J ==>
+             !phi σ σs. IMAGE σ univ(:num) SUBSET ((mm2folm (ultraproduct_model U J Ms)).domain) /\
+	                (!i. i IN J ==> IMAGE (σs i) univ(:num) SUBSET (Ms i).frame.world) /\
+	                freevars phi ⊆ {x} /\ fcounts phi = {} ==>
+	                  (!fc. fc IN (ultraproduct_model U J Ms).frame.world ==>
+			          (fsatis (mm2folm (ultraproduct_model U J Ms)) ((x =+ fc)σ) phi <=>
+			          {i | i IN J /\ ?f. f IN fc /\ fsatis (mm2folm (Ms i)) ((x =+ f i)(σs i)) phi} IN U))``,
+strip_tac >> strip_tac >> strip_tac >> strip_tac >> Induct_on `phi` >> rw[] (* 6 *)
+(* Var case *)
+>- rw[EQ_IMP_THM,fsatis_def] (* 3 *)
+   >- Cases_on `f`  (* 2 *)
+      (* f  is a var *)
+      >- Cases_on `f0`
+         (* f0 is a var *) >- 
+	 (fs[freevars_def,tvars_def] >> fs[feval_def,mm2folm_def,interpret_def]>> rfs[APPLY_UPDATE_THM] >>
+	 qmatch_abbrev_tac `ss IN U` >>
+	 `ss ⊆ J` by fs[Abbr`ss`,SUBSET_DEF] >>
+	 rfs[ultraproduct_world] >> fs[ultraproduct_rel] >> rfs[] >>
+	 `({i | i IN J /\ x' i = f i} ∩ {i | i IN J /\ x' i = g i}) ∩ {i | i IN J /\ (Ms i).frame.rel (f i) (g i)} IN U`
+	   by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+	 `({i | i IN J /\ x' i = f i} ∩ {i | i IN J /\ x' i = g i}) ∩ {i | i IN J /\ (Ms i).frame.rel (f i) (g i)} ⊆ ss`
+	   suffices_by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+	 rw[SUBSET_DEF,Abbr`ss`] >> rfs[] >> qexists_tac `g` >> rw[] >> Cases_on `x''' = n` >> rw[APPLY_UPDATE_THM] >>
+	 fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+	 (* f0 is const *)
+	 fs[freevars_def,tvars_def] >> fs[feval_def,mm2folm_def,interpret_def]>> rfs[APPLY_UPDATE_THM] >>
+	 qmatch_abbrev_tac `ss IN U` >>
+	 `ss ⊆ J` by fs[Abbr`ss`,SUBSET_DEF] >>
+	 rfs[ultraproduct_world] >> fs[ultraproduct_rel] >> rfs[] >>
+	 
+
+
+
+
+
+val countably_incomplete_def = Define`
+  countably_incomplete U J <=> ultrafilter U J /\ (?SS. SS ⊆ U /\ BIGINTER SS = {})`;
+
+Let L be a countable ﬁrst-order language, U a countably incomplete ultraﬁlter over a non-empty set I, and M an L-model. The ultrapowerQU M is countably saturated.
+
+
+val lemma_2_73 = store_thm(
+  "lemma_2_73",
+  ``!U J Ms. countably_incomplete U J /\ (!i. i IN J ==> Ms i = M)
+             ==> countably_saturated (mm2folm (ultraproduct_model U I Ms))``
+   rw[countably_saturated_def,n_saturated_def]
+
+
+
+val thm_2_74_half1 = store_thm(
+  "thm_2_74",
+  ``!M N. ultrafilter U J /\ (!i. i IN J ==> (Ms i) = M) /\ (!i. i IN J ==> (Ns i) = N) ==>
+	  bisim_world (ultraproduct_model U J Ms) (ultraproduct_model U J Ns)
+          {fw | Uequiv U J (models2worlds Ms) (\i. w) fw} {fw | Uequiv U J (models2worlds Ns) (\i. v) fw} ==>
+	  (!phi. satis M w phi <=> satis N v phi)``,
+  rw[] >> `modal_eq (ultraproduct_model U J Ms) (ultraproduct_model U J Ns)
+                    {fw | Uequiv U J (models2worlds Ms) (\i. w) fw} {fw | Uequiv U J (models2worlds Ns) (\i. v) fw}`
+            by metis_tac[thm_2_20] >> fs[modal_eq_tau] >> metis_tac[prop_2_71]);
+
+
+val exercise_2_5_4_lemma = store_thm(
+  "exercise_2_5_4_lemma",
+  ``proper_filter {ss | ss ⊆ univ(:num) /\ FINITE (univ(:num) DIFF ss)} univ(:num)``,
+  rw[ultrafilter_def,proper_filter_def,filter_def] (* 5 *)
+  >- rw[POW_DEF,SUBSET_DEF]
+  >- (`(univ(:num) DIFF X) ∪ (univ(:num) DIFF Y) = (univ(:num) DIFF (X INTER Y))`
+       by rw[EXTENSION,EQ_IMP_THM,DIFF_DEF,INTER_DEF] >>
+     metis_tac[FINITE_UNION])
+  >- (`(univ(:num) DIFF Z) ⊆ (univ(:num) DIFF X)` by (fs[SUBSET_DEF,DIFF_DEF] >> metis_tac[]) >>
+     metis_tac[SUBSET_FINITE])
+  >- (simp[EXTENSION,EQ_IMP_THM] >> qexists_tac `{}` >> rw[] >> fs[POW_DEF,SUBSET_DEF]));
+
+
+val exercise_2_5_4 = store_thm(
+  "exercise_2_5_4",
+  ``?U. ultrafilter U univ(:num) /\ (!ss. ss IN U ==> INFINITE ss) /\
+  {ss | ss ⊆ univ(:num) /\ FINITE (univ(:num) DIFF ss)} ⊆ U``,
+  `proper_filter {ss | ss ⊆ univ(:num) /\ FINITE (univ(:num) DIFF ss)} univ(:num)`
+    by metis_tac[exercise_2_5_4_lemma] >>
+  `?U. ultrafilter U univ(:num) /\ {ss | ss ⊆ univ(:num) /\ FINITE (univ(:num) DIFF ss)} ⊆ U`
+    by metis_tac[ultrafilter_theorem] >>
+  qexists_tac `U` >> rw[] >>
+  SPOSE_NOT_THEN ASSUME_TAC >>
+  `ss ⊆ univ(:num)` by fs[SUBSET_DEF] >>
+  `univ(:num) DIFF (univ(:num) DIFF ss) = ss` by metis_tac[DIFF_DIFF_SUBSET] >>
+  `(univ(:num) DIFF ss) IN {ss | ss SUBSET univ(:num) /\ FINITE (univ(:num) DIFF ss)}` by fs[] >>
+  `(univ(:num) DIFF ss) IN U` by fs[SUBSET_DEF] >>
+  `(univ(:num) DIFF ss) ∩ ss IN U` by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+  `(univ(:num) DIFF ss) INTER ss = {}` by fs[EXTENSION,EQ_IMP_THM] >>
+  metis_tac[EMPTY_NOTIN_ultrafilter]);
+
+
+val exercise_2_5_4_countably_incomplete = store_thm(
+  "exercise_2_5_4_countably_incomplete",
+  ``?U. countably_incomplete U univ(:num)``,
+  `?U.
+      ultrafilter U univ(:num) /\ (!ss. ss IN U ==> INFINITE ss) /\
+      {ss | ss SUBSET univ(:num) /\ FINITE (univ(:num) DIFF ss)} SUBSET
+      U` by metis_tac[exercise_2_5_4] >>
+  qexists_tac `U` >> rw[countably_incomplete_def] >>
+  qexists_tac `{ss | ?x. ss = univ(:num) DIFF {x}}` >> rw[] (* 2 *)
+  >- (`{ss | ?x. ss = univ(:num) DIFF {x}} ⊆ {ss | ss SUBSET univ(:num) /\ FINITE (univ(:num) DIFF ss)}`
+       suffices_by fs[SUBSET_DEF] >>
+     rw[SUBSET_DEF] >>
+     `{x'} ⊆ univ(:num)` by fs[] >>
+     `(univ(:num) DIFF (univ(:num) DIFF {x'})) = {x'}` by metis_tac[DIFF_DIFF_SUBSET] >>
+     fs[])
+  >- (SPOSE_NOT_THEN ASSUME_TAC >>
+     fs[GSYM MEMBER_NOT_EMPTY] >>
+     `?P. (?x. P = univ(:num) DIFF {x}) /\ x NOTIN P` suffices_by metis_tac[] >>
+     qexists_tac `univ(:num) DIFF {x}` >> rw[] >> qexists_tac `x` >> rw[]));
+  
+  
+
+
+
+val thm_2_74_half2 = store_thm(
+  "thm_2_74_half2",
+  ``!M N. (!phi. satis M w phi <=> satis N v phi) ==>
+          (?U J. ultrafilter U J /\ (!i. i IN J ==> (Ms i) = M) /\ (!i. i IN J ==> (Ns i) = N) ==>
+	  bisim_world (ultraproduct_model U J Ms) (ultraproduct_model U J Ns)
+          {fw | Uequiv U J (models2worlds Ms) (\i. w) fw} {fw | Uequiv U J (models2worlds Ns) (\i. v) fw})``,
+  rw[] >> 
+
+
+
+
+
+
+
 val _ = export_theory();
 
