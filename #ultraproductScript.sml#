@@ -560,6 +560,16 @@ val countably_incomplete_def = Define`
 
 Let L be a countable ﬁrst-order language, U a countably incomplete ultraﬁlter over a non-empty set I, and M an L-model. The ultrapowerQU M is countably saturated.
 
+val one_freevar_satis_lemma = store_thm(
+  "one_freevar_satis_lemma",
+  ``!phi x. freevars phi ⊆ {x} ==> !M σ. fsatis M σ phi ==> !σ'. IMAGE σ' univ(:num) ⊆ M.domain ==> σ' x = σ x ==> fsatis M σ' phi``,
+  Induct_on `phi` >> rw[] (* 6 *)
+  >- (Cases_on `f` >> Cases_on `f0` >> fs[freevars_def,tvars_def,SUBSET_DEF,fsatis_def,interpret_def,feval_def] >> rw[] >> rfs[])
+  >- (Cases_on `f` >> fs[freevars_def,tvars_def,SUBSET_DEF,fsatis_def,interpret_def,feval_def] >> rw[] >> rfs[])
+  >- (fs[fsatis_def,feval_def,freevars_def] (* 2 *) >> metis_tac[])
+  >- (fs[fsatis_def,feval_def,freevars_def] (* 2 *) >> metis_tac[])
+  >- fs[fsatis_def,feval_def,freevars_def] >> qexists_tac `x'` >> rw[]
+
 
 val lemma_2_73_modal = store_thm(
   "lemma_2_73_modal",
@@ -570,12 +580,17 @@ val lemma_2_73_modal = store_thm(
   `?Is. (!n. n IN univ(:num) ==> (Is n) IN U) /\ (!n. Is (n + 1) ⊆ Is n) /\ BIGINTER {Is n | n IN univ(:num)} = {}` by cheat >>
   fs[COUNTABLE_ALT_BIJ] (* 2 *)
   >- `G ⊆ G` by fs[SUBSET_DEF] >>
-     `?σ. !phi. phi IN G ==> fsatis M' σ phi` by metis_tac[] >>
+     `?σ. IMAGE σ univ(:num) SUBSET M'.domain /\ (!phi. phi IN G ==> fsatis M' σ phi)` by metis_tac[] >>
      qexists_tac `σ x` >> rw[] (* 2 *)
-     >- fs[fsatis_def]
+     >- (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+     >- fs[fsatis_def] >>
+        `feval M' σ phi` by metis_tac[] >>
+	
   qabbrev_tac `Xs = \n. if n = 0 then Is 0
                         else (Is n) ∩ {i| i IN J /\ ?fu. !si. fsatis (mm2folm (Ms i)) }
-  
+  cheat ????????????????????????????????
+  >- `?w. w IN M'domain /\
+          !σ 
   
 
 
@@ -672,7 +687,7 @@ val thm_2_74_half2 = store_thm(
 	>- fs[Uequiv_def,Cart_prod_def,models2worlds_def]
 	>- (fs[Uequiv_def,Cart_prod_def,models2worlds_def] >> metis_tac[MEMBER_NOT_EMPTY])))
   >- (fs[modal_eq_tau] >> rw[EQ_IMP_THM] (* 2 *)
-     >> metis_tac[prop_2_71])D
+     >> metis_tac[prop_2_71]));
      
 
 

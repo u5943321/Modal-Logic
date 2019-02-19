@@ -34,7 +34,7 @@ val ok_form_def = Define`ok_form M phi <=> fconsts phi ⊆ FDOM M.consts`
 
 val consistent_def = Define`
   consistent M G <=>
-      !G0. FINITE G0 /\ G0 ⊆ G ==> ?σ. !phi. phi ∈ G0 ==> fsatis M σ phi `;
+      !G0. FINITE G0 /\ G0 ⊆ G ==> ?σ. IMAGE σ univ(:num) SUBSET M.domain /\ !phi. phi ∈ G0 ==> fsatis M σ phi `;
   
 val n_saturated_def = Define`
   n_saturated M n <=>
@@ -161,8 +161,9 @@ val thm_2_65 = store_thm(
 		   SPOSE_NOT_THEN ASSUME_TAC >>
 		   metis_tac[INFINITE_INJ]) >>
 	    `∃x. (x ∈ M.frame.world ∧ M.frame.rel w x) ∧ ∀form. form ∈ ps ⇒ satis M x form` by metis_tac[] >>
-	    qexists_tac `\n. x'` >> rw[fsatis_def] (* 2 *)
+	    qexists_tac `\n. x'` >> rw[fsatis_def] (* 3 *)
 	    >- (rw[Abbr`MA`] >> rw[IMAGE_DEF,SUBSET_DEF])
+	    >- fs[IMAGE_DEF,SUBSET_DEF,Abbr`MA`]
 	    >- (`IMAGE (λn. x') 𝕌(:num) ⊆ MA.domain` by (rw[Abbr`MA`] >> rw[IMAGE_DEF,SUBSET_DEF]) >>
 	       Cases_on `phi = fRrel () (fConst 0) (fVar x)` (* 2 *)
 	       >- (fs[] >> rw[feval_def,interpret_def,Abbr`MA`])
@@ -200,6 +201,7 @@ val thm_2_65 = store_thm(
 	       `∃x. (x ∈ M.frame.world ∧ M.frame.rel w x) ∧ ∀form. form ∈ ps ⇒ satis M x form` by metis_tac[] >>
 	        qexists_tac `\n. x'` >> rw[fsatis_def] (* 2 *)
 		>- (rw[Abbr`MA`] >> rw[IMAGE_DEF,SUBSET_DEF])
+		>- fs[IMAGE_DEF,SUBSET_DEF,Abbr`MA`]
 		>- (`IMAGE (λn. x') 𝕌(:num) ⊆ MA.domain` by (rw[Abbr`MA`] >> rw[IMAGE_DEF,SUBSET_DEF]) >>
 		   `∃t. phi = ST x () t ∧ t ∈ ps`
 	               by (`phi IN Σ'` by fs[SUBSET_DEF] >>
