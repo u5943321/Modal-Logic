@@ -560,15 +560,22 @@ val countably_incomplete_def = Define`
 
 Let L be a countable ﬁrst-order language, U a countably incomplete ultraﬁlter over a non-empty set I, and M an L-model. The ultrapowerQU M is countably saturated.
 
-val one_freevar_satis_lemma = store_thm(
-  "one_freevar_satis_lemma",
-  ``!phi x. freevars phi ⊆ {x} ==> !M σ. fsatis M σ phi ==> !σ'. IMAGE σ' univ(:num) ⊆ M.domain ==> σ' x = σ x ==> fsatis M σ' phi``,
+val agree_on_freevars_satis_lemma = store_thm(
+  "agree_on_freevars_satis_lemma",
+  ``!phi M σ. fsatis M σ phi ==> !σ'. IMAGE σ' univ(:num) ⊆ M.domain ==> (!x. x IN freevars phi ==> σ x = σ' x) ==> fsatis M σ' phi``,
   Induct_on `phi` >> rw[] (* 6 *)
   >- (Cases_on `f` >> Cases_on `f0` >> fs[freevars_def,tvars_def,SUBSET_DEF,fsatis_def,interpret_def,feval_def] >> rw[] >> rfs[])
   >- (Cases_on `f` >> fs[freevars_def,tvars_def,SUBSET_DEF,fsatis_def,interpret_def,feval_def] >> rw[] >> rfs[])
   >- (fs[fsatis_def,feval_def,freevars_def] (* 2 *) >> metis_tac[])
   >- (fs[fsatis_def,feval_def,freevars_def] (* 2 *) >> metis_tac[])
-  >- fs[fsatis_def,feval_def,freevars_def] >> qexists_tac `x'` >> rw[]
+  >- (fs[fsatis_def,feval_def,freevars_def] >> qexists_tac `x` >> rw[] >>
+     `!a. a IN freevars phi ==> ((n =+ x) σ) a = ((n =+ x) σ') a`
+       by (rw[] >> Cases_on `a = n` >> rw[APPLY_UPDATE_THM]) >>
+     `IMAGE ((n =+ x) σ) univ(:num) SUBSET M.domain /\
+     IMAGE ((n =+ x) σ') univ(:num) SUBSET M.domain`
+       by (fs[IMAGE_DEF,SUBSET_DEF] >> Cases_on `x'' = n` >> fs[APPLY_UPDATE_THM] >> metis_tac[]) >>
+     metis_tac[])
+  >- (fs[fsatis_def,feval_def,freevars_def] >> Cases_on `f` >> Cases_on `f0` (* 4 *) >> fs[tvars_def,interpret_def]));
 
 
 val lemma_2_73_modal = store_thm(
@@ -589,7 +596,8 @@ val lemma_2_73_modal = store_thm(
   qabbrev_tac `Xs = \n. if n = 0 then Is 0
                         else (Is n) ∩ {i| i IN J /\ ?fu. !si. fsatis (mm2folm (Ms i)) }
   cheat ????????????????????????????????
-  >- 
+  >- `?w. w IN M'domain /\
+          !σ
   
 
 
