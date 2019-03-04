@@ -38,7 +38,7 @@ val expansion_def = Define`
 
 val _ = Datatype`
         fterm = fVar num
-	       | fConst num ;
+	       | fConst num (fterm list) ;
 	fform = fRrel 'r fterm fterm
 	       | fPrel 'p fterm
 	       | fDISJ fform fform
@@ -50,9 +50,13 @@ val fAND_def = Define`
   fAND ff1 ff2 = fNOT (fDISJ (fNOT ff1) (fNOT ff2))`;
 
 
+val fIMP_def = Define`
+  fIMP ff1 ff2 = fDISJ (fNOT ff1) ff2`;
+
+
 val tvars_def = Define`
   tvars (fVar a) = {a} /\
-  tvars (fConst a) = {}`;
+  tvars (fConst a l) = {}`;
 
 val fvars_def = Define`
   fvars (fRrel a t1 t2) = tvars t1 ∪ tvars t2 /\

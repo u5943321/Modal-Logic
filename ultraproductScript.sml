@@ -480,37 +480,128 @@ val mm2folm_def = Define`
 		 predsyms := \p w. (w IN M.frame.world /\ M.valt p w);
 		 relsyms := \ (u:unit) w1 w2. (M.frame.rel w1 w2 /\ w1 IN M.frame.world /\ w2 IN M.frame.world) |>`;
 
-val folmodel2domains_def = Define`
- folmodel2domains Ms = (\i. (Ms i).domain)`;
+val folmodels2domains_def = Define`
+ folmodels2domains Ms = (\i. (Ms i).domain)`;
 
 
 
-val ultraproduct_folmodel = Define`
-  ultraproduct_folmodel U I Ms =
-              <| domain := ultraproduct U I (folmodel2domains Ms);
-                 consts := \i. {fw | Uequiv U J (models2worlds Ms) (\i. ((Ms i).consts i)) fw};
-                 fnsyms := \n l. {fw | Uequiv U J (models2worlds Ms) (\i. ((Ms i).fnsyms n l)) fw};
-		 predsyms := \p fu. ?f. f IN fu /\ {i | i IN I /\ f i IN (Ms i).predsyms p} IN U;
+val ultraproduct_folmodel_def = Define`
+  ultraproduct_folmodel U J Ms =
+              <| domain := ultraproduct U J (folmodels2domains Ms);
+                 consts := FUN_FMAP (\n. {fw | Uequiv U J (folmodels2domains Ms) (\i. ((Ms i).consts ' n)) fw}) (BIGINTER {FDOM (Ms i).consts | i IN J});
+                 fnsyms := \n l. {fw | Uequiv U J (folmodels2domains Ms) (\i. ((Ms i).fnsyms n (MAP (\l0. l0 i) (MAP CHOICE l)))) fw} ;
+		 predsyms := \p fu. ?f. f IN fu /\ {i | i IN J /\ f i IN (Ms i).predsyms p} IN U;
 		 relsyms := \ (u:unit) fu gu.
-		            ?f g. f IN fu /\ g IN gu /\ {i | i IN I /\ (Ms i).relsyms u (f i) (g i)} IN U |>`
+		            ?f g. f IN fu /\ g IN gu /\ {i | i IN J /\ (Ms i).relsyms u (f i) (g i)} IN U |>`
 
 
 
 
-      <|frame :=
-          <|world := ultraproduct U I (folmodel2domains Ms);
-            rel :=
-              (\fu gu.
-                  ?f g.
-                     f IN fu /\ g IN gu /\
-                     {i | i IN I /\ (MS i).frame.rel (f i) (g i)} IN
-                     U)|>;
-        valt :=
-          (\p fu.
-              ?f.
-                 f IN fu /\ {i | i IN I /\ f i IN (MS i).valt p} IN U)|>
+val ultraproduct_world = store_thm(
+  "ultraproduct_world",
+  ``!U J MS.
+    ultrafilter U J ==>
+       (!v.
+           v ∈ (ultraproduct_model U J MS).frame.world <=>
+               (!i. i IN J ==> (MS i).frame.world <> {}) /\
+               (∃x.
+                   (∀i. i ∈ J ⇒ x i ∈ (MS i).frame.world) /\
+                   v = {y | (∀i. i ∈ J ⇒ y i ∈ (MS i).frame.world) /\ {i | i ∈ J ∧ x i = y i} ∈ U}))``,
+  rw[ultraproduct_def,ultraproduct_model_def, models2worlds_def,partition_def,Uequiv_def,Cart_prod_def] >> rw[EQ_IMP_THM] (* 3 *)
+  >- metis_tac[MEMBER_NOT_EMPTY]
+  >> qexists_tac `x` >> rw[EXTENSION,EQ_IMP_THM] >> metis_tac[]);
 
 
+val ultraproduct_fol_world = store_thm(
+  "ultraproduct_fol_world",
+  ``!U J Ms.
+    ultrafilter U J ==>
+      (!v. v IN (ultraproduct_folmodel U J Ms).domain <=>
+           (!i. i IN J ==> (Ms i).domain <> {}) /\
+	   (?x.
+               (!i. i IN J ==> x i IN (Ms i).domain) /\
+	       v = {y | (!i. i IN J ==> y i IN (Ms i).domain) /\ {i | i IN J /\ x i = y i} IN U}))``,
+  rw[ultraproduct_def,ultraproduct_folmodel_def, folmodels2domains_def,partition_def,Uequiv_def,Cart_prod_def] >>
+  rw[EQ_IMP_THM]
+  >- metis_tac[MEMBER_NOT_EMPTY]
+  >> qexists_tac `x` >> rw[EXTENSION,EQ_IMP_THM] >> metis_tac[]);
+
+
+
+  
+val ultraproduct_fol_rel = save_thm(
+  "ultraproduct_fol_rel",
+  ``(ultraproduct_folmodel U J Ms).relsyms u w v``
+    |> SIMP_CONV (srw_ss()) [ultraproduct_def,ultraproduct_folmodel_def, folmodels2domains_def,partition_def,Uequiv_def,Cart_prod_def])
+
+val ultraproduct_valt = save_thm(
+  "ultraproduct_valt",
+  ``v IN (ultraproduct_model U J MS).valt p``
+    |> SIMP_CONV (srw_ss()) [ultraproduct_def,ultraproduct_model_def, models2worlds_def,partition_def,Uequiv_def,Cart_prod_def])
+
+
+
+
+val ultraproduct_folmodel_rel_gen = store_thm(
+  "ultraproduct_folmodel_rel_gen",
+  ``!U J Ms. ultrafilter U J ==>
+      !fu gu. fu IN (ultraproduct_folmodel U J Ms).domain /\ gu IN (ultraproduct_folmodel U J Ms).domain ==>
+        !rf rg. rf IN fu /\ rg IN gu /\ {i | i IN J /\ (Ms i).relsyms u (rf i) (rg i)} IN U ==>
+	  (!f g. f IN fu /\ g IN gu ==> {i | i IN J /\ (Ms i).relsyms u (f i) (g i)} IN U)``,
+  rw[] >> rfs[ultraproduct_fol_world] >>
+  `f IN {y | (!i. i IN J ==> y i IN (Ms i).domain) /\ {i | i IN J /\ x' i = y i} IN U} /\
+  g IN {y | (!i. i IN J ==> y i IN (Ms i).domain) /\ {i | i IN J /\ x i = y i} IN U}`
+    by metis_tac[] >> fs[] >>
+  `rf IN {y | (!i. i IN J ==> y i IN (Ms i).domain) /\ {i | i IN J /\ x' i = y i} IN U} /\
+  rg IN {y | (!i. i IN J ==> y i IN (Ms i).domain) /\ {i | i IN J /\ x i = y i} IN U}`
+    by metis_tac[] >> fs[] >>
+  `{i | i IN J /\ x' i = rf i} ∩ {i | i IN J /\ x' i = f i} IN U`
+    by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+  `{i | i IN J /\ x i = g i} ∩ {i | i IN J /\ x i = rg i} IN U`
+    by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+  `({i | i IN J /\ x' i = rf i} ∩ {i | i IN J /\ x' i = f i}) ∩
+  ({i | i IN J /\ x i = g i} ∩ {i | i IN J /\ x i = rg i}) IN U`
+    by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+  `(({i | i IN J /\ x' i = rf i} ∩ {i | i IN J /\ x' i = f i}) ∩
+  ({i | i IN J /\ x i = g i} ∩ {i | i IN J /\ x i = rg i})) ∩ {i | i IN J /\ (Ms i).relsyms () (rf i) (rg i)} IN U`
+    by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+  `{i | i IN J /\ (Ms i).relsyms () (f i) (g i)} ⊆ J` by fs[SUBSET_DEF] >>
+  `(({i | i IN J /\ x' i = rf i} ∩ {i | i IN J /\ x' i = f i}) ∩
+  ({i | i IN J /\ x i = g i} ∩ {i | i IN J /\ x i = rg i})) ∩ {i | i IN J /\ (Ms i).relsyms () (rf i) (rg i)}
+  ⊆ {i | i IN J /\ (Ms i).relsyms () (f i) (g i)}`
+    suffices_by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+  rw[INTER_DEF,SUBSET_DEF] >> metis_tac[]);
+
+
+
+
+
+
+val thm_A_19 = store_thm(
+  "thm_A_19",
+  ``!U J Ms. ultrafilter U J ==>
+      !phi σ σs. IMAGE σ univ(:num) SUBSET (ultraproduct_folmodel U J Ms).domain /\
+                 (!i. i IN J ==> IMAGE (σs i) univ(:num) SUBSET (Ms i).domain) /\
+		 (!a. a IN freevars phi ==> (!i. i IN J ==> ?fu. fu IN (σ a) /\ (σs i) a = fu i))==>
+		   (fsatis (ultraproduct_folmodel U J Ms) σ phi <=>
+		   {i | i IN J /\ fsatis (Ms i) (σs i) phi} IN U)``,
+strip_tac >> strip_tac >> strip_tac >> strip_tac >> Induct_on `phi` >> rw[] (* 6 *)
+(*-------------------- Rel case ----------------------*)
+>- rw[EQ_IMP_THM,fsatis_def] (* 2 *)
+   >- Cases_on `f` >> Cases_on `f0`
+      >- `{i | i IN J /\ IMAGE (σs i) univ(:num) SUBSET (Ms i).domain /\
+               feval (Ms i) (σs i) (fRrel () (fVar n) (fVar n'))} =
+	  {i | i IN J /\ feval (Ms i) (σs i) (fRrel () (fVar n) (fVar n'))} `
+	   by rw[EXTENSION,EQ_IMP_THM] >>
+	 `{i | i IN J /\ feval (Ms i) (σs i) (fRrel () (fVar n) (fVar n'))} IN U` suffices_by metis_tac[] >>
+	 fs[feval_def,interpret_def] >>
+	 fs[ultraproduct_fol_rel] >>
+	 `(σ n) IN (ultraproduct_folmodel U J Ms).domain /\ (σ n') IN (ultraproduct_folmodel U J Ms).domain`
+	   by (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
+	 drule ultraproduct_folmodel_rel_gen >> rw[] >>
+	 `!f0 g0. f0 IN (σ n) /\ g0 IN (σ n') ==> {i | i IN J /\ (Ms i).relsyms u (f0 i) (g0 i)} IN U`
+	   by metis_tac[]
+		   
 
 
 
@@ -520,13 +611,15 @@ val ultraproduct_folmodel = Define`
 
 val Los_one_free_var_thm = store_thm(
   "Los_one_free_var_thm",
-  ``!U J Ms. ultrafilter U J ==>
-             !phi σ σs. IMAGE σ univ(:num) SUBSET ((mm2folm (ultraproduct_model U J Ms)).domain) /\
-	                (!i. i IN J ==> IMAGE (σs i) univ(:num) SUBSET (Ms i).frame.world) /\
-	                freevars phi ⊆ {x} /\ fcounts phi = {} ==>
-	                  (!fc. fc IN (ultraproduct_model U J Ms).frame.world ==>
-			          (fsatis (mm2folm (ultraproduct_model U J Ms)) ((x =+ fc)σ) phi <=>
-			          {i | i IN J /\ ?f. f IN fc /\ fsatis (mm2folm (Ms i)) ((x =+ f i)(σs i)) phi} IN U))``,
+``!U J Ms.
+ultrafilter U J ==>
+  !phi σ σs. FINITE (freevars phi) ==>
+             IMAGE σ univ(:num) SUBSET (ultraproduct_folmodel U J Ms).domain) /\
+	     (!i. i IN J ==> IMAGE (σs i) univ(:num) SUBSET (Ms i).domain) ==>
+	       (!fc. fc IN (ultraproduct_folmodel U J Ms).domain ==>
+	         (fsatis (ultraproduct_folmodel U J Ms) σ phi <=>
+		 (!x. x IN (freevars phi) ==> (!i. i IN J ==> (σ x) IN (σs i))) ==>
+			          {i | i IN J /\ fsatis (Ms i) (σs i) phi} IN U))``,
 strip_tac >> strip_tac >> strip_tac >> strip_tac >> Induct_on `phi` >> rw[] (* 6 *)
 (* Var case *)
 >- rw[EQ_IMP_THM,fsatis_def] (* 3 *)
@@ -578,6 +671,13 @@ val agree_on_freevars_satis_lemma = store_thm(
   >- (fs[fsatis_def,feval_def,freevars_def] >> Cases_on `f` >> Cases_on `f0` (* 4 *) >> fs[tvars_def,interpret_def]));
 
 
+val 
+
+
+
+
+
+
 val lemma_2_73_modal = store_thm(
   "lemma_2_73_modal",
   ``!U J Ms. countably_incomplete U J /\ (!i. i IN J ==> Ms i = M)
@@ -586,18 +686,45 @@ val lemma_2_73_modal = store_thm(
   `countable G` by cheat >>
   `?Is. (!n. n IN univ(:num) ==> (Is n) IN U) /\ (!n. Is (n + 1) ⊆ Is n) /\ BIGINTER {Is n | n IN univ(:num)} = {}` by cheat >>
   fs[COUNTABLE_ALT_BIJ] (* 2 *)
-  >- `G ⊆ G` by fs[SUBSET_DEF] >>
+  >- (`G ⊆ G` by fs[SUBSET_DEF] >>
      `?σ. IMAGE σ univ(:num) SUBSET M'.domain /\ (!phi. phi IN G ==> fsatis M' σ phi)` by metis_tac[] >>
      qexists_tac `σ x` >> rw[] (* 2 *)
      >- (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
-     >- fs[fsatis_def] >>
-        `feval M' σ phi` by metis_tac[] >>
+     >- (fs[fsatis_def] >>
+        `feval M' σ phi` by metis_tac[] >> rw[] (* 2 *)
+	>- (fs[IMAGE_DEF,SUBSET_DEF] >> rw[] >> Cases_on `x'' = x` >> fs[APPLY_UPDATE_THM] (* 2 *) >> metis_tac[])
+	>- (`IMAGE σ univ(:num) SUBSET M'.domain` by metis_tac[] >>
+	   `fsatis M' ((x =+ σ x) σ') phi` suffices_by metis_tac[fsatis_def] >>
+           `fsatis M' σ phi` by metis_tac[fsatis_def] >>
+           `IMAGE ((x =+ σ x) σ') univ(:num) SUBSET M'.domain /\
+	   IMAGE σ univ(:num) SUBSET M'.domain /\
+	   (!a. a IN freevars phi ==> σ a = ((x =+ σ x) σ') a)`
+	     suffices_by metis_tac[agree_on_freevars_satis_lemma] >>
+	   rw[IMAGE_DEF,SUBSET_DEF] (* 2 *)
+	   >- (Cases_on `x'' = x` >> fs[APPLY_UPDATE_THM] (* 2 *)
+	      >> (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]))
+	   >- (fs[ftype_def] >>
+	      `phi IN {phi | freevars phi SUBSET {x}}` by metis_tac[SUBSET_DEF] >>
+	      fs[] >> `a IN {x}` by metis_tac[SUBSET_DEF] >> fs[APPLY_UPDATE_THM]))))
+	      
+	   
+	   
 	
-  qabbrev_tac `Xs = \n. if n = 0 then Is 0
-                        else (Is n) ∩ {i| i IN J /\ ?fu. !si. fsatis (mm2folm (Ms i)) }
-  cheat ????????????????????????????????
-  >- `?w. w IN M'domain /\
-          !σ
+  >- qabbrev_tac `Xs = \n. if n = 0 then Is 0
+                        else (Is n) ∩ {i| i IN J /\ ?x0. !a σ. a <= n ==> fsatis (mm2folm (Ms i)) ((x =+ x0)σ) ((enumerate G) (a - 1))}` >>
+     `!n. {i |
+                 i IN J /\
+                 ?x0.
+                    !a σ.
+                       a <= n ==>
+                       fsatis (mm2folm (Ms i)) ((x =+ x0) σ)
+                         (enumerate G (a - 1))} IN U`
+       by rw[] >>
+          `FINITE {(enumerate G) (a - 1) | a <= n'}`
+	    by cheat >>
+	  `?ff.!w M.
+            w IN M.frame.world ==>
+            (satis M w ff <=> !f. f IN {enumerate G (a - 1) | a <= n'} ==> satis M w f)` by metis_tac[BIGCONJ_EXISTS_2]
   
 
 
