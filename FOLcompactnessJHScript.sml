@@ -134,24 +134,6 @@ val (universal_rules, universal_ind, universal_cases) = Hol_reln`
   (!ff. qfree ff ==> universal ff) /\
   (!ff n. prenex ff ==> universal (fFORALL n ff))`
 
-val Prenex_right_def = tDefine "Prenex_right" `
-  Prenex_right p fFALSE = fIMP p fFALSE /\
-  Prenex_right p (fR a t1 t2) = fIMP p (fR a t1 t2) /\
-  Prenex_right p (fP a t) = fIMP p (fP a t) /\
-  Prenex_right p (fIMP ff1 ff2) = fIMP p (fIMP ff1 ff2) /\
-  Prenex_right p (fFORALL n q) = fFORALL (VARIANT ((ffvs (fFORALL n q) ∪ (ffvs p))))
-                                         (Prenex_right p (fsubst ((n =+ fVar (VARIANT ((ffvs (fEXISTS n q) ∪ (ffvs p))))) fVar) q)) /\
-  
-  ` (WF_REL_TAC `measure (size o SND)` >> rw[] (* 2 *)
-     >- (`size (fsubst ((n =+ fVar (VARIANT (ffvs (fEXISTS n (fNOT ff0)) ∪ ffvs p))) fVar) ff0) = size ff0`
-          by metis_tac[size_fsubst] >>
-	`size ff0 < size (fNOT (fEXISTS n (fNOT ff0)))` suffices_by metis_tac[] >> rw[size_def])
-     >- (`size (fsubst ((n =+ fVar (VARIANT (ffvs (fEXISTS n q) ∪ ffvs p))) fVar) q) = size q`
-          by metis_tac[size_fsubst] >>
-`size q < size (fEXISTS n q)` suffices_by metis_tac[] >> rw[size_def]))
-
-
-
 
 val size_def = Define`
   size fFALSE = 1 /\
@@ -224,19 +206,10 @@ Induct_on `f1` >> rw[]
 val Prenex_left_subst = store_thm(
   "Prenex_left_subst",
 ``!f. prenex f ==> !f1 f2. f = (Prenex_left f1 f2) ==> !v. prenex (Prenex_left (fsubst v f1) f2)``,	
+Induct_on `prenex f` >> rw[]
 
 
 
-
-
-
-
-
-val COUNT_Q_def = Define`
-COUNT_Q fFALSE = 0 /\
-COUNT_Q (fR a t1 t2) = 0 /\
-COUNT_Q (fP a t) = 0 /\
-COUNT_Q 
 
 val prenex_Prenex_left = store_thm(
   "prenex_Prenex_left",							       
