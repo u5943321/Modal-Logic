@@ -4,6 +4,7 @@ open pred_setTheory;
 open relationTheory;
 open arithmeticTheory;
 open set_relationTheory;
+open numpairTheory;
 
 
 val _ = ParseExtras.tight_equality()
@@ -39,6 +40,7 @@ val tvars_def = tDefine "tvars" `
 ` (WF_REL_TAC `measure fterm_size` >> rpt gen_tac >> Induct_on `ts` >>
      simp[definition "fterm_size_def"] >> rpt strip_tac >> rw[] >>
      fs[])
+
 
 val tfns_def = tDefine "tfns" `
   tfns (V a) = {} /\
@@ -136,7 +138,7 @@ val (universal_rules, universal_ind, universal_cases) = Hol_reln`
 
 
 val size_def = Define`
-  size fFALSE = 1 /\
+  size fFALSE = 1n /\
   size (fR a t1 t2) = 1 /\
   size (fP a f) = 1 /\
   (size (fIMP ff1 ff2) = size ff1 + size ff2) /\
@@ -175,6 +177,7 @@ Prenex_right p (fEXISTS n ff) = let y = VARIANT ((ffvs (fEXISTS n ff) ∪ (ffvs 
 
 
 
+
 val Prenex_left_def = tDefine "Prenex_left" `
 Prenex_left fFALSE p = Prenex_right fFALSE p /\
 Prenex_left (fR a t1 t2) p = Prenex_right (fR a t1 t2) p /\
@@ -189,9 +192,6 @@ Prenex_left (fEXISTS n q) p = let y = VARIANT ((ffvs (fEXISTS n q) ∪ (ffvs p))
           by metis_tac[size_fsubst] >> rw[size_def] >> fs[])
      >- (`size (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n q) ∪ ffvs p))⦈ q) = size q`
           by metis_tac[size_fsubst] >> rw[size_def] >> fs[]))
-
-
-
 
 Theorem prenex_rwts[simp]:
   (prenex fFALSE <=> T) /\
@@ -227,18 +227,6 @@ Proof
   simp[combinTheory.o_DEF]
 QED
 
-(*
-    
-Theorem fsubst_composition : 
-  ∀f s1 s2. fsubst s1 (fsubst s2 f) = fsubst (tsubst s1 o s2) f
-Proof
-  Induct_on `f` >> simp[fsubst_def, tsubst_composition] >> rw[] 
-  >- (qmatch_abbrev_tac `fsubst _ (fFORALL v (fsubst ss f)) = 
-                         fFORALL u (fsubst tt f)` >>
-      simp[fsubst_def] >> rw[]
-      >- simp[Abbr`u`, Abbr`tt`, Abbr`ss`]
-
-*)
 
 Theorem Prenex_right_subst:
   !f1 f2 s. qfree f1 /\ prenex f2 ==> prenex (Prenex_right f1 f2)
@@ -281,6 +269,332 @@ Induct_on `ff` (* 6 *)
 >- (rw[Prenex_def] >> metis_tac[prenex_rules])
 >- (rw[Prenex_def] >> metis_tac[prenex_rules]));
 
-			       
+
+val specialize_def = Define`
+(specialize fFALSE = fFALSE) /\
+(specialize (fR a t1 t2) = fR a t1 t2) /\
+(specialize (fP a t) = fP a t) /\
+(specialize (fIMP f1 f2) = fIMP f1 f2) /\
+(specialize (fFORALL n f) = specialize f) /\
+(specialize (fEXISTS n ff) = fIMP (fFORALL n (fIMP ff fFALSE)) fFALSE)`;
+
+val bumpterm_def = tDefine "bumpterm" `
+bumpterm (V x) = V x /\
+bumpterm (Fn k l) = Fn (npair 0 k) (MAP bumpterm l)`
+(WF_REL_TAC `measure fterm_size` >> rpt gen_tac >> Induct_on `l` >>
+     simp[definition "fterm_size_def"] >> rpt strip_tac >> rw[] >>
+     fs[])
+
+val bumpform_def = Define`
+bumpform fFALSE = fFALSE /\
+bumpform (fR a t1 t2) = fR a (bumpterm t1) (bumpterm t2) /\
+bumpform (fP a t) = fP a (bumpterm t) /\
+bumpform (fIMP f1 f2) = fIMP (bumpform f1) (bumpform f2) /\
+bumpform (fFORALL a ff) = fFORALL a (bumpform ff) /\
+bumpform (fFORALL a ff) = fEXISTS a (bumpform ff)`;
+
+val num_of_term_def = tDefine "num_of_term" `
+  num_of_term (V n) = 2 * n /\
+  num_of_term (Fn f ts) = 2 * (npair f (nlist_of (MAP num_of_term ts))) + 1`
+  (WF_REL_TAC `measure fterm_size` >> rpt gen_tac >> Induct_on `ts` 
+     >- simp[definition "fterm_size_def"]
+     >- (simp[definition "fterm_size_def"] >> rw[]
+        >- fs[]
+        >> first_x_assum drule >> rw[]))
+
+val num_of_form_def = Define`
+  num_of_form fFALSE = 0 /\
+  num_of_form (fP a t) = (npair a (num_of_term t)) * 5 + 1 /\
+  num_of_form (fR a t1 t2) = (npair a (npair (num_of_term t1) (num_of_term t2))) * 5 + 2 /\
+  num_of_form (fIMP ff1 ff2) = npair (num_of_form ff1) (num_of_form ff2) * 5 + 3 /\
+  num_of_form (fFORALL n ff) = npair n (num_of_form ff) * 5 + 4 /\
+  num_of_form (fEXISTS n ff) = npair n (num_of_form ff) * 5 + 5`;
+
+
+
+val term_of_num_def = tDefine "term_of_num" `
+term_of_num n = if (n MOD 2 = 0) then (V (n DIV 2)) else
+                   Fn (nfst ((n - 1) DIV 2)) (MAP term_of_num (listOfN (nsnd ((n - 1) DIV 2))))`
+(WF_REL_TAC `$<` >> rw[] >>
+ `a < (nsnd ((n − 1) DIV 2))` by fs[MEM_listOfN_LESS] >>
+ `(nsnd ((n − 1) DIV 2)) < n` suffices_by simp[] >>
+ `(nsnd ((n − 1) DIV 2)) <= ((n − 1) DIV 2)` by fs[nsnd_le] >>
+ `(n − 1) DIV 2 < n` suffices_by simp[] >>
+ `0 < 2` by simp[] >>
+ `(n - 1) DIV 2 <= n - 1` by simp[DIV_LESS_EQ] >> fs[])
+ 
+
+Theorem num_of_form_0 :
+  num_of_form ff = 0 ==> ff = fFALSE
+Proof
+  rw[] >> SPOSE_NOT_THEN ASSUME_TAC >> Cases_on `ff` >> fs[num_of_form_def]
+QED
+
+
+
+val form_of_num_def = tDefine "form_of_num" `
+  form_of_num n = case (n MOD 5) of
+                  | 0 => if n = 0 then fFALSE else
+		    fEXISTS (nfst ((n - 5) DIV 5)) (form_of_num (nsnd ((n - 5) DIV 5)))
+		  | 1 => fP (nfst ((n - 1) DIV 5)) (term_of_num (nsnd ((n - 1) DIV 5)))
+		  | 2 => fR (nfst ((n - 2) DIV 5)) (term_of_num (nfst (nsnd ((n - 2) DIV 5)))) (term_of_num (nsnd (nsnd ((n - 2) DIV 5))))
+		  | 3 => fIMP (form_of_num (nfst ((n - 3) DIV 5)))
+		              (form_of_num (nsnd ((n - 3) DIV 5)))
+		  | 4 => fFORALL (nfst ((n - 4) DIV 5)) (form_of_num (nsnd ((n - 4) DIV 5)))`
+(WF_REL_TAC `$<` >> rw[] (* 4 *)
+>- (`nsnd ((n − 4) DIV 5) <= (n − 4) DIV 5` by rw[nsnd_le] >>
+   `(n − 4) DIV 5 < n` suffices_by fs[] >>
+   Cases_on `n - 4 = 0`
+   >- (`n = 4` by fs[] >> simp[])
+   >- (`n - 4 > 0` by simp[] >>
+      `(n - 4) DIV 5 < n - 4` by simp[DIV_LESS] >> fs[]))
+>- (`nfst ((n − 3) DIV 5) <= (n − 3) DIV 5` by rw[nfst_le] >>
+   `(n − 3) DIV 5 < n` suffices_by fs[] >>
+   Cases_on `n - 3 = 0`
+   >- (`n = 3` by fs[] >> simp[])
+   >- (`n - 3 > 0` by simp[] >>
+      `(n - 3) DIV 5 < n - 3` by simp[DIV_LESS] >> fs[]))
+>- (`nsnd ((n − 3) DIV 5) <= (n − 3) DIV 5` by rw[nsnd_le] >>
+   `(n − 3) DIV 5 < n` suffices_by fs[] >>
+   Cases_on `n - 3 = 0`
+   >- (`n = 3` by fs[] >> simp[])
+   >- (`n - 3 > 0` by simp[] >>
+      `(n - 3) DIV 5 < n - 3` by simp[DIV_LESS] >> fs[]))
+>- (`nsnd ((n − 5) DIV 5) <= (n − 5) DIV 5` by rw[nsnd_le] >>
+   `(n − 5) DIV 5 < n` suffices_by fs[] >>
+   Cases_on `n - 5 = 0`
+   >- (Cases_on `n = 0`
+      >- fs[]
+      >- (`n > 0` by fs[] >> `(n − 5) DIV 5 = 0` by simp[] >> fs[]))
+   >- (`n - 5 > 0` by simp[] >>
+      `(n - 5) DIV 5 < n - 5` by simp[DIV_LESS] >> fs[])))
+
+
+Theorem LE_LESS :
+!m n. m <= n <=> m < n + 1
+Proof
+rw[]
+QED
+
+
+
+
+Theorem MEM_LESS_num_of_term :
+∀l. MEM m l ⇒ num_of_term m < num_of_term (Fn n l)
+Proof
+Induct_on `l` >> rw[]
+>- (rw[num_of_term_def] >> rw[ncons_def] >>
+   `num_of_term h = nfst (num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l))`
+     by simp[GSYM nfst_npair] >>
+   `nfst (num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l)) <= (num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l))`
+     by simp[nfst_le] >>
+  `num_of_term h <=
+   2 * n ⊗ (num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l) + 1)` suffices_by simp[] >>
+  `num_of_term h <=
+   n ⊗ (num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l) + 1)` suffices_by simp[] >>
+  `(num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l) + 1) <=
+  n ⊗ (num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l) + 1)` by simp[nsnd_le] >>
+  `num_of_term h <=
+   (num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l) + 1)` suffices_by simp[] >>
+  `num_of_term h <= num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l)`
+    suffices_by simp[] >>
+  simp[nfst_le])
+>- (first_x_assum drule >> rw[] >>
+   `num_of_term (Fn n l) <= num_of_term (Fn n (h :: l))` suffices_by fs[] >>
+   rw[num_of_term_def] >>
+   `n ⊗ nlist_of (MAP (λa. num_of_term a) l) <
+   n ⊗ ncons (num_of_term h) (nlist_of (MAP (λa. num_of_term a) l))` suffices_by simp[] >>
+   `nlist_of (MAP (λa. num_of_term a) l) <
+   ncons (num_of_term h) (nlist_of (MAP (λa. num_of_term a) l))` suffices_by simp[le_npair] >>
+   rw[ncons_def] >>
+   `num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l) <
+   (num_of_term h ⊗ nlist_of (MAP (λa. num_of_term a) l)) + 1` by fs[] >>
+   rw[GSYM LE_LESS])
+QED
+
+
+Theorem term_num_term :
+!n t. num_of_term t = n ==> (term_of_num (num_of_term t)) = t
+Proof
+completeInduct_on `n` >> rw[] >> Cases_on `t`
+>- (rw[num_of_term_def,Once term_of_num_def] >>
+   `2 * n = n * 2` by simp[] >>
+   `2 * n DIV 2 = n * 2 DIV 2` by metis_tac[] >>
+   `0 < 2` by fs[] >> metis_tac[MULT_DIV])
+>- (rw[num_of_term_def,Once term_of_num_def]
+   >- (`2 * n ⊗ nlist_of (MAP (λa. num_of_term a) l) =
+      n ⊗ nlist_of (MAP (λa. num_of_term a) l) * 2` by simp[] >>
+      `(2 * n ⊗ nlist_of (MAP (λa. num_of_term a) l) DIV 2) =
+      ((n ⊗ nlist_of (MAP (λa. num_of_term a) l) * 2) DIV 2)` by metis_tac[] >>
+      `_ = n ⊗ nlist_of (MAP (λa. num_of_term a) l)` by fs[MULT_DIV] >>
+      `nfst (n ⊗ nlist_of (MAP (λa. num_of_term a) l)) = n` by fs[nfst_npair] >>
+      metis_tac[])
+   >- (`2 * n ⊗ nlist_of (MAP (λa. num_of_term a) l) =
+      n ⊗ nlist_of (MAP (λa. num_of_term a) l) * 2` by simp[] >>
+      `(2 * n ⊗ nlist_of (MAP (λa. num_of_term a) l) DIV 2) =
+      ((n ⊗ nlist_of (MAP (λa. num_of_term a) l) * 2) DIV 2)` by metis_tac[] >>
+      `_ = n ⊗ nlist_of (MAP (λa. num_of_term a) l)` by fs[MULT_DIV] >>
+      `nsnd (n ⊗ nlist_of (MAP (λa. num_of_term a) l)) = nlist_of (MAP (λa. num_of_term a) l)` by fs[nsnd_npair] >>
+      fs[] >> simp[listOfN_nlist] >>
+      `MAP (λa. term_of_num a) (MAP (λa. num_of_term a) l) =
+      MAP ((λa. term_of_num a) o (λa. num_of_term a)) l` by simp[MAP_MAP_o] >>
+      `MAP ((λa. term_of_num a) ∘ (λa. num_of_term a)) l = l` suffices_by fs[] >>
+      rw[LIST_EQ_REWRITE] >> 
+      `EL x (MAP ((λa. term_of_num a) ∘ (λa. num_of_term a)) l) =
+      ((λa. term_of_num a) ∘ (λa. num_of_term a)) (EL x l)` by fs[EL_MAP] >>
+      `((λa. term_of_num a) ∘ (λa. num_of_term a)) (EL x l) = EL x l` suffices_by fs[] >>
+      rw[] >>
+      `(num_of_term (EL x l)) < num_of_term (Fn n l)`
+        suffices_by rw[] >>
+      `!m. MEM m l ==> num_of_term m < num_of_term (Fn n l)`
+        suffices_by (rw[] >>
+	            `MEM (EL x l) l`
+		      by (`∃n. n < LENGTH l ∧ (EL x l) = EL n l`
+		            suffices_by metis_tac[MEM_EL] >>
+		         qexists_tac `x` >> fs[]) >>
+		    metis_tac[]) >>
+      metis_tac[MEM_LESS_num_of_term]))
+QED
+
+val MULT_DIV' = ONCE_REWRITE_RULE [MULT_COMM] MULT_DIV
+
+Theorem term_num_term'[simp] = SIMP_RULE (srw_ss ()) [] term_num_term
+Theorem LENGTH_listOfN_nlen' = GSYM LENGTH_listOfN_nlen
+
+Theorem divmod2_inverts[simp]:
+  !n k. n MOD 2 = k ==> 2 * ((n - k) DIV 2) + k = n
+Proof
+      rw[] >> qabbrev_tac `q = n DIV 2` >> qabbrev_tac `r = n MOD 2` >>
+      mp_tac (DIVISION |> Q.SPEC `2`) >> impl_tac >- simp[] >>
+      disch_then (qspec_then `n` mp_tac) >> simp[] >>
+      markerLib.RM_ALL_ABBREVS_TAC >> rw[MULT_DIV']
+QED
+
+Theorem num_term_num[simp]:
+  !n. num_of_term (term_of_num n) = n
+Proof
+  completeInduct_on `n` >> rw[num_of_term_def,Once term_of_num_def,MULT_DIV']
+  >- (`2 * ((n - 0) DIV 2) + 0 = n` by metis_tac[divmod2_inverts] >> fs[])
+  >- (simp[MAP_MAP_o] >>
+     `nlist_of
+     (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a))
+        (listOfN (nsnd ((n − 1) DIV 2)))) =
+     nsnd ((n − 1) DIV 2) /\ 2 * ((n - 1) DIV 2) + 1 = n` suffices_by simp[] >>
+     rw[] (* 2 *)
+     >- (`(!l. l < n ==>
+        nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)) = l) /\
+        (nsnd ((n − 1) DIV 2)) < n` suffices_by metis_tac[] >> rw[] (* 2 *)
+	>- (irule nel_eq_nlist >> rw[] (* 2 *)
+	   >- (`!m l. m < nlen l ==> nel m l = EL m (listOfN l)` by simp[nel_EL] >>
+	      `m < LENGTH (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
+	        by metis_tac[listOfN_nlist,LENGTH_listOfN_nlen] >>
+	      `m < LENGTH (listOfN l)` by metis_tac[LENGTH_MAP] >>
+	      `nlen l = LENGTH (listOfN l)` by fs[Once LENGTH_listOfN_nlen'] >>
+	      `nlen
+     (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))) =
+              LENGTH (listOfN (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))))` by fs[Once LENGTH_listOfN_nlen] >>
+	      `EL m (listOfN (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)))) = EL m (listOfN l)` suffices_by metis_tac[] >>
+	      `EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)) =
+              EL m (listOfN l)` suffices_by metis_tac[listOfN_nlist] >>
+	      `MEM (EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)))
+	      (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
+	        by metis_tac[EL_MEM] >>
+	      `MEM (EL m (listOfN l)) (listOfN l)`
+	        by metis_tac[LENGTH_MAP,EL_MEM] >>
+	      `!e l. MEM e (listOfN l) ==> e < l` by metis_tac[MEM_listOfN_LESS] >>
+	      `EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)) =
+	      ((λa. num_of_term a) ∘ (λa. term_of_num a)) (EL m (listOfN l))`
+	        by metis_tac[EL_MAP] >>
+              `((λa. num_of_term a) ∘ (λa. term_of_num a)) (EL m (listOfN l)) =
+	      EL m (listOfN l)` suffices_by metis_tac[] >> rw[] >>
+	      first_x_assum irule >>
+	      `EL m (listOfN l) < l` suffices_by metis_tac[LESS_TRANS] >>
+	      metis_tac[])
+	   >- (`nlen l = LENGTH (listOfN l)` by fs[Once LENGTH_listOfN_nlen'] >>
+	      `nlen
+     (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))) =
+              LENGTH (listOfN (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))))` by fs[Once LENGTH_listOfN_nlen] >>
+	      `LENGTH (listOfN l) =
+	      LENGTH
+              (listOfN
+                (nlist_of
+                 (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))))`
+	      suffices_by metis_tac[] >>
+	      `(listOfN (nlist_of
+              (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)))) =
+              (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
+	        by simp[Once listOfN_nlist] >>
+              `LENGTH (listOfN l) = 
+	      LENGTH (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
+	        suffices_by metis_tac[] >>
+	      simp[GSYM LENGTH_MAP]))
+	>- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 1) DIV 2` >> simp[nsnd_le] >>
+           irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 1` >> rw[DIV_LE_X] >>
+	   SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
+     >- (`n MOD 2 = 1` by (SPOSE_NOT_THEN ASSUME_TAC >> `n MOD 2 >= 2` by fs[] >>
+        `0 < 2` by fs[] >> `n MOD 2 < 2` by fs[MOD_LESS] >>
+	`2 <= n MOD 2` by fs[] >>
+	`¬(n MOD 2 < 2)` by metis_tac[GSYM NOT_LESS]) >> metis_tac[divmod2_inverts]))	
+QED
+
+
+
+Theorem form_num_form[simp] :
+  !f. (form_of_num (num_of_form f)) = f
+Proof
+Induct_on `f` >> rw[num_of_form_def,Once form_of_num_def,MULT_DIV']
+QED
+
+Theorem divmod5_inverts[simp]:
+  n MOD 5 = k ==> 5 * ((n - k) DIV 5) + k = n
+Proof
+  qabbrev_tac `q = n DIV 5` >> qabbrev_tac `r = n MOD 5` >>
+      mp_tac (DIVISION |> Q.SPEC `5`) >> impl_tac >- simp[] >>
+      disch_then (qspec_then `n` mp_tac) >> simp[] >>
+      markerLib.RM_ALL_ABBREVS_TAC >> rw[MULT_DIV']
+QED
+
+Theorem num_form_num[simp] :
+  !n. num_of_form (form_of_num n) = n
+Proof
+  completeInduct_on `n` >> simp[Once form_of_num_def] >> rw[num_of_form_def]
+  >- (`nsnd ((n - 5) DIV 5) < n ∧ 5 * ((n -5) DIV 5) = n - 5 ∧ 5 <= n` suffices_by simp[] >>
+     rw[] (* 3 *)
+     >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 5) DIV 5` >> simp[nsnd_le] >>
+        irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 5` >> rw[DIV_LE_X])
+     >- (qabbrev_tac `q = n DIV 5` >> qabbrev_tac `r = n MOD 5` >>
+         mp_tac (DIVISION |> Q.SPEC `5`) >> impl_tac >- simp[] >>
+	 disch_then (qspec_then `n` mp_tac) >> simp[] >>
+	 markerLib.RM_ALL_ABBREVS_TAC >> rw[] >> `5 <= 5 * q` by simp[] >>
+	 `5 * q - 5 = 5 * (q - 1)` by simp[LEFT_SUB_DISTRIB] >> simp[MULT_DIV'])
+     >- (spose_not_then strip_assume_tac >> `n < 5` by simp[] >>
+         `n MOD 5 = n` by simp[] >> fs[]))
+  >- (`nfst ((n - 3) DIV 5) < n /\ nsnd ((n - 3) DIV 5) < n` suffices_by simp[] >> rw[]
+     >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 3) DIV 5` >> simp[nfst_le] >>
+        irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 3` >> rw[DIV_LE_X] >>
+	SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[])
+     >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 3) DIV 5` >> simp[nsnd_le] >>
+        irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 3` >> rw[DIV_LE_X] >>
+	SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
+  >- (`nfst ((n - 4) DIV 5) < n /\ nsnd ((n - 4) DIV 5) < n` suffices_by simp[] >> rw[]
+     >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 4) DIV 5` >> simp[nfst_le] >>
+        irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 4` >> rw[DIV_LE_X] >>
+	SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[])
+     >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 4) DIV 5` >> simp[nsnd_le] >>
+        irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 4` >> rw[DIV_LE_X] >>
+	SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
+  >- (`n MOD 5 < 5` by simp[] >> qabbrev_tac `r = n MOD 5` >> fs[])
+QED
+
+
+Theorem Godel_num_of_form :
+  BIJ num_of_form (univ (:fform)) univ (:num)
+Proof
+  rw[BIJ_DEF] >> simp[EQ_IMP_THM,INJ_DEF,SURJ_DEF] (* 2 *)
+  >- metis_tac[form_num_form]
+  >- (rw[] >> qexists_tac `form_of_num x` >> rw[num_form_num])
+QED
+
+
 val _ = export_theory();
 

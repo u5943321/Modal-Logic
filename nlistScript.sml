@@ -2,6 +2,9 @@ open HolKernel Parse boolLib bossLib;
 
 open numpairTheory
 
+open listTheory;
+open rich_listTheory;
+
 val _ = new_theory "nlist";
 
 
@@ -523,7 +526,7 @@ ho_match_mp_tac nlist_ind >> rpt strip_tac
       >> `0 < LENGTH (listOfN (ncons h l1))` by simp[]
       >> `nel 0 (ncons h l1) = nel 0 (ncons h' t)` by metis_tac[]
       >> fs[])
-    >- (first_x_assum irule
+    >- (first_x_assum irule >> rw[]
       >- (SPOSE_NOT_THEN ASSUME_TAC >> fs[]
         >> `m + 1 < nlen l1 + 1` by simp[]
 	>> `nel (m + 1) (ncons h l1) <> nel (m + 1) (ncons h' t)` suffices_by fs[]
@@ -617,6 +620,79 @@ val nlast_napp_singl = store_thm(
 ``nlast (napp w (nlist_of [v'])) = v'``,
 `nlist_of [v'] <> 0` by simp[nlist_of_def,ncons_not_nnil]
 >> simp[nlast_napp]);
+
+Theorem ntl_LE :
+!n. ntl n <= n
+Proof
+rw[ntl_def,ncons_def] >> `nsnd (n - 1) <= n - 1` by fs[nsnd_le] >> fs[]
+QED
+
+Theorem ntl_nonzero_LESS :
+!n. n <> 0 ==> ntl n < n
+Proof
+rw[ntl_def,ncons_def] >> `nsnd (n - 1) <= n - 1` by fs[nsnd_le] >>
+`n - 1 < n` by fs[] >> fs[]
+QED
+
+
+
+val MEM_listOfN_LESS = store_thm(
+"MEM_listOfN_LESS",
+``!n. !a. MEM a (listOfN n) ==> a < n``,
+completeInduct_on `n` >> rw[] >> fs[Once listOfN_def] >> Cases_on `n = 0`
+>- (`MEM a []` by fs[] >> fs[])
+>- (fs[Once nhd_def]
+   >- (`nfst (n - 1) <= n - 1` by fs[nfst_le] >> fs[])
+   >- (Cases_on `(listOfN (ntl n))` >> fs[MEM]
+      >- (`h < ncons h tn`
+            by (rw[ncons_def] >> `a <= npair a tn` suffices_by simp[] >>
+	       `a = nfst (npair a tn)` by simp[GSYM nfst_npair] >>
+	       `nfst (npair a tn) <= npair a tn` suffices_by fs[] >>
+	       simp[nfst_le]) >>
+         `h < ntl n` by metis_tac[] >>
+	 `ntl n <= n` by fs[ntl_LE] >> fs[])
+      >- (`ntl n < n` by fs[ntl_nonzero_LESS] >> 
+	 first_x_assum (qspecl_then [`ncons h tn`] mp_tac) >> rw[] >>
+	  `a < ncons h tn` by metis_tac[] >> fs[])))
+QED
+
+val nfst_le_npair = store_thm(
+  "nfst_le_npair[simp]",
+  ``n <= npair n m``,
+  `n = nfst (npair n m)` by simp[GSYM nfst_npair] >>
+  `nfst (npair n m) <= npair n m` by simp[nfst_le] >> fs[]);
+
+val nsnd_le_npair = store_thm(
+  "nsnd_le_npair[simp]",
+  ``m <= npair n m``,
+  `m = nsnd (npair n m)` by simp[GSYM nsnd_npair] >>
+  `nsnd (npair n m) <= npair n m` by simp[nsnd_le] >> fs[]);
+
+Theorem nel_EL :
+!m l. m < nlen l ==> nel m l = EL m (listOfN l)
+Proof
+  Induct_on `listOfN l` >> rw[] >> `listOfN tn = listOfN tn` by fs[] >> first_assum drule >>
+  rw[] >> Cases_on `m = 0` (* 2 *)
+  >- simp[nel_nhd]
+  >- (`0 < m` by fs[] >> simp[nel_ncons_nonzero] >> simp[EL_CONS] >>
+     `nel (m − 1) tn = EL (m - 1) (listOfN tn)` suffices_by fs[] >>
+     `m - 1 < nlen tn` suffices_by metis_tac[] >>
+     `m < nlen tn + 1` by fs[nlen_thm] >> fs[])
+QED
+
+Theorem MEM_listOfN_LESS :
+!e l. MEM e (listOfN l) ==> e < l
+Proof
+  Induct_on `listOfN l` >> rw[] >>
+  first_x_assum (qspecl_then [`tn`] mp_tac) >> rw[] >> fs[listOfN_ncons] (* 2 *)
+  >- (rw[ncons_def] >> `e <= npair e tn` by simp[] >>
+     `npair e tn < (npair e tn) + 1` by rw[] >> metis_tac[LESS_EQ_LESS_TRANS])
+  >- (`tn <= ncons h tn` suffices_by metis_tac[LESS_LESS_EQ_TRANS] >> rw[ncons_def] >>
+     `tn <= npair h tn` by simp[] >>
+     `npair h tn <= (npair h tn) + 1` by rw[] >> metis_tac[LESS_EQ_TRANS])
+QED
+
+
 
 
 val _ = export_theory();
