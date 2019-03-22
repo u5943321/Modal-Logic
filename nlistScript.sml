@@ -2,6 +2,13 @@ open HolKernel Parse boolLib bossLib;
 
 open numpairTheory
 
+open combinTheory;
+open pred_setTheory;
+open relationTheory;
+open arithmeticTheory;
+open set_relationTheory;
+open numpairTheory;
+
 open listTheory;
 open rich_listTheory;
 
@@ -635,27 +642,6 @@ rw[ntl_def,ncons_def] >> `nsnd (n - 1) <= n - 1` by fs[nsnd_le] >>
 QED
 
 
-
-val MEM_listOfN_LESS = store_thm(
-"MEM_listOfN_LESS",
-``!n. !a. MEM a (listOfN n) ==> a < n``,
-completeInduct_on `n` >> rw[] >> fs[Once listOfN_def] >> Cases_on `n = 0`
->- (`MEM a []` by fs[] >> fs[])
->- (fs[Once nhd_def]
-   >- (`nfst (n - 1) <= n - 1` by fs[nfst_le] >> fs[])
-   >- (Cases_on `(listOfN (ntl n))` >> fs[MEM]
-      >- (`h < ncons h tn`
-            by (rw[ncons_def] >> `a <= npair a tn` suffices_by simp[] >>
-	       `a = nfst (npair a tn)` by simp[GSYM nfst_npair] >>
-	       `nfst (npair a tn) <= npair a tn` suffices_by fs[] >>
-	       simp[nfst_le]) >>
-         `h < ntl n` by metis_tac[] >>
-	 `ntl n <= n` by fs[ntl_LE] >> fs[])
-      >- (`ntl n < n` by fs[ntl_nonzero_LESS] >> 
-	 first_x_assum (qspecl_then [`ncons h tn`] mp_tac) >> rw[] >>
-	  `a < ncons h tn` by metis_tac[] >> fs[])))
-QED
-
 val nfst_le_npair = store_thm(
   "nfst_le_npair[simp]",
   ``n <= npair n m``,
@@ -686,7 +672,8 @@ Proof
   Induct_on `listOfN l` >> rw[] >>
   first_x_assum (qspecl_then [`tn`] mp_tac) >> rw[] >> fs[listOfN_ncons] (* 2 *)
   >- (rw[ncons_def] >> `e <= npair e tn` by simp[] >>
-     `npair e tn < (npair e tn) + 1` by rw[] >> metis_tac[LESS_EQ_LESS_TRANS])
+     `npair e tn < (npair e tn) + 1` by rw[] >> irule LESS_EQ_LESS_TRANS >>
+     rw[ncons_def] >> qexists_tac `npair e tn` >> rw[nfst_le])
   >- (`tn <= ncons h tn` suffices_by metis_tac[LESS_LESS_EQ_TRANS] >> rw[ncons_def] >>
      `tn <= npair h tn` by simp[] >>
      `npair h tn <= (npair h tn) + 1` by rw[] >> metis_tac[LESS_EQ_TRANS])

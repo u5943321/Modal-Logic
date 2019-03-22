@@ -1,10 +1,7 @@
 open HolKernel Parse boolLib bossLib;
-open combinTheory;
-open pred_setTheory;
-open relationTheory;
-open arithmeticTheory;
-open set_relationTheory;
-open numpairTheory;
+
+open combinTheory pred_setTheory relationTheory arithmeticTheory set_relationTheory
+     numpairTheory nlistTheory listTheory rich_listTheory
 
 
 val _ = ParseExtras.tight_equality()
@@ -14,12 +11,12 @@ val _ = new_theory "FOLcompactnessJH";
 
 val _ = Datatype`
         fterm = V num
-	       | Fn num (fterm list) ;
-	fform = fFALSE
-	       | fR num fterm fterm
-	       | fP num fterm
-	       | fIMP fform fform
-	       | fFORALL num fform
+               | Fn num (fterm list) ;
+        fform = fFALSE
+               | fR num fterm fterm
+               | fP num fterm
+               | fIMP fform fform
+               | fFORALL num fform
                | fEXISTS num fform`
 
 
@@ -113,10 +110,10 @@ val fsubst_def = Define`
   fsubst v (fIMP ff1 ff2) = fIMP (fsubst v ff1) (fsubst v ff2) /\
   (fsubst v (fFORALL n ff) = if (?y. y IN (ffvs (fFORALL n ff)) /\ n IN tfvs ((n =+ V n) v y))
                                then (fFORALL (VARIANT (ffvs (fsubst ((n =+ V n) v) ff))) (fsubst ((n =+ V n) v) ff))
-			    else (fFORALL n (fsubst ((n =+ V n) v) ff))) /\
+                            else (fFORALL n (fsubst ((n =+ V n) v) ff))) /\
   fsubst v (fEXISTS n ff) = if (?y. y IN (ffvs (fEXISTS n ff)) /\ n IN tfvs ((n =+ V n) v y))
                                then (fEXISTS (VARIANT (ffvs (fsubst ((n =+ V n) v) ff))) (fsubst ((n =+ V n) v) ff))
-			    else (fEXISTS n (fsubst ((n =+ V n) v) ff))`
+                            else (fEXISTS n (fsubst ((n =+ V n) v) ff))`
 
 val qfree_def = Define`
   (qfree fFALSE = T) /\
@@ -166,9 +163,9 @@ Prenex_right p (fR a t1 t2) = fIMP p (fR a t1 t2) /\
 Prenex_right p (fP a t) = fIMP p (fP a t) /\
 Prenex_right p (fIMP ff1 ff2) = fIMP p (fIMP ff1 ff2) /\
 (Prenex_right p (fFORALL n ff) = let y = VARIANT ((ffvs (fFORALL n ff) ∪ (ffvs p))) in
-				    fFORALL y (Prenex_right p (fsubst ((n =+ V y) V) ff))) /\
+                                    fFORALL y (Prenex_right p (fsubst ((n =+ V y) V) ff))) /\
 Prenex_right p (fEXISTS n ff) = let y = VARIANT ((ffvs (fEXISTS n ff) ∪ (ffvs p))) in
-				    fEXISTS y (Prenex_right p (fsubst ((n =+ V y) V) ff))`
+                                    fEXISTS y (Prenex_right p (fsubst ((n =+ V y) V) ff))`
  (WF_REL_TAC `measure (size o SND)` >> rw[] (* 2 *)
      >- (`size (fsubst V⦇n ↦ V (VARIANT (ffvs (fEXISTS n ff) ∪ ffvs p))⦈ ff) = size ff`
           by metis_tac[size_fsubst] >> rw[size_def] >> fs[])
@@ -184,9 +181,9 @@ Prenex_left (fR a t1 t2) p = Prenex_right (fR a t1 t2) p /\
 Prenex_left (fP a t) p = Prenex_right (fP a t) p /\
 Prenex_left (fIMP ff1 ff2) p = Prenex_right (fIMP ff1 ff2) p /\
 (Prenex_left (fFORALL n q) p = let y = VARIANT ((ffvs (fFORALL n q) ∪ (ffvs p))) in
-				  fEXISTS y (Prenex_left (fsubst ((n =+ V y) V) q) p)) /\
+                                  fEXISTS y (Prenex_left (fsubst ((n =+ V y) V) q) p)) /\
 Prenex_left (fEXISTS n q) p = let y = VARIANT ((ffvs (fEXISTS n q) ∪ (ffvs p))) in
-				  fFORALL y (Prenex_left (fsubst ((n =+ V y) V) q) p)`
+                                  fFORALL y (Prenex_left (fsubst ((n =+ V y) V) q) p)`
 (WF_REL_TAC `measure (size o FST)` >> rw[] (* 2 *)
      >- (`size (fsubst V⦇n ↦ V (VARIANT (ffvs (fEXISTS n q) ∪ ffvs p))⦈ q) = size q`
           by metis_tac[size_fsubst] >> rw[size_def] >> fs[])
@@ -203,7 +200,7 @@ Theorem prenex_rwts[simp]:
 Proof
   rpt conj_tac >> simp[Once prenex_cases, SimpLHS]
 QED
-			
+                        
 Theorem qfree_fsubst[simp]:
   !f s. qfree (fsubst s f) <=> qfree f
 Proof
@@ -215,7 +212,7 @@ Theorem prenex_fsubst[simp]:
 Proof
   Induct_on `f` >> rw[fsubst_def]
 QED
-	 
+         
 Theorem tsubst_composition : 
   (∀t s1 s2. tsubst s1 (tsubst s2 t) = tsubst (tsubst s1 o s2) t) ∧
   (∀tl s1 s2. MAP (\a. tsubst s1 (tsubst s2 a)) tl = MAP (tsubst (tsubst s1 o s2)) tl)
@@ -230,14 +227,14 @@ QED
 
 Theorem Prenex_right_subst:
   !f1 f2 s. qfree f1 /\ prenex f2 ==> prenex (Prenex_right f1 f2)
-Proof					       
+Proof                                          
   completeInduct_on `size f2` >> fs[PULL_FORALL] >> Cases >> 
   rw[size_def, fsubst_def, Prenex_right_def] 
   >> (first_x_assum irule >> simp[prenex_fsubst, GSYM size_fsubst])
 QED
      
 val prenex_Prenex_left = store_thm(
-  "prenex_Prenex_left",							       
+  "prenex_Prenex_left",                                                        
   ``!f1 f2. prenex f1 /\ prenex f2 ==> prenex (Prenex_left f1 f2)``,
   completeInduct_on `size f1` >> fs[PULL_FORALL] >> Cases >> 
   rw[fsubst_def, Prenex_left_def, Prenex_right_subst] (* 2 *) >>
@@ -245,7 +242,7 @@ val prenex_Prenex_left = store_thm(
 
 
 
-	
+        
 val Prenex_def = Define`
   Prenex fFALSE = fFALSE /\
   Prenex (fR a t1 t2) = fR a t1 t2 /\
@@ -257,9 +254,9 @@ val Prenex_def = Define`
 
 
 
-				
+                                
 val prenex_Prenex = store_thm(
-	"prenex_Prenex",
+        "prenex_Prenex",
 ``!ff. prenex (Prenex ff)``,
 Induct_on `ff` (* 6 *)
 >- (rw[Prenex_def] >> `qfree fFALSE` by fs[qfree_def] >> metis_tac[prenex_rules])
@@ -335,12 +332,12 @@ QED
 val form_of_num_def = tDefine "form_of_num" `
   form_of_num n = case (n MOD 5) of
                   | 0 => if n = 0 then fFALSE else
-		    fEXISTS (nfst ((n - 5) DIV 5)) (form_of_num (nsnd ((n - 5) DIV 5)))
-		  | 1 => fP (nfst ((n - 1) DIV 5)) (term_of_num (nsnd ((n - 1) DIV 5)))
-		  | 2 => fR (nfst ((n - 2) DIV 5)) (term_of_num (nfst (nsnd ((n - 2) DIV 5)))) (term_of_num (nsnd (nsnd ((n - 2) DIV 5))))
-		  | 3 => fIMP (form_of_num (nfst ((n - 3) DIV 5)))
-		              (form_of_num (nsnd ((n - 3) DIV 5)))
-		  | 4 => fFORALL (nfst ((n - 4) DIV 5)) (form_of_num (nsnd ((n - 4) DIV 5)))`
+                    fEXISTS (nfst ((n - 5) DIV 5)) (form_of_num (nsnd ((n - 5) DIV 5)))
+                  | 1 => fP (nfst ((n - 1) DIV 5)) (term_of_num (nsnd ((n - 1) DIV 5)))
+                  | 2 => fR (nfst ((n - 2) DIV 5)) (term_of_num (nfst (nsnd ((n - 2) DIV 5)))) (term_of_num (nsnd (nsnd ((n - 2) DIV 5))))
+                  | 3 => fIMP (form_of_num (nfst ((n - 3) DIV 5)))
+                              (form_of_num (nsnd ((n - 3) DIV 5)))
+                  | 4 => fFORALL (nfst ((n - 4) DIV 5)) (form_of_num (nsnd ((n - 4) DIV 5)))`
 (WF_REL_TAC `$<` >> rw[] (* 4 *)
 >- (`nsnd ((n − 4) DIV 5) <= (n − 4) DIV 5` by rw[nsnd_le] >>
    `(n − 4) DIV 5 < n` suffices_by fs[] >>
@@ -448,11 +445,11 @@ completeInduct_on `n` >> rw[] >> Cases_on `t`
         suffices_by rw[] >>
       `!m. MEM m l ==> num_of_term m < num_of_term (Fn n l)`
         suffices_by (rw[] >>
-	            `MEM (EL x l) l`
-		      by (`∃n. n < LENGTH l ∧ (EL x l) = EL n l`
-		            suffices_by metis_tac[MEM_EL] >>
-		         qexists_tac `x` >> fs[]) >>
-		    metis_tac[]) >>
+                    `MEM (EL x l) l`
+                      by (`∃n. n < LENGTH l ∧ (EL x l) = EL n l`
+                            suffices_by metis_tac[MEM_EL] >>
+                         qexists_tac `x` >> fs[]) >>
+                    metis_tac[]) >>
       metis_tac[MEM_LESS_num_of_term]))
 QED
 
@@ -484,57 +481,57 @@ Proof
      >- (`(!l. l < n ==>
         nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)) = l) /\
         (nsnd ((n − 1) DIV 2)) < n` suffices_by metis_tac[] >> rw[] (* 2 *)
-	>- (irule nel_eq_nlist >> rw[] (* 2 *)
-	   >- (`!m l. m < nlen l ==> nel m l = EL m (listOfN l)` by simp[nel_EL] >>
-	      `m < LENGTH (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
-	        by metis_tac[listOfN_nlist,LENGTH_listOfN_nlen] >>
-	      `m < LENGTH (listOfN l)` by metis_tac[LENGTH_MAP] >>
-	      `nlen l = LENGTH (listOfN l)` by fs[Once LENGTH_listOfN_nlen'] >>
-	      `nlen
+        >- (irule nel_eq_nlist >> rw[] (* 2 *)
+           >- (`!m l. m < nlen l ==> nel m l = EL m (listOfN l)` by simp[nel_EL] >>
+              `m < LENGTH (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
+                by metis_tac[listOfN_nlist,LENGTH_listOfN_nlen] >>
+              `m < LENGTH (listOfN l)` by metis_tac[LENGTH_MAP] >>
+              `nlen l = LENGTH (listOfN l)` by fs[Once LENGTH_listOfN_nlen'] >>
+              `nlen
      (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))) =
               LENGTH (listOfN (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))))` by fs[Once LENGTH_listOfN_nlen] >>
-	      `EL m (listOfN (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)))) = EL m (listOfN l)` suffices_by metis_tac[] >>
-	      `EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)) =
+              `EL m (listOfN (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)))) = EL m (listOfN l)` suffices_by metis_tac[] >>
+              `EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)) =
               EL m (listOfN l)` suffices_by metis_tac[listOfN_nlist] >>
-	      `MEM (EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)))
-	      (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
-	        by metis_tac[EL_MEM] >>
-	      `MEM (EL m (listOfN l)) (listOfN l)`
-	        by metis_tac[LENGTH_MAP,EL_MEM] >>
-	      `!e l. MEM e (listOfN l) ==> e < l` by metis_tac[MEM_listOfN_LESS] >>
-	      `EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)) =
-	      ((λa. num_of_term a) ∘ (λa. term_of_num a)) (EL m (listOfN l))`
-	        by metis_tac[EL_MAP] >>
+              `MEM (EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)))
+              (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
+                by metis_tac[EL_MEM] >>
+              `MEM (EL m (listOfN l)) (listOfN l)`
+                by metis_tac[LENGTH_MAP,EL_MEM] >>
+              `!e l. MEM e (listOfN l) ==> e < l` by metis_tac[MEM_listOfN_LESS] >>
+              `EL m (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)) =
+              ((λa. num_of_term a) ∘ (λa. term_of_num a)) (EL m (listOfN l))`
+                by metis_tac[EL_MAP] >>
               `((λa. num_of_term a) ∘ (λa. term_of_num a)) (EL m (listOfN l)) =
-	      EL m (listOfN l)` suffices_by metis_tac[] >> rw[] >>
-	      first_x_assum irule >>
-	      `EL m (listOfN l) < l` suffices_by metis_tac[LESS_TRANS] >>
-	      metis_tac[])
-	   >- (`nlen l = LENGTH (listOfN l)` by fs[Once LENGTH_listOfN_nlen'] >>
-	      `nlen
+              EL m (listOfN l)` suffices_by metis_tac[] >> rw[] >>
+              first_x_assum irule >>
+              `EL m (listOfN l) < l` suffices_by metis_tac[LESS_TRANS] >>
+              metis_tac[])
+           >- (`nlen l = LENGTH (listOfN l)` by fs[Once LENGTH_listOfN_nlen'] >>
+              `nlen
      (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))) =
               LENGTH (listOfN (nlist_of (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))))` by fs[Once LENGTH_listOfN_nlen] >>
-	      `LENGTH (listOfN l) =
-	      LENGTH
+              `LENGTH (listOfN l) =
+              LENGTH
               (listOfN
                 (nlist_of
                  (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))))`
-	      suffices_by metis_tac[] >>
-	      `(listOfN (nlist_of
+              suffices_by metis_tac[] >>
+              `(listOfN (nlist_of
               (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l)))) =
               (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
-	        by simp[Once listOfN_nlist] >>
+                by simp[Once listOfN_nlist] >>
               `LENGTH (listOfN l) = 
-	      LENGTH (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
-	        suffices_by metis_tac[] >>
-	      simp[GSYM LENGTH_MAP]))
-	>- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 1) DIV 2` >> simp[nsnd_le] >>
+              LENGTH (MAP ((λa. num_of_term a) ∘ (λa. term_of_num a)) (listOfN l))`
+                suffices_by metis_tac[] >>
+              simp[GSYM LENGTH_MAP]))
+        >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 1) DIV 2` >> simp[nsnd_le] >>
            irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 1` >> rw[DIV_LE_X] >>
-	   SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
+           SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
      >- (`n MOD 2 = 1` by (SPOSE_NOT_THEN ASSUME_TAC >> `n MOD 2 >= 2` by fs[] >>
         `0 < 2` by fs[] >> `n MOD 2 < 2` by fs[MOD_LESS] >>
-	`2 <= n MOD 2` by fs[] >>
-	`¬(n MOD 2 < 2)` by metis_tac[GSYM NOT_LESS]) >> metis_tac[divmod2_inverts]))	
+        `2 <= n MOD 2` by fs[] >>
+        `¬(n MOD 2 < 2)` by metis_tac[GSYM NOT_LESS]) >> metis_tac[divmod2_inverts]))   
 QED
 
 
@@ -564,25 +561,25 @@ Proof
         irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 5` >> rw[DIV_LE_X])
      >- (qabbrev_tac `q = n DIV 5` >> qabbrev_tac `r = n MOD 5` >>
          mp_tac (DIVISION |> Q.SPEC `5`) >> impl_tac >- simp[] >>
-	 disch_then (qspec_then `n` mp_tac) >> simp[] >>
-	 markerLib.RM_ALL_ABBREVS_TAC >> rw[] >> `5 <= 5 * q` by simp[] >>
-	 `5 * q - 5 = 5 * (q - 1)` by simp[LEFT_SUB_DISTRIB] >> simp[MULT_DIV'])
+         disch_then (qspec_then `n` mp_tac) >> simp[] >>
+         markerLib.RM_ALL_ABBREVS_TAC >> rw[] >> `5 <= 5 * q` by simp[] >>
+         `5 * q - 5 = 5 * (q - 1)` by simp[LEFT_SUB_DISTRIB] >> simp[MULT_DIV'])
      >- (spose_not_then strip_assume_tac >> `n < 5` by simp[] >>
          `n MOD 5 = n` by simp[] >> fs[]))
   >- (`nfst ((n - 3) DIV 5) < n /\ nsnd ((n - 3) DIV 5) < n` suffices_by simp[] >> rw[]
      >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 3) DIV 5` >> simp[nfst_le] >>
         irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 3` >> rw[DIV_LE_X] >>
-	SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[])
+        SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[])
      >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 3) DIV 5` >> simp[nsnd_le] >>
         irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 3` >> rw[DIV_LE_X] >>
-	SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
+        SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
   >- (`nfst ((n - 4) DIV 5) < n /\ nsnd ((n - 4) DIV 5) < n` suffices_by simp[] >> rw[]
      >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 4) DIV 5` >> simp[nfst_le] >>
         irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 4` >> rw[DIV_LE_X] >>
-	SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[])
+        SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[])
      >- (irule LESS_EQ_LESS_TRANS >> qexists_tac `(n - 4) DIV 5` >> simp[nsnd_le] >>
         irule LESS_EQ_LESS_TRANS >> qexists_tac `n - 4` >> rw[DIV_LE_X] >>
-	SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
+        SPOSE_NOT_THEN ASSUME_TAC >> `n = 0` by fs[] >> fs[]))
   >- (`n MOD 5 < 5` by simp[] >> qabbrev_tac `r = n MOD 5` >> fs[])
 QED
 
@@ -594,6 +591,106 @@ Proof
   >- metis_tac[form_num_form]
   >- (rw[] >> qexists_tac `form_of_num x` >> rw[num_form_num])
 QED
+
+
+val SKOLEM_def = tDefine "SKOLEM"`
+ (SKOLEM k (fEXISTS m f0) =
+   SKOLEM (k + 1)
+          (fsubst V⦇m ↦ Fn (npair (npair m (num_of_form f0)) k)
+                                (MAP V (SET_TO_LIST (ffvs (fEXISTS m f0))))⦈
+                  f0)
+ ) /\
+ (SKOLEM k (fFORALL m f0) = fFORALL m (SKOLEM k f0)) /\
+ SKOLEM k ff = ff`
+(WF_REL_TAC `measure (size o SND)` >> simp[GSYM size_fsubst,size_def]);
+
+val SKOLEM_ind = DB.fetch "-" "SKOLEM_ind"
+
+Theorem BIGUNION_set_MAP :
+  BIGUNION (set (MAP f l)) = BIGUNION (IMAGE f (set l))
+Proof
+  Induct_on `l` >> simp[]
+QED
+
+Theorem fterm_size_def[simp] = DB.fetch "-" "fterm_size_def"
+
+val tsize_lemma = Q.prove(
+  `MEM t tlist ==> fterm_size t < fterm1_size tlist`,
+  Induct_on `tlist` >> fs[] >> rw[] >> fs[]);
+
+Theorem tfvs_tsubst :
+  !v t. tfvs (tsubst v t) = BIGUNION (IMAGE (tfvs o v) (tfvs t))
+Proof
+  completeInduct_on `fterm_size t` >> Cases_on `t`
+  >> rw[tfvs_def,tsubst_def,MAP_MAP_o,BIGUNION_set_MAP,combinTheory.o_ABS_R] >>
+  rw[Once EXTENSION,EQ_IMP_THM,PULL_EXISTS] >> fs[MEM_MAP] >> rw[] >>
+  rename [`MEM t tlist`] >>
+  first_x_assum (qspec_then `fterm_size t` mp_tac) >> drule_then assume_tac tsize_lemma >>
+  simp[] >> strip_tac >> simp[PULL_EXISTS]
+  >- (fs[] >> metis_tac[]) >>
+  qexists_tac `t` >> simp[] >> metis_tac[]
+QED
+
+
+Theorem ffvs_fsubst:
+  !v ff. ffvs (fsubst v ff) = BIGUNION (IMAGE (tfvs o v) (ffvs ff))
+Proof
+  Induct_on `ff` >> rw[ffvs_def,fsubst_def,tfvs_tsubst]
+  >- (rw[EQ_IMP_THM, Once EXTENSION, PULL_EXISTS] >>
+      rename [`y ∈ ffvs ff`, `a ∈ ffvs ff`, `x ∈ tfvs (v (|n |-> V n|) a)`] >>
+      >- (Cases_on `a = n`
+          >- (fs[APPLY_UPDATE_THM, tfvs_def] >> rw[] >> rfs[] >> metis_tac[]) >>
+          fs[APPLY_UPDATE_THM, tfvs_def] >> rfs[] >> metis_tac[]) >>
+      rfs[APPLY_UPDATE_THM] >> qexists_tac `y` >> simp[] >>
+      simp[VARIANT_def] >>
+      qmatch_abbrev_tac `x <> MAX_SET myset + 1` >>
+      `FINITE myset` by cheat >>
+      `x IN myset` suffices_by (
+        strip_tac >> drule_all in_max_set >> simp[]
+      ) >>
+      simp[Abbr`myset`,PULL_EXISTS] >> qexists_tac `y` >>
+      simp[APPLY_UPDATE_THM])
+  >-
+QED
+
+
+
+
+Theorem ffvs_SKOLEM[simp]:
+  !n ff. prenex ff ==> ffvs (SKOLEM n ff) = ffvs ff
+Proof
+  ho_match_mp_tac SKOLEM_ind >> rw[SKOLEM_def,ffvs_def]
+QED
+
+
+
+(* semantics stuff *)
+
+
+val _ = Datatype`
+        folmodel = <| dom : 'a set ;
+                      fnsyms : num -> 'a list -> 'a;
+                      predsyms : num -> 'a -> bool;
+                      relsyms : num -> 'a -> 'a -> bool;
+                      |>`;
+
+val interpret_def = Define`
+  interpret M σ (V n) = σ n /\
+  interpret M σ (Fn f l) = M.fnsyms f l`;
+
+val feval_def = Define`
+  feval M σ (fP p t) = M.predsyms p (interpret M σ t) /\
+  feval M σ (fR n t1 t2) = M.relsyms n (interpret M σ t1) (interpret M σ t2) /\
+  feval M σ (fIMP f1 f2) = (feval M σ f1 \/ feval M σ f2) /\
+  feval M σ (fFALSE) = F /\
+  feval M σ (fEXISTS n f) = (?x. x IN M.dom /\ feval M ((n=+x)σ) f) /\
+  feval M σ (fFORALL n f) = (!x. x IN M.dom ==> feval M ((n=+x)σ) f)`;
+
+
+
+val fsatis_def = Define`
+  fsatis M σ fform <=> (IMAGE σ univ(:num)) SUBSET M.dom /\
+                       feval M σ fform`;
 
 
 val _ = export_theory();
