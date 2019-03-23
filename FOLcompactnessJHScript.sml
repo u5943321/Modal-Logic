@@ -632,34 +632,83 @@ Proof
 QED
 
 
+Theorem tfvs_FINITE :
+!t. FINITE (tfvs t)
+Proof
+  completeInduct_on `fterm_size t` >> Cases_on `t` >>
+  rw[tfvs_def,MAP_MAP_o,BIGUNION_set_MAP,combinTheory.o_ABS_R] >>
+  rw[tfvs_def] >> fs[MEM_MAP] >>
+  first_x_assum (qspec_then `fterm_size a'` mp_tac) >> drule_then assume_tac tsize_lemma >>
+  simp[]
+QED
+
+Theorem ffvs_FINITE :
+!f. FINITE (ffvs f)
+Proof
+  Induct_on `f` >> rw[ffvs_def] >> metis_tac[tfvs_FINITE]
+QED
+
+
 Theorem ffvs_fsubst:
   !v ff. ffvs (fsubst v ff) = BIGUNION (IMAGE (tfvs o v) (ffvs ff))
 Proof
   Induct_on `ff` >> rw[ffvs_def,fsubst_def,tfvs_tsubst]
   >- (rw[EQ_IMP_THM, Once EXTENSION, PULL_EXISTS] >>
-      rename [`y ∈ ffvs ff`, `a ∈ ffvs ff`, `x ∈ tfvs (v (|n |-> V n|) a)`] >>
+      rename [`y ∈ ffvs ff`, `a ∈ ffvs ff`, `x ∈ tfvs (v (|n |-> V n|) a)`]
       >- (Cases_on `a = n`
           >- (fs[APPLY_UPDATE_THM, tfvs_def] >> rw[] >> rfs[] >> metis_tac[]) >>
           fs[APPLY_UPDATE_THM, tfvs_def] >> rfs[] >> metis_tac[]) >>
       rfs[APPLY_UPDATE_THM] >> qexists_tac `y` >> simp[] >>
       simp[VARIANT_def] >>
       qmatch_abbrev_tac `x <> MAX_SET myset + 1` >>
-      `FINITE myset` by cheat >>
+      `FINITE myset` by
+        (rw[Abbr`myset`]
+	>- (irule IMAGE_FINITE >> metis_tac[ffvs_FINITE])
+	>- metis_tac[tfvs_FINITE]) >>
       `x IN myset` suffices_by (
         strip_tac >> drule_all in_max_set >> simp[]
       ) >>
       simp[Abbr`myset`,PULL_EXISTS] >> qexists_tac `y` >>
       simp[APPLY_UPDATE_THM])
-  >-
+  >- (rw[EQ_IMP_THM, Once EXTENSION, PULL_EXISTS] 
+     >- (rename [`a ∈ ffvs ff`, `x ∈ tfvs (v (|n |-> V n|) a)`] >>
+         Cases_on `a = n`
+         >- (fs[APPLY_UPDATE_THM, tfvs_def] >> rw[] >> rfs[] >> metis_tac[]) >>
+	fs[APPLY_UPDATE_THM, tfvs_def] >> rfs[] >> metis_tac[])
+     >- (rename [`a ∈ ffvs ff`, `x ∈ tfvs (v a)`,`a <> n`] >>
+        rfs[APPLY_UPDATE_THM] >> qexists_tac `a` >> simp[] >> metis_tac[]))
+  >- (rw[EQ_IMP_THM, Once EXTENSION, PULL_EXISTS]
+     >- (rename [`a ∈ ffvs ff`, `x ∈ tfvs (v (|n |-> V n|) a)`] >>
+        Cases_on `a = n`
+	>- (fs[APPLY_UPDATE_THM, tfvs_def] >> rw[] >> rfs[] >> metis_tac[]) >>
+	fs[APPLY_UPDATE_THM, tfvs_def] >> rfs[] >> metis_tac[])
+     >- (rename [`a ∈ ffvs ff`, `x ∈ tfvs (v a)`,`a <> n`] >>
+        rfs[APPLY_UPDATE_THM] >> qexists_tac `a` >> simp[] >> 
+        simp[VARIANT_def] >>
+        qmatch_abbrev_tac `x <> MAX_SET myset + 1` >>
+        `FINITE myset` by
+	   (rw[Abbr`myset`]
+           >- (irule IMAGE_FINITE >> metis_tac[ffvs_FINITE])
+	   >- metis_tac[tfvs_FINITE]) >>
+        `x IN myset` suffices_by (
+         strip_tac >> drule_all in_max_set >> simp[]
+        ) >>
+        simp[Abbr`myset`,PULL_EXISTS] >> qexists_tac `a` >>
+        simp[APPLY_UPDATE_THM]))
+  >- (rw[EQ_IMP_THM, Once EXTENSION, PULL_EXISTS]
+     >- (rename [`a ∈ ffvs ff`, `x ∈ tfvs (v (|n |-> V n|) a)`] >>
+        Cases_on `a = n`
+	>- (fs[APPLY_UPDATE_THM, tfvs_def] >> rw[] >> rfs[] >> metis_tac[]) >>
+	fs[APPLY_UPDATE_THM, tfvs_def] >> rfs[] >> metis_tac[])
+     >- (rename [`a ∈ ffvs ff`, `x ∈ tfvs (v a)`,`a <> n`] >>
+	rfs[APPLY_UPDATE_THM] >> qexists_tac `a` >> simp[] >> metis_tac[]))
 QED
-
-
-
 
 Theorem ffvs_SKOLEM[simp]:
   !n ff. prenex ff ==> ffvs (SKOLEM n ff) = ffvs ff
 Proof
-  ho_match_mp_tac SKOLEM_ind >> rw[SKOLEM_def,ffvs_def]
+  ho_match_mp_tac SKOLEM_ind >> rw[SKOLEM_def,ffvs_def] >> fs[ffvs_fsubst] >>
+  rw[Once EXTENSION,EQ_IMP_THM,PULL_EXISTS]
 QED
 
 
