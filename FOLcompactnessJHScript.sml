@@ -705,11 +705,21 @@ Proof
 QED
 
 Theorem ffvs_SKOLEM[simp]:
-  !n ff. prenex ff ==> ffvs (SKOLEM n ff) = ffvs ff
+  !n ff. ffvs (SKOLEM n ff) = ffvs ff
 Proof
   ho_match_mp_tac SKOLEM_ind >> rw[SKOLEM_def,ffvs_def] >> fs[ffvs_fsubst] >>
   rw[Once EXTENSION,EQ_IMP_THM,PULL_EXISTS]
+  >- (Cases_on `x' = m` >> fs[APPLY_UPDATE_THM,tfvs_def,MEM_MAP] >>
+     `FINITE (ffvs f0)` by metis_tac[ffvs_FINITE] >>
+     `FINITE (ffvs f0 DELETE m)` by simp[] >>
+     `y IN (ffvs f0 DELETE m)` by metis_tac[MEM_SET_TO_LIST] >> fs[tfvs_def])
+  >- (Cases_on `x' = m` >> fs[APPLY_UPDATE_THM,tfvs_def,MEM_MAP] >>
+     `FINITE (ffvs f0)` by metis_tac[ffvs_FINITE] >>
+     `FINITE (ffvs f0 DELETE m)` by simp[] >>
+     `y IN (ffvs f0 DELETE m)` by metis_tac[MEM_SET_TO_LIST] >> fs[tfvs_def])
+  >- (qexists_tac `x` >> simp[] >> fs[APPLY_UPDATE_THM,tfvs_def,MEM_MAP])   
 QED
+
 
 
 
@@ -730,7 +740,7 @@ val interpret_def = Define`
 val feval_def = Define`
   feval M σ (fP p t) = M.predsyms p (interpret M σ t) /\
   feval M σ (fR n t1 t2) = M.relsyms n (interpret M σ t1) (interpret M σ t2) /\
-  feval M σ (fIMP f1 f2) = (feval M σ f1 \/ feval M σ f2) /\
+  feval M σ (fIMP f1 f2) = (feval M σ f1 ==> feval M σ f2) /\
   feval M σ (fFALSE) = F /\
   feval M σ (fEXISTS n f) = (?x. x IN M.dom /\ feval M ((n=+x)σ) f) /\
   feval M σ (fFORALL n f) = (!x. x IN M.dom ==> feval M ((n=+x)σ) f)`;
@@ -740,6 +750,49 @@ val feval_def = Define`
 val fsatis_def = Define`
   fsatis M σ fform <=> (IMAGE σ univ(:num)) SUBSET M.dom /\
                        feval M σ fform`;
+
+Theorem Prenex_right_fsatis :
+  !M σ f1 f2. fsatis M σ (fIMP f1 f2) ==> fsatis M σ (Prenex_right f1 f2)
+Proof
+  completeInduct_on `size f2` >> rw[fsatis_def,Prenex_right_def,feval_def] >>
+  Cases_on `f2` (* 6 *)
+  >> fs[feval_def,Prenex_right_def]
+  >- rw[] >> first_x_assum (qspec_then `size f` mp_tac) >> rw[] >>
+     `size f < size (fFORALL n f)`
+       by rw[size_def] >> first_x_assum drule >> rw[] >>
+     first_x_assum (qspec_then `fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f` mp_tac) >> rw[] >>
+     `size f =
+             size
+               (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f)`
+       by metis_tac[size_fsubst] >>
+     first_x_assum (qspec_then `M` mp_tac) >> rw[] >>
+     first_x_assum (qspec_then `σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈` mp_tac) >> rw[] >>
+     first_x_assum (qspec_then `f1` mp_tac) >> rw[] >>
+     `fsatis M σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈
+           (fIMP f1
+              (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f))` suffices_by metis_tac[fsatis_def] >>
+     rw[fsatis_def]
+     >- cheat
+     >- qabbrev_tac `a = VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)`
+     
+  
+
+QED
+
+
+
+Theorem Prenex_fsatis:
+  !M σ f. fsatis M σ f <=> fsatis M σ (Prenex f)
+Proof
+  Induct_on `f` >> rw[fsatis_def,feval_def,Prenex_def]
+  >- rw[EQ_IMP_THM]
+     >- Cases_on `f` >> rw[Prenex_left_def]
+        >- rw[EQ_IMP_THM]
+	   >- rw[Prenex_left_def,Prenex_def,feval_def,]
+QED
+
+
+
 
 
 val _ = export_theory();
