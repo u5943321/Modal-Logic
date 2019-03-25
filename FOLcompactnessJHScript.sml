@@ -751,15 +751,52 @@ val fsatis_def = Define`
   fsatis M σ fform <=> (IMAGE σ univ(:num)) SUBSET M.dom /\
                        feval M σ fform`;
 
+
+
+Theorem feval_ffvs :
+  !M σ1 σ2 f. (!n. n IN (ffvs f) ==> σ1 n = σ2 n) ==> feval M σ1 f = feval M σ2 f
+Proof
+  Induct_on `f`
+  >- rw[feval_def]
+  >- (rw[feval_def] >> Cases_on `f` >> Cases_on `f0` >> rw[interpret_def] >> fs[ffvs_def,tfvs_def])
+  >- (rw[feval_def] >> Cases_on `f` >> rw[interpret_def] >> fs[ffvs_def,tfvs_def])
+  >- (rw[feval_def,EQ_IMP_THM] (* 2 *)
+     >> first_x_assum (qspec_then `M` mp_tac) >> rw[] >>
+        last_x_assum (qspec_then `M` mp_tac) >> rw[] >>
+	fs[ffvs_def] >>
+	`(∀n. n ∈ ffvs f ⇒ σ1 n = σ2 n) /\ (∀n. n ∈ ffvs f' ⇒ σ1 n = σ2 n)` by metis_tac[] >>
+	metis_tac[])
+  >> (rw[feval_def,EQ_IMP_THM] (* 2 *)
+     >> fs[ffvs_def] >>
+        `(∀n0. n0 ∈ ffvs f ⇒ σ1⦇n ↦ x⦈ n0 = σ2⦇n ↦ x⦈ n0)` by
+	  (rw[] >> Cases_on `n0 = n` >> fs[APPLY_UPDATE_THM]) >>
+	metis_tac[])	 
+QED
+
+Theorem feval_fsubst:
+   !M σ n x a f. feval M σ⦇n ↦ x⦈ f ==> feval M σ⦇a ↦ x⦈ (fsubst V⦇n ↦ V a⦈ f)
+Proof
+   Induct_on `f` >> rw[feval_def,interpret_def,fsubst_def] (* 7 *)
+   >- Cases_on `f` >> Cases_on `f0` (* 4 *) >> fs[interpret_def,tsubst_def]
+      
+QED
+
+
 Theorem Prenex_right_fsatis :
-  !M σ f1 f2. fsatis M σ (fIMP f1 f2) ==> fsatis M σ (Prenex_right f1 f2)
+  !M σ f1 f2. fsatis M σ (fIMP f1 f2) <=> fsatis M σ (Prenex_right f1 f2)
 Proof
   completeInduct_on `size f2` >> rw[fsatis_def,Prenex_right_def,feval_def] >>
   Cases_on `f2` (* 6 *)
-  >> fs[feval_def,Prenex_right_def]
-  >- rw[] >> first_x_assum (qspec_then `size f` mp_tac) >> rw[] >>
-     `size f < size (fFORALL n f)`
-       by rw[size_def] >> first_x_assum drule >> rw[] >>
+  >> fs[feval_def,Prenex_right_def] (* 2 *)
+  >- rw[EQ_IMP_THM] (* 2 *)
+     >- 
+
+
+
+
+>> first_x_assum (qspec_then `size f` mp_tac) >> rw[] >>
+     `size f < size (fFORALL n f)` by rw[size_def] >>
+     first_x_assum drule >> rw[] >>
      first_x_assum (qspec_then `fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f` mp_tac) >> rw[] >>
      `size f =
              size
@@ -771,9 +808,12 @@ Proof
      `fsatis M σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈
            (fIMP f1
               (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f))` suffices_by metis_tac[fsatis_def] >>
-     rw[fsatis_def]
-     >- cheat
-     >- qabbrev_tac `a = VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)`
+     `feval M σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈
+     (fIMP f1 (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f))` suffices_by cheat >>
+     rw[feval_def] >>
+     qabbrev_tac `a = VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)` >>
+     `feval M σ f1 ⇒ feval M σ⦇n ↦ x⦈ f` by metis_tac[] >>
+     
      
   
 
