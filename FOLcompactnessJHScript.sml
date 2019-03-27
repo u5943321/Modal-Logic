@@ -774,11 +774,65 @@ Proof
 QED
 
 Theorem feval_fsubst:
-   !M σ n x a f. feval M σ⦇n ↦ x⦈ f ==> feval M σ⦇a ↦ x⦈ (fsubst V⦇n ↦ V a⦈ f)
+   !M σ1 σ2 a n f. a NOTIN (ffvs f) /\ σ1 n = σ2 a /\ (!k. k IN (ffvs f DELETE n) ==> σ1 k = σ2 k) ==> 
+    feval M σ2 (fsubst V⦇n ↦ V a⦈ f) = feval M σ1 f 
 Proof
-   Induct_on `f` >> rw[feval_def,interpret_def,fsubst_def] (* 7 *)
-   >- Cases_on `f` >> Cases_on `f0` (* 4 *) >> fs[interpret_def,tsubst_def]
+   Induct_on `f` >> rw[feval_def,interpret_def,fsubst_def,EQ_IMP_THM] (* 14 *) 
+   >- Cases_on `f` >> Cases_on `f0` >> fs[interpret_def,tsubst_def] (* 4 *)
+      >- (Cases_on `n''' = n'` >> fs[APPLY_UPDATE_THM] >> Cases_on `n' = n''` >> fs[interpret_def,ffvs_def,tfvs_def])
+      >- Cases_on `n'' = n'` >> fs[APPLY_UPDATE_THM] (* 2 *)
+         >- `(MAP (λa'. tsubst V⦇n' ↦ V a⦈ a') l) = l` suffices_by (rw[] >> fs[interpret_def]) >>
+	    irule LIST_EQ >> rw[] >> rw[EL_MAP] >> 
+	    
       
+QED
+
+val updated_sigma = Define`
+  updated_sigma σ v 
+
+Theorem feval_fsubst :
+  !f v M σ. feval M σ (fsubst v f) = feval M (σ()) f
+Proof
+
+QED
+  
+
+
+
+[(("pred_set", "in_max_set"),
+     (⊢ ∀s. FINITE s ⇒ ∀x. x ∈ s ⇒ x ≤ MAX_SET s, Thm)),
+
+Theorem tsubst_V :
+  !t. tsubst V t = t
+Proof
+  completeInduct_on `fterm_size t` >> rw[tsubst_def] >>
+  Cases_on `t` >> rw[tsubst_def] >> irule LIST_EQ >> rw[EL_MAP] >>
+  `fterm_size (EL x l) < fterm_size (Fn n l)` suffices_by metis_tac[] >> simp[fterm_size_def] >>
+  `MEM (EL x l) l` by metis_tac[MEM_EL] >> drule tsize_lemma >> rw[]
+QED
+
+Theorem size_nonzero :
+  !f. 0 < size f
+Proof
+  Induct_on `f` >> fs[size_def]
+QED
+
+
+
+Theorem fsubst_V :
+  !f. fsubst V f = f
+Proof
+  completeInduct_on `size f` >> rw[] >> Cases_on `f` >> rw[fsubst_def] >> rw[tsubst_V] (* 8 *)
+  >- (first_x_assum irule >> qexists_tac `size f'` >> rw[size_def] >> simp[size_nonzero])
+  >- (first_x_assum irule >> qexists_tac `size f0` >> rw[size_def,size_nonzero])
+  >- (Cases_on `y = n` >> fs[APPLY_UPDATE_THM] (* 2 *) >> fs[ffvs_def,tfvs_def])
+  >- (`V⦇n ↦ V n⦈ = V` by (rw[FUN_EQ_THM] >> Cases_on `x = n` >> fs[APPLY_UPDATE_THM]) >> fs[] >>
+     first_x_assum irule >> qexists_tac `size f'` >> rw[size_def,size_nonzero])
+  >- (`V⦇n ↦ V n⦈ = V` by (rw[FUN_EQ_THM] >> Cases_on `x = n` >> fs[APPLY_UPDATE_THM]) >> fs[] >>
+     first_x_assum irule >> qexists_tac `size f'` >> rw[size_def,size_nonzero])
+  >- (Cases_on `y = n` >> fs[APPLY_UPDATE_THM] (* 2 *) >> fs[ffvs_def,tfvs_def])
+  >> (`V⦇n ↦ V n⦈ = V` by (rw[FUN_EQ_THM] >> Cases_on `x = n` >> fs[APPLY_UPDATE_THM]) >> fs[] >>
+     first_x_assum irule >> qexists_tac `size f'` >> rw[size_def,size_nonzero])
 QED
 
 
@@ -789,12 +843,7 @@ Proof
   Cases_on `f2` (* 6 *)
   >> fs[feval_def,Prenex_right_def] (* 2 *)
   >- rw[EQ_IMP_THM] (* 2 *)
-     >- 
-
-
-
-
->> first_x_assum (qspec_then `size f` mp_tac) >> rw[] >>
+     >- first_x_assum (qspec_then `size f` mp_tac) >> rw[] >>
      `size f < size (fFORALL n f)` by rw[size_def] >>
      first_x_assum drule >> rw[] >>
      first_x_assum (qspec_then `fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f` mp_tac) >> rw[] >>
@@ -813,6 +862,18 @@ Proof
      rw[feval_def] >>
      qabbrev_tac `a = VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)` >>
      `feval M σ f1 ⇒ feval M σ⦇n ↦ x⦈ f` by metis_tac[] >>
+     `feval M σ f1 = feval M σ⦇a ↦ x⦈ f1` by
+       (irule feval_ffvs >> rw[] >> Cases_on `n' = a` >> fs[APPLY_UPDATE_THM,Abbr`a`,VARIANT_def] >>
+       `FINITE (ffvs f1)` by metis_tac[ffvs_FINITE] >>
+       `MAX_SET (ffvs (fFORALL n f) ∪ ffvs f1) + 1 <= MAX_SET (ffvs (fFORALL n f) ∪ ffvs f1)` suffices_by fs[] >>
+       irule in_max_set >> rw[] >> metis_tac[ffvs_FINITE]) >>
+     `feval M σ⦇n ↦ x⦈ f` by metis_tac[] >> Cases_on `a = n` >> rw[] (* 2 *)
+       >- (`V⦇a ↦ V a⦈ = V` by (rw[FUN_EQ_THM] >> Cases_on `x' = a` >> rw[APPLY_UPDATE_THM]) >>
+          simp[fsubst_V])
+       >- 
+        
+          
+     
      
      
   
@@ -820,12 +881,20 @@ Proof
 QED
 
 
+Theorem Prenex_left_fsatis :
+  !f1 f2 M σ. feval M σ (Prenex_left (Prenex f1) (Prenex f2)) <=> (feval M σ f1 ⇒ feval M σ f2) 
+Proof
+  Induct_on `f1` >> fs[Prenex_left_def] >> rw[EQ_IMP_THM] (* 12 *)
+  >- fs[feval_def]
+  >- fs[Prenex_def,Prenex_left_def]
+QED
+
 
 Theorem Prenex_fsatis:
   !M σ f. fsatis M σ f <=> fsatis M σ (Prenex f)
 Proof
-  Induct_on `f` >> rw[fsatis_def,feval_def,Prenex_def]
-  >- rw[EQ_IMP_THM]
+  Induct_on `f` >> rw[fsatis_def,feval_def,Prenex_def] (* 3 *)xs
+  >- rw[EQ_IMP_THM] (* 2 *)
      >- Cases_on `f` >> rw[Prenex_left_def]
         >- rw[EQ_IMP_THM]
 	   >- rw[Prenex_left_def,Prenex_def,feval_def,]
