@@ -733,9 +733,11 @@ val _ = Datatype`
                       relsyms : num -> 'a -> 'a -> bool;
                       |>`;
 
-val interpret_def = Define`
+val interpret_def = tDefine "interpret" `
   interpret M σ (V n) = σ n /\
-  interpret M σ (Fn f l) = M.fnsyms f l`;
+  interpret M σ (Fn f l) = M.fnsyms f (MAP (interpret M σ) l)`
+ (WF_REL_TAC `measure (fterm_size o SND o SND)` >> rw[] >> drule tsize_lemma >> rw[])
+
 
 val feval_def = Define`
   feval M σ (fP p t) = M.predsyms p (interpret M σ t) /\
@@ -752,25 +754,23 @@ val fsatis_def = Define`
                        feval M σ fform`;
 
 
+Theorem interpret_tfvs :
+  !M σ1 t σ2. (!n. n IN (tfvs t) ==> σ1 n = σ2 n) ==> interpret M σ1 t = interpret M σ2 t
+Proof
+  ho_match_mp_tac (theorem "interpret_ind") >> rw[tfvs_def,interpret_def] >> AP_TERM_TAC >> irule MAP_CONG
+  >> rw[] >> first_x_assum irule >> rw[] >> fs[PULL_EXISTS,MEM_MAP] >> metis_tac[]
+QED
+
 
 Theorem feval_ffvs :
   !M σ1 σ2 f. (!n. n IN (ffvs f) ==> σ1 n = σ2 n) ==> feval M σ1 f = feval M σ2 f
 Proof
-  Induct_on `f`
-  >- rw[feval_def]
-  >- (rw[feval_def] >> Cases_on `f` >> Cases_on `f0` >> rw[interpret_def] >> fs[ffvs_def,tfvs_def])
-  >- (rw[feval_def] >> Cases_on `f` >> rw[interpret_def] >> fs[ffvs_def,tfvs_def])
-  >- (rw[feval_def,EQ_IMP_THM] (* 2 *)
-     >> first_x_assum (qspec_then `M` mp_tac) >> rw[] >>
-        last_x_assum (qspec_then `M` mp_tac) >> rw[] >>
-	fs[ffvs_def] >>
-	`(∀n. n ∈ ffvs f ⇒ σ1 n = σ2 n) /\ (∀n. n ∈ ffvs f' ⇒ σ1 n = σ2 n)` by metis_tac[] >>
-	metis_tac[])
-  >> (rw[feval_def,EQ_IMP_THM] (* 2 *)
-     >> fs[ffvs_def] >>
-        `(∀n0. n0 ∈ ffvs f ⇒ σ1⦇n ↦ x⦈ n0 = σ2⦇n ↦ x⦈ n0)` by
-	  (rw[] >> Cases_on `n0 = n` >> fs[APPLY_UPDATE_THM]) >>
-	metis_tac[])	 
+  Induct_on `f` >> rw[feval_def,ffvs_def]
+  >- metis_tac[interpret_tfvs]
+  >- metis_tac[interpret_tfvs]
+  >- metis_tac[interpret_tfvs]
+  >> (`∀m x. m ∈ ffvs f ==> σ1(|n |-> x|) m = σ2(|n|->x|) m` suffices_by metis_tac[] >>
+     rw[APPLY_UPDATE_THM]) 
 QED
 
 Theorem feval_fsubst:
@@ -787,20 +787,64 @@ Proof
       
 QED
 
-val updated_sigma = Define`
-  updated_sigma σ v 
+Theorem interpret_tsubst :
+  !v t M σ. (interpret M σ (tsubst v t)) = (interpret M (interpret M σ o v) t)
+Proof
+  ho_match_mp_tac (theorem "tsubst_ind") >> rw[tsubst_def,interpret_def] 
+  >> simp[MAP_MAP_o,combinTheory.o_ABS_R] >> AP_TERM_TAC >> irule MAP_CONG >> rw[]
+QED
+
+
+show_types := false
 
 Theorem feval_fsubst :
-  !f v M σ. feval M σ (fsubst v f) = feval M (σ()) f
+  !f v M σ. feval M σ (fsubst v f) = feval M (interpret M σ o v) f
 Proof
+  Induct_on `f` >> rw[feval_def,tsubst_def,fsubst_def,interpret_tsubst] (* 4 *)
+  >- rw[EQ_IMP_THM] (* 2 *)
+     
+
+
+
+
+
+
+     >- first_x_assum drule >> qmatch_abbrev_tac`feval M s1 f ==> feval M s2 f` >>
+        `s1 = s2` suffices_by simp[] >> rw[Abbr`s1`,Abbr`s2`] >>
+	simp[FUN_EQ_THM] >> rw[] >> Cases_on `x' = n` >> fs[APPLY_UPDATE_THM] (* 2 *)
+	>- simp[interpret_def] >> Cases_on `n = y` >> fs[] (* 2 *)
+	   >- fs[ffvs_def]
+	   >- fs[ffvs_def,tfvs_def] >> Cases_on `v y` >> fs[tfvs_def,ffvs_def]
+
+`(interpret M
+                  (σ :num -> α)⦇VARIANT
+                       (ffvs
+                          (fsubst (v :num -> fterm)⦇(n :num) ↦ V n⦈
+                             (f :fform))) ↦ x⦈ ∘ v⦇n ↦ V n⦈) =
+			     (interpret M (σ :num -> α) ∘ (v :num -> fterm))⦇(n :num) ↦ (x :α)⦈` suffices_by metis_tac[]
+
+
+
+
+
+
+
+
+
+
+`(interpret M σ ∘ v)⦇n ↦ x⦈ =
+         (interpret M σ⦇VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)) ↦ x⦈ ∘
+                v⦇n ↦ V n⦈)` by cheat >> fs[] >> metis_tac[]
+      first_x_assum (qspec_then `x` mp_tac) >> rw[] >> 
+         `feval M (interpret M σ ∘ v⦇n ↦ x⦈) f =
+         feval M (interpret M σ⦇VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)) ↦ x⦈ ∘ v⦇n ↦ V n⦈) f` by simp[]
+	 simp[FUN_EQ_THM] >> rw[interpret_def] >> Cases_on `x
+
+  fs[]
 
 QED
   
 
-
-
-[(("pred_set", "in_max_set"),
-     (⊢ ∀s. FINITE s ⇒ ∀x. x ∈ s ⇒ x ≤ MAX_SET s, Thm)),
 
 Theorem tsubst_V :
   !t. tsubst V t = t
