@@ -871,89 +871,45 @@ Proof
      >- (AP_TERM_TAC >> irule LIST_EQ >> rw[EL_MAP] >> irule interpret_tfvs >> rw[] >> Cases_on `n''' = n` >> fs[APPLY_UPDATE_THM] >> first_x_assum (qspec_then `n'` mp_tac) >> fs[ffvs_def,tfvs_def] >>
         rw[] >> first_x_assum (qspec_then `tfvs (EL x' l)` mp_tac) >> rw[] >> fs[MEM_MAP] >>
 	first_x_assum (qspec_then `EL x' l` mp_tac) >> rw[] >> metis_tac[EL_MEM]))
-
-
-
-
-
-
-
-  >- rw[EQ_IMP_THM] >> qexists_tac `x` >> rw[] >>
-     Q.MATCH_ASMSUB_ABBREV_TAC `interpret _ _ (| VV |-> _ |)` >>
-     `feval M (interpret M σ⦇VV ↦ x⦈ ∘ v⦇n ↦ V VV⦈) f <=> feval M (interpret M σ ∘ v)⦇n ↦ x⦈ f` suffices_by
-        metis_tac[] >>
-     irule feval_ffvs >> rw[] >> Cases_on `n' = n` >> fs[APPLY_UPDATE_THM] >> fs[interpret_def,APPLY_UPDATE_THM] >>
-     irule interpret_tfvs >> rw[] >> 
-
-
-
-metis_tac[] rw[] >> first_x_assum drule
-     pop_assum (SUBST_ALL_TAC o SYM) >> rw[] >> pop_assum ACCEPT_TAC
-
-val (a :: asms, g) = top_goal()
- dest_comb(g)
-dest_thy_const(g)
-dest_var(g)
-  rw[EQ_IMP_THM] >> qexists_tac `x` >> rw[] >> first_x_assum (qspec_then `x` mp_tac) >> rw[] >>
-  `feval M (interpret M σ ∘ v)⦇n ↦ x⦈ f = 
-
-show_types := false
->> Cases_on `v y` >> fs[ffvs_def,tfvs_def] (* 2 *)
-	      >- 
-
-
-
-
-	   >- `n' <> VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f))` suffices_by fs[APPLY_UPDATE_THM] >>
-	      `¬(n = y)` by fs[] >> fs[] >> simp[ffvs_fsubst] >>
-	      `n' IN (BIGUNION (IMAGE (tfvs ∘ v⦇n ↦ V n⦈) (ffvs f)))` suffices_by cheat >>
-	      fs[PULL_EXISTS] >>
-
-
-
-
-fs[ffvs_def,tfvs_def] >> Cases_on `y = n` >> fs[APPLY_UPDATE_THM] >>
-        Cases_on `v y` >> fs[APPLY_UPDATE_THM,ffvs_def,tfvs_def]
-        >- first_x_assum drule >> rw[] 
-
-
-
-
-
-
-     >- first_x_assum drule >> qmatch_abbrev_tac`feval M s1 f ==> feval M s2 f` >>
-        `s1 = s2` suffices_by simp[] >> rw[Abbr`s1`,Abbr`s2`] >>
-	simp[FUN_EQ_THM] >> rw[] >> Cases_on `x' = n` >> fs[APPLY_UPDATE_THM] (* 2 *)
-	>- simp[interpret_def] >> Cases_on `n = y` >> fs[] (* 2 *)
-	   >- fs[ffvs_def]
-	   >- fs[ffvs_def,tfvs_def] >> Cases_on `v y` >> fs[tfvs_def,ffvs_def]
-
-`(interpret M
-                  (σ :num -> α)⦇VARIANT
-                       (ffvs
-                          (fsubst (v :num -> fterm)⦇(n :num) ↦ V n⦈
-                             (f :fform))) ↦ x⦈ ∘ v⦇n ↦ V n⦈) =
-			     (interpret M (σ :num -> α) ∘ (v :num -> fterm))⦇(n :num) ↦ (x :α)⦈` suffices_by metis_tac[]
-
-
-
-
-
-
-
-
-
-
-`(interpret M σ ∘ v)⦇n ↦ x⦈ =
-         (interpret M σ⦇VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)) ↦ x⦈ ∘
-                v⦇n ↦ V n⦈)` by cheat >> fs[] >> metis_tac[]
-      first_x_assum (qspec_then `x` mp_tac) >> rw[] >> 
-         `feval M (interpret M σ ∘ v⦇n ↦ x⦈) f =
-         feval M (interpret M σ⦇VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)) ↦ x⦈ ∘ v⦇n ↦ V n⦈) f` by simp[]
-	 simp[FUN_EQ_THM] >> rw[interpret_def] >> Cases_on `x
-
-  fs[]
-
+  >- (rw[EQ_IMP_THM]
+     >- (qexists_tac `x` >> rw[] >>
+        Q.MATCH_ASMSUB_ABBREV_TAC `interpret _ _ (| VV |-> _ |)` >>
+        `feval M (interpret M σ⦇VV ↦ x⦈ ∘ v⦇n ↦ V VV⦈) f <=> feval M (interpret M σ ∘ v)⦇n ↦ x⦈ f` suffices_by
+          metis_tac[] >>
+        irule feval_ffvs >> rw[] >> Cases_on `n' = n` >> fs[APPLY_UPDATE_THM] >> fs[interpret_def,APPLY_UPDATE_THM] >>
+        irule interpret_tfvs >> rw[] >> fs[ffvs_def,tfvs_def] >> `n <> y` by fs[] >> fs[] >> Cases_on `n'' = VV` >>
+        fs[APPLY_UPDATE_THM,Abbr`VV`] >> rw[] >>
+        `FINITE (ffvs (fsubst v⦇n ↦ V n⦈ f)) /\ (ffvs (fsubst v⦇n ↦ V n⦈ f)) <> {} /\  VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)) IN (ffvs (fsubst v⦇n ↦ V n⦈ f))` suffices_by metis_tac[VARIANT_NOTIN] >> rw[] (* 3 *)
+          >- metis_tac[ffvs_FINITE]
+          >- (fs[ffvs_fsubst] >> fs[MEMBER_NOT_EMPTY,IMAGE_DEF] >> rw[] (* 2 *)
+            >- metis_tac[MEMBER_NOT_EMPTY]
+	    >- (rw[Once EXTENSION] >> `∃x. (∃x'. x = tfvs (v⦇n ↦ V n⦈ x') ∧ x' ∈ ffvs f) /\ x <> ∅` suffices_by metis_tac[] >>
+	        rw[PULL_EXISTS] >> qexists_tac `y` >> fs[APPLY_UPDATE_THM] >> metis_tac[MEMBER_NOT_EMPTY]))
+          >- (`ffvs (fsubst v⦇n ↦ V n⦈ f) = BIGUNION (IMAGE (tfvs ∘ v⦇n ↦ V n⦈) (ffvs f))` by metis_tac[ffvs_fsubst] >>
+             `VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)) ∈ BIGUNION (IMAGE (tfvs ∘ v⦇n ↦ V n⦈) (ffvs f))` suffices_by metis_tac[] >>
+	     simp[PULL_EXISTS] >> qexists_tac `n'` >> fs[APPLY_UPDATE_THM]))
+     >- (qexists_tac `x` >> rw[] >>
+        qabbrev_tac `VV = VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f))` >>
+        `feval M (interpret M σ⦇VV ↦ x⦈ ∘ v⦇n ↦ V VV⦈) f <=> feval M (interpret M σ ∘ v)⦇n ↦ x⦈ f` suffices_by metis_tac[] >>
+	irule feval_ffvs >> rw[] >> Cases_on `n' = n` >> fs[APPLY_UPDATE_THM] >> fs[interpret_def,APPLY_UPDATE_THM] >>
+        irule interpret_tfvs >> rw[] >> fs[ffvs_def,tfvs_def] >> `n <> y` by fs[] >> fs[] >> Cases_on `n'' = VV` >>
+        fs[APPLY_UPDATE_THM,Abbr`VV`] >> rw[] >>
+        `FINITE (ffvs (fsubst v⦇n ↦ V n⦈ f)) /\ (ffvs (fsubst v⦇n ↦ V n⦈ f)) <> {} /\  VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)) IN (ffvs (fsubst v⦇n ↦ V n⦈ f))` suffices_by metis_tac[VARIANT_NOTIN] >> rw[] (* 3 *)
+          >- metis_tac[ffvs_FINITE]
+          >- (fs[ffvs_fsubst] >> fs[MEMBER_NOT_EMPTY,IMAGE_DEF] >> rw[] (* 2 *)
+            >- metis_tac[MEMBER_NOT_EMPTY]
+	    >- (rw[Once EXTENSION] >> `∃x. (∃x'. x = tfvs (v⦇n ↦ V n⦈ x') ∧ x' ∈ ffvs f) /\ x <> ∅` suffices_by metis_tac[] >>
+	        rw[PULL_EXISTS] >> qexists_tac `y` >> fs[APPLY_UPDATE_THM] >> metis_tac[MEMBER_NOT_EMPTY]))
+          >- (`ffvs (fsubst v⦇n ↦ V n⦈ f) = BIGUNION (IMAGE (tfvs ∘ v⦇n ↦ V n⦈) (ffvs f))` by metis_tac[ffvs_fsubst] >>
+             `VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)) ∈ BIGUNION (IMAGE (tfvs ∘ v⦇n ↦ V n⦈) (ffvs f))` suffices_by metis_tac[] >>
+	     simp[PULL_EXISTS] >> qexists_tac `n'` >> fs[APPLY_UPDATE_THM])))
+  >- (`!x. x IN M.dom ==> feval M (interpret M σ⦇n ↦ x⦈ ∘ v⦇n ↦ V n⦈) f = feval M (interpret M σ ∘ v)⦇n ↦ x⦈ f` suffices_by metis_tac[] >> rw[] >> irule feval_ffvs >> rw[] >> Cases_on `n' = n` >>
+     rw[interpret_def,APPLY_UPDATE_THM] >> Cases_on `v n'` >> rw[interpret_def] (* 2 *)
+     >- (Cases_on `n'' = n` >> fs[APPLY_UPDATE_THM,ffvs_def,tfvs_def] >> rw[] >>
+        first_x_assum (qspec_then `n'` mp_tac) >> rw[tfvs_def])
+     >- (AP_TERM_TAC >> irule LIST_EQ >> rw[EL_MAP] >> irule interpret_tfvs >> rw[] >> Cases_on `n''' = n` >> fs[APPLY_UPDATE_THM] >> first_x_assum (qspec_then `n'` mp_tac) >> fs[ffvs_def,tfvs_def] >>
+        rw[] >> first_x_assum (qspec_then `tfvs (EL x' l)` mp_tac) >> rw[] >> fs[MEM_MAP] >>
+	first_x_assum (qspec_then `EL x' l` mp_tac) >> rw[] >> metis_tac[EL_MEM]))
 QED
   
 

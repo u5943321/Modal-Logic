@@ -773,19 +773,6 @@ Proof
      rw[APPLY_UPDATE_THM]) 
 QED
 
-Theorem feval_fsubst:
-   !M σ1 σ2 a n f. a NOTIN (ffvs f) /\ σ1 n = σ2 a /\ (!k. k IN (ffvs f DELETE n) ==> σ1 k = σ2 k) ==> 
-    feval M σ2 (fsubst V⦇n ↦ V a⦈ f) = feval M σ1 f 
-Proof
-   Induct_on `f` >> rw[feval_def,interpret_def,fsubst_def,EQ_IMP_THM] (* 14 *) 
-   >- Cases_on `f` >> Cases_on `f0` >> fs[interpret_def,tsubst_def] (* 4 *)
-      >- (Cases_on `n''' = n'` >> fs[APPLY_UPDATE_THM] >> Cases_on `n' = n''` >> fs[interpret_def,ffvs_def,tfvs_def])
-      >- Cases_on `n'' = n'` >> fs[APPLY_UPDATE_THM] (* 2 *)
-         >- `(MAP (λa'. tsubst V⦇n' ↦ V a⦈ a') l) = l` suffices_by (rw[] >> fs[interpret_def]) >>
-	    irule LIST_EQ >> rw[] >> rw[EL_MAP] >> 
-	    
-      
-QED
 
 Theorem interpret_tsubst :
   !v t M σ. (interpret M σ (tsubst v t)) = (interpret M (interpret M σ o v) t)
@@ -795,14 +782,21 @@ Proof
 QED
 
 
+Theorem 
+
 show_types := false
+
+
+(theorem "interpret_ind")
 
 Theorem feval_fsubst :
   !f v M σ. feval M σ (fsubst v f) = feval M (interpret M σ o v) f
 Proof
   Induct_on `f` >> rw[feval_def,tsubst_def,fsubst_def,interpret_tsubst] (* 4 *)
   >- rw[EQ_IMP_THM] (* 2 *)
-     
+     >- fs[ffvs_def,tfvs_def] >> Cases_on `y = n` >> fs[APPLY_UPDATE_THM] >>
+        Cases_on `v y` >> fs[APPLY_UPDATE_THM,ffvs_def,tfvs_def]
+        >- first_x_assum drule >> rw[] 
 
 
 
