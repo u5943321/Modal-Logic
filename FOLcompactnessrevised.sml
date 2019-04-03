@@ -789,15 +789,6 @@ Proof
   >> simp[MAP_MAP_o,combinTheory.o_ABS_R] >> AP_TERM_TAC >> irule MAP_CONG >> rw[]
 QED
 
-(*
-Theorem interpret_feval :
-  !s1 s2 f. (!t. t IN fterm f ==> interpret M s1 t = interpret M s2 t) ==> feval M s1 f = feval M s2 f
-
-show_types := false
-
-
-(theorem "interpret_ind")
-*)
 
 Theorem VARIANT_NOTIN :
   !s. FINITE s /\ s <> {}  ==> (VARIANT s) NOTIN s
@@ -947,12 +938,22 @@ Proof
 QED
 
 
+Theorem UPDATE_IMAGE :
+  !σ n x s. IMAGE σ 𝕌(:num) ⊆ s /\ x IN s ==> IMAGE σ⦇n ↦ x⦈ 𝕌(:num) ⊆ s
+Proof
+  rw[IMAGE_DEF,SUBSET_DEF] >> Cases_on `x'' = n` >> fs[APPLY_UPDATE_THM] >> metis_tac[]
+QED
+
+
+
+
+(*
 Theorem Prenex_right_fsatis :
   !M σ f1 f2. fsatis M σ (fIMP f1 f2) <=> fsatis M σ (Prenex_right f1 f2)
 Proof
   completeInduct_on `size f2` >> rw[fsatis_def,Prenex_right_def,feval_def] >>
   Cases_on `f2` (* 6 *)
-  >> fs[feval_def,Prenex_right_def] (* 2 *)
+  >> fs[feval_def,Prenex_right_def] (* 2 *) cheat
   >- rw[EQ_IMP_THM] (* 2 *)
      >- (first_x_assum (qspec_then `size f` mp_tac) >> rw[] >>
         `size f < size (fFORALL n f)` by rw[size_def] >>
@@ -965,7 +966,9 @@ Proof
         first_x_assum (qspec_then `f1` mp_tac) >> rw[] >>
         `fsatis M σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈
            (fIMP f1 (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f))` suffices_by metis_tac[fsatis_def] >>
-        `feval M σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈
+ (*	`
+ >- rw[UPDATE_IMAGE] >> *)
+        `feval M σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈ 
            (fIMP f1 (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f))` suffices_by cheat >>
         rw[feval_def] >>
         qabbrev_tac `a = VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)` >>
@@ -994,26 +997,147 @@ Proof
 	first_x_assum (qspec_then `(fsubst V⦇n ↦ V VV⦈ f)` mp_tac) >> rw[] >>
 	first_x_assum (qspec_then `M` mp_tac) >> rw[] >> first_x_assum (qspec_then `σ⦇VV ↦ x⦈` mp_tac) >> rw[] >>
 	first_x_assum (qspec_then `f1` mp_tac) >> rw[] >>
-	`fsatis M σ⦇VV ↦ x⦈ (Prenex_right f1 (fsubst V⦇n ↦ V VV⦈ f))` by cheat
+	`fsatis M σ⦇VV ↦ x⦈ (Prenex_right f1 (fsubst V⦇n ↦ V VV⦈ f))` by cheat >>
         `fsatis M σ⦇VV ↦ x⦈ (fIMP f1 (fsubst V⦇n ↦ V VV⦈ f))` by metis_tac[] >>
 	`fsatis M σ⦇VV ↦ x⦈ (fIMP f1 (fsubst V⦇n ↦ V VV⦈ f)) ==> feval M σ⦇n ↦ x⦈ f` suffices_by metis_tac[] >>
         fs[fsatis_def,feval_def] >> `feval M σ⦇VV ↦ x⦈ f1` by cheat >>
 	first_x_assum drule >> rw[] >> fs[feval_fsubst] >>
 	`feval M (interpret M σ⦇VV ↦ x⦈ ∘ V⦇n ↦ V VV⦈) f <=> feval M σ⦇n ↦ x⦈ f` suffices_by metis_tac[] >> 
-	irule feval_ffvs >> rw[] >> Cases_on `n' = n` >> fs[APPLY_UPDATE_THM,interpret_def] >> rw[] (* 2 *)
-	>- rw[interpret_def,APPLY_UPDATE_THM]
-	>- (rw[interpret_def,APPLY_UPDATE_THM] >>
+	irule feval_ffvs >> rw[] >> Cases_on `n' = n` >> fs[APPLY_UPDATE_THM,interpret_def] >> rw[] 
+	>> (rw[interpret_def,APPLY_UPDATE_THM] >>
 	   `FINITE (ffvs (fFORALL n f) ∪ ffvs f1) /\ (ffvs (fFORALL n f) ∪ ffvs f1) <> {} /\ (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)) IN (ffvs (fFORALL n f) ∪ ffvs f1)` suffices_by metis_tac[VARIANT_NOTIN] >> rw[] (* 4 *)
 	   >- metis_tac[ffvs_FINITE] >- metis_tac[ffvs_FINITE]
 	   >- (`ffvs (fFORALL n f) ≠ ∅` suffices_by metis_tac[] >> rw[ffvs_def,GSYM MEMBER_NOT_EMPTY] >> metis_tac[])
-	   >- (`VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ∈ ffvs f DELETE n` suffices_by fs[ffvs_def] >> fs[])) 
-	
+	   >- (`VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ∈ ffvs f DELETE n` suffices_by fs[ffvs_def] >> fs[]))
+  >- rw[EQ_IMP_THM]
+     >- first_x_assum (qspec_then `size f` mp_tac) >> rw[] >>
+        `size f < size (fEXISTS n f)` by rw[size_def] >>
+        first_x_assum drule >> rw[] >>
+	qabbrev_tac `VV = VARIANT (ffvs (fEXISTS n f) ∪ ffvs f1)` >> 
+        first_x_assum (qspecl_then [`fsubst V⦇n ↦ V VV⦈ f`,`M`] assume_tac) >> rw[] >>
+        `size f = size (fsubst V⦇n ↦ V VV⦈ f)`
+          by metis_tac[size_fsubst] >>
+        first_x_assum (qspec_then `M` mp_tac) >> rw[] >>
+        first_x_assum (qspec_then `σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈` mp_tac) >> rw[] >>
+        first_x_assum (qspec_then `f1` mp_tac) >> rw[] >>
+        `fsatis M σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈
+           (fIMP f1 (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f))` suffices_by metis_tac[fsatis_def] >>
+ (*	`
+ >- rw[UPDATE_IMAGE] >> *)
+        `feval M σ⦇VARIANT (ffvs (fFORALL n f) ∪ ffvs f1) ↦ x⦈ 
+           (fIMP f1 (fsubst V⦇n ↦ V (VARIANT (ffvs (fFORALL n f) ∪ ffvs f1))⦈ f))` suffices_by cheat >>
 	  
-
+ rw[EQ_IMP_THM]
      
-     
+     simp[PULL_EXISTS]
   
 
+QED
+ *)
+
+
+
+
+Theorem Prenex_right_fsatis :
+  !M σ f1 f2. M.dom <> {} ==> (feval M σ (Prenex_right f1 f2) <=> feval M σ (fIMP f1 f2))
+Proof
+  completeInduct_on `size f2` >> rw[Prenex_right_def,feval_def] >>
+  Cases_on `f2` (* 6 *)
+  >> fs[feval_def,Prenex_right_def] (* 2 *)
+  >- (rw[EQ_IMP_THM]
+     >- (`size f < size (fFORALL n f)` by rw[size_def] >>
+        first_x_assum drule >> rw[] >> first_x_assum drule >> rw[] >>
+        qabbrev_tac `VV = VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)` >>
+        `size f = size (fsubst V⦇n ↦ V VV⦈ f)` by metis_tac[size_fsubst] >>
+        first_x_assum drule >> rw[] >>
+        first_x_assum (qspecl_then [`M`,`σ⦇VV ↦ x⦈`,`f1`] assume_tac) >>
+        first_x_assum drule >> rw[] >>
+        `feval M σ f1 = feval M σ⦇VV ↦ x⦈ f1` by
+          (irule feval_ffvs >> rw[] >> Cases_on `VV = n'` >> fs[APPLY_UPDATE_THM] >>
+          `n' IN (ffvs (fFORALL n f) ∪ ffvs f1) /\ (ffvs (fFORALL n f) ∪ ffvs f1) <> {} /\
+          FINITE (ffvs (fFORALL n f) ∪ ffvs f1)` suffices_by metis_tac[VARIANT_NOTIN,Abbr`n'`] >>
+          rw[ffvs_FINITE,ffvs_def,GSYM MEMBER_NOT_EMPTY] >> metis_tac[]) >>
+        rfs[] >> fs[feval_fsubst] >>
+	`feval M σ⦇n ↦ x⦈ f = feval M (interpret M σ⦇VV ↦ x⦈ ∘ V⦇n ↦ V VV⦈) f` suffices_by metis_tac[] >>
+        irule feval_ffvs >> rw[] >> Cases_on `n = n'` >> fs[APPLY_UPDATE_THM,interpret_def] >> rw[] >>
+        `VV IN (ffvs (fFORALL n f) ∪ ffvs f1) /\ FINITE (ffvs (fFORALL n f) ∪ ffvs f1) /\
+	(ffvs (fFORALL n f) ∪ ffvs f1) <> {}` suffices_by metis_tac[VARIANT_NOTIN,Abbr`VV`] >>
+        rw[ffvs_FINITE,ffvs_def] >> `ffvs f DELETE n ≠ ∅` suffices_by metis_tac[] >> rw[EXTENSION] >> metis_tac[])
+     >- (Cases_on `feval M σ f1` (* 2 *)
+       >- (`size f < size (fFORALL n f)` by fs[size_def] >> rpt (first_x_assum drule >> rw[]) >> 
+	  qabbrev_tac `VV = VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)` >>
+ 	  `size f = size (fsubst V⦇n ↦ V VV⦈ f)` by metis_tac[size_fsubst] >>
+	  first_x_assum drule >> rw[] >>
+	  first_x_assum (qspecl_then [`M`,`σ⦇VV ↦ x⦈`,`f1`] assume_tac) >>
+	  first_x_assum drule >> rw[] >> rw[feval_fsubst] >>
+	  `feval M (interpret M σ⦇VV ↦ x⦈ ∘ V⦇n ↦ V VV⦈) f = feval M σ⦇n ↦ x⦈ f` suffices_by metis_tac[] >>
+	  irule feval_ffvs >> rw[] >> Cases_on `n = n'` >> fs[interpret_def,APPLY_UPDATE_THM] >> rw[] >>
+	  `VV IN (ffvs (fFORALL n f) ∪ ffvs f1) /\ FINITE (ffvs (fFORALL n f) ∪ ffvs f1) /\
+	  (ffvs (fFORALL n f) ∪ ffvs f1) <> {}` suffices_by metis_tac[VARIANT_NOTIN,Abbr`VV`] >>
+	  rw[ffvs_FINITE,ffvs_def] >>
+	  `ffvs f DELETE n ≠ ∅` suffices_by metis_tac[] >> rw[EXTENSION] >> metis_tac[])
+       >- (qabbrev_tac `VV = VARIANT (ffvs (fFORALL n f) ∪ ffvs f1)` >>
+          `size f < size (fFORALL n f)` by fs[size_def] >>
+	  `size (fsubst V⦇n ↦ V VV⦈ f) = size f ` by metis_tac[size_fsubst] >>
+	  rpt (first_x_assum drule >> rw[]) >>
+	  first_x_assum (qspecl_then [`fsubst V⦇n ↦ V VV⦈ f`,`M`,`σ⦇VV ↦ x⦈`,`f1`] assume_tac) >> rfs[] >>
+	  `feval M σ f1 = feval M σ⦇VV ↦ x⦈ f1` suffices_by metis_tac[] >> irule feval_ffvs >> rw[] >>
+	  Cases_on `VV = n'` >> fs[APPLY_UPDATE_THM] >> 
+          `VV IN (ffvs (fFORALL n f) ∪ ffvs f1) /\ FINITE (ffvs (fFORALL n f) ∪ ffvs f1) /\
+ 	  (ffvs (fFORALL n f) ∪ ffvs f1) <> {}` suffices_by metis_tac[VARIANT_NOTIN,Abbr`VV`] >>
+ 	  rw[ffvs_FINITE,ffvs_def] >> metis_tac[MEMBER_NOT_EMPTY])))
+>- (rw[EQ_IMP_THM] 
+  >- (qexists_tac `x` >> rw[] >>
+     `size f < size (fEXISTS n f)` by fs[size_def] >> first_x_assum drule >>
+     rw[] >>
+     qabbrev_tac `VV = VARIANT (ffvs (fEXISTS n f) ∪ ffvs f1)` >>
+     `size f = size (fsubst V⦇n ↦ V VV⦈ f)` by metis_tac[size_fsubst] >>
+     first_x_assum drule >> rw[] >>
+     first_x_assum (qspecl_then [`M`,`σ⦇VV ↦ x⦈`,`f1`] assume_tac) >>
+     first_x_assum drule >> rw[] >>
+     `feval M σ f1 = feval M σ⦇VV ↦ x⦈ f1` by
+       (irule feval_ffvs >> rw[] >> Cases_on `VV = n'` >> fs[APPLY_UPDATE_THM] >>
+       `n' IN (ffvs (fEXISTS n f) ∪ ffvs f1) /\ (ffvs (fEXISTS n f) ∪ ffvs f1) <> {} /\
+       FINITE (ffvs (fEXISTS n f) ∪ ffvs f1)` suffices_by metis_tac[VARIANT_NOTIN,Abbr`n'`] >>
+       rw[ffvs_FINITE,ffvs_def,GSYM MEMBER_NOT_EMPTY] >> metis_tac[]) >>
+     rfs[] >> fs[feval_fsubst] >>
+     `feval M σ⦇n ↦ x⦈ f = feval M (interpret M σ⦇VV ↦ x⦈ ∘ V⦇n ↦ V VV⦈) f` suffices_by metis_tac[] >>
+     irule feval_ffvs >> rw[] >> Cases_on `n = n'` >> fs[APPLY_UPDATE_THM,interpret_def] >> rw[] >>
+     `VV IN (ffvs (fEXISTS n f) ∪ ffvs f1) /\ FINITE (ffvs (fEXISTS n f) ∪ ffvs f1) /\
+	(ffvs (fEXISTS n f) ∪ ffvs f1) <> {}` suffices_by metis_tac[VARIANT_NOTIN,Abbr`VV`] >>
+     rw[ffvs_FINITE,ffvs_def] >> `ffvs f DELETE n ≠ ∅` suffices_by metis_tac[] >> rw[EXTENSION] >> metis_tac[])
+  >- (Cases_on `feval M σ f1` (* 2 *)
+     >- (first_x_assum drule >> rw[] >> qexists_tac `x` >> rw[] >>
+        `size f < size (fEXISTS n f)` by fs[size_def] >> first_x_assum drule >>
+	rw[] >>
+	qabbrev_tac `VV = VARIANT (ffvs (fEXISTS n f) ∪ ffvs f1)` >>
+	`size f = size (fsubst V⦇n ↦ V VV⦈ f)` by metis_tac[size_fsubst] >>
+	first_x_assum drule >> rw[] >>
+	first_x_assum (qspecl_then [`M`,`σ⦇VV ↦ x⦈`,`f1`] assume_tac) >>
+	first_x_assum drule >> rw[] >> rw[feval_fsubst] >>
+	`feval M (interpret M σ⦇VV ↦ x⦈ ∘ V⦇n ↦ V VV⦈) f = feval M σ⦇n ↦ x⦈ f` suffices_by metis_tac[] >>
+	irule feval_ffvs >> rw[] >> Cases_on `n = n'` >> fs[interpret_def,APPLY_UPDATE_THM] >> rw[] >>
+	`VV IN (ffvs (fEXISTS n f) ∪ ffvs f1) /\ FINITE (ffvs (fEXISTS n f) ∪ ffvs f1) /\
+	(ffvs (fEXISTS n f) ∪ ffvs f1) <> {}` suffices_by metis_tac[VARIANT_NOTIN,Abbr`VV`] >>
+	rw[] (* 3 *)
+	>- fs[ffvs_def] >- metis_tac[ffvs_FINITE] >- metis_tac[ffvs_FINITE]
+	>> fs[ffvs_def] >> `ffvs f DELETE n ≠ ∅` suffices_by metis_tac[] >> rw[EXTENSION] >> metis_tac[])
+     >- (fs[GSYM MEMBER_NOT_EMPTY] >> qexists_tac `x` >> rw[] >>
+        `size f < size (fEXISTS n f)` by fs[size_def] >> first_x_assum drule >>
+	rw[] >>
+	qabbrev_tac `VV = VARIANT (ffvs (fEXISTS n f) ∪ ffvs f1)` >>
+	`size f = size (fsubst V⦇n ↦ V VV⦈ f)` by metis_tac[size_fsubst] >>
+	first_x_assum drule >> rw[] >>
+	first_x_assum (qspecl_then [`M`,`σ⦇VV ↦ x⦈`,`f1`] assume_tac) >>
+	`(feval M σ⦇VV ↦ x⦈ (Prenex_right f1 (fsubst V⦇n ↦ V VV⦈ f)) ⇔
+        feval M σ⦇VV ↦ x⦈ f1 ⇒ feval M σ⦇VV ↦ x⦈ (fsubst V⦇n ↦ V VV⦈ f))` by metis_tac[] >>
+	rw[] >> `feval M σ⦇VV ↦ x⦈ f1 = feval M σ f1` suffices_by metis_tac[] >>
+	irule feval_ffvs >> rw[] >> Cases_on `n' = VV` >> fs[APPLY_UPDATE_THM] >>
+	`VV IN (ffvs (fEXISTS n f) ∪ ffvs f1) /\ FINITE (ffvs (fEXISTS n f) ∪ ffvs f1) /\
+	(ffvs (fEXISTS n f) ∪ ffvs f1) <> {}` suffices_by metis_tac[VARIANT_NOTIN,Abbr`VV`] >>
+	rw[] (* 3 *)
+	>- metis_tac[ffvs_FINITE] >- metis_tac[ffvs_FINITE]
+	>- metis_tac[MEMBER_NOT_EMPTY])))
 QED
 
 
