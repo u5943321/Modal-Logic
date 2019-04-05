@@ -77,7 +77,7 @@ val ST_def = Define`
   (ST x u (DIAM phi) <=> fEXISTS (x + 1) (fAND (fRrel u (fVar x) (fVar (x + 1))) (ST (x + 1) u phi)))`;
 
 
-val interpret_def = Define`
+(* val interpret_def = Define`
   interpret M σ (fVar n) = σ n /\
   interpret M σ (fConst n) = M.consts ' n`;
 
@@ -345,7 +345,7 @@ val thm_2_68 = store_thm(
 
 *)
 
-
+*)
 val _ = export_theory();
 	          
 	    
