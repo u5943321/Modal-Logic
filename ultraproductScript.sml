@@ -38,7 +38,7 @@ val prop_A_16 = store_thm(
 val ultraproduct_def = Define`
   ultraproduct U I A = partition (Uequiv U I A) (Cart_prod I A)`;
 
-
+(*
 val models2worlds_def = Define`
   models2worlds MS = \i. (MS i).frame.world`;
 
@@ -825,7 +825,7 @@ val thm_2_74_half2 = store_thm(
      
 
 
-
+*)
 
 
 
