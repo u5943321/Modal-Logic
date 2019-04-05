@@ -55,9 +55,8 @@ val thm_2_78_half1 = store_thm(
   rw[] >> `preserved_under_sim μ ν phi0` by metis_tac[thm_2_78_half1_lemma] >>
   fs[preserved_under_sim_def] >> rw[] >> fs[equiv0_def] >> `satis M w phi0` by metis_tac[] >> metis_tac[]);
 
-
+(*
  Let  be a set of ﬁrst-order formulas. If each ﬁnite subset of  has a model, then  itself has a model.
-
 
 val compactness_theorem = store_thm(
   "compactness_theorem",
@@ -74,4 +73,6 @@ val thm_2_78_half2 = store_thm(
   rw[] >>
 
 
-  
+*)
+
+val _ = export_theory();
