@@ -19,6 +19,7 @@ open combinTheory;
 val _ = new_theory "chap2_6";
 
 
+(*
 
 val ftype_def = Define`
   ftype x G <=> G ⊆ {phi | freevars phi SUBSET {x}}`;
@@ -281,6 +282,6 @@ val thm_2_65_corollary = store_thm(
 
 
 
-
+*)
 val _ = export_theory();
 

@@ -15,7 +15,7 @@ val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "chap2_5";
 
-
+(*
 
 
 val BIGCONJ_EXISTS_DIST_TYPE = store_thm(
@@ -608,5 +608,5 @@ val thm_2_62 = store_thm(
      modal_eq M' (UE M') w' (principle_UF w' M'.frame.world)` by metis_tac[prop_2_59_ii] >>
      metis_tac[modal_eq_TRANS,modal_eq_SYM]));
 
-
+*)
 val _ = export_theory();
