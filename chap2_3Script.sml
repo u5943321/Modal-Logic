@@ -17,6 +17,7 @@ val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "chap2_3";
 
+val irule = fn th => irule th >> rpt conj_tac
 (* finite model property via selection *)
 
 

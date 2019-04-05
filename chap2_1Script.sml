@@ -17,6 +17,8 @@ val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "chap2_1";
 
+val irule = fn th => irule th >> rpt conj_tac
+
 
 val DU_def = Define`
   DU (f, dom) = <| frame := <| world := {w | (FST w) IN dom /\ (SND w) IN (f (FST w)).frame.world};
