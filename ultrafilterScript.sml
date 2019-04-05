@@ -349,13 +349,9 @@ val UNION_proper_proper = store_thm(
      `filter s W' ∧ s ≠ POW W'` by metis_tac[] >> metis_tac[empty_improper_filter]));
      
      
-    
-  
-
-
-val ultrafilter_theorem = store_thm(
-"ultrafilter_theorem",
-``!f w. proper_filter f w ==> ?U. ultrafilter U w /\ f SUBSET U``,
+Theorem ultrafilter_theorem: 
+  !f w. proper_filter f w ==> ?U. ultrafilter U w /\ f SUBSET U
+Proof
 rpt strip_tac >>
 qabbrev_tac
   `r = { (s1,s2) | proper_filter s2 w /\ proper_filter s1 w /\ f SUBSET s1 /\ s1 ⊆ s2}` >>
@@ -377,35 +373,37 @@ qabbrev_tac `s = { g | proper_filter g w /\ f ⊆ g }` >>
         >- (simp[chain_def, upper_bounds_def, Abbr`r`] >> rw[] >>
             simp[Once EXTENSION] >>
             qexists_tac `BIGUNION t` >> rw[]
-          >- (* BIGUNION is in (range of) relation *)
-             (* BIGUNION is proper filter *)
-	     (simp[range_def] >> qexists_tac `f` >> rw[]
-	     (* is proper filter *)
-	    >- (irule UNION_proper_proper
-	      >- (fs[chain_def] >> metis_tac[])
-	      >- (fs[chain_def] >> metis_tac[])
-	      >- metis_tac[proper_filter_def,filter_def]
-	      >- rw[])
-             (* contain f *)
-	    >- (fs[chain_def,Abbr`s`] >> rw[SUBSET_DEF] >>
-	      `?a. a IN t` by metis_tac[MEMBER_NOT_EMPTY] >> qexists_tac `a` >> rw[] >> metis_tac[SUBSET_DEF]))
+             >- (* BIGUNION is in (range of) relation *)
+                (* BIGUNION is proper filter *)
+                (simp[range_def] >> qexists_tac `f` >> rw[]
+                 (* is proper filter *)
+                 >- (irule UNION_proper_proper >> rw[]
+	             >- (fs[chain_def] >> metis_tac[])
+                     >- (fs[chain_def] >> metis_tac[])
+                     >- metis_tac[proper_filter_def,filter_def])
+                (* contain f *)
+                 >- (fs[chain_def,Abbr`s`] >> rw[SUBSET_DEF] >>
+                    `?a. a IN t` by metis_tac[MEMBER_NOT_EMPTY] >> qexists_tac `a` >> rw[] >> 
+	        	metis_tac[SUBSET_DEF]))
              (* indeed upper bound *)
-          >- (`y IN t ==> proper_filter (BIGUNION t) w ∧ proper_filter y w ∧ f ⊆ y ∧ y ⊆ BIGUNION t` suffices_by metis_tac[] >> rw[]
-	    >- (irule UNION_proper_proper >> rw[]
-	        >- (fs[chain_def] >> metis_tac[])
-	        >- (fs[chain_def] >> metis_tac[])
-	        >- metis_tac[proper_filter_def,filter_def])
-	    >- (fs[chain_def] >> metis_tac[])
-	    >- (fs[chain_def] >> metis_tac[])
-	    >- (rw[SUBSET_DEF,BIGUNION] >> metis_tac[])))) >>
+             >- (`y IN t ==> proper_filter (BIGUNION t) w ∧ proper_filter y w ∧
+                             f ⊆ y ∧ y ⊆ BIGUNION t` suffices_by metis_tac[] >> 
+                 rw[]
+                 >- (irule UNION_proper_proper >> rw[]
+                     >- (fs[chain_def] >> metis_tac[])
+                     >- (fs[chain_def] >> metis_tac[])
+                     >- metis_tac[proper_filter_def,filter_def])
+                 >- (fs[chain_def] >> metis_tac[])
+                 >- (fs[chain_def] >> metis_tac[])
+                 >- (rw[SUBSET_DEF,BIGUNION] >> metis_tac[])))) >>
  `?x. x IN maximal_elements s r` by metis_tac[zorns_lemma] >>
  fs[maximal_elements_def,Abbr`r`,Abbr`s`] >> qexists_tac `x` >> rw[] >>
  irule maximal_ultrafilter >> rw[] >> SPOSE_NOT_THEN ASSUME_TAC >>
  `proper_filter S' w` by metis_tac[proper_filter_def] >>
  `x <> S'` by metis_tac[PSUBSET_DEF] >>
  `x = S'` by (first_x_assum irule >> fs[] (* 2 *)
- >> metis_tac[PSUBSET_DEF,SUBSET_TRANS]));
-
+              >> metis_tac[PSUBSET_DEF,SUBSET_TRANS])
+QED
 
 val ultrafilter_theorem_corollary = store_thm(
   "ultrafilter_theorem_corollary",
@@ -429,9 +427,9 @@ val FIP_closed_under_intersection = store_thm(
   "FIP_closed_under_intersection",
   ``!A B. A SUBSET POW w /\ B SUBSET POW w /\ A <> {} /\ B <> {} /\
         (!a a'. a IN A /\ a' IN A ==> (a ∩ a') IN A) /\
-	(!b b'. b IN B /\ b' IN B ==> (b ∩ b') IN B) ==>
-	(!a b. a IN A /\ b IN B ==> (a ∩ b) <> {}) ==>
-	FIP (A ∪ B) w``,
+        (!b b'. b IN B /\ b' IN B ==> (b ∩ b') IN B) ==>
+        (!a b. a IN A /\ b IN B ==> (a ∩ b) <> {}) ==>
+        FIP (A ∪ B) w``,
    rw[FIP_def] >>
    `!s. FINITE s ==> s SUBSET (A ∪ B) /\ s <> {} ==> BIGINTER s <> {}` suffices_by metis_tac[] >>
    Induct_on `FINITE` >> rw[] (* 2 *)
@@ -439,66 +437,66 @@ val FIP_closed_under_intersection = store_thm(
    >- (Cases_on `s = {}` (* 2 *)
       >- (fs[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
          `?b. b IN B` by metis_tac[MEMBER_NOT_EMPTY] >>
-	 `e ∩ b = {}` by fs[EXTENSION] >> metis_tac[])
+         `e ∩ b = {}` by fs[EXTENSION] >> metis_tac[])
       >- (`s = (s ∩ A) ∪ (s ∩ B)` by (rw[EXTENSION,EQ_IMP_THM] >> fs[SUBSET_DEF]) >>
          `s ∩ A SUBSET A` by fs[SUBSET_DEF] >>
-	 `s ∩ B SUBSET B` by fs[SUBSET_DEF] >>
-	 `FINITE (s ∩ A)` by fs[] >>
-	 `FINITE (s ∩ B)` by fs[] >>
-	 `s ∩ A <> {} ==> BIGINTER (s ∩ A) IN A` by metis_tac[BIGINTER_FINITE] >>
-	 `s ∩ B <> {} ==> BIGINTER (s ∩ B) IN B` by metis_tac[BIGINTER_FINITE] >>
-	 Cases_on `s ∩ A = {}`
-	 >- (`s = s ∩ B` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
-	    `BIGINTER s ∈ B` by metis_tac[] >> metis_tac[])
-	 >- (Cases_on `s ∩ B = {}`
-	    >- (`s = s ∩ A` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
-	       `BIGINTER s ∈ A` by metis_tac[] >>
-	       `e ∩ (BIGINTER s) IN A` by metis_tac[] >>
-	       `{} NOTIN A`
-	           by (SPOSE_NOT_THEN ASSUME_TAC >>
-		       `?b. b IN B` by metis_tac[MEMBER_NOT_EMPTY] >>
-		       `{} ∩ b = {}` by fs[EXTENSION] >> metis_tac[]) >>
-	       metis_tac[])
-	    >- (`BIGINTER (s ∩ A) ∈ A` by metis_tac[] >>
-	       `BIGINTER (s ∩ B) ∈ B` by metis_tac[] >>
-	       `BIGINTER s = BIGINTER ((s ∩ A) ∪ (s ∩ B))` by metis_tac[] >>
-	       fs[BIGINTER_UNION] >>
-	       fs[INTER_ASSOC]))))
+         `s ∩ B SUBSET B` by fs[SUBSET_DEF] >>
+         `FINITE (s ∩ A)` by fs[] >>
+         `FINITE (s ∩ B)` by fs[] >>
+         `s ∩ A <> {} ==> BIGINTER (s ∩ A) IN A` by metis_tac[BIGINTER_FINITE] >>
+         `s ∩ B <> {} ==> BIGINTER (s ∩ B) IN B` by metis_tac[BIGINTER_FINITE] >>
+         Cases_on `s ∩ A = {}`
+         >- (`s = s ∩ B` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
+            `BIGINTER s ∈ B` by metis_tac[] >> metis_tac[])
+         >- (Cases_on `s ∩ B = {}`
+            >- (`s = s ∩ A` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
+               `BIGINTER s ∈ A` by metis_tac[] >>
+               `e ∩ (BIGINTER s) IN A` by metis_tac[] >>
+               `{} NOTIN A`
+                   by (SPOSE_NOT_THEN ASSUME_TAC >>
+                       `?b. b IN B` by metis_tac[MEMBER_NOT_EMPTY] >>
+                       `{} ∩ b = {}` by fs[EXTENSION] >> metis_tac[]) >>
+               metis_tac[])
+            >- (`BIGINTER (s ∩ A) ∈ A` by metis_tac[] >>
+               `BIGINTER (s ∩ B) ∈ B` by metis_tac[] >>
+               `BIGINTER s = BIGINTER ((s ∩ A) ∪ (s ∩ B))` by metis_tac[] >>
+               fs[BIGINTER_UNION] >>
+               fs[INTER_ASSOC]))))
    >- (Cases_on `s = {}` (* 2 *)
       >- (fs[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
          `?a. a IN A` by metis_tac[MEMBER_NOT_EMPTY] >>
-	 `e ∩ a = {}` by fs[EXTENSION] >> metis_tac[INTER_COMM])
+         `e ∩ a = {}` by fs[EXTENSION] >> metis_tac[INTER_COMM])
       >- (`s = (s ∩ A) ∪ (s ∩ B)` by (rw[EXTENSION,EQ_IMP_THM] >> fs[SUBSET_DEF]) >>
          `s ∩ A SUBSET A` by fs[SUBSET_DEF] >>
-	 `s ∩ B SUBSET B` by fs[SUBSET_DEF] >>
-	 `FINITE (s ∩ A)` by fs[] >>
-	 `FINITE (s ∩ B)` by fs[] >>
-	 `s ∩ A <> {} ==> BIGINTER (s ∩ A) IN A` by metis_tac[BIGINTER_FINITE] >>
-	 `s ∩ B <> {} ==> BIGINTER (s ∩ B) IN B` by metis_tac[BIGINTER_FINITE] >>
-	 Cases_on `s ∩ B = {}`
-	 >- (`s = s ∩ A` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
-	    `BIGINTER s ∈ A` by metis_tac[] >> metis_tac[INTER_COMM])
-	 >- (Cases_on `s ∩ A = {}`
-	    >- (`s = s ∩ B` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
-	       `BIGINTER s ∈ B` by metis_tac[] >>
-	       `e ∩ (BIGINTER s) IN B` by metis_tac[] >>
-	       `{} NOTIN B`
-	           by (SPOSE_NOT_THEN ASSUME_TAC >>
-		       `?a. a IN A` by metis_tac[MEMBER_NOT_EMPTY] >>
-		       `{} ∩ a = {}` by fs[EXTENSION] >> metis_tac[INTER_COMM]) >>
-	       metis_tac[])
-	    >- (`BIGINTER (s ∩ A) ∈ A` by metis_tac[] >>
-	       `BIGINTER (s ∩ B) ∈ B` by metis_tac[] >>
-	       `BIGINTER s = BIGINTER ((s ∩ A) ∪ (s ∩ B))` by metis_tac[] >>
-	       fs[BIGINTER_UNION] >>
-	       `BIGINTER (s ∩ A) ∩ BIGINTER (s ∩ B) = BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A)` by metis_tac[INTER_COMM] >>
-	       `e ∩ (BIGINTER (s ∩ A) ∩ BIGINTER (s ∩ B)) =
-	       e ∩ (BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A))` by metis_tac[] >>
-	       `e ∩ (BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A)) <> {}` suffices_by metis_tac[] >>
-	       simp[INTER_ASSOC] >>
-	       `e ∩ BIGINTER (s ∩ B) IN B` by metis_tac[] >>
-	       metis_tac[INTER_COMM])))));
-	       
+         `s ∩ B SUBSET B` by fs[SUBSET_DEF] >>
+         `FINITE (s ∩ A)` by fs[] >>
+         `FINITE (s ∩ B)` by fs[] >>
+         `s ∩ A <> {} ==> BIGINTER (s ∩ A) IN A` by metis_tac[BIGINTER_FINITE] >>
+         `s ∩ B <> {} ==> BIGINTER (s ∩ B) IN B` by metis_tac[BIGINTER_FINITE] >>
+         Cases_on `s ∩ B = {}`
+         >- (`s = s ∩ A` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
+            `BIGINTER s ∈ A` by metis_tac[] >> metis_tac[INTER_COMM])
+         >- (Cases_on `s ∩ A = {}`
+            >- (`s = s ∩ B` by (fs[EXTENSION,SUBSET_DEF] >> metis_tac[]) >>
+               `BIGINTER s ∈ B` by metis_tac[] >>
+               `e ∩ (BIGINTER s) IN B` by metis_tac[] >>
+               `{} NOTIN B`
+                   by (SPOSE_NOT_THEN ASSUME_TAC >>
+                       `?a. a IN A` by metis_tac[MEMBER_NOT_EMPTY] >>
+                       `{} ∩ a = {}` by fs[EXTENSION] >> metis_tac[INTER_COMM]) >>
+               metis_tac[])
+            >- (`BIGINTER (s ∩ A) ∈ A` by metis_tac[] >>
+               `BIGINTER (s ∩ B) ∈ B` by metis_tac[] >>
+               `BIGINTER s = BIGINTER ((s ∩ A) ∪ (s ∩ B))` by metis_tac[] >>
+               fs[BIGINTER_UNION] >>
+               `BIGINTER (s ∩ A) ∩ BIGINTER (s ∩ B) = BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A)` by metis_tac[INTER_COMM] >>
+               `e ∩ (BIGINTER (s ∩ A) ∩ BIGINTER (s ∩ B)) =
+               e ∩ (BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A))` by metis_tac[] >>
+               `e ∩ (BIGINTER (s ∩ B) ∩ BIGINTER (s ∩ A)) <> {}` suffices_by metis_tac[] >>
+               simp[INTER_ASSOC] >>
+               `e ∩ BIGINTER (s ∩ B) IN B` by metis_tac[] >>
+               metis_tac[INTER_COMM])))));
+               
 
 
 val _ = export_theory();
