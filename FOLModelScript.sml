@@ -10,7 +10,6 @@ val _ = ParseExtras.tight_equality()
 val _ = new_theory "FOLModel";
 
 
-
 val _ = Datatype`
         folmodel = <| dom : 'a set ;
                       fnsyms : num -> 'a list -> 'a;
@@ -410,7 +409,183 @@ Proof
   >- (`size f' < size (fEXISTS n f')` by fs[size_def] >> first_x_assum drule >> rw[])
 QED
 
+Theorem SKOLEM_qfree :
+  !f. qfree f ==> SKOLEM n f = f
+Proof
+  Induct_on `f` >> fs[qfree_def,SKOLEM_def]
+QED
 
+
+Theorem tsubst_tsubst :
+  !t v2 v1. tsubst v2 (tsubst v1 t) = tsubst (tsubst v2 ∘ v1) t
+Proof
+  completeInduct_on `fterm_size t` >> Cases_on `t` >> fs[tsubst_def] >>
+  rw[MAP_MAP_o] >> qmatch_abbrev_tac `MAP f1 l = MAP f2 l` >>
+  irule LIST_EQ >> rw[EL_MAP] >>
+  `MEM (EL x l) l` by fs[EL_MEM] >>
+  `!m. MEM m l ==> f1 m = f2 m` suffices_by metis_tac[] >> rw[] >>
+  drule tsize_lemma >> rw[] >> 
+  first_x_assum (qspec_then `fterm_size m` mp_tac) >> fs[] >> rw[] >>
+  first_x_assum (qspec_then `m` mp_tac) >> fs[] >> rw[Abbr`f1`,Abbr`f2`]
+QED
+
+
+Theorem fsubst_fsubt :
+  !f v1 v2. fsubst v2 (fsubst v1 f) = fsubst ((tsubst v2) o v1) f
+Proof
+  completeInduct_on `size f` >> rw[] >> Cases_on `f` >> rw[] (* 6 *)
+  >- fs[fsubst_def]
+  >- rw[fsubst_def,tsubst_tsubst] (* 2 *)
+  >- rw[fsubst_def,tsubst_tsubst]
+  >- (rw[fsubst_def] (* 2 *)
+     >- (first_x_assum (qspec_then `size f'` mp_tac) >> rw[size_def,size_nonzero]) >>  first_x_assum (qspec_then `size f0` mp_tac) >> rw[size_def,size_nonzero])
+  >- first_x_assum (qspec_then `size f'` mp_tac) >> rw[size_def] >> 
+     first_x_assum (qspec_then `f'` mp_tac) >> rw[] >>
+     rw[Once fsubst_def] (* 2 *)
+     >- qabbrev_tac `a = (VARIANT (ffvs (fsubst v1⦇n ↦ V n⦈ f')))` >>
+        rw[Once fsubst_def] (* 2 *)
+        >- qabbrev_tac `b = (VARIANT (ffvs (fsubst (tsubst v2⦇a ↦ V a⦈ ∘ v1⦇n ↦ V a⦈) f')))` >>
+           first_x_assum (qspecl_then [`v1⦇n ↦ V a⦈`,`v2⦇a ↦ V b⦈`] assume_tac) >> 
+           `fFORALL b (fsubst v2⦇a ↦ V b⦈ (fsubst v1⦇n ↦ V a⦈ f')) = 
+           fsubst (tsubst v2 ∘ v1) (fFORALL n f')` suffices_by metis_tac[] >>
+           simp[Once fsubst_def] >> rw[] (* 4 *)
+           >- 
+           >-
+           >- qabbrev_tac `c = (VARIANT (ffvs (fsubst (tsubst v2 ∘ v1)⦇n ↦ V n⦈ f')))` >>
+              
+   
+           
+     
+     
+
+     
+QED
+
+
+Theorem prenex_SKOLEM_fsubst :
+  !f. prenex f ==> (!n v. (SKOLEM n (fsubst v f) = fsubst v (SKOLEM n f)))
+Proof
+  Induct_on `prenex` >> rw[SKOLEM_qfree,fsubst_def] >> rw[]
+  >- qabbrev_tac `a = (VARIANT (ffvs (fsubst v⦇n ↦ V n⦈ f)))` >>
+     rw[SKOLEM_def] >> rw[ffvs_def,ffvs_fsubst] >>
+     qmatch_abbrev_tac `SKOLEM (n' + 1) (fsubst V(|a |-> fn |) fv) = _` >>
+     qmatch_abbrev_tac `_ = fsubst v (fsubst V(| n |-> fn' |) (SKOLEM (n' + 1) f))` >>
+     rw[Abbr`fv`] >> 
+     
+QED
+
+
+``fsubst v2 (fsubst v1 f) = fsubst ((tsubst v2) o v1) f``
+
+
+
+Theorem SKOLEM_qfree :
+  !f. qfree f ==> SKOLEM n f = f
+Proof
+  Induct_on `f` >> fs[qfree_def,SKOLEM_def]
+QED
+Theorem SKOLEM_feval :
+  !f n. prenex f ==> 
+        ((?M:α folmodel σ. feval M σ  (SKOLEM n f)) <=> 
+        (?M:α folmodel σ. feval M σ f))
+Proof
+  completeInduct_on `size f` >> fs[PULL_FORALL] >> Cases_on `f` >> 
+  simp[SKOLEM_def,size_def,feval_def] >> rw[] (* 3 *)
+  >- 
+QED
+
+
+Theorem SKOLEM_qfree :
+  !f. qfree f ==> SKOLEM n f = f
+Proof
+  Induct_on `f` >> fs[qfree_def,SKOLEM_def]
+QED
+
+
+
+
+
+(* val _ = Datatype`
+        folmodel = <| dom : 'a set ;
+                      fnsyms : num -> 'a list -> 'a;
+                      predsyms : num -> 'a -> bool;
+                      relsyms : num -> 'a -> 'a -> bool;
+                      |>`; 
+*)
+
+          
+
+Theorem prenex_SKOLEM_fsatis_direction1 :
+  !f. prenex f ==> (!M σ. fsatis M σ f ==> ?M σ. fsatis M σ (SKOLEM n f))
+Proof
+
+QED
+
+
+Theorem prenex_SKOLEM_fsatis_direction2 :
+  !f. prenex f ==> (!M σ. fstis M σ SKOLEM n f ==> ?M σ. fsatis M σ f)
+Proof
+
+
+QED
+
+Theorem SKOLEM_fsubst :
+  !f n. prenex f ==> SKOLEM n (fsubst v f) = fsubst v⦇n ↦ V z⦈ (SKOLEM n f)
+Proof
+
+QED
+
+ 
+
+Theorem SKOLEM_feval :
+  !f. prenex f ==> !n.
+        ((?M:α folmodel σ. feval M σ (SKOLEM n f)) <=> 
+        (?M:α folmodel σ. feval M σ f))
+Proof
+  Induct_on `prenex` >> rw[SKOLEM_qfree,EQ_IMP_THM] (* 4 *)
+  >- fs[SKOLEM_def] >>
+     qabbrev_tac `a = Fn ((n ⊗ num_of_form f) ⊗ n')
+                      (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))` >>
+     rw[feval_def] >> 
+     `feval M σ (fsubst V⦇n ↦ a⦈ (SKOLEM (n' + 1) f))` by cheat (*need SKOLEM fsubst commutes*)>>
+     fs[feval_fsubst] >> 
+     `?M σ. feval M σ f` by metis_tac[] >> map_every qexists_tac [`M'`,`σ'`,`σ' n`] >> cheat
+
+  >- rw[SKOLEM_def] >>
+     qabbrev_tac `a = Fn ((n ⊗ num_of_form f) ⊗ n')
+                    (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))` >>
+     fs[feval_def] >> 
+     `∃M' σ'. feval M' σ' (fsubst V⦇n ↦ a⦈ (SKOLEM (n' + 1) f))` suffices_by cheat (* require comm *) >>
+     `?M σ. feval M σ (SKOLEM (n' + 1) f)` by metis_tac[] >>
+     (* same σ', add M' a new function symbol Fn ((n ⊗ num_of_form f) ⊗ n')
+              (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) and interpret it as σ'. *)
+   cheat
+     rw[feval_fsubst]
+  >- fs[SKOLEM_def,feval_def] >> 
+     `x IN M.dom` by cheat >>
+     first_x_assum drule >> rw[] >> `?M σ. feval M σ f` by metis_tac[] >>
+     (*strengthen the inductive hypothesis?*)
+     cheat
+  >- fs[SKOLEM_def,feval_def] >> 
+   
+
+
+
+     
+     `∃M σ. feval M σ (SKOLEM (n' + 1) f)` by cheat >>
+     `∃M σ. feval M σ f` by metis_tac[] >>
+     map_every qexists_tac [`M''`,`σ''`,`(σ'' n)`] >> rw[]
+    
+
+
+
+  Induct_on `f` >> fs[qfree_def,SKOLEM_def]
+
+
+
+ fs[PULL_FORALL] >> Cases_on `f` >> 
+  simp[SKOLEM_def,size_def,feval_def] >> rw[]
+QED
 
 
 
