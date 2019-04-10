@@ -430,6 +430,67 @@ Proof
 QED
 
 
+Theorem MAP_LIST_EQ :
+  !l f g. (!m. MEM m l ==> f m = g m) ==> MAP f l = MAP g l
+Proof
+  rw[] >> irule LIST_EQ >> rw[EL_MAP] >> metis_tac[EL_MEM]
+QED
+
+Theorem tfvs_tsubst_EQ :
+  !t v1 v2. (!a. a IN (tfvs t) ==> v1 a = v2 a) ==> tsubst v1 t = tsubst v2 t
+Proof
+  completeInduct_on `fterm_size t` >> rw[] >> Cases_on `t` >> 
+  fs[tsubst_def,tfvs_def] >> irule MAP_LIST_EQ >> rw[] >> 
+  drule tsize_lemma >> rw[] >> 
+  last_x_assum (qspec_then `fterm_size m` mp_tac) >> rpt strip_tac >> rfs[] >>
+  first_x_assum (qspec_then `m` mp_tac) >> rw[] >> fs[] >>
+  first_x_assum irule >> rw[] >> first_x_assum irule >> qexists_tac `tfvs m` >> 
+  rw[MEM_MAP] >> metis_tac[]
+QED
+
+Theorem ffvs_fsubst_EQ :
+  !f v1 v2. (!a. a IN (ffvs f) ==> v1 a = v2 a) ==> fsubst v1 f = fsubst v2 f
+Proof
+  completeInduct_on `size f` >> rw[] >> Cases_on `f` >> 
+  fs[fsubst_def,ffvs_def,tfvs_tsubst_EQ,size_def,size_nonzero] >> rw[] (* 14 *)
+  >- (rpt AP_TERM_TAC >> first_x_assum irule >> rw[] >> Cases_on `n = a` >>
+     fs[APPLY_UPDATE_THM])
+  >- (`tfvs (v1⦇n ↦ V n⦈ y) = tfvs (v2⦇n ↦ V n⦈ y)` suffices_by metis_tac[] >>
+     Cases_on `n = y` >> fs[APPLY_UPDATE_THM,tfvs_def])
+  >- (`tfvs (v1⦇n ↦ V n⦈ y) = tfvs (v2⦇n ↦ V n⦈ y)` suffices_by metis_tac[] >>
+     Cases_on `n = y` >> fs[APPLY_UPDATE_THM,tfvs_def])
+  >- (first_assum irule >> rw[] >> Cases_on `n = a` >> fs[APPLY_UPDATE_THM] >>
+     `(fsubst v1⦇a ↦ V a⦈ f') = (fsubst v2⦇a ↦ V a⦈ f')` 
+       suffices_by metis_tac[] >>
+     rfs[] >> first_x_assum irule >> rw[] >> Cases_on `a = a'` >> 
+     fs[APPLY_UPDATE_THM])
+  >- (`tfvs (v1⦇n ↦ V n⦈ y) = tfvs (v2⦇n ↦ V n⦈ y)` suffices_by metis_tac[] >>
+     Cases_on `n = y` >> fs[APPLY_UPDATE_THM,tfvs_def])
+  >- (`tfvs (v1⦇n ↦ V n⦈ y) = tfvs (v2⦇n ↦ V n⦈ y)` suffices_by metis_tac[] >>
+     Cases_on `n = y` >> fs[APPLY_UPDATE_THM,tfvs_def])
+  >- (first_x_assum irule >> rw[] >> Cases_on `n = a` >> fs[APPLY_UPDATE_THM])
+  >- (rpt AP_TERM_TAC >> first_x_assum irule >> rw[] >> Cases_on `n = a` >>
+     fs[APPLY_UPDATE_THM])
+  >- (`tfvs (v1⦇n ↦ V n⦈ y) = tfvs (v2⦇n ↦ V n⦈ y)` suffices_by metis_tac[] >>
+     Cases_on `n = y` >> fs[APPLY_UPDATE_THM,tfvs_def])
+  >- (`tfvs (v1⦇n ↦ V n⦈ y) = tfvs (v2⦇n ↦ V n⦈ y)` suffices_by metis_tac[] >>
+     Cases_on `n = y` >> fs[APPLY_UPDATE_THM,tfvs_def])
+  >- (first_assum irule >> rw[] >> Cases_on `n = a` >> fs[APPLY_UPDATE_THM] >>
+     `(fsubst v1⦇a ↦ V a⦈ f') = (fsubst v2⦇a ↦ V a⦈ f')` 
+       suffices_by metis_tac[] >>
+     rfs[] >> first_x_assum irule >> rw[] >> Cases_on `a = a'` >> 
+     fs[APPLY_UPDATE_THM])
+  >- (`tfvs (v1⦇n ↦ V n⦈ y) = tfvs (v2⦇n ↦ V n⦈ y)` suffices_by metis_tac[] >>
+     Cases_on `n = y` >> fs[APPLY_UPDATE_THM,tfvs_def])
+  >- (`tfvs (v1⦇n ↦ V n⦈ y) = tfvs (v2⦇n ↦ V n⦈ y)` suffices_by metis_tac[] >>
+     Cases_on `n = y` >> fs[APPLY_UPDATE_THM,tfvs_def])
+  >- (first_x_assum irule >> rw[] >> Cases_on `n = a` >> fs[APPLY_UPDATE_THM])
+QED
+
+
+
+
+
 Theorem fsubst_fsubt :
   !f v1 v2. fsubst v2 (fsubst v1 f) = fsubst ((tsubst v2) o v1) f
 Proof
@@ -445,14 +506,31 @@ Proof
      >- qabbrev_tac `a = (VARIANT (ffvs (fsubst v1⦇n ↦ V n⦈ f')))` >>
         rw[Once fsubst_def] (* 2 *)
         >- qabbrev_tac `b = (VARIANT (ffvs (fsubst (tsubst v2⦇a ↦ V a⦈ ∘ v1⦇n ↦ V a⦈) f')))` >>
-           first_x_assum (qspecl_then [`v1⦇n ↦ V a⦈`,`v2⦇a ↦ V b⦈`] assume_tac) >> 
-           `fFORALL b (fsubst v2⦇a ↦ V b⦈ (fsubst v1⦇n ↦ V a⦈ f')) = 
-           fsubst (tsubst v2 ∘ v1) (fFORALL n f')` suffices_by metis_tac[] >>
+           qpat_x_assum `!x. _` (assume_tac o GSYM) >>
+           fs[] >> rw[fsubst_def]
+
+
+
+
+    
            simp[Once fsubst_def] >> rw[] (* 4 *)
            >- 
            >-
            >- qabbrev_tac `c = (VARIANT (ffvs (fsubst (tsubst v2 ∘ v1)⦇n ↦ V n⦈ f')))` >>
-              
+               qpat_x_assum `!v1 v2. _` (assume_tac o GSYM) >> fs[] >>
+               
+
+`(tsubst v2⦇a ↦ V b⦈ ∘ v1⦇n ↦ V a⦈) = (tsubst v2 ∘ v1)⦇n ↦ V c⦈` suffices_by metis_tac[] >>
+simp[FUN_EQ_THM] >> rw[] >> Cases_on `x = n` >> fs[APPLY_UPDATE_THM] (*2 *)
+>- rw[tsubst_def,APPLY_UPDATE_THM,Abbr`b`,Abbr`c`] >> rpt AP_TERM_TAC >>
+   `(tsubst v2⦇a ↦ V a⦈ ∘ v1⦇n ↦ V a⦈) = (tsubst v2 ∘ v1)⦇n ↦ V n⦈`
+   suffices_by metis_tac[] >> rw[FUN_EQ_THM] >> Cases_on `n = x` >> fs[APPLY_UPDATE_THM] (* 2 *)
+   >- rw[tsubst_def,APPLY_UPDATE_THM] >> cheat
+      Cases_on `v1 x` >> fs[tsubst_def] >> cheat >> 
+      irule LIST_EQ >> rw[] >> rw[EL_MAP] >> 
+      `!m. MEM m l ==> tsubst v2⦇a ↦ V a⦈ m = tsubst v2 m` suffices_by 
+        metis_tac[MEM_EL] >>
+      rw[] >> 
    
            
      
@@ -501,6 +579,12 @@ Proof
   Induct_on `f` >> fs[qfree_def,SKOLEM_def]
 QED
 
+Theorem specialize_qfree :
+  ! f. qfree f ==> specialize f = f
+Proof
+  Induct_on `f` >> fs[qfree_def,specialize_def]
+QED
+
 
 
 
@@ -539,15 +623,22 @@ QED
 
 Theorem SKOLEM_feval :
   !f. prenex f ==> !n.
-        ((?M:α folmodel σ. feval M σ (SKOLEM n f)) <=> 
+        ((?M:α folmodel σ. feval M σ (specialize (SKOLEM n f))) <=> 
         (?M:α folmodel σ. feval M σ f))
 Proof
-  Induct_on `prenex` >> rw[SKOLEM_qfree,EQ_IMP_THM] (* 4 *)
+  Induct_on `prenex` >> rw[SKOLEM_qfree,EQ_IMP_THM,specialize_qfree] (* 4 *)
+  >- fs[
+
+
+
+
+
   >- fs[SKOLEM_def] >>
+
      qabbrev_tac `a = Fn ((n ⊗ num_of_form f) ⊗ n')
                       (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))` >>
      rw[feval_def] >> 
-     `feval M σ (fsubst V⦇n ↦ a⦈ (SKOLEM (n' + 1) f))` by cheat (*need SKOLEM fsubst commutes*)>>
+     `feval M σ (fsubst V⦇n ↦ a⦈ (specialize (SKOLEM (n' + 1) f)))` by cheat (*need SKOLEM fsubst commutes*)>>
      fs[feval_fsubst] >> 
      `?M σ. feval M σ f` by metis_tac[] >> map_every qexists_tac [`M'`,`σ'`,`σ' n`] >> cheat
 
@@ -555,17 +646,19 @@ Proof
      qabbrev_tac `a = Fn ((n ⊗ num_of_form f) ⊗ n')
                     (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))` >>
      fs[feval_def] >> 
-     `∃M' σ'. feval M' σ' (fsubst V⦇n ↦ a⦈ (SKOLEM (n' + 1) f))` suffices_by cheat (* require comm *) >>
-     `?M σ. feval M σ (SKOLEM (n' + 1) f)` by metis_tac[] >>
+     `∃M' σ'. feval M' σ' (fsubst V⦇n ↦ a⦈ (specialize (SKOLEM (n' + 1) f)))` suffices_by cheat (* require comm *) >>
+     `?M σ. feval M σ (specialize (SKOLEM (n' + 1) f))` by metis_tac[] >>
      (* same σ', add M' a new function symbol Fn ((n ⊗ num_of_form f) ⊗ n')
               (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) and interpret it as σ'. *)
    cheat
      rw[feval_fsubst]
-  >- fs[SKOLEM_def,feval_def] >> 
+  >- fs[SKOLEM_def,feval_def,specialize_def] >> 
      `x IN M.dom` by cheat >>
      first_x_assum drule >> rw[] >> `?M σ. feval M σ f` by metis_tac[] >>
      (*strengthen the inductive hypothesis?*)
      cheat
+     qabbrev_tac `ff = (specialize (SKOLEM (n' + 1) f))` >>
+     
   >- fs[SKOLEM_def,feval_def] >> 
    
 
@@ -586,6 +679,9 @@ Proof
  fs[PULL_FORALL] >> Cases_on `f` >> 
   simp[SKOLEM_def,size_def,feval_def] >> rw[]
 QED
+
+``!ff M σ. feval M σ ff ==> ?M' σ'. feval M' σ' (fsubst V⦇n ↦ a⦈ ff)``
+rw[feval_fsubst]
 
 
 
