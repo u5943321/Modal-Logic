@@ -772,29 +772,31 @@ QED
 
 
 
-Theorem prenex_SKOLEM_fsatis :
-  !f. prenex f ==> (!M σ n. feval M σ (SKOLEM n f) ==> feval M σ f)
+Theorem prenex_SKOLEM_implies_original :
+  !f. prenex f ==> (!M σ n. (!k l. (M.fnsyms k l) IN M.dom) ==> (feval M σ (SKOLEM n f) ==> feval M σ f))
 Proof
 completeInduct_on `size f` >> 
-`∀f. prenex f ⇒  v = size f ⇒ ∀M σ n. feval M σ (SKOLEM n f) ⇒ feval M σ f`
+`∀f. prenex f ⇒  v = size f ⇒ ∀M σ n. (∀k l. M.fnsyms k l ∈ M.dom) ==> 
+         feval M σ (SKOLEM n f) ⇒ feval M σ f`
   suffices_by metis_tac[] >> Induct_on `prenex f` >> rw[]
 >- metis_tac[SKOLEM_qfree]    
->- fs[SKOLEM_qfree,SKOLEM_def,feval_def] (* 2 *)
+>- (fs[SKOLEM_qfree,SKOLEM_def,feval_def] >>
    qabbrev_tac `a = Fn ((n ⊗ num_of_form f) ⊗ n')
                       (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))` >>
-   qexists_tac `interpret M σ a` >> rw[]
-   `feval M σ (fsubst V⦇n ↦ a⦈ f)` by 
-     (first_x_assum (qspec_then `size f` mp_tac) >> rw[size_def] >>
-      first_x_assum (qspec_then `fsubst V⦇n ↦ a⦈ f` mp_tac) >> 
-      rw[size_fsubst] >> metis_tac[]) >>
-   fs[feval_fsubst] >>
-   `feval M σ⦇n ↦ interpret M σ a⦈ f = feval M (interpret M σ ∘ V⦇n ↦ a⦈) f`
-   suffices_by metis_tac[] >> irule feval_ffvs >> rw[] >>
-   Cases_on `n = n''` >> fs[APPLY_UPDATE_THM] >> rw[interpret_def]
-   cheat
+   qexists_tac `interpret M σ a` >> rw[] (* 2 *)
+   >- rw[Abbr`a`,interpret_def]
+   >- (`feval M σ (fsubst V⦇n ↦ a⦈ f)` by 
+      (last_x_assum (qspec_then `size f` mp_tac) >> rw[size_def] >>
+       first_x_assum (qspec_then `fsubst V⦇n ↦ a⦈ f` mp_tac) >> 
+      rw[size_fsubst,GSYM prenex_fsubst] >> metis_tac[]) >>
+      fs[feval_fsubst] >>
+      `feval M σ⦇n ↦ interpret M σ a⦈ f = feval M (interpret M σ ∘ V⦇n ↦ a⦈) f`
+        suffices_by metis_tac[] >>
+      irule feval_ffvs >> rw[] >>
+      Cases_on `n = n''` >> fs[APPLY_UPDATE_THM] >> rw[interpret_def]))
 >- (fs[SKOLEM_qfree,SKOLEM_def,feval_def] >> rw[] >>
    first_assum drule >> strip_tac >> 
-   first_x_assum (qspec_then `size f` mp_tac) >> rw[size_def] >>
+   last_x_assum (qspec_then `size f` mp_tac) >> rw[size_def] >>
    first_x_assum (qspec_then `f` mp_tac) >> rw[] >> metis_tac[])
 QED 
 
@@ -813,11 +815,26 @@ QED
  
 
 Theorem SKOLEM_fsatis :
-  !f. prenex f ==> !n.
+  !f. prenex f ==> (!M:α folmodel σ n. (!k l. (M.fnsyms k l) IN M.dom)) ==>
         ((?M:α folmodel σ. fsatis M σ (SKOLEM n f)) <=> 
         (?M:α folmodel σ. fsatis M σ f))
 Proof
-  Induct_on `prenex` >> rw[SKOLEM_qfree,EQ_IMP_THM,specialize_qfree] (* 4 *)
+Induct_on `prenex` >> rw[SKOLEM_qfree,EQ_IMP_THM,specialize_qfree] (* 4 *)
+>- (map_every qexists_tac [`M`,`σ`] >>
+   metis_tac[prenex_SKOLEM_implies_original,prenex_rules,fsatis_def])
+>- first_x_assum drule >> rw[] >> fs[fsatis_def,feval_def,PULL_EXISTS] >> 
+   rw[SKOLEM_def] >> 
+   qmatch_abbrev_tac `∃M' σ'. IMAGE σ' 𝕌(:num) ⊆ M'.dom ∧
+       feval M' σ' (SKOLEM (n + 1) (fsubst V⦇n' ↦ a⦈ f))` >>
+   `IMAGE σ⦇n' ↦ x⦈ 𝕌(:num) ⊆ M.dom` by metis_tac[UPDATE_IMAGE] >>
+   first_x_assum drule >> rw[] >> 
+   
+  
+ 
+
+
+
+
   >- rfs[ffvs_def,APPLY_UPDATE_THM] >> 
 
 
