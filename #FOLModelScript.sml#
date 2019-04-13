@@ -773,7 +773,7 @@ QED
 
 
 Theorem prenex_SKOLEM_fsatis :
-  !f. prenex f ==> (!M σ n. feval M σ (SKOLEM n f) ==> feval M σ f)
+  !f. prenex f ==> IMAGE M.fnsyms (univ (:num)) ⊆ M.dom ==> (!M σ n. feval M σ (SKOLEM n f) ==> feval M σ f)
 Proof
 completeInduct_on `size f` >> 
 `∀f. prenex f ⇒  v = size f ⇒ ∀M σ n. feval M σ (SKOLEM n f) ⇒ feval M σ f`
