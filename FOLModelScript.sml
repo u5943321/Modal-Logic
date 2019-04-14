@@ -808,6 +808,12 @@ l = (MAP (λa. interpret M σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) the
 >- `∃M' σ'. fsatis M' σ' (fNOT (fEXISTS n (fNOT (SKOLEM n' f))))` suffices_by cheat >>
    `∃M' σ'. ¬(fsatis M' σ' (fEXISTS n (fNOT (SKOLEM n' f))))` suffices_by cheat >>
    `¬fsatis M σ (fEXISTS n (fNOT f))` by cheat >> 
+  first_x_assum irule
+
+
+  rw[]
+   `∃M σ. fsatis M σ (SKOLEM n' (fNOT (fEXISTS n (fNOT f))))` suffices_by cheat >>
+   first_x_assum irule >> rw[]
         
 QED
 
