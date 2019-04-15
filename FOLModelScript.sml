@@ -503,17 +503,6 @@ QED
 
 
 
-(* val _ = Datatype`
-        folmodel = <| dom : 'a set ;
-                      fnsyms : num -> 'a list -> 'a;
-                      predsyms : num -> 'a -> bool;
-                      relsyms : num -> 'a -> 'a -> bool;
-                      |>`; 
-*)
-
-          
-
-
 Theorem prenex_SKOLEM_implies_original :
   !f. prenex f ==> (!M σ n. (!k l. (M.fnsyms k l) IN M.dom) ==> (feval M σ (SKOLEM n f) ==> feval M σ f))
 Proof
@@ -541,15 +530,6 @@ completeInduct_on `size f` >>
    last_x_assum (qspec_then `size f` mp_tac) >> rw[size_def] >>
    first_x_assum (qspec_then `f` mp_tac) >> rw[] >> metis_tac[])
 QED 
-
-(* val _ = Datatype`
-        folmodel = <| dom : 'a set ;
-                      fnsyms : num -> 'a list -> 'a;
-                      predsyms : num -> 'a -> bool;
-                      relsyms : num -> 'a -> 'a -> bool;
-                      |>`; 
-*)
-
 
 
 Theorem UPDATE_tsubst :
@@ -670,7 +650,7 @@ Proof
   rw[feval_fsubst] >> irule feval_ffvs >> rw[] >>
   Cases_on `n = n'` >> fs[APPLY_UPDATE_THM,interpret_def]
 QED
-
+(*
 Theorem ffns_LESS_num_of_term :
   !f fc. fc IN ffns f ==> FST fc < num_of_form f
 Proof
@@ -701,7 +681,12 @@ Proof
         `FST fc <= num_of_term (Fn n' l)` suffices_by fs[] >> rw[num_of_term_def] >>
         `FST fc ≤ 2 * n' ⊗ nlist_of (MAP (λa. num_of_term a) l)` suffices_by fs[] >>
         `FST fc ≤ n' ⊗ nlist_of (MAP (λa. num_of_term a) l)` suffices_by fs[] >>
-        `
+        `nlist_of (MAP (λa. num_of_term a) l) <=
+         n' ⊗ nlist_of (MAP (λa. num_of_term a) l)` by fs[nsnd_le_npair] >>
+        `FST fc ≤ nlist_of (MAP (λa. num_of_term a) l)`
+          suffices_by metis_tac[LESS_EQ_TRANS] >>
+        
+       
 
 
 
@@ -769,73 +754,7 @@ l = (MAP (λa. interpret M σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) the
    metis_tac[UPDATE_IMAGE])
 QED
 
-
-
-Theorem prenex_original_implies_SKOLEM :
-  !f. prenex f ==> !M:'a folmodel σ. fsatis M σ f ==> 
-                       !n. ?M:'a folmodel σ. fsatis M σ (SKOLEM n f)
-Proof
-completeInduct_on `size f` >>
-`∀f.
-       prenex f ⇒ v = size f ⇒
-       ∀M:'a folmodel σ. fsatis M σ f ⇒
-          ∀n. ∃M:'a folmodel σ. fsatis M σ (SKOLEM n f)` suffices_by 
-  metis_tac[] >>
-Induct_on `prenex f` >> rw[SKOLEM_def,SKOLEM_qfree] (* 3 *)
->- metis_tac[]
->- (qabbrev_tac `a = Fn ((n ⊗ num_of_form f) ⊗ n')
-                    (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))` >>
-   fs[fsatis_def,feval_def] >>
-   last_x_assum irule >> rw[] (* 2 *)
-     >- rw[GSYM size_fsubst,size_def]
-
-
-
-     >- rw[feval_fsubst_interpret] >> 
-        qexists_tac `<| dom := M.dom ;
-                        fnsyms := λ m l. 
-                                (if m = ((n ⊗ num_of_form f) ⊗ n') /\ 
-l = (MAP (λa. interpret M σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) then x else (M.fnsyms m l));
-                      predsyms := M.predsyms;
-                      relsyms := M.relsyms;
-                      |>` >> 
-        qexists_tac `σ` >> rw[] (* 2 *)
-     >- (qmatch_abbrev_tac `feval M0 _ f` >>
-        `interpret M0 σ a = x` by
-          (simp[Abbr`a`,interpret_def] >> 
-          `(MAP (λa. interpret M0 σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) = 
-          (MAP (λa. interpret M σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f)))))`
-            suffices_by (rw[] >> rw[Abbr`M0`]) >>
-          irule MAP_LIST_EQ >> rw[MEM_MAP] >> irule interpret_tfns >> rw[] (* 5 *)
-          >- fs[tfns_def]
-          >> fs[Abbr`M0`]) >>
-        fs[] >> 
-        `feval M σ⦇n ↦ x⦈ f = feval M0 σ⦇n ↦ x⦈ f` suffices_by metis_tac[] >>
-        irule feval_ffns >> rw[] (* 5 *)
-        >- (`FST fc <> (n ⊗ num_of_form f) ⊗ n'` by
-             (strip_tac >> 
-             `(n ⊗ num_of_form f) <= (n ⊗ num_of_form f) ⊗ n'` by fs[nfst_le_npair] >>
-             `num_of_form f <= n ⊗ num_of_form f` by fs[nsnd_le_npair] >>
-             `num_of_form f <= FST fc` by metis_tac[LESS_EQ_TRANS] >>
-             `FST fc < num_of_form f` suffices_by fs[] >> cheat (* cheated!!! *)) >>
-           fs[Abbr`M0`] >> rw[FUN_EQ_THM])
-        >> fs[Abbr`M0`])
-        >- (irule UPDATE_IMAGE >> rw[]))
->- `∃M' σ'. fsatis M' σ' (fNOT (fEXISTS n (fNOT (SKOLEM n' f))))` suffices_by cheat >>
-   `∃M' σ'. ¬(fsatis M' σ' (fEXISTS n (fNOT (SKOLEM n' f))))` suffices_by cheat >>
-   `¬fsatis M σ (fEXISTS n (fNOT f))` by cheat >> 
-  first_x_assum irule
-
-
-  rw[]
-   `∃M σ. fsatis M σ (SKOLEM n' (fNOT (fEXISTS n (fNOT f))))` suffices_by cheat >>
-   first_x_assum irule >> rw[]
-
-
-fs[fsatis_def,feval_def] fs[GSYM SKOLEM_def] >> SPOSE_NOT_THEN ASSUME_TAC 
-        
-QED
-
+*)
 
  
 Theorem IMAGE_NOT_EMPTY :
@@ -844,21 +763,204 @@ Proof
   rw[IMAGE_DEF] >> strip_tac >> fs[] >> fs[EXTENSION] >> metis_tac[]
 QED
 
-Theorem feval_UPDATE :
-  !f M σ. feval M σ f ==> ?M' σ'. feval M' 
 
+
+Theorem interpret_IN_dom :
+  (∀M:α folmodel k l. M.fnsyms k l ∈ M.dom) ==> !M:α folmodel σ. IMAGE σ 𝕌(:num) ⊆ M.dom ==>
+  !a. (interpret M σ a) IN M.dom
+Proof
+  rw[] >> Cases_on `a` >> rw[interpret_def]
+  >- (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
+  metis_tac[]
+QED
+
+
+Theorem universal_feval_fsubst :
+  !f v M.(!M:α folmodel. (!k l. (M.fnsyms k l) IN M.dom)) ==>
+          ((!σ. IMAGE σ univ(:num) ⊆ M.dom ==> feval M σ f) <=> 
+          (!σ. IMAGE σ univ(:num) ⊆ M.dom ==> !a. (interpret M σ a) IN M.dom 
+               ==> feval M σ (fsubst V(|n |-> a|) f)))
+Proof
+  rw[EQ_IMP_THM] 
+  >- (simp[feval_fsubst_interpret] >> 
+     `IMAGE σ⦇n ↦ interpret M σ a⦈ univ(:num) ⊆ M.dom` suffices_by metis_tac[]>>
+     metis_tac[UPDATE_IMAGE])
+  >- (`(fsubst V⦇n ↦ V n⦈ f) = f`
+       by (`V⦇n ↦ V n⦈ = V` suffices_by metis_tac[fsubst_V] >> 
+           simp[FUN_EQ_THM] >> strip_tac >> 
+           Cases_on `n = x` >> fs[APPLY_UPDATE_THM]) >>
+     `feval M σ (fsubst V⦇n ↦ V n⦈ f)` suffices_by metis_tac[] >>
+     first_x_assum irule >> fs[interpret_def,SUBSET_DEF] >> metis_tac[]) 
+QED
+
+Theorem interpret_idempotent :
+  !M σ t. (interpret M (interpret M σ ∘ V) t) = interpret M σ t
+Proof
+  completeInduct_on `fterm_size t` >> Cases_on `t`
+  >- rw[interpret_def] >>
+  rw[interpret_def] >> AP_TERM_TAC >> irule MAP_LIST_EQ >> rw[] >>
+  first_x_assum irule >> qexists_tac `fterm_size m` >> rw[] >>
+  drule tsize_lemma >> rw[]
+QED
+
+Theorem feval_interpret :
+  !f M σ. feval M (interpret M σ ∘ V) f = feval M σ f
+Proof
+Induct_on `f` >> rw[feval_def,interpret_idempotent] (* 2 *)
+>> (`∀x. x ∈ M.dom ⇒ feval M (interpret M σ ∘ V)⦇n ↦ x⦈ f = feval M σ⦇n ↦ x⦈ f`
+     suffices_by metis_tac[] >> rw[] >> irule feval_ffvs >> rw[] >>
+   Cases_on `(n = n')` >> fs[APPLY_UPDATE_THM,interpret_def])
+QED
+
+Theorem universal_fsubst :
+  (∀M:α folmodel k l. M.fnsyms k l ∈ M.dom) ==>
+    !M:α folmodel. M.dom <> {} ==>
+       !f. 
+         (!σ. IMAGE σ univ(:num) ⊆ M.dom ==> feval M σ f) <=>
+         (!v σ. 
+            (IMAGE σ univ(:num) ⊆ M.dom /\ IMAGE (interpret M σ) (IMAGE v univ(:num)) ⊆ M.dom) ==> feval M σ (fsubst v f))
+Proof
+strip_tac >> strip_tac >> strip_tac >> Induct_on `f` (* 6 *)
+>- (fs[feval_def,fsubst_def] >> rw[EQ_IMP_THM] >> SPOSE_NOT_THEN ASSUME_TAC >>
+   `∀v σ.
+        (IMAGE σ 𝕌(:num) ⊆ M.dom) ==>
+            ¬(IMAGE (interpret M σ) (IMAGE v 𝕌(:num)) ⊆ M.dom)`by metis_tac[]>>
+   `∀σ.
+      (IMAGE σ 𝕌(:num) ⊆ M.dom) ==>
+         !v.¬(IMAGE (interpret M σ) (IMAGE v 𝕌(:num)) ⊆ M.dom)`by metis_tac[]>>
+   first_x_assum drule >> strip_tac >>
+   fs[GSYM MEMBER_NOT_EMPTY] >>
+   `?v. (IMAGE (interpret M σ) (IMAGE v 𝕌(:num)) ⊆ M.dom)`
+     suffices_by metis_tac[] >> 
+   qexists_tac `v` >> 
+   Q.UNDISCH_THEN `∀v. ¬(IMAGE (interpret M σ) (IMAGE v 𝕌(:num)) ⊆ M.dom)` (K ALL_TAC) >>
+   Q.UNDISCH_THEN `∀v σ.
+             IMAGE σ 𝕌(:num) ⊆ M.dom ⇒
+             ¬(IMAGE (interpret M σ) (IMAGE v 𝕌(:num)) ⊆ M.dom)` (K ALL_TAC) >>
+   rw[IMAGE_DEF,SUBSET_DEF] >> irule interpret_IN_dom >> rw[])
+>- (fs[feval_def,fsubst_def] >> rw[EQ_IMP_THM] (* 2 *)
+   >- (simp[interpret_tsubst] >> 
+      `IMAGE (interpret M σ ∘ v) 𝕌(:num) ⊆ M.dom` suffices_by metis_tac[] >>
+      rw[IMAGE_DEF,SUBSET_DEF] >> irule interpret_IN_dom >> rw[])
+   >- (`?v σ0.
+             IMAGE σ0 𝕌(:num) ⊆ M.dom ∧
+             IMAGE (interpret M σ0) (IMAGE v 𝕌(:num)) ⊆ M.dom /\
+             M.relsyms n (interpret M σ0 (tsubst v f))
+               (interpret M σ0 (tsubst v f0)) = M.relsyms n (interpret M σ f) (interpret M σ f0)` suffices_by metis_tac[] >>
+      map_every qexists_tac [`V`,`σ`] >> rw[tsubst_V,IMAGE_DEF,SUBSET_DEF] >> 
+      irule interpret_IN_dom >> rw[]))
+>- (fs[feval_def,fsubst_def] >> rw[EQ_IMP_THM] (* 2 *)
+   >- (fs[interpret_tsubst] >> first_x_assum irule >>
+      rw[tsubst_V,IMAGE_DEF,SUBSET_DEF] >> irule interpret_IN_dom >> rw[])
+   >- (`?v σ0.
+             IMAGE σ0 𝕌(:num) ⊆ M.dom ∧
+             IMAGE (interpret M σ0) (IMAGE v 𝕌(:num)) ⊆ M.dom /\
+             (M.predsyms n (interpret M σ0 (tsubst v f)) = 
+              M.predsyms n (interpret M σ f))` suffices_by metis_tac[] >>
+      map_every qexists_tac [`V`,`σ`] >> rw[tsubst_V,IMAGE_DEF,SUBSET_DEF] >>
+      irule interpret_IN_dom >> rw[]))
+>- (fs[feval_def,fsubst_def] >> rw[EQ_IMP_THM] (* 2 *)
+   >- (fs[feval_fsubst] >> first_x_assum irule >> rw[IMAGE_DEF,SUBSET_DEF] >>
+      irule interpret_IN_dom >> rw[])
+   >- (`?v σ0.
+             IMAGE σ0 𝕌(:num) ⊆ M.dom ∧
+             IMAGE (interpret M σ0) (IMAGE v 𝕌(:num)) ⊆ M.dom /\
+             feval M σ0 (fsubst v f) /\
+             (feval M σ0 (fsubst v f') = feval M σ f')`suffices_by metis_tac[]>>
+      map_every qexists_tac [`V`,`σ`] >> rw[fsubst_V,IMAGE_DEF,SUBSET_DEF] >>
+      irule interpret_IN_dom >> rw[]))
+>- (fs[feval_def] >> rw[EQ_IMP_THM] (* 2 *)
+   >- (rw[feval_fsubst,feval_def] >> first_x_assum irule >> 
+      rw[IMAGE_DEF,SUBSET_DEF] >> irule interpret_IN_dom >> rw[])
+   >- (`?v σ0.
+             IMAGE σ0 𝕌(:num) ⊆ M.dom ∧
+             IMAGE (interpret M σ0) (IMAGE v 𝕌(:num)) ⊆ M.dom /\
+             (feval M σ0 (fsubst v (fFORALL n f)) ==> feval M σ⦇n ↦ x⦈ f)`
+        suffices_by metis_tac[] >>
+      rw[feval_fsubst,feval_def] >>
+      map_every qexists_tac[`V`,`σ`] >> rw[feval_interpret] (* 2 *)
+      >- (rw[IMAGE_DEF,SUBSET_DEF] >> irule interpret_IN_dom >> rw[]) >>
+      `feval M (interpret M σ ∘ V)⦇n ↦ x⦈ f` by metis_tac[] >>
+      `(feval M (interpret M σ ∘ V)⦇n ↦ x⦈ f = feval M σ⦇n ↦ x⦈ f)`
+        suffices_by metis_tac[] >> irule feval_ffvs >> rw[] >>
+      Cases_on `(n = n')` >> fs[APPLY_UPDATE_THM,interpret_def]))
+>- (fs[feval_def] >> rw[EQ_IMP_THM] (* 2 *)
+   >- (rw[feval_fsubst,feval_def] >> first_x_assum irule >> 
+      rw[IMAGE_DEF,SUBSET_DEF] >> irule interpret_IN_dom >> rw[]) >>
+   fs[feval_fsubst,feval_def] >> 
+   first_x_assum (qspec_then `V` mp_tac) >> strip_tac >>
+   first_x_assum (qspec_then `σ` mp_tac) >> strip_tac >>
+   `IMAGE (interpret M σ) (IMAGE V 𝕌(:num)) ⊆ M.dom` by 
+     (rw[IMAGE_DEF,SUBSET_DEF] >> irule interpret_IN_dom >> rw[]) >>
+   first_x_assum drule >> rw[] >> qexists_tac `x` >> rw[] >>
+   `(feval M (interpret M σ ∘ V)⦇n ↦ x⦈ f = feval M σ⦇n ↦ x⦈ f)` 
+     suffices_by metis_tac[] >> irule feval_ffvs >> rw[] >>
+   Cases_on `(n = n')` >> rw[APPLY_UPDATE_THM,interpret_def])
+QED
 
 Theorem SKOLEM_fsatis :
-  !f. prenex f ==> (!M:α folmodel σ n. (!k l. (M.fnsyms k l) IN M.dom)) ==>
-        ((?M:α folmodel σ. fsatis M σ (SKOLEM n f)) <=> 
-        (?M:α folmodel σ. fsatis M σ f))
+  !s. (!f. f IN s ==> prenex f) ==> 
+      (!M:α folmodel σ n. (!k l. (M.fnsyms k l) IN M.dom)) ==>
+        ((?M:α folmodel. M.dom <> {} /\ !σ f. f IN s ==> fsatis M σ (specialize (SKOLEM n f))) <=> 
+        (?M:α folmodel. M.dom <> {} /\ !σ f. f IN s ==> fsatis M σ f))
 Proof
+rw[EQ_IMP_THM] (* 2 *)
+>- qexists_tac `M` >> rw[] >> first_x_assum drule >> rw[] >>  
+
+
+`!f. prenex f ==> !n.
+      (∀σ. fsatis M σ (specialize (SKOLEM n f))) /\ 
+      M.dom ≠ ∅ /\
+      (∀M:α folmodel k l. M.fnsyms k l ∈ M.dom) ==> fsatis M σ f` 
+     suffices_by metis_tac[] >>
+   Induct_on `prenex` >> rw[] (* 3 *)
+   >- rfs[SKOLEM_qfree,specialize_qfree] 
+   >- rw[fsatis_def,feval_def] 
+      >- cheat 
+     
+          
+fs[SKOLEM_def] >> qabbrev_tac `a = Fn ((n' ⊗ num_of_form f') ⊗ n'')
+                             (MAP V (SET_TO_LIST (ffvs (fEXISTS n' f'))))` >>
+qexists_tac `σ n'` >> `fsatis M σ f'` suffices_by cheat >> 
+first_x_assum irule >> qexists_tac `n'' + 1` >> rw[] >> 
+`∀σ. fsatis M σ (specialize (fsubst V⦇m ↦ b⦈ (SKOLEM (n'' + 1) f')))` by cheat>>
+`∀σ. fsatis M σ (fsubst V⦇m ↦ b⦈ (specialize (SKOLEM (n'' + 1) f')))` by cheat>>
+qabbrev_tac `ff = (specialize (SKOLEM (n'' + 1) f'))` >>
+`IMAGE σ 𝕌(:num) ⊆ M.dom` by cheat >>
+`interpret M σ b ∈ M.dom` by metis_tac[interpret_IN_dom] >>
+drule (universal_feval_fsubst |> INST_TYPE [gamma |-> ``:'a``])
 
 
 
+ >> rw[] >> fs[feval_fsubst_interpret,fsatis_def]>>
+`∀σ'. feval M σ'⦇m ↦ interpret M σ' b⦈ ff` by fs[] >>
+`(∀σ. IMAGE σ 𝕌(:num) ⊆ M.dom ⇒ feval M σ ff)` suffices_by metis_tac[] >>
+
+`∀σ.
+                 IMAGE σ 𝕌(:num) ⊆ M.dom ⇒
+                 ∀a.
+                     interpret M σ a ∈ M.dom ⇒
+                     feval M σ⦇n ↦ interpret M σ a⦈ ff` suffices_by metis_tac[] >>
+rw[]
+`?σ0.feval M σ0⦇m ↦ interpret M σ0 b⦈ ff = feval M σ'⦇n ↦ interpret M σ' a'⦈ ff`
+suffices_by metis_tac[] >>
+`?σ0. (!fv. fv IN (ffvs ff) ==> σ0⦇m ↦ interpret M σ0 b⦈ fv = σ'⦇n ↦ interpret M σ' a'⦈ fv ) ` suffices_by metis_tac[feval_ffvs] >> rw[] >> 
+qexists_tac `σ'(| |) 
 
 
 
+qexists_tac `M` >> rw[] >> first_x_assum drule >> rw[] >>  
+   `!f. prenex f ==> (∀M k l. M.fnsyms k l ∈ M.dom) ==> f IN s ==>
+       (∀σ. fsatis M σ f) ==> fsatis M σ (specialize (SKOLEM n f))` 
+    suffices_by metis_tac[]
+    `!f. prenex f ==> !M:'a folmodel σ. fsatis M σ f /\ M.dom <> {} ==> 
+                       !n. ?M:'a folmodel σ. fsatis M σ (specialize (SKOLEM n f))` by cheat >> `M.dom ≠ ∅` by cheat >> 
+   
+>- 
+
+
+
+  
 
 Induct_on `prenex` >> rw[SKOLEM_qfree,EQ_IMP_THM,specialize_qfree] (* 4 *)
 >- (map_every qexists_tac [`M`,`σ`] >>
