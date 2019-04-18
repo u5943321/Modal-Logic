@@ -1,7 +1,7 @@
 open HolKernel Parse boolLib bossLib;
 
 open combinTheory pred_setTheory relationTheory arithmeticTheory set_relationTheory
-     numpairTheory nlistTheory listTheory rich_listTheory;
+     numpairTheory nlistTheory listTheory rich_listTheory pairTheory;
 open FOLSyntaxTheory;
 
 val _ = ParseExtras.tight_equality()
@@ -650,12 +650,44 @@ Proof
   rw[feval_fsubst] >> irule feval_ffvs >> rw[] >>
   Cases_on `n = n'` >> fs[APPLY_UPDATE_THM,interpret_def]
 QED
-(*
+
+Theorem FST_tfns_LESS_num_of_term:
+  !a fc. fc IN tfns a ==> FST fc < num_of_term a 
+Proof
+  completeInduct_on `fterm_size a` >> Cases_on `a` >> fs[tfns_def] >> rw[] 
+  >- (simp[FST,num_of_term_def] >>
+     `n <= 2 * n ⊗ nlist_of (MAP (λa. num_of_term a) l)` suffices_by fs[] >>
+     `n ⊗ nlist_of (MAP (λa. num_of_term a) l) <= 
+      2 * n ⊗ nlist_of (MAP (λa. num_of_term a) l)` by fs[] >>
+     `n <= n ⊗ nlist_of (MAP (λa. num_of_term a) l)` 
+       suffices_by metis_tac[LESS_EQ_TRANS] >> metis_tac[nfst_le_npair]) >>
+  Cases_on `fc` >> simp[num_of_term_def] >> 
+  `q <= 2 * n ⊗ nlist_of (MAP (λa. num_of_term a) l)` suffices_by fs[] >>
+  `n ⊗ nlist_of (MAP (λa. num_of_term a) l) <= 
+   2 * n ⊗ nlist_of (MAP (λa. num_of_term a) l)` by fs[] >>
+  `q <= n ⊗ nlist_of (MAP (λa. num_of_term a) l)` 
+      suffices_by metis_tac[LESS_EQ_TRANS] >> 
+  fs[MEM_MAP] >> rw[] >> 
+  `q <= nlist_of (MAP (λa. num_of_term a) l)` 
+   suffices_by metis_tac[nsnd_le_npair,LESS_EQ_TRANS] >>
+  `?a. MEM a (MAP (λa. num_of_term a) l) /\ q <= a` 
+   suffices_by (rw[] >> drule MEM_nlist_of_LESS >> rw[]) >>
+  qexists_tac `num_of_term a'` >> simp[MEM_MAP,PULL_EXISTS] >> 
+  qexists_tac `a'` >> rw[] >> 
+  `q < num_of_term a'` suffices_by fs[] >>
+  `(q = FST (q,r))` by metis_tac[FST] >> 
+  `FST (q,r) < num_of_term a'` suffices_by metis_tac[] >>
+  first_x_assum irule >> rw[] >> 
+  `fterm_size a' < fterm1_size l` suffices_by fs[] >> metis_tac[tsize_lemma] 
+QED
+
+
+
 Theorem ffns_LESS_num_of_term :
   !f fc. fc IN ffns f ==> FST fc < num_of_form f
 Proof
   Induct_on `f` >> rw[num_of_form_def] >> fs[ffns_def,tfvs_def] (* 7 *)
-  >- Cases_on `f` >> fs[tfns_def] (* 2 *)
+  >- (Cases_on `f` >> fs[tfns_def] (* 2 *)
      >- (`n' <= 5 * n ⊗ num_of_term (Fn n' l) ⊗ num_of_term f0` suffices_by fs[] >>
         `n' <= n ⊗ num_of_term (Fn n' l) ⊗ num_of_term f0` suffices_by fs[] >>
         `num_of_term (Fn n' l) ⊗ num_of_term f0 <=
@@ -685,19 +717,67 @@ Proof
          n' ⊗ nlist_of (MAP (λa. num_of_term a) l)` by fs[nsnd_le_npair] >>
         `FST fc ≤ nlist_of (MAP (λa. num_of_term a) l)`
           suffices_by metis_tac[LESS_EQ_TRANS] >>
-        
-       
-
-
-
-
-        `n' <= 2 * n' ⊗ nlist_of (MAP (λa. num_of_term a) l)` suffices_by fs[] >>
-        `n' <= n' ⊗ nlist_of (MAP (λa. num_of_term a) l)` by fs[nfst_le_npair] >>
-        `n' ⊗ nlist_of (MAP (λa. num_of_term a) l) <=
-         2 * n' ⊗ nlist_of (MAP (λa. num_of_term a) l)` by fs[] >> 
-        metis_tac[LESS_EQ_TRANS])
-         
+        fs[MEM_MAP] >> rw[] >> 
+        `?a. MEM a (MAP (λa. num_of_term a) l) /\ FST fc <= a`
+          suffices_by (rw[] >> drule MEM_nlist_of_LESS >> rw[]) >>
+        rw[MEM_MAP,PULL_EXISTS] >> qexists_tac `a'` >> rw[] >> 
+        drule FST_tfns_LESS_num_of_term >> fs[]))
+  >- (Cases_on `fc` >> fs[FST] >> 
+     `q <= 5 * n ⊗ num_of_term f ⊗ num_of_term f0` suffices_by fs[] >>
+     `n ⊗ num_of_term f ⊗ num_of_term f0 <=
+      5 * n ⊗ num_of_term f ⊗ num_of_term f0` by fs[] >>
+     irule LESS_EQ_TRANS >> qexists_tac `n ⊗ num_of_term f ⊗ num_of_term f0`>>
+     rw[] >> 
+     `num_of_term f ⊗ num_of_term f0 <= 
+      n ⊗ num_of_term f ⊗ num_of_term f0` by fs[nsnd_le_npair] >>
+     `num_of_term f0 <= num_of_term f ⊗ num_of_term f0` by fs[nsnd_le_npair] >>
+     `q <= num_of_term f0` suffices_by metis_tac[LESS_EQ_TRANS] >>
+     `q < num_of_term f0` suffices_by fs[] >>
+     drule FST_tfns_LESS_num_of_term >> simp[FST])
+  >- (Cases_on `fc` >> fs[FST] >> 
+     `q <= 5 * n ⊗ num_of_term f` suffices_by fs[] >>
+     `n ⊗ num_of_term f <= 5 * n ⊗ num_of_term f` by fs[] >>
+     irule LESS_EQ_TRANS >> qexists_tac `n ⊗ num_of_term f` >> rw[] >>
+     `num_of_term f <= n ⊗ num_of_term f` by fs[nsnd_le_npair] >>
+     `q <= num_of_term f` suffices_by metis_tac[LESS_EQ_TRANS] >>
+     `q < num_of_term f` suffices_by fs[] >>
+     drule FST_tfns_LESS_num_of_term >> simp[FST])
+  >- (first_x_assum drule >> rw[] >>
+     `num_of_form f < 5 * num_of_form f ⊗ num_of_form f' + 3` 
+      suffices_by metis_tac[LESS_TRANS] >>
+     `num_of_form f <= 5 * num_of_form f ⊗ num_of_form f'` 
+      suffices_by fs[] >>
+     `num_of_form f <= num_of_form f ⊗ num_of_form f'` by fs[nfst_le_npair] >>
+     `num_of_form f ⊗ num_of_form f' <=
+      5 * num_of_form f ⊗ num_of_form f'` by fs[] >>
+     metis_tac[LESS_EQ_TRANS])
+  >- (first_x_assum drule >> rw[] >>
+     `num_of_form f' < 5 * num_of_form f ⊗ num_of_form f' + 3` 
+      suffices_by metis_tac[LESS_TRANS] >>
+     `num_of_form f' <= 5 * num_of_form f ⊗ num_of_form f'` 
+      suffices_by fs[] >>
+     `num_of_form f' <= num_of_form f ⊗ num_of_form f'` by fs[nsnd_le_npair] >>
+     `num_of_form f ⊗ num_of_form f' <=
+      5 * num_of_form f ⊗ num_of_form f'` by fs[] >>
+     metis_tac[LESS_EQ_TRANS])
+  >- (first_x_assum drule >> rw[] >>
+     `num_of_form f < 5 * n ⊗ num_of_form f + 4` 
+      suffices_by metis_tac[LESS_TRANS] >>
+     `num_of_form f <= 5 * n ⊗ num_of_form f` 
+      suffices_by fs[] >>
+     `num_of_form f <= n ⊗ num_of_form f` by fs[nsnd_le_npair] >>
+     `n ⊗ num_of_form f <= 5 * n ⊗ num_of_form f` by fs[] >>
+     metis_tac[LESS_EQ_TRANS])
+  >- (first_x_assum drule >> rw[] >>
+     `num_of_form f < 5 * n ⊗ num_of_form f + 5` 
+      suffices_by metis_tac[LESS_TRANS] >>
+     `num_of_form f <= 5 * n ⊗ num_of_form f` 
+      suffices_by fs[] >>
+     `num_of_form f <= n ⊗ num_of_form f` by fs[nsnd_le_npair] >>
+     `n ⊗ num_of_form f <= 5 * n ⊗ num_of_form f` by fs[] >>
+     metis_tac[LESS_EQ_TRANS])
 QED
+
 
 
 Theorem prenex_original_implies_SKOLEM :
@@ -712,12 +792,12 @@ completeInduct_on `size f` >>
   suffices_by metis_tac[] >>
 Induct_on `prenex f` >> rw[SKOLEM_def,SKOLEM_qfree,specialize_qfree]
 >- metis_tac[]
->- qabbrev_tac `a = Fn ((n ⊗ num_of_form f) ⊗ n')
+>- (qabbrev_tac `a = Fn ((n ⊗ num_of_form f) ⊗ n')
                     (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))` >>
    fs[fsatis_def,feval_def] >>
    last_x_assum irule >> rw[] (* 2 *)
    >- rw[GSYM size_fsubst,size_def]
-   >- rw[feval_fsubst_interpret] >> 
+   >- (rw[feval_fsubst_interpret] >> 
       qexists_tac `<| dom := M.dom ;
                         fnsyms := λ m l. 
                                 (if m = ((n ⊗ num_of_form f) ⊗ n') /\ 
@@ -732,9 +812,10 @@ l = (MAP (λa. interpret M σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) the
          `(MAP (λa. interpret M0 σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) = 
           (MAP (λa. interpret M σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f)))))`
             suffices_by (rw[] >> rw[Abbr`M0`]) >>
-         irule MAP_LIST_EQ >> rw[MEM_MAP] >> irule interpret_tfns >> rw[] (* 5 *)
+         irule MAP_LIST_EQ >> rw[MEM_MAP] >> 
+         irule interpret_tfns >> rw[] (* 5 *)
          >- fs[tfns_def]
-         >> fs[Abbr`M0`]) >> fs[]
+         >> fs[Abbr`M0`]) >> fs[] >>
       `feval M σ⦇n ↦ x⦈ f = feval M0 σ⦇n ↦ x⦈ f` suffices_by metis_tac[] >>
       irule feval_ffns >> rw[] (* 5 *)
       >- (`FST fc <> (n ⊗ num_of_form f) ⊗ n'` by
@@ -743,10 +824,10 @@ l = (MAP (λa. interpret M σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) the
              `num_of_form f <= n ⊗ num_of_form f` by fs[nsnd_le_npair] >>
              `num_of_form f <= FST fc` by metis_tac[LESS_EQ_TRANS] >>
              `FST fc < num_of_form f` suffices_by fs[] >>
-              cheat (* cheated!!! *)) >>
+             metis_tac[ffns_LESS_num_of_term]) >>
            fs[Abbr`M0`] >> rw[FUN_EQ_THM])
        >> fs[Abbr`M0`]
-       >- (irule UPDATE_IMAGE >> rw[]))
+       >- (irule UPDATE_IMAGE >> rw[])))
 >- (rw[specialize_def] >> 
    first_x_assum (qspec_then `size f` mp_tac) >> rw[] >> fs[size_def] >>
    first_x_assum (qspec_then `f` mp_tac) >> rw[] >> first_x_assum irule >>
@@ -754,7 +835,6 @@ l = (MAP (λa. interpret M σ a) (MAP V (SET_TO_LIST (ffvs (fEXISTS n f))))) the
    metis_tac[UPDATE_IMAGE])
 QED
 
-*)
 
  
 Theorem IMAGE_NOT_EMPTY :
@@ -963,30 +1043,13 @@ rw[EQ_IMP_THM]
    >- fs[feval_def,specialize_def])
 QED
 
-
-Theorem universal_fEXISTS :
-  (∀M:α folmodel k l. M.fnsyms k l ∈ M.dom) ⇒
-     ∀M:α folmodel.
-         M.dom ≠ ∅ ⇒
-         ∀f.
-             (∀σ. IMAGE σ 𝕌(:num) ⊆ M.dom ⇒ feval M σ f) ⇔
-             (∀σ n.
-                 IMAGE σ 𝕌(:num) ⊆ M.dom ==> feval M σ (fEXISTS n f)) 
-Proof
-rw[EQ_IMP_THM] (* 2 *)
->- (drule (universal_fFORALL|> INST_TYPE [gamma |-> ``:'a``]) >> rw[] >>  
-   first_x_assum (qspecl_then [`M`,`f`] assume_tac) >> 
-   fs[feval_def] >> fs[GSYM MEMBER_NOT_EMPTY] >> metis_tac[])
->- fs[feval_def] >> first_x_assum ()
-QED
-
-
+(*
 
 Theorem SKOLEM_fsatis :
   (∀M:α folmodel k l. M.fnsyms k l ∈ M.dom) ==>
      !s. 
        (!f. f IN s ==> prenex f) ==>
-         (?M:α folmodel. 
+         ((?M:α folmodel. 
             M.dom <> {} /\ 
             (!σ. IMAGE σ univ(:num) ⊆ M.dom ==> 
                !f. f IN s ==>
@@ -995,30 +1058,31 @@ Theorem SKOLEM_fsatis :
          (?M:α folmodel. 
             M.dom <> {} /\ 
             (!σ. IMAGE σ univ(:num) ⊆ M.dom ==> 
-               !f. f IN s ==> feval M σ f))
+               !f. f IN s ==> feval M σ f)))
 Proof
 rw[EQ_IMP_THM] (* 2 *)
->-
->- qexists_tac `M` >> rw[] >>
-   
+>- (drule universal_specialize >> rw[] >> 
+   `∀σ.
+      IMAGE σ 𝕌(:num) ⊆ M.dom ⇒
+        ∀f. f ∈ s ⇒ ∀n. feval M σ (SKOLEM n f)` by metis_tac[] >>
+   qexists_tac `M` >> rw[] >> first_x_assum drule >> rw[] >>
+   last_x_assum drule >> rw[] >>
+   drule prenex_SKOLEM_implies_original >> metis_tac[])
+>- `∃M.
+       M.dom ≠ ∅ ∧
+       ∀σ.
+           IMAGE σ 𝕌(:num) ⊆ M.dom ⇒
+           ∀f. f ∈ s ⇒ ∀n. feval M σ (SKOLEM n f)` suffices_by 
+     (rw[] >> drule universal_specialize >> rw[] >> 
+     qexists_tac `M'` >> metis_tac[]) >>
   
+
 QED
 
 
 
 
-Theorem implies_fsatis_equisatisfiable :
-  !f1 f2. (∀M:α folmodel k l. M.fnsyms k l ∈ M.dom) ==>
-   
-Proof
-  rw[EQ_IMP_THM] (* 2 *)
-  >- metis_tac[]
-  >- SPOSE_NOT_THEN ASSUME_TAC >> 
-QED
-
-
-
-
+*)
 
 val _ = export_theory();
 

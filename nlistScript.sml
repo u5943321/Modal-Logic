@@ -679,7 +679,12 @@ Proof
      `npair h tn <= (npair h tn) + 1` by rw[] >> metis_tac[LESS_EQ_TRANS])
 QED
 
-
+Theorem MEM_nlist_of_LESS :
+  !e l. MEM e l ==> e < nlist_of l
+Proof
+  rw[] >> `l = listOfN (nlist_of l)` by metis_tac[listOfN_nlist] >>
+  first_x_assum SUBST_ALL_TAC >> metis_tac[MEM_listOfN_LESS,listOfN_nlist]
+QED
 
 
 val _ = export_theory();
