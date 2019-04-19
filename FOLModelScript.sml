@@ -1044,7 +1044,6 @@ rw[EQ_IMP_THM]
 QED
 
 (*
-
 Theorem SKOLEM_fsatis :
   (∀M:α folmodel k l. M.fnsyms k l ∈ M.dom) ==>
      !s. 
@@ -1078,11 +1077,47 @@ rw[EQ_IMP_THM] (* 2 *)
   
 
 QED
-
-
-
-
 *)
+
+val SKOLEM_ffns_def = Define
+  `SKOLEM_ffns n (fFALSE) = {} /\
+   SKOLEM_ffns n (fP a t) = {} /\
+   SKOLEM_ffns n (fR a t1 t2) = {} /\
+   SKOLEM_ffns n (fIMP f1 f2) = SKOLEM_ffns n f1 ∪ SKOLEM_ffns n f2 /\
+   SKOLEM_ffns n (fFORALL m f) = SKOLEM_ffns n f /\
+   SKOLEM_ffns n (fEXISTS m f) = SKOLEM_ffns (n+1) f ∪ {npair (npair m (num_of_form f)) n}`;
+
+
+
+val SKOLEM_folmodel_def = Define`
+  SKOLEM_folmodel M ff = 
+  <| dom := M.dom ;
+     fnsyms := λ g zs.
+     if (g IN (SKOLEM_ffns 0 ff)) /\
+        (LENGTH zs = 
+        CARD 
+          (ffvs 
+            (fEXISTS (nfst (nfst g)) (form_of_num (nsnd (nfst g))))))
+     then (@a. a IN M.dom /\ 
+          feval M 
+                ((λ(n,w) σ. σ(|n |-> w|))
+                   (nfst (nfst g),a) 
+                   (FOLDR 
+                      (λ(n,w) σ. σ(|n |-> w|))
+                      (λz. @c. c IN M.dom)
+                      (MAP2 
+                         (\n w. (n,w)) 
+                         (SET_TO_LIST 
+                            (ffvs 
+                              (fEXISTS (nfst (nfst g)) 
+                                      (form_of_num (nsnd (nfst g))) ))) 
+                         zs)))
+                (form_of_num (nsnd (nfst g))))
+     else M.fnsyms g zs;
+     predsyms := M.predsyms;
+     relsyms := M.relsyms;
+  |>`
+
 
 val _ = export_theory();
 
