@@ -1064,7 +1064,7 @@ val SKOLEM_folmodel_def = Define`
   SKOLEM_folmodel M ffs = 
   <| dom := M.dom ;
      fnsyms := λ g zs.
-     if (?ff. ff IN ffs /\ g IN (SKOLEM_ffns 0 ff)) /\
+     if (?ff. ff IN ffs /\ ?k. (g,k) IN (ffns ff) /\ nfst g <> 0) /\
         (LENGTH zs = 
         CARD 
           (ffvs 
@@ -1104,30 +1104,6 @@ Proof
   fs[EXTENSION] >> metis_tac[]
 QED
 
-Theorem prenex_SKOLEM_ffns_disjoint :
-  !f1. prenex f1 ==> 
-      !f2. prenex f2 ==>
-             f1 <> f2 ==>
-               !m n. SKOLEM_ffns m f1 ∩ SKOLEM_ffns n f2 = {}
-Proof
-  Induct_on `prenex f1` >> rw[] (* 3 *)
-  >- fs[SKOLEM_ffns_qfree]
-  >- `!f2. 
-          prenex f2 ==> 
-            prenex f1 /\  
-            (∀f2. prenex f2 ⇒ !m n. SKOLEM_ffns m f1 ∩ SKOLEM_ffns n f2 = ∅) ==>
-              !m n n'. SKOLEM_ffns m (fEXISTS n f1) ∩ SKOLEM_ffns n' f2 = ∅`
-       suffices_by metis_tac[] >>
-     rpt (pop_assum (K ALL_TAC)) >>      
-     Induct_on `prenex f2` >> rw[] (* 3 *)
-     >- fs[SKOLEM_ffns_qfree]
-     >- last_x_assum drule >> rw[] >> 
-        first_x_assum (qspecl_then [`m`,`n'`,`n'' + 1`] assume_tac) >>
-        qabbrev_tac`s1 = SKOLEM_ffns m (fEXISTS n' f1)` >>
-        simp[SKOLEM_ffns_def] >> irule disjoint_INSERT >> rw[] >>
-        simp[Abbr`s1`,SKOLEM_ffns_def] >> rw[]
-        >- 
-rw[SKOLEM_ffns_def] >> 
 
 
 Theorem prenex_NOTIN_SKOLEM_ffns :
@@ -1147,32 +1123,7 @@ Proof
 QED
 
 
-Theorem SKOLEM_folmodel :
-  !ff s. ff IN s ==> !f. f IN (ffns ff) ==> 
-         !M. (SKOLEM_folmodel M s).fnsyms (FST f) = M.fnsyms (FST f)
 
-
-Theorem SKOLEM_folmodel_qfree :
-  !f s.
-     f IN s ==>
-       qfree f ==>
-         !M σ. 
-            IMAGE σ 𝕌(:num) ⊆ M.dom ==> 
-              feval M σ f ==> feval (SKOLEM_folmodel M s) σ f 
-Proof
-  Induct_on `f` 
-  >- rw[feval_def]
-  >- rw[] >> 
-     `feval (SKOLEM_folmodel M s) σ (fR n f f0) = feval M σ (fR n f f0)`
-       suffices_by metis_tac[] >>
-     rw[] >>
-     `feval (SKOLEM_folmodel M s) σ f = feval M σ f` suffices_by metis_tac[] >>
-     irule feval_ffns >> rw[] (* 5 *)
-     >- fs[SKOLEM_folmodel_def]
-     >- fs[SKOLEM_folmodel_def]
-     >- fs[SKOLEM_folmodel_def]
-     >- fs[SKOLEM_folmodel_def]
-     >- `¬(∃ff. ff ∈ s ∧ FST fc ∈ SKOLEM_ffns 0 ff)`
 
 
 Theorem SKOLEM_fsatis :
@@ -1210,7 +1161,7 @@ rw[EQ_IMP_THM] (* 2 *)
       
 
 val bumpmod_def = Define`
-   bumpmod M = M with fnsyms := \k l. if nfst k = 0 then M.fnsyms (nsnd k) l else ARB`;
+   bumpmod M = M with fnsyms := \k l. if nfst k = 0 then M.fnsyms (nsnd k) l else @a. a IN M.dom`;
 
 val MAP_CONG' = REWRITE_RULE [GSYM AND_IMP_INTRO] MAP_CONG
 
@@ -1219,6 +1170,12 @@ Theorem bumpmod_interpret :
 Proof 
   ho_match_mp_tac (theorem "interpret_ind") >> rw[interpret_def,bumpterm_def] >>
   simp[MAP_MAP_o,combinTheory.o_ABS_R,Cong MAP_CONG'] >> simp[bumpmod_def]
+QED
+
+Theorem wffm_bumpmod :
+  !M. wffm M ==> wffm (bumpmod M)
+Proof
+  rw[wffm_def,bumpmod_def] >> rw[] >> SELECT_ELIM_TAC >> metis_tac[MEMBER_NOT_EMPTY]
 QED
 
 Theorem bumpmod_feval :
@@ -1270,13 +1227,34 @@ Proof
   Induct_on `f` >> fs[SKOLEM_ffns_def]
 QED
 
-Theorem SKOLEM_ffns_nonzero :
-  !f. prenex f ==> !fc n. fc IN (SKOLEM_ffns n f) ==> nfst fc <> 0
+Theorem SKOLEM_bumpform_fsatis :
+    !f. prenex f ==>
+        !M:α folmodel σ. wffm M /\
+             IMAGE σ univ(:num) ⊆ M.dom ==> feval M σ f
+        ==>
+             (!n. feval (SKOLEM_folmodel (bumpmod M) {f}) σ (specialize (SKOLEM n (bumpform f))))
 Proof
-  Induct_on `prenex` >> rw[]
-  >- metis_tac[SKOLEM_ffns_qfree,MEMBER_NOT_EMPTY]      
-  >- fs[SKOLEM_ffns_def]  (* 2 *) >- metis_tac[] >>                                                                                                                                                      
+  Induct_on `prenex` >> rw[] (* 3 *)
+  >- fs[bumpform_qfree,SKOLEM_qfree,specialize_qfree] >>
+     drule bumpmod_feval >> rw[] >> 
+     `feval (bumpmod M) σ (bumpform f)` by metis_tac[] >>
+     `feval (bumpmod M) σ (bumpform f) = 
+     feval (SKOLEM_folmodel (bumpmod M) {f}) σ (bumpform f)` 
+       suffices_by metis_tac[] >> irule feval_ffns >> rw[] (* 5 *)
+     >- (rw[SKOLEM_folmodel_def] >>
+        `¬(∃k. (FST fc,k) ∈ ffns f ∧ nfst (FST fc) ≠ 0)` by cheat (*!!!*) >> rw[] >>
+        simp[FUN_EQ_THM])
+     >> fs[SKOLEM_folmodel_def,bumpmod_def]
+  >- fs[feval_def] >> 
+     `IMAGE σ⦇n ↦ x⦈ 𝕌(:num) ⊆ M.dom` by metis_tac[UPDATE_IMAGE] >> 
+     first_x_assum drule_all >> rw[] >> 
+     simp[specialize_def,SKOLEM_def,bumpform_def] >>
+     qabbrev_tac `skf = Fn ((n ⊗ num_of_form (bumpform f)) ⊗ n')
+                   (MAP V (SET_TO_LIST (ffvs (fEXISTS n (bumpform f)))))` >>
+     
 
+
+>> fs[feval_def]
 QED
 
 Theorem SKOLEM_bumpform_fsatis :
@@ -1291,7 +1269,8 @@ Theorem SKOLEM_bumpform_fsatis :
                !f. f IN s ==>
                   !n. feval M σ (specialize (SKOLEM n (bumpform f))))
 Proof
-  rw[] >> qexists_tac `SKOLEM_folmodel (bumpmod M) {bumpform f| f IN s}` >>
+  rw[] >> qexists_tac `SKOLEM_folmodel (bumpmod M) {bumpform f| f IN s}` >> 
+  rw[] >-  >>
   first_x_assum drule >> rpt (pop_assum mp_tac) >>
   `!f. prenex f ==> !n. wffm M ⇒
    (∀σ. IMAGE σ 𝕌(:num) ⊆ M.dom ⇒ ∀f. f ∈ s ⇒ feval M σ f) ⇒
@@ -1303,13 +1282,20 @@ Proof
    >- fs[bumpform_qfree,SKOLEM_qfree,specialize_qfree] >> 
       `IMAGE σ 𝕌(:num) ⊆ M.dom` by fs[SKOLEM_folmodel_def,bumpmod_def] >>
       first_x_assum drule_all >> rw[] >>
+      
       `feval (bumpmod M) σ (bumpform f) =
       feval (SKOLEM_folmodel (bumpmod M) {bumpform f | f ∈ s}) σ (bumpform f)`
-        suffices_by metis_tac[] >>
+        suffices_by metis_tac[bumpmod_feval] >>
      irule feval_ffns >> rw[SKOLEM_folmodel_def] (* 2 *)
      >- rw[FUN_EQ_THM] >> rw[] >> 
         `nfst (FST fc) = 0` by cheat >>
-        `nfst 
+        `¬(∃ff.
+               (∃f. ff = bumpform f ∧ f ∈ s) ∧
+               ∃k. (FST fc,k) ∈ ffns ff ∧ nfst (FST fc) ≠ 0)` by cheat >> 
+        fs[] >> simp[FUN_EQ_THM]
+     >- cheat (* trivial *)
+  >- `(SKOLEM_folmodel (bumpmod M) {bumpform f | f ∈ s}).dom = M.dom` 
+       by fs[SKOLEM_folmodel_def,bumpmod_def] >> fs[]
 QED
         
     

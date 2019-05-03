@@ -296,7 +296,7 @@ bumpform (fR a t1 t2) = fR a (bumpterm t1) (bumpterm t2) /\
 bumpform (fP a t) = fP a (bumpterm t) /\
 bumpform (fIMP f1 f2) = fIMP (bumpform f1) (bumpform f2) /\
 bumpform (fFORALL a ff) = fFORALL a (bumpform ff) /\
-bumpform (fFORALL a ff) = fEXISTS a (bumpform ff)`;
+bumpform (fEXISTS a ff) = fEXISTS a (bumpform ff)`;
 
 val num_of_term_def = tDefine "num_of_term" `
   num_of_term (V n) = 2 * n /\
