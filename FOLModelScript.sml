@@ -1315,5 +1315,294 @@ QED
 QED
 
 
-val _ = export_theory();
+Theorem FOL_compactness_thm :
+  !s. (!ss. ss ⊆ s /\ FINITE ss ==> 
+            ?M:α folmodel. wffm M /\
+                (!σ. IMAGE σ univ(:num) ⊆ M.dom ==> 
+                     (!f. f IN ss ==> feval M σ f))) ==>
+      (?M:α folmodel. wffm M /\
+           (!σ. IMAGE σ univ(:num) ⊆ M.dom ==> 
+                !f. f IN s ==> feval M σ f))
+Proof
+cheat
+QED
 
+
+val free_to_const_term_def = tDefine "free_to_const_term" 
+ `(free_to_const_term s (V n) = if n IN s then (Fn (2 * n) []) else (V n)) /\
+  free_to_const_term s (Fn n l) = Fn (2 * n + 1) (MAP (free_to_const_term s) l)`
+ (WF_REL_TAC `measure (fterm_size o SND)` >> rpt gen_tac >> Induct_on `l` 
+     >- simp[fterm_size_def]
+     >- (simp[fterm_size_def] >> rw[]
+        >- fs[]
+        >> first_x_assum drule >> rw[]))
+
+
+val free_to_const_form_def = Define`
+  free_to_const_form s fFALSE = fFALSE /\
+  free_to_const_form s (fP a t) = fP a (free_to_const_term s t) /\
+  free_to_const_form s (fR a t1 t2) = fR a (free_to_const_term s t1)
+                                           (free_to_const_term s t2) /\
+  free_to_const_form s (fIMP f1 f2) = fIMP (free_to_const_form s f1)
+                                           (free_to_const_form s f2) /\
+  free_to_const_form s (fFORALL n f) = 
+    fFORALL n (free_to_const_form (s DELETE n) f) /\
+  free_to_const_form s (fEXISTS n f) =
+    fEXISTS n (free_to_const_form (s DELETE n) f)`
+
+
+val free_to_const_fm_def = Define`
+   free_to_const_fm M σ0 = M with 
+                           fnsyms := \n l. if (l = [] /\ n MOD 2 = 0) then (σ0 (n DIV 2)) 
+                                           else if (n MOD 2 = 1) then 
+                                                   (M.fnsyms ((n - 1) DIV 2) l)
+                                           else ARB`
+
+Theorem tfvs_MEM :
+  !m l. MEM m l ==>  tfvs m ⊆ tfvs (Fn n l)
+Proof
+  rw[tfvs_def] >> simp[BIGUNION,SUBSET_DEF] >> rw[] >> qexists_tac `tfvs m` >> rw[] >>
+  simp[MEM_MAP] >> metis_tac[]
+QED
+
+Theorem free_to_const_interpret :
+  !M σ0 s t. (tfvs t) ⊆ s ==>
+       !σ.
+         interpret (free_to_const_fm M σ0) σ (free_to_const_term s t) = interpret M σ0 t
+Proof
+  completeInduct_on `fterm_size t` >> rw[] >> Cases_on `t` >> rw[interpret_def] (* 3 *)
+  >- (simp[free_to_const_fm_def] >> 
+     `(2 * n DIV 2) = (n * 2 DIV 2)` by fs[] >>
+     fs[MULT_DIV])
+  >- fs[tfvs_def]
+  >- (simp[free_to_const_fm_def] >> rw[] >>
+     `(2 * n DIV 2) = (n * 2 DIV 2)` by fs[] >> fs[MULT_DIV] >>
+     AP_TERM_TAC >> simp[MAP_MAP_o] >> irule MAP_LIST_EQ >> rw[] >> 
+     drule tsize_lemma >> rw[] >> 
+     fs[PULL_FORALL] >>
+     first_x_assum (qspecl_then [`m`,`M`,`σ0`,`s`] mp_tac) >> 
+     simp[free_to_const_fm_def] >> rw[] >>
+     `tfvs m ⊆ tfvs (Fn n l)` suffices_by metis_tac[SUBSET_DEF] >> 
+     metis_tac[tfvs_MEM])
+QED
+
+Theorem free_to_const_tfvs :
+  !t s. tfvs t ⊆ s ==> tfvs (free_to_const_term s t) = {}
+Proof
+ completeInduct_on `fterm_size t` >> Cases_on `t` >> 
+ rw[tfvs_def,free_to_const_term_def] >> 
+ `l <> [] ==> set (MAP (λa'. tfvs a') (MAP (λa. free_to_const_term s a) l)) = {∅}` 
+    suffices_by metis_tac[] >> rw[] >> 
+  simp[MAP_MAP_o] >> fs[PULL_FORALL,LIST_TO_SET_MAP] >> rw[IMAGE_DEF] >>
+  simp[Once EXTENSION,PULL_EXISTS] >> rw[EQ_IMP_THM] (* 2 *)
+  >- (first_x_assum (qspecl_then [`x'`,`s`] mp_tac) >> rw[] >>
+     first_x_assum irule >>  drule tsize_lemma >> simp[] >> rw[] >> 
+     fs[IMAGE_DEF,BIGUNION,PULL_EXISTS,SUBSET_DEF] >> metis_tac[])
+  >- (Cases_on `l` >> fs[] >> qexists_tac `h` >> rw[])
+QED
+
+
+Theorem free_to_const_term_INTER_s :
+  !t s. (tfvs (free_to_const_term s t)) ∩ s = {}
+Proof
+  completeInduct_on `fterm_size t` >> Cases_on `t` >> fs[free_to_const_term_def] (* 2 *)
+  >- (rw[] >> Cases_on `n IN s` >> rw[tfvs_def] >> simp[EXTENSION])
+  >- (rw[tfvs_def,MAP_MAP_o,BIGUNION] >> SPOSE_NOT_THEN ASSUME_TAC >> 
+     fs[GSYM MEMBER_NOT_EMPTY,PULL_FORALL,MEM_MAP] >> 
+     first_x_assum (qspecl_then [`y`,`s`] mp_tac) >> rw[] (* 2 *)
+     >- (drule tsize_lemma >> fs[])
+     >- (strip_tac >> fs[GSYM MEMBER_NOT_EMPTY,INTER_DEF,EXTENSION] >> metis_tac[]))
+QED
+
+Theorem free_to_const_ffvs_INTER_s :
+  !f s. ffvs (free_to_const_form s f) ∩ s = {}
+Proof
+  Induct_on `f` >> rw[free_to_const_form_def]
+  >- fs[ffvs_def]
+  >- (fs[ffvs_def] >>
+     `(tfvs (free_to_const_term s f) ∪ tfvs (free_to_const_term s f0)) ∩ s =
+      (tfvs (free_to_const_term s f) ∩ s) ∪ (tfvs (free_to_const_term s f0)) ∩ s`
+       by (fs[EXTENSION,INTER_DEF,UNION_DEF] >> metis_tac[]) >> fs[] >>
+     metis_tac[free_to_const_term_INTER_s])
+  >- (fs[ffvs_def] >> metis_tac[free_to_const_term_INTER_s])
+  >- (fs[ffvs_def] >> 
+     `(ffvs (free_to_const_form s f) ∪ ffvs (free_to_const_form s f')) ∩ s =
+      (ffvs (free_to_const_form s f) ∩ s) ∪ ffvs (free_to_const_form s f') ∩ s`
+       by (fs[EXTENSION,INTER_DEF,UNION_DEF] >> metis_tac[]) >> fs[])
+  >> (fs[ffvs_def] >> 
+     first_x_assum (qspec_then `s DELETE n` mp_tac) >> rw[] >>
+     fs[DELETE_DEF,INTER_DEF,EXTENSION] >> metis_tac[])
+QED
+
+Theorem free_to_const_term_tfvs_SUBSET:
+  !t s. tfvs (free_to_const_term s t) ⊆ tfvs t
+Proof
+  completeInduct_on `fterm_size t` >> Cases_on `t` >> fs[free_to_const_term_def] (* 2 *)
+  >- (rw[] >> Cases_on `n IN s` >> rw[] >> simp[tfvs_def])
+  >- (rw[tfvs_def,MAP_MAP_o,BIGUNION,SUBSET_DEF] >> 
+     fs[MEM_MAP,PULL_FORALL,PULL_EXISTS] >>
+     first_x_assum (qspecl_then [`y`,`s`] mp_tac) >> rw[] >> qexists_tac `y` >> rw[] >>
+     drule tsize_lemma >> rw[] >> fs[SUBSET_DEF])
+QED
+
+Theorem free_to_const_form_ffvs_SUBSET:
+  !f s. ffvs (free_to_const_form s f) ⊆ ffvs f
+Proof
+  Induct_on `f` >> rw[ffvs_def,free_to_const_form_def] (* 7 *)
+  >- (`tfvs (free_to_const_term s f) ⊆ tfvs f` 
+       by metis_tac[free_to_const_term_tfvs_SUBSET] >>
+     fs[SUBSET_DEF,UNION_DEF])
+  >- (`tfvs (free_to_const_term s f0) ⊆ tfvs f0` 
+       by metis_tac[free_to_const_term_tfvs_SUBSET] >>
+     fs[SUBSET_DEF,UNION_DEF])
+  >- metis_tac[free_to_const_term_tfvs_SUBSET] 
+  >- (fs[SUBSET_DEF,UNION_DEF] >> metis_tac[])
+  >- (fs[SUBSET_DEF,UNION_DEF] >> metis_tac[])
+  >> (first_x_assum (qspec_then `s DELETE n` mp_tac) >> rw[DELETE_DEF,SUBSET_DEF])
+QED
+
+
+Theorem free_to_const_ffvs :
+  !f s. ffvs f ⊆ s ==> ffvs (free_to_const_form s f) = {}
+Proof
+  rw[] >>
+  `ffvs (free_to_const_form s f) ∩ s = {}` by metis_tac[free_to_const_ffvs_INTER_s] >>
+  `ffvs (free_to_const_form s f) ⊆ ffvs f` by metis_tac[free_to_const_form_ffvs_SUBSET]>>
+  fs[EXTENSION,INTER_DEF,SUBSET_DEF] >> metis_tac[]
+QED
+
+Theorem free_to_const_form_feval_universal :
+  !f s. ffvs f ⊆ s ==> 
+       !M σ0. feval M σ0 (free_to_const_form s f) ==>
+              !σ. feval M σ (free_to_const_form s f)
+Proof
+  rw[] >>
+  `feval M σ (free_to_const_form s f) = feval M σ0 (free_to_const_form s f)` 
+    suffices_by metis_tac[] >> irule feval_ffvs >> rw[] >> 
+  drule free_to_const_ffvs >> rw[] >> fs[EXTENSION]
+QED   
+
+
+
+Theorem free_to_const_functorial :
+  !f s. ffvs f ⊆ s ==>
+        !M σ0. (feval M σ0 f <=> 
+               feval (free_to_const_fm M σ0) σ0 (free_to_const_form s f))
+Proof
+  Induct_on `f` >> rw[feval_def,free_to_const_form_def] (* 5 *)
+  >- (`(interpret (free_to_const_fm M σ0) σ0 (free_to_const_term s f)) = 
+     (interpret M σ0 f) /\
+     (interpret (free_to_const_fm M σ0) σ0 (free_to_const_term s f0)) =
+     (interpret M σ0 f0)` 
+       by (rw[] >> irule free_to_const_interpret >> fs[ffvs_def,SUBSET_DEF]) >>
+     fs[] >> simp[free_to_const_fm_def])
+  >- (`(interpret (free_to_const_fm M σ0) σ0 (free_to_const_term s f)) = 
+     (interpret M σ0 f)` 
+       by (rw[] >> irule free_to_const_interpret >> fs[ffvs_def,SUBSET_DEF]) >>
+     fs[] >> simp[free_to_const_fm_def])
+  >- (fs[ffvs_def] >> metis_tac[])
+  >- fs[ffvs_def] >> rw[EQ_IMP_THM] (* 2 *)
+     >- `x ∈ M.dom` by fs[free_to_const_fm_def] >> first_x_assum drule >> rw[] >>
+        fs[PULL_FORALL] >>
+        first_x_assum (qspecl_then [`s ∪ {n}`,`M`,`σ0⦇n ↦ x⦈`] mp_tac) >> rw[] >>
+        `ffvs f DELETE n ⊆ s ==> ffvs f ⊆ s ∪ {n}`
+          by (fs[DELETE_DEF,SUBSET_DEF,UNION_DEF] >> metis_tac[]) >>
+        `feval (free_to_const_fm M σ0⦇n ↦ x⦈) σ0⦇n ↦ x⦈
+           (free_to_const_form (s ∪ {n}) f)` by metis_tac[] >>
+        
+QED      
+
+
+Theorem free_to_const_feval :
+  !M σ0 s. IMAGE σ0 univ(:num) ⊆ M.dom ==>  
+         !f s. 
+             (ffvs f) ⊆ s ==>
+             (feval M σ0 f <=> 
+             (!σ. IMAGE σ univ(:num) ⊆ M.dom ==>
+                 feval (free_to_const_fm M σ0) σ (free_to_const_form s f)))
+Proof
+  strip_tac >> strip_tac >> strip_tac >> strip_tac >> Induct_on `f` >> rw[feval_def] (* 6 *)
+  >- metis_tac[]
+  >- (rw[EQ_IMP_THM] 
+     >- (`(interpret (free_to_const_fm M σ0) σ0 (free_to_const_term s f)) = 
+        (interpret M σ0 f) /\
+        (interpret (free_to_const_fm M σ0) σ0 (free_to_const_term s f0)) =
+        (interpret M σ0 f0)` 
+          by (rw[] >> irule free_to_const_interpret >> fs[ffvs_def,SUBSET_DEF]) >>
+        fs[] >> simp[free_to_const_fm_def])
+     >- (last_x_assum drule >> rw[] >>
+        `(interpret (free_to_const_fm M σ0) σ0 (free_to_const_term s f)) = 
+        (interpret M σ0 f) /\
+        (interpret (free_to_const_fm M σ0) σ0 (free_to_const_term s f0)) =
+        (interpret M σ0 f0)` 
+          by (rw[] >> irule free_to_const_interpret >> fs[ffvs_def,SUBSET_DEF]) >> 
+        fs[] >> fs[free_to_const_fm_def]))
+  >- (rw[EQ_IMP_THM] 
+     >- (`(interpret (free_to_const_fm M σ0) σ (free_to_const_term s f)) = 
+        (interpret M σ0 f)` 
+          by (rw[] >> irule free_to_const_interpret >> fs[ffvs_def,SUBSET_DEF]) >>
+        fs[] >> simp[free_to_const_fm_def])
+     >- (last_x_assum drule >> rw[] >>
+        `(interpret (free_to_const_fm M σ0) σ0 (free_to_const_term s f)) = 
+        (interpret M σ0 f)` 
+          by (rw[] >> irule free_to_const_interpret >> fs[ffvs_def,SUBSET_DEF]) >>
+        fs[] >> fs[free_to_const_fm_def]))
+  >- rw[EQ_IMP_THM] 
+     >- 
+
+simp[interpret_def,free_to_const_fm_def,free_to_const_interpret] >> rw[ffvs_def]
+QED
+
+
+val const_to_free_fm_def 
+                                                     
+              
+
+(*
+val entails_def = Define`
+  entails M Γ ϕ = !σ. IMAGE σ univ(:num) ⊆ M.dom /\
+                      (!f. f IN Γ ==> feval M σ f) ==> feval M σ ϕ`
+
+
+val _ = export_rewrites ["free_to_const_form_def","free_to_const_term_def"] 
+
+
+Theorem entails_fIMP :
+  !f1 f2. entails M Γ (fIMP f1 f2) <=> 
+          (entails M Γ f1 ==> entails M Γ f2)
+Proof
+  simp[entails_def,feval_def] >> rw[EQ_IMP_THM]
+
+QED
+
+Theorem to_const_entail :
+  !Γ ϕ s. (ffvs ϕ ∪ BIGUNION (IMAGE ffvs Γ)) ⊆ s ==>
+  ((!M. wffm M ==> entails M Γ ϕ) <=>
+  (!M. wffm M ==> entails M (IMAGE (free_to_const_form s) Γ) 
+                            (free_to_const_form s ϕ)))
+Proof
+  rpt strip_tac >> eq_tac >> rw[entails_def] >> fs[PULL_EXISTS]
+QED
+
+val free_to_const_form
+
+Theorem FOL_compactness_thm_v2 :
+  !s f0. 
+      (!M:α folmodel σ. 
+            wffm M /\ IMAGE σ univ(:num) ⊆ M.dom ==> 
+            (!f. f IN s ==> fsatis M σ f) ==> 
+            fsatis M σ f0) ==>
+      (?ss. ss SUBSET s /\ 
+            FINITE ss /\ 
+            (!M:α folmodel σ. 
+                  wffm M /\ IMAGE σ univ(:num) ⊆ M.dom ==> 
+                  (!f. f IN ss ==> fsatis M σ f) ==> fsatis M σ f0))
+Proof
+
+QED
+ *)
+ 
+
+
+val _ = export_theory();
+ 
