@@ -48,6 +48,10 @@ val _ = overload_on ("fV", “folLang$V”);
 
 Theorem feval_def = holds_def
 Theorem fAND_def = And_def
+Theorem fDISJ_def = Or_def
+Theorem fNOT_def = Not_def
+
+
 
 Definition ST_def[simp]:
   (ST x (VAR p) = fP p (fV x)) /\
@@ -227,14 +231,7 @@ val prop_2_47_i_alt = store_thm(
 val ST_alt_two_var = store_thm(
   "ST_alt_two_var",
   ``!phi. FV (ST_alt 0 phi) SUBSET {0;1} /\ FV (ST_alt 1 phi) SUBSET {0;1}``,
-  Induct_on `phi` >> rw[] >> fs[ST_alt_def,FV_def,SUBSET_DEF,FVT_def] >> 
-   rw[FV_def]
-  >- metis_tac[]
-  >- metis_tac[]
-  >- metis_tac[]
-  >- metis_tac[]
-  >> fs[fAND_def,fvars_def,tvars_def]);
-
+  Induct_on `phi` >> rw[] >> fs[ST_alt_def,FV_def,SUBSET_DEF,FVT_def,fDISJ_def,fNOT_def,fAND_def] >> rw[] >> metis_tac[]);
 
 
 
@@ -242,17 +239,14 @@ val ST_alt_two_var = store_thm(
 
 val fequiv_def = Define`
   fequiv (μ:'b itself) ff1 ff2 <=>
-
-
-
- (!M (σ:num -> 'b). (IMAGE σ univ(:num)) SUBSET M.frame.world
+  (!M (σ:num -> 'b). (IMAGE σ univ(:num)) SUBSET M.frame.world
                                                         ==> (fsatis (mm2folm M) σ ff1 <=> fsatis (mm2folm M) σ ff2))`;
 
 
 
 val ST_ST_alt_fequiv = store_thm(
   "ST_ST_alt_fequiv",
-  ``!phi. fequiv μ (ST 0 u phi) (ST_alt 0 u phi) /\ fequiv μ (ST 1 u phi) (ST_alt 1 u phi)``,
+  ``!phi. fequiv μ (ST 0 phi) (ST_alt 0 phi) /\ fequiv μ (ST 1 phi) (ST_alt 1 phi)``,
   rw[ST_alt_def,ST_def,fequiv_def] (* 2 *)
   >- (eq_tac >> rw[] (* 2 *)
      >- (`satis M (σ 0) phi` by metis_tac[prop_2_47_i] >>
@@ -266,57 +260,11 @@ val ST_ST_alt_fequiv = store_thm(
   
 val prop_2_49_i = store_thm(
   "prop_2_49_i",
-  ``!phi. ?fphi. (fvars fphi) SUBSET {0;1} /\
-                 fequiv μ (ST 0 u phi) fphi``,
-  rw[] >> qexists_tac `(ST_alt 0 u phi)` >>
-  `u = ()` by fs[] >>
+  ``!phi. ?fphi. (FV fphi) SUBSET {0;1} /\
+                 fequiv μ (ST 0 phi) fphi``,
+  rw[] >> qexists_tac `(ST_alt 0 phi)` >>
   metis_tac[ST_alt_two_var,ST_ST_alt_fequiv]);
 
-
-
-
-
-val tconsts_def = Define`
-  tconsts (fVar a) = {} /\
-  tconsts (fConst a) = {a}`;
-
-val fconsts_def = Define`
-  fconsts (fRrel a t1 t2) = tconsts t1 ∪ tconsts t2 /\
-  fconsts (fPrel a t) = tconsts t /\
-  fconsts (fDISJ ff1 ff2) = (fconsts ff1) ∪ (fconsts ff2) /\
-  fconsts (fNOT ff) = fconsts ff /\
-  fconsts (fEXISTS n ff) = fconsts ff /\
-  fconsts (fEQ t1 t2) = tconsts t1 ∪ tconsts t2`;
-
-
-val freevars_def = Define`
-  freevars (fRrel a t1 t2) = tvars t1 ∪ tvars t2 /\
-  freevars (fPrel a t) = tvars t /\
-  freevars (fDISJ ff1 ff2) = freevars ff1 ∪ freevars ff2 /\
-  freevars (fNOT ff) = freevars ff /\
-  freevars (fEXISTS n ff) = freevars ff DELETE n /\
-  freevars (fEQ t1 t2) = tvars t1 ∪ tvars t2`;
-
-
-
-(*
-		  
-		  
-val invariant_for_bisim_def = Define`
-  invariant_for_bisim (a:'a itself) (b:'b itself) ff x <=> freevars ff SUBSET {x} /\
-                               !M N w v. bisim_world M N (w:'a) (v:'b) ==>
-			       (!σ1 σ2.
-			        IMAGE σ1 univ(:num) SUBSET M.frame.world /\
-				IMAGE σ2 univ(:num) SUBSET N.frame.world ==>
-                                (fsatis (mm2folm M) ((x =+ w)σ1) ff <=> fsatis (mm2folm N) ((x =+ v)σ2) ff))`;
-
-val thm_2_68 = store_thm(
-  "thm_2_68",
-
-
-*)
-
-*)
 val _ = export_theory();
 	          
 	    
