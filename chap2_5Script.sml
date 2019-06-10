@@ -15,7 +15,6 @@ val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "chap2_5";
 
-(*
 
 
 val BIGCONJ_EXISTS_DIST_TYPE = store_thm(
@@ -534,11 +533,11 @@ val prop_2_61 = store_thm(
 	     {w | w ∈ M.frame.world ∧ satis M w ff}`
 	         by (rw[EXTENSION,EQ_IMP_THM] >> metis_tac[]) >> metis_tac[]) >>
       `FIP d M.frame.world`
-         by (fs[Abbr`d`] >> irule FIP_closed_under_intersection (* 7 *)
-	                 >- (rw[] >> qexists_tac `s ∪ s'` >> rw[] >> rw[EXTENSION,EQ_IMP_THM] >> metis_tac[])
-			 >- rw[]
+         by (fs[Abbr`d`] >> irule FIP_closed_under_intersection (* 7 *) >> rpt strip_tac
+	                 >- (rw[] >> fs[] >> qexists_tac `s ∪ s'` >> rw[] >> rw[EXTENSION,EQ_IMP_THM] >> metis_tac[])
+			 >- (rw[] >> fs[] >> metis_tac[])
 			 >- (rw[] >> simp[only_see_INTER] (* 2 *)
-			     >- (`ultrafilter w M.frame.world` by fs[UE_def] >>
+			     >- (`ultrafilter w M.frame.world` by fs[UE_def] >> fs[] >>
 			         metis_tac[ultrafilter_def,proper_filter_def,filter_def])
 			     >- fs[INTER_DEF,SUBSET_DEF])
 			 >- (`M.frame.world IN
@@ -608,5 +607,4 @@ val thm_2_62 = store_thm(
      modal_eq M' (UE M') w' (principle_UF w' M'.frame.world)` by metis_tac[prop_2_59_ii] >>
      metis_tac[modal_eq_TRANS,modal_eq_SYM]));
 
-*)
 val _ = export_theory();
