@@ -27,6 +27,7 @@ val mm2folm_def = Define`
                               |  _ => F 
               |>`;
 
+(*
 val expansion_def = Define`
   expansion M0 A M <=> A SUBSET M0.domain /\
                        ?ns f. ns INTER (FDOM M0.consts) = {} /\
@@ -34,7 +35,7 @@ val expansion_def = Define`
 		       FINITE A /\
 		       M = M0 with consts := FUNION M0.consts (FUN_FMAP f ns)`;
                        
-
+*)
 
 
 val _ = overload_on ("fEXISTS", “folLang$Exists”);
@@ -45,6 +46,7 @@ val _ = overload_on ("fFALSE", “folLang$False”);
 val _ = overload_on ("fP", “λp t. Pred p [t]”);
 val _ = overload_on ("fR", “λw1 w2. Pred 0 [w1; w2]”);
 val _ = overload_on ("fV", “folLang$V”);
+val _ = overload_on ("feval", “holds”);
 
 Theorem feval_def = holds_def
 Theorem fAND_def = And_def
