@@ -497,6 +497,61 @@ val FIP_closed_under_intersection = store_thm(
                `e ∩ BIGINTER (s ∩ B) IN B` by metis_tac[] >>
                metis_tac[INTER_COMM])))));
                
+val countably_incomplete_def = Define`
+  countably_incomplete U W <=> (ultrafilter U W /\ 
+                                ?IFS. IFS ⊆ U /\ (BIGINTER IFS) NOTIN U)`
+
+Theorem example_2_72:
+  (ultrafilter U (univ (:num)) /\ !n. {n} NOTIN U) ==> countably_incomplete U (univ (:num))
+Proof
+  rw[countably_incomplete_def] >> 
+  `?IFS. IFS ⊆ U /\ BIGINTER IFS = {}` suffices_by metis_tac[EMPTY_NOTIN_ultrafilter] >>
+  qexists_tac `{ (univ (:num)) DIFF {n} | n IN univ (:num)}` >> rw[] (* 2 *)
+  >- (rw[SUBSET_DEF] >> fs[ultrafilter_def] >> first_x_assum (qspec_then `{n}` mp_tac) >>
+     rw[POW_DEF])
+  >- (simp[BIGINTER,EXTENSION,PULL_EXISTS] >> rw[] >> 
+     qexists_tac `(univ (:num)) DIFF {x}` >> simp[])
+QED 
+
+
+
+(* Prove that the collection of co-finite subsets of 􏰟 has the finite intersection prop- erty.
+(b) Showthatthereareultrafiltersover􏰟 thatdonotcontainanyfiniteset
+*)
+
+Theorem exercise_2_5_4_a :
+  FIP ({(univ(:num)) DIFF X | FINITE X}) (univ (:num))
+Proof
+   rw[FIP_def] 
+  >- rw[POW_DEF]
+  >- (`!S. FINITE S ==> S <> {} ==> S ⊆ {𝕌(:num) DIFF X | FINITE X} ==> 
+       INFINITE (BIGINTER S)` suffices_by cheat >>
+     Induct_on `FINITE` >> rw[] >>
+     Cases_on `S'' = {}` >> fs[] (* 2 *)
+    >- (`INFINITE univ(:num) ==> (INFINITE X \/ INFINITE (univ(:num) DIFF X))` by 
+        metis_tac[FINITE_DIFF_down] >> 
+       `INFINITE (univ(:num))` by rw[] >> metis_tac[])
+    >- (`BIGINTER S'' ⊆ (univ (:num))` by rw[SUBSET_DEF] >>
+       `((univ (:num)) DIFF X) ∩ BIGINTER S'' = (BIGINTER S'') DIFF X`
+          by rw[EQ_IMP_THM,EXTENSION] >>
+       rw[] >> 
+       `INFINITE (BIGINTER S'') ==> (INFINITE X \/ INFINITE ((BIGINTER S'') DIFF X))`
+          by metis_tac[FINITE_DIFF_down] >>
+       metis_tac[]))
+QED  
+
+
+Theorem exercise_2_5_4_b :
+  ?U. ultrafilter U (univ(:num)) /\ !s. FINITE s ==> s NOTIN U 
+Proof
+  `FIP ({(univ(:num)) DIFF X | FINITE X}) (univ (:num))` by metis_tac[exercise_2_5_4_a] >>
+  drule ultrafilter_theorem_corollary >> rw[] >> qexists_tac `u` >> rw[] >>
+  strip_tac >> 
+  `((univ (:num)) DIFF s) IN u` by (fs[SUBSET_DEF,PULL_EXISTS] >> metis_tac[]) >>
+  fs[ultrafilter_def] >> 
+  `s IN (POW 𝕌(:num))` by fs[POW_DEF,SUBSET_DEF] >>
+  metis_tac[]
+QED
 
 
 val _ = export_theory();
