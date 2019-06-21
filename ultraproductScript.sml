@@ -463,6 +463,29 @@ val prop_2_71 = store_thm(
           suffices_by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
 	rw[EXTENSION,EQ_IMP_THM])));
 
+val folmodels2Doms_def = Define`
+  folmodels2worlds FMS = \i. (FMS i).Dom`
+
+
+ 
+val ultraproduct_folmodel_def = Define`
+   ultraproduct_folmodel U I FMS = 
+    <| Dom := ultraproduct U I (folmodels2Doms FMS) ;
+       Fun := \n fs fc. (\i. ((FMS i).Fun n (MAP ((\f. f i) o CHOICE) fs))) IN fc;
+       Pred := \p zs. ({i IN I | (FMS i).Pred p (MAP ((\f. f i) zs) o CHOICE) zs} IN U) |>`;
+
+
+
+Theorem Los_Thm :
+  !D I. ultrafilter D I ==> 
+        !phi. 
+             (feval σ (mm2folm (ultraproduct_model U I MS)) phi)<=> 
+             {i IN I | satis (\n. σ n i) (MS i) phi} IN U
+Proof
+
+
+QED
+
 
 val _ = export_theory();
 
