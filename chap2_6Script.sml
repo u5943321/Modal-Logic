@@ -22,7 +22,19 @@ open folLangTheory;
 
 val _ = new_theory "chap2_6";
 
+Definition FCT_def[simp]:
+  (FCT (V v) = {}) /\
+  (FCT (Fn s ts) = if ts = [] then {s} else (LIST_UNION (MAP FCT ts)))
+Termination
+  WF_REL_TAC `(measure (term_size))` >> rw[term_size_lemma]
+End
 
+Definition FC_def[simp]:
+  (FC False = {}) /\
+  (FC (Pred n ts) = LIST_UNION (MAP FCT ts)) /\
+  (FC (IMP f1 f2) = FC f1 ∪ FC f2) /\
+  (FC (FALL x f) = FC f)
+End
 
 
 val ftype_def = Define`
@@ -34,7 +46,7 @@ val frealizes_def = Define`
 
 
 (*
-val ok_form_def = Define`ok_form M phi <=> fconsts phi ⊆ FDOM M.consts`
+val A_form_def = Define`A_form phi <=> FC phi ⊆ FDOM M.consts`
 *)
 
 val expansion_def = Define`
@@ -53,7 +65,9 @@ val n_saturated_def = Define`
   n_saturated M n <=>
      !A M' G x f.
         (FINITE A /\ CARD A <= n /\ A SUBSET M.Dom /\
-        expansion M A M' f /\ (* G SUBSET { phi | ok_form M' phi} /\ *)
+        expansion M A M' f /\ 
+        (!phi. phi IN G ==> !c. c IN (FC phi) ==> c IN (count (CARD A))) /\
+(* G SUBSET { phi | ok_form M' phi} /\ *)
         ftype x G /\ consistent M' G)
          ==>
         frealizes M' x G`;
@@ -61,20 +75,6 @@ val n_saturated_def = Define`
 val countably_saturated_def = Define`
   countably_saturated M <=> !n. n_saturated M n`;
 
-
-Definition FCT_def[simp]:
-  (FCT (V v) = {}) /\
-  (FCT (Fn s ts) = if ts = [] then {s} else (LIST_UNION (MAP FCT ts)))
-Termination
-  WF_REL_TAC `(measure (term_size))` >> rw[term_size_lemma]
-End
-
-Definition FC_def[simp]:
-  (FC False = {}) /\
-  (FC (Pred n ts) = LIST_UNION (MAP FCT ts)) /\
-  (FC (IMP f1 f2) = FC f1 ∪ FC f2) /\
-  (FC (FALL x f) = FC f)
-End
 
 
 Theorem MAP_LIST_EQ :
@@ -181,13 +181,13 @@ val ST_FV_singleton = store_thm(
 --------------
 val diff_form_diff_ST = store_thm(
   "diff_form_diff_ST",
-  ``!f1 f2. f1 <> f2 ==> !x. ST x f1 <> ST x f2``,
+  ``!f1 f2. ST x f1 = ST x f2 <=> f1 = f2``,
   cheat);
 
 ???????????????
 
   Induct_on `f1` >> rw[] (* 5 *)
-  >- (Cases_on `f2` >> rw[ST_def,fAND_def,fNOT_def,fDISJ_def,Exists_def])
+  >-  (Cases_on `f2` >> rw[ST_def,fAND_def,fNOT_def,fDISJ_def,Exists_def])
   >- (Cases_on `f2` >> rw[ST_def] (* 2 *) >>
      `() = u` by fs[] >> metis_tac[])
   >- (Cases_on `f2` >> rw[ST_def] >> Cases_on `f` >> fs[ST_def])
@@ -308,15 +308,22 @@ val thm_2_65 = store_thm(
                 fs[])
             >- fs[mm2folm_def,Abbr`MA`]) >>
 
+   `∀phi. phi ∈ Σ' ⇒ ∀c. c ∈ FC phi ⇒ c ∈ count (CARD {w})`
+      by (rw[SUBSET_DEF,Abbr`MA`,count_def] >>
+          fs[Abbr`Σ'`] (* 2 *)
+	  >- (`FC (fR (Fn 0 []) (fV x)) = {0}` by fs[FC_def,FCT_def] >> rfs[])
+	  >- (`FC (ST x x') = {}` by metis_tac[ST_FC_EMPTY] >> rfs[] >>
+	      metis_tac[NOT_IN_EMPTY])) >>
 
-   `Σ' SUBSET {phi |ok_form MA phi}`
+
+ (*  `Σ' SUBSET {phi |ok_form MA phi}`
        by (rw[SUBSET_DEF,ok_form_def,Abbr`MA`] >>
           fs[Abbr`Σ'`] (* 2 *)
 	  >- (`fconsts (fRrel () (fConst 0) (fVar x)) = {0}` by fs[fconsts_def,tconsts_def] >>
 	     `fconsts x' = {0}` by metis_tac[] >> fs[])
 	  >- (`fconsts (ST x () x''') = {}` by metis_tac[ST_no_constant] >>
 	     `fconsts x' = {}` by metis_tac[] >> metis_tac[NOT_IN_EMPTY])) >>
-
+*)
 
    `ftype x Σ'`
        by (rw[ftype_def,SUBSET_DEF] >> fs[Abbr`Σ'`] (* 2 *)
@@ -325,7 +332,10 @@ val thm_2_65 = store_thm(
 	     `x'' IN {x}` by metis_tac[] >> fs[])
 	  >- (`FV (ST x x''') SUBSET {x}` by metis_tac[ST_FV_singleton] >>
 	     `x'' IN {x}` by metis_tac[SUBSET_DEF] >> fs[])) >>
-   `frealizes MA x Σ'` by metis_tac[] >>
+   `frealizes MA x Σ'` 
+      by (first_x_assum irule >> rw[] >>
+          map_every qexists_tac [`{w}`,`\n.w`,`1`] >> rw[] >>
+          fs[count_def,CARD_DEF] >> metis_tac[]) >>
    fs[frealizes_def] >>
    rw[satisfiable_in_def] (* 2 *)
    >- rw[SUBSET_DEF]

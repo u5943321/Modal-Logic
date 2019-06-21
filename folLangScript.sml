@@ -77,6 +77,53 @@ Definition Exists_def:
   Exists x p = Not (FALL x (Not p))
 End
 
+Theorem Or_11[simp]:
+  Or p q = Or r s <=> p = r /\ q = s
+Proof
+ simp[Or_def] >> metis_tac[]
+QED
+
+Theorem Not_11[simp]:
+  Not p = Not q <=> p = q
+Proof
+ simp[Not_def] >> metis_tac[]
+QED
+
+
+Theorem And_11[simp]:
+  And p q = And r s <=> p = r /\ q = s
+Proof
+ simp[And_def] >> metis_tac[]
+QED
+
+
+Theorem Exists_11[simp]:
+  Exists x p = Exists y q <=> x = y /\ p = q
+Proof
+ simp[Exists_def] >> metis_tac[]
+QED
+
+Theorem Pred_DISTINCT[simp]:
+  Pred n ts <> And p q /\
+  Pred n ts <> Or p q /\
+  Pred n ts <> Not p /\
+  Pred n ts <> Exists x p /\
+  Pred n ts <> True
+Proof
+  rw[And_def,Or_def,Not_def,Exists_def,True_def]
+QED
+
+
+Theorem Or_DISTINCT[simp]:
+  Or f1 f2 <> False /\ 
+  (Or f1 f2 = Not f <=> f = IMP f1 f2 /\ f2 = False) /\
+  Or f1 f2 <> Exists y p /\
+  Or f1 f2 <> And p q /\
+  Or f1 f2 <> True
+Proof
+  rw[And_def,Or_def,Not_def,Exists_def,True_def,EQ_SYM_EQ] >> Cases_on `f2 = False` >> simp[]
+QED
+
 Definition term_functions_def[simp]:
   (term_functions (V v) = ∅) ∧
   (term_functions (Fn f args) =

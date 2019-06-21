@@ -463,6 +463,10 @@ val prop_2_71 = store_thm(
           suffices_by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
 	rw[EXTENSION,EQ_IMP_THM])));
 
+
+
+
+
 val folmodels2Doms_def = Define`
   folmodels2worlds FMS = \i. (FMS i).Dom`
 
@@ -475,16 +479,34 @@ val ultraproduct_folmodel_def = Define`
        Pred := \p zs. ({i IN I | (FMS i).Pred p (MAP ((\f. f i) zs) o CHOICE) zs} IN U) |>`;
 
 
+Theorem lemma_2_73:
+  !U I MS M. 
+         countably_incomplete U I /\
+         (!i. i IN I ==> MS i = M) ==> 
+             countably_saturated (mm2folm (ultraproduct_model U I M))
+Proof
+  rw[countably_saturated_def,n_saturated_def] >>
+  `countable G` by cheat >> fs[countable_def]
+  `?In. (!n: num. In (n+1) ⊆ In n) /\ BIGINTER {(In n)| n IN (univ (:num))} = {}` by cheat >>
+  qabbrev_tac 
+   `X = \n. if n = 0 then In 0 
+            else (In n) ∩ {i IN I | (?σ. !m. m < n ==> fsatis (MS i) σ (f' m))}`
+
+QED
+
 
 Theorem Los_Thm :
   !D I. ultrafilter D I ==> 
         !phi. 
-             (feval σ (mm2folm (ultraproduct_model U I MS)) phi)<=> 
-             {i IN I | satis (\n. σ n i) (MS i) phi} IN U
+             (feval σ (ultraproduct_model U I MS) phi) <=> 
+             {i IN I | feval (\n. σ n i) (MS i) phi} IN U
 Proof
 
 
 QED
+
+
+
 
 
 val _ = export_theory();
