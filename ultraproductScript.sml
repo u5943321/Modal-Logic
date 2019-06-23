@@ -468,29 +468,360 @@ val prop_2_71 = store_thm(
 
 
 val folmodels2Doms_def = Define`
-  folmodels2worlds FMS = \i. (FMS i).Dom`
+  folmodels2Doms FMS = \i. (FMS i).Dom`
 
 
- 
+ (* 
+val _ = overload_on ("fP", “λp t. Pred p [t]”);
+val _ = overload_on ("fR", “λw1 w2. Pred 0 [w1; w2]”); *)
+(*
 val ultraproduct_folmodel_def = Define`
    ultraproduct_folmodel U I FMS = 
     <| Dom := ultraproduct U I (folmodels2Doms FMS) ;
-       Fun := \n fs fc. (\i. ((FMS i).Fun n (MAP ((\f. f i) o CHOICE) fs))) IN fc;
+       Fun := \n fs fc. (\i. ((FMS i).Fun n (MAP ((\f. f i) o CHOICE) fs)) IN U);
        Pred := \p zs. ({i IN I | (FMS i).Pred p (MAP ((\f. f i) zs) o CHOICE) zs} IN U) |>`;
+*)
 
+val ultraproduct_folmodel_def = Define`
+   ultraproduct_folmodel U I FMS = 
+    <| Dom := ultraproduct U I (folmodels2Doms FMS) ;
+       Fun := \n fs. {y | (!i. i IN I ==> (y i) IN (FMS i).Dom) /\
+                          {i | i IN I /\ 
+                               (y i) = (FMS i).Fun n (MAP (\fc. (CHOICE fc) i)fs)} IN U
+                     };
+       Pred := \p zs. {i | i IN I /\ (FMS i).Pred p (MAP (\fc. (CHOICE fc) i) zs)} IN U |>`;
+
+
+Theorem A_19_i:
+  !t σp σs.
+      (!i. i IN I ==> (σs i n) IN (σp n)) ==> 
+      termval (ultraproduct_folmodel U I FMS) σp t =
+      {y | (!i. i IN I ==> (y i) IN (FMS i).Dom) /\
+           {i | i IN I /\ 
+                (y i) = termval (FMS i) (σs i) t} IN U
+                     }
+Proof
+  
+QED
+
+Theorem mm2folm_fsatis_ST_EXISTS:
+  !M f. ?mf. feval (mm2folm M) σ(|x |-> w|) f <=> 
+             feval (mm2folm M) σ(|x |-> w|) (ST x mf)
+Proof
+  Induct_on `f`
+  
+  `(?a b. l = [a;b]) \/ (?a. l = [a])` by cheat >> 
+  >- qexists_tac `VAR n` >> rw[ST_def,termval_def,mm2folm_def,APPLY_UPDATE_THM]
+  
+ 
+
+
+  >- qexists_tac `
+
+  >- Cases_on `(?a b. l = [a;b]) \/ (?a. l = [a])` 
+
+rw[] >> 
+     
+
+   qexists_tac 
+
+
+
+
+  `∃w.
+            w ∈ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
+            ∀σ phi.
+                IMAGE σ 𝕌(:num) ⊆ M'.Dom ∧ phi ∈ G ⇒ 
+                ?f. f IN w /\ {i| i IN I' /\ fsatis M σ⦇x ↦ f i⦈ phi} IN U 
+
+
+fsatis M' σ⦇x ↦ w⦈ phi` 
+    (mm2folm (ultraproduct_model U I' MS))
+  `fsatis (mm2folm (ultraproduct_model U I' MS))
+          σ⦇x ↦
+             {f |
+              (∀i. i ∈ I' ⇒ f i ∈ M.frame.world) ∧
+              {i | i ∈ I' ∧ f i = fi i} ∈ U}⦈ phi'` suffices_by cheat >>
+  `?f0. f0 IN {f |
+              (∀i. i ∈ I' ⇒ f i ∈ M.frame.world) ∧
+              {i | i ∈ I' ∧ f i = fi i} ∈ U} /\
+        {i| i IN I' /\ !σ. fsatis (mm2folm M) σ(|x |-> (f0 i)|) phi'} IN U` 
+   suffices_by cheat >>
+  qexists_tac `fi` >> rw[]
+  >- cheat
+  >- cheat 
+     `!i σ. i IN I' ==> fsatis (mm2folm M) σ⦇x ↦ fi i⦈ phi'` suffices_by cheat
+
+
+fsatis (mm2folm (ultraproduct_model U I' MS))
+          σ⦇x ↦
+             {f |
+              (∀i. i ∈ I' ⇒ f i ∈ M.frame.world) ∧
+              {i | i ∈ I' ∧ f i = fi i} ∈ U}⦈ phi'                                                                 
+
+QED
+
+
+Definition shift_term_def:
+  shift_term n (V m) = V (m+n) /\
+  shift_term n (Fn m l) = if l = [] then (V m) else (Fn m (MAP (shift_term n) l))
+Termination
+WF_REL_TAC `measure (term_size o SND)` >> rw[term_size_lemma]
+End
+
+Definition shift_form_def:
+  shift_form n False = False /\
+  shift_form n (Pred m l) = Pred m (MAP (shift_term n) l) /\
+  shift_form n (IMP f1 f2) = IMP (shift_form n f1) (shift_form n f2) /\
+  shift_form n (FALL x f) = FALL (x + n) (shift_form n f)
+End
+
+Definition shift_valuation_def:
+  shift_valuation n σ f = \m. if m < n then (f m) else (σ (m-n))
+End
+
+Theorem expansion_shift_termval:
+  !M A M' f. expansion (mm2folm M) A M' f ==>
+            !t. (∀c. c ∈ FCT t ⇒ c < CARD A) ==>
+                !σ. (termval M' σ t =
+                    termval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_term (CARD A) t))
+Proof
+  strip_tac >> strip_tac >> strip_tac >> strip_tac >> strip_tac >>
+  completeInduct_on `term_size t` >> Cases_on `t` >> rw[] (* 3 *)
+  >- rw[termval_def,shift_valuation_def,shift_term_def]
+  >- (rw[termval_def,shift_valuation_def,shift_term_def] >> fs[expansion_def])
+  >- (rw[termval_def,shift_valuation_def,shift_term_def] >> fs[expansion_def] >>
+      fs[mm2folm_def])
+QED
+
+(*
+Theorem expansion_shift_feval:
+  !M A M' f. expansion (mm2folm M) A M' f ==>
+            !phi. (∀c. c ∈ FC phi ⇒ c < CARD A) ==>
+                 !σ. 
+                    IMAGE σ (univ(:num)) ⊆ M.frame.world ==>
+                    (feval M' σ phi <=> 
+                    feval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi))
+Proof
+  rw[] >> Induct_on `phi` (* 4 *)
+  >- rw[feval_def,shift_form_def]
+  >- (rw[feval_def,shift_form_def,shift_term_def,shift_valuation_def,expansion_def] >> 
+     ` M'.Pred n (MAP (termval M' σ) l) ⇔
+       M'.Pred n
+          (MAP
+             (termval (mm2folm M)
+                (λm. if m < CARD A then f m else σ (m - CARD A)))
+             (MAP (shift_term (CARD A)) l))` suffices_by metis_tac[expansion_def] >>
+     AP_TERM_TAC >> simp[MAP_MAP_o] >> irule MAP_LIST_EQ >> rw[] >> 
+     drule expansion_shift_termval >> rw[] >> 
+     first_x_assum (qspecl_then [`m`, `σ`] assume_tac) >> fs[shift_valuation_def] >>
+     first_x_assum irule >> rw[] >> first_x_assum irule >> rw[MEM_MAP,PULL_EXISTS] >>
+     metis_tac[])
+  >- (rw[FC_def] >>
+     `(∀c. c ∈ FC phi ==> c < CARD A) /\
+      (!c. c ∈ FC phi' ⇒ c < CARD A)` by metis_tac[] >> 
+     first_x_assum drule >> first_x_assum drule >> rw[] >> 
+     rw[EQ_IMP_THM,shift_form_def])
+  >- rw[FC_def] >> first_x_assum 
+QED
+*)
+
+Theorem expansion_shift_feval:
+  !M A M' f. expansion (mm2folm M) A M' f ==>
+            !phi σ. (∀c. c ∈ FC phi ⇒ c < CARD A) ==>
+                  
+                    IMAGE σ (univ(:num)) ⊆ M.frame.world ==>
+                    (feval M' σ phi <=> 
+                    feval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi))
+Proof
+  strip_tac >> strip_tac >> strip_tac >> strip_tac >> strip_tac >> Induct_on `phi` (* 4 *)
+  >- rw[feval_def,shift_form_def]
+  >- (rw[feval_def,shift_form_def,shift_term_def,shift_valuation_def,expansion_def] >> 
+     ` M'.Pred n (MAP (termval M' σ) l) ⇔
+       M'.Pred n
+          (MAP
+             (termval (mm2folm M)
+                (λm. if m < CARD A then f m else σ (m - CARD A)))
+             (MAP (shift_term (CARD A)) l))` suffices_by metis_tac[expansion_def] >>
+     AP_TERM_TAC >> simp[MAP_MAP_o] >> irule MAP_LIST_EQ >> rw[] >> 
+     drule expansion_shift_termval >> rw[] >> 
+     first_x_assum (qspecl_then [`m`, `σ`] assume_tac) >> fs[shift_valuation_def] >>
+     first_x_assum irule >> rw[] >> first_x_assum irule >> rw[MEM_MAP,PULL_EXISTS] >>
+     metis_tac[])
+  >- (rw[FC_def] >>
+     `(∀c. c ∈ FC phi ==> c < CARD A) /\
+      (!c. c ∈ FC phi' ⇒ c < CARD A)` by metis_tac[] >> 
+     first_x_assum drule >> first_x_assum drule >> rw[] >> 
+     rw[EQ_IMP_THM,shift_form_def])
+  >- (rw[FC_def] >> rw[EQ_IMP_THM,shift_form_def] (* 2 *)
+     >- (`(shift_valuation (CARD A) σ f)⦇n + CARD A ↦ a⦈ =
+         (shift_valuation (CARD A) σ(|n |-> a|) f)` 
+           by (rw[FUN_EQ_THM,shift_valuation_def] >> 
+              Cases_on `x < CARD A` (* 2 *)
+              >- (`x <> n + CARD A` by cheat >> fs[APPLY_UPDATE_THM])
+              >- (Cases_on `x = n + CARD A` >> fs[APPLY_UPDATE_THM])) >>
+        `feval (mm2folm M) (shift_valuation (CARD A) σ⦇n ↦ a⦈ f)
+          (shift_form (CARD A) phi)` suffices_by metis_tac[] >> 
+        first_x_assum (qspec_then `σ(|n |-> a|)` assume_tac) >> first_x_assum drule >>
+        `IMAGE σ⦇n ↦ a⦈ 𝕌(:num) ⊆ M.frame.world /\ a IN M'.Dom` suffices_by metis_tac[] >>
+        cheat)
+     >- (first_x_assum (qspec_then `σ(|n |-> a|)` assume_tac) >> first_x_assum drule >>
+        rw[] >> cheat))
+QED
+
+
+Theorem Los_mm2folm_thm:
+  !U I MS.
+     ultrafilter U I ==> (!i. i IN I ==> MS i = M) ==> 
+    !phi. FV phi ⊆ {x} ==>
+       !fc. fc IN (ultraproduct_model U I MS).frame.world ==>
+             
+             !σ. (feval (mm2folm (ultraproduct_model U I MS)) σ(|x |-> fc|) phi <=>
+                 ?f0. f0 IN (σ x) /\
+                      {i | i IN I /\ !σ0. feval (mm2folm M) σ0(|x |-> (f0 i)|) phi} IN U)
+Proof
+  strip_tac >> strip_tac >> strip_tac >> strip_tac >> strip_tac >> strip_tac >>
+  strip_tac >> Induct_on `phi` (* 4 *)
+  >- fs[FV_def] >> rw[] >> cheat
+  >- rw[FV_def,EQ_IMP_THM] >> qexists_tac `CHOICE fc` >> rw[]
+     >- cheat
+     >- `l = [a;b] \/ l = [c]` by cheat 
+        >- `n = 0 /\ (ultraproduct_model U I' MS).frame.rel (termval (mm2folm (ultraproduct_model U I' MS)) σ⦇x ↦ fc⦈ a) (termval (mm2folm (ultraproduct_model U I' MS)) σ⦇x ↦ fc⦈ b)` by cheat >> fs[ultraproduct_rel] >>
+           `{i |
+         i ∈ I' ∧
+         ∀σ0.
+         M.frame.rel 
+               (termval (mm2folm M) σ0⦇x ↦ CHOICE fc i⦈ a)
+               (termval (mm2folm M) σ0⦇x ↦ CHOICE fc i⦈ b)} ∈ U` suffices_by cheat
+        `{i | i ∈ I' ∧ (MS i).frame.rel (f i) (g i)} =
+        {i |
+         i ∈ I' ∧
+         ∀σ0.
+             M.frame.rel (termval (mm2folm M) σ0⦇x ↦ CHOICE fc i⦈ a)
+               (termval (mm2folm M) σ0⦇x ↦ CHOICE fc i⦈ b)}` suffices_by cheat >>
+        rw[EXTENSION,EQ_IMP_THM]
+        `(f x') = (termval (mm2folm M) σ0⦇x ↦ CHOICE fc x'⦈ a)` suffices_by cheat >>
+        Cases_on `a` >> rw[termval_def]
+        >- `f x' = (CHOICE fc) x'` suffices_by cheat
+
+
+fs[]
+
+
+         fs[mm2folm_def]
+QED 
+
+
+`?fr. fr IN w /\ 
+        {i | i IN I' /\ feval M (f i) (shift_form (CARD A) phi)} IN U`
 
 Theorem lemma_2_73:
   !U I MS M. 
          countably_incomplete U I /\
          (!i. i IN I ==> MS i = M) ==> 
-             countably_saturated (mm2folm (ultraproduct_model U I M))
+             countably_saturated (mm2folm (ultraproduct_model U I MS))
 Proof
   rw[countably_saturated_def,n_saturated_def] >>
-  `countable G` by cheat >> fs[countable_def]
-  `?In. (!n: num. In (n+1) ⊆ In n) /\ BIGINTER {(In n)| n IN (univ (:num))} = {}` by cheat >>
+  `countable G` by cheat >> fs[countable_def] >>
+  `?In. (!n: num. In (n+1) ⊆ In n) /\
+        (!n. (In n) IN U) /\
+        BIGINTER {(In n)| n IN (univ (:num))} = {}` by cheat >>
+  `?k. BIJ k (univ(:num)) G` by cheat >> 
+  rw[frealizes_def] >> 
+  `∃w.
+                 w ∈ M'.Dom ∧
+                 ∀σ phi.
+                     IMAGE σ 𝕌(:num) ⊆ M'.Dom ∧ phi ∈ G ⇒
+                     feval (mm2folm (ultraproduct_model U I' MS)) 
+                           (shift_valuation (CARD A) σ⦇x ↦ w⦈ f)
+                       (shift_form (CARD A) phi)` suffices_by cheat >> 
+  qexists_tac `w` >> rw[]
+  >- cheat 
+  >- fs[consistent_def] >> 
+     `∀G0.
+            FINITE G0 ∧ G0 ⊆ G ⇒
+            ∃σ. IMAGE σ 𝕌(:num) ⊆ M'.Dom ∧ ∀phi. phi ∈ G0 ⇒ 
+                feval (mm2folm (ultraproduct_model U I' MS)) (shift_valuation (CARD A) σ f)
+                (shift_form (CARD A) phi)` by cheat >>
+
+
+     `∀G0.
+                 FINITE G0 ∧ G0 ⊆ G ⇒
+                 ∃σ.
+                     IMAGE σ 𝕌(:num) ⊆ M'.Dom ∧
+                     ∀phi.
+                         phi ∈ G0 ⇒
+                         ?f0. f0 IN ((shift_valuation (CARD A) σ f) (x + CARD A))
+                              {i| i IN I /\ !σ0. feval (mm2folm M) 
+
+
+
+}
+                         feval (mm2folm (ultraproduct_model U I' MS))
+                           (shift_valuation (CARD A) σ f)
+                           (shift_form (CARD A) phi)`
+    
+
+  `?fr. fr IN w /\ 
+        {i | i IN I' /\ feval M (f i) (shift_form (CARD A) phi)} IN U`
+
+
+
   qabbrev_tac 
-   `X = \n. if n = 0 then In 0 
-            else (In n) ∩ {i IN I | (?σ. !m. m < n ==> fsatis (MS i) σ (f' m))}`
+   `Xn = \n. if n = 0 then (In 0)
+             else ((In n) ∩ 
+                  (if (?σ. !m. m < n ==> fsatis (mm2folm M) σ (k m)) then I' else {}))` >>
+  rw[frealizes_def] >> 
+  `∃w.
+      w ∈ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
+            ∀σ phi.
+                IMAGE σ 𝕌(:num) ⊆ M'.Dom ∧ phi ∈ G ⇒ fsatis M' σ⦇x ↦ w⦈ phi`
+   suffices_by metis_tac[expansion_def] >>
+  qabbrev_tac `ni = \i. MAX_SET { n | i IN In n}` >> 
+  qabbrev_tac `fi = \i. if (ni i = 0) then CHOICE M.frame.world 
+                   else (CHOICE 
+                       {w | w IN M.frame.world /\ 
+                           (!m. m <= (ni i) ==> ?σ. fsatis (mm2folm M) σ(|x |-> w|) (k m))})`
+  `!f. f IN G ==> ?mf. feval M' σ(|x |-> w|) f <=> 
+                       feval M' σ(|x |-> w|) (ST x mf)` by cheat
+  `∃w.
+            w ∈ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
+            ∀σ phi.
+                IMAGE σ 𝕌(:num) ⊆ M'.Dom ∧ phi ∈ G0 ⇒ fsatis M' σ⦇x ↦ w⦈ (ST x phi)` suffices_by cheat >> 
+
+  `∃w.
+      w ∈ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
+            ∀σ phi.
+                IMAGE σ 𝕌(:num) ⊆ M'.Dom ∧ phi ∈ G0 ⇒
+                satis (ultraproduct_model U I' MS) w phi` suffices_by cheat >>
+  `∃w.
+            w ∈ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
+            ∀σ phi.
+                IMAGE σ 𝕌(:num) ⊆ M'.Dom ∧ phi ∈ G0 ⇒
+                ?rp. rp IN w /\ {i | i IN I' /\ satis M (rp i) phi} IN U`
+  qexists_tac `{f | (!i. i IN I' ==> (f i) IN M.frame.world) /\
+                    {i | i IN I' /\ f i = fi i} IN U}` >> rw[]
+  >- cheat
+  >- `?f0. f0 IN {f |
+              (∀i. i ∈ I' ⇒ f i ∈ M.frame.world) ∧
+              {i | i ∈ I' ∧ f i = fi i} ∈ U} /\
+          {i | i IN I' /\ (!σ. fsatis M' σ(|x |-> (f0 i)|) phi)} IN U` 
+  
+
+
+  Induct_on `f`
+
+
+  ho_match_mp_tac form_induction >> rw[]
+  (* trivial cheat *)
+  
+
+
+(ultraproduct_model U J MS).frame.world
+
+
+                  {i | i IN I' /\ (?w. w IN M.frame.world /\
+                  !m. m < n ==> satis M w (k m))}`
 
 QED
 

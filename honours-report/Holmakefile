@@ -1,0 +1,20 @@
+INCLUDES = .. 
+
+TEXDIR = $(HOLDIR)/src/TeX
+
+report.pdf: report.tex
+	latexmk -pdf report
+
+
+munge.exe: ppLib.uo
+	$(protect $(HOLDIR)/bin/mkmunge.exe) $<
+
+EXTRA_CLEANS = munge.exe report.tex report.pdf report.aux report.fls report.log \
+               holtexbasic.sty
+
+holtexbasic.sty: $(TEXDIR)/holtexbasic.sty
+	$(CP) $< $@
+
+report.tex: report.htex munge.exe holtexbasic.sty overrides
+	./munge.exe -m\; overrides < $< > $@
+

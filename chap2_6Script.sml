@@ -179,15 +179,24 @@ val ST_FV_singleton = store_thm(
   `(freevars (ST (x + 1) () f)) SUBSET {x + 1}` by metis_tac[] >> fs[DELETE_DEF,DIFF_DEF,SUBSET_DEF] >> metis_tac[]);
 
 --------------
+
+
+
 val diff_form_diff_ST = store_thm(
   "diff_form_diff_ST",
-  ``!f1 f2. ST x f1 = ST x f2 <=> f1 = f2``,
-  cheat);
-
-???????????????
+  ``!f1 f2. ST x f1 = ST y f2 <=> (f1 = f2 /\ x = y)``,
 
   Induct_on `f1` >> rw[] (* 5 *)
-  >-  (Cases_on `f2` >> rw[ST_def,fAND_def,fNOT_def,fDISJ_def,Exists_def])
+  >-  (Cases_on `f2` >> rw[])
+  >- (Cases_on `f2` >> rw[EQ_SYM_EQ] 
+     >- metis_tac[]
+     >- Cases_on `ST x f1' = fFALSE` >> fs[] >> strip_tac
+
+)
+
+
+
+
   >- (Cases_on `f2` >> rw[ST_def] (* 2 *) >>
      `() = u` by fs[] >> metis_tac[])
   >- (Cases_on `f2` >> rw[ST_def] >> Cases_on `f` >> fs[ST_def])
