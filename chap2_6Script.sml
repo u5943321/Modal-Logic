@@ -380,8 +380,92 @@ val thm_2_65_corollary = store_thm(
        bisim_world M M' w w'``,
    rw[] >> `M_sat M /\ M_sat M'` by metis_tac[thm_2_65] >> metis_tac[prop_2_54_DIST_TYPE]);
 
+Theorem thm_2_65_corollary:
+ ∀M M' w:'b w':'c.
+       countably_saturated (mm2folm M) /\ countably_saturated (mm2folm M') ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world ⇒
+       modal_eq M M' w w' ⇒
+       bisim_world M M' w w'
+Proof
+  cheat
+QED
+
+(*
+
+Theorem thm_2_74_half1:
+  !M N w v. w IN M.frame.world /\ v IN N.frame.world ==> 
+         !U I MS NS. ultrafilter U I /\
+                     (!i. i IN I ==> MS i = M) /\
+                     (!i. i IN I ==> NS i = N) ==>
+               bisim_world (ultraproduct_model U I MS) (ultraproduct_model U I NS) 
+                           {x | (!i. i IN I ==> (x i) IN M.frame.world) /\ 
+                                {i | x i = w} IN U}
+                           {y | (!i. i IN I ==> (y i) IN M.frame.world) /\ 
+                                {i | y i = v} IN U}
+                   ==> (!phi. satis M w phi <=> satis N v phi)
+Proof
+  rw[] >> 
+
+QED*)
+
+Theorem thm_2_74_half1:
+  !M N w v. w IN M.frame.world /\ v IN N.frame.world ==> 
+         !U I MS NS. ultrafilter U I /\
+                     (!i. i IN I ==> MS i = M) /\
+                     (!i. i IN I ==> NS i = N) ==>
+               bisim_world (ultraproduct_model U I MS) (ultraproduct_model U I NS) 
+                           {fw | Uequiv U I (models2worlds MS) (λi. w) fw}
+                           {fv | Uequiv U I (models2worlds NS) (λi. v) fv}
+                   ==> (!phi. satis M w phi <=> satis N v phi)
+Proof
+  rw[] >> drule prop_2_71 >> rw[] >> last_x_assum (qspec_then `U` assume_tac) >>
+  first_x_assum (qspecl_then [`phi`,`v`] assume_tac) >> first_x_assum drule >> rw[] >>
+  `∀phi w.
+             satis (ultraproduct_model U I' MS)
+               {fw | Uequiv U I' (models2worlds MS) (λi. w) fw} phi ⇔
+             satis M w phi` by metis_tac[prop_2_71] >> 
+  first_x_assum (qspecl_then [`phi`,`w`] assume_tac) >> drule thm_2_20_lemma >> 
+  metis_tac[]
+QED
+
+Theorem thm_2_74_half2:
+  !(M: (num,α) chap1$model) N w v. w IN M.frame.world /\ v IN N.frame.world ==> 
+            (!phi. satis M w phi <=> satis N v phi) ==>
+             ?U (I:num -> bool) MS NS. ultrafilter U I /\
+                     (!i. i IN I ==> MS i = M) /\
+                     (!i. i IN I ==> NS i = N) /\
+               bisim_world (ultraproduct_model U I MS) (ultraproduct_model U I NS) 
+                           {fw | Uequiv U I (models2worlds MS) (λi. w) fw}
+                           {fv | Uequiv U I (models2worlds NS) (λi. v) fv}
+Proof
+ rw[] >> map_every qexists_tac [`U`,`univ(:num)`,`\i.M`,`\i.N`] >> rw[] (* 2 *)
+ >- cheat
+ >- irule thm_2_65_corollary >> rw[] (* 5 *)
+    >- (* 2.73 *) cheat
+    >- cheat 
+    >- `ultrafilter U 𝕌(:num)` by cheat >>
+       `!i. i IN 𝕌(:num) ==> (\i. M) i = M` by fs[] >>
+       `{fw | Uequiv U 𝕌(:num) (models2worlds (λi. M)) (λi. w) fw} ∈
+        (ultraproduct_model U 𝕌(:num) (λi. M)).frame.world <=> w IN M.frame.world`
+         suffices_by metis_tac[] >> irule ultraproduct_world_constant >> rw[]
+    >- cheat
+    >- rw[modal_eq_tau] >> drule prop_2_71
+QED
+
+val invar4bisim_def = Define`
+  invar4bisim μ ν phi <=> 
+     FV phi ⊆ {x} /\ 
+     !(M:(num,μ) chap1$model) (N:(num,ν) chap1$model) v w.
+        bisim_world M N w v ==> 
+           (!σ. fsatis (mm2folm M) σ(|x |-> w|) phi <=> 
+                fsatis (mm2folm N) σ(|x |-> v|) phi)
 
 
-*)
+
+
+Theorem thm_2_68:
+  
+ 
+  
+
 val _ = export_theory();
 

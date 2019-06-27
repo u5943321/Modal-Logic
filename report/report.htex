@@ -16,6 +16,11 @@
 
 \maketitle
 
+
+
+Interlude : Any formula is equivalent to a disjunction normal form.
+
+
 This is a report for summarizing my learning of interactive theorem proving in the HOL. This paper consists of two parts, the first part it about the correspondence theorem on group theory, through the process of searching for methods of proving it, I get known to some basics tools, mainly the simplifiers of the HOL. The second part is about modal logic, where I think is my starting point of being exposed to more advanced and useful tools.
 
 \section{Correspondence Theorem in the HOL}
