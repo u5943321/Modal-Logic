@@ -807,8 +807,8 @@ QED
 
 Theorem thm_A_19_i:
   !t U I. ultrafilter U I ==>
-          !σ. IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==>
-             
+          !σ FMS. IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==>
+             (!i ff ll. i IN I ==> (FMS i).Fun ff ll IN (FMS i).Dom) ==>
           termval (ultraproduct_folmodel U I FMS) σ t = 
           {f | Uequiv U I (folmodels2Doms FMS) f 
                (\i. termval (FMS i) (\n. CHOICE (σ n) i) t)}
@@ -818,106 +818,137 @@ QED
 
 Theorem thm_A_19_ii:
    !U I phi. ultrafilter U I ==>
-         (feval (ultraproduct_folmodel U I FMS) σ phi <=>
-         {i | i IN I /\ feval (FMS i) (\x. (CHOICE (σ x)) i) phi} IN U)
+      !σ FMS. IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==>
+             (!i ff ll. i IN I ==> (FMS i).Fun ff ll IN (FMS i).Dom) ==>
+                  (feval (ultraproduct_folmodel U I FMS) σ phi <=>
+                  {i | i IN I /\ feval (FMS i) (\x. (CHOICE (σ x)) i) phi} IN U)
 Proof
-  Induct_on `phi`
-  >- cheat
-  >- rw[feval_def] >> rw[ultraproduct_folmodel_def,feval_def] >> fs[MAP_MAP_o,o_DEF] >> 
-     `((ultraproduct_folmodel U I' FMS).Pred n
-       (MAP (\t. {f |
-              Uequiv U I' (folmodels2Doms FMS) f
-                (λi. termval (FMS i) (λn. CHOICE (σ n) i) t)}) l)) ⇔
-        {i |
+  Induct_on `phi` (* 4 *)
+  >- (rw[feval_def] >> metis_tac[EMPTY_NOTIN_ultrafilter])
+  >- (rw[feval_def,ultraproduct_folmodel_def,feval_def,MAP_MAP_o,o_DEF] >> 
+     `<|Dom := ultraproduct U I' (folmodels2Doms FMS);
+                        Fun :=
+                          (λn fs.
+                               {y |
+                                (∀i. i ∈ I' ⇒ y i ∈ (FMS i).Dom) ∧
+                                {i |
+                                 i ∈ I' ∧
+                                 y i =
+                                 (FMS i).Fun n (MAP (λfc. CHOICE fc i) fs)} ∈
+                                U});
+                        Pred :=
+                          (λp zs.
+                               {i |
+                                i ∈ I' ∧
+                                (FMS i).Pred p (MAP (λfc. CHOICE fc i) zs)} ∈
+                               U)|> = ultraproduct_folmodel U I' FMS`
+       by fs[ultraproduct_folmodel_def] >> rw[] >> 
+      qmatch_abbrev_tac `S1 IN U <=> S2 IN U` >> 
+      qabbrev_tac `I0 = {i | i IN I' /\
+                           (MAP (λx. CHOICE (termval (ultraproduct_folmodel U I' FMS) σ x) i) l) = 
+                           (MAP (termval (FMS i) (λx. CHOICE (σ x) i)) l)}` >> 
+      `I0 ∩ S1 = I0 ∩ S2` by
+        (rw[EXTENSION,EQ_IMP_THM,Abbr`S1`,Abbr`S2`,Abbr`I0`] >> metis_tac[]) >>
+      `I0 IN U` by cheat(* cheated! need a lemma, basically ultrafilter closed under finite inter *)>>
+      rw[EQ_IMP_THM] (* 2 *)
+      >- (`I0 ∩ S1 ∈ U` by cheat (* ultrafilter closed under inter and closed upward *)>> cheat)
+      >- cheat (* same as above *)) 
+  >- (rw[feval_def,EQ_IMP_THM] (* 2 *)
+     >- (`{i |
          i ∈ I' ∧
-         (FMS i).Pred n (MAP (termval (FMS i) (λx. CHOICE (σ x) i)) l)} ∈ U`
-     
-     rw
-      cheat
-
-
-  >- rw[feval_def] >> rw[EQ_IMP_THM] >>
-     `{i |
-         i ∈ I' ∧
-         ¬(feval (FMS i) (λx. CHOICE (σ x) i) phi \/
-          feval (FMS i) (λx. CHOICE (σ x) i) phi')} ∈ U` suffices_by cheat >>
-     ` {i | i ∈ I' ∧
-         ¬(feval (FMS i) (λx. CHOICE (σ x) i) phi)} IN U \/
-        {i |
-         i ∈ I' ∧
-          feval (FMS i) (λx. CHOICE (σ x) i) phi'} IN U` suffices_by cheat >> cheat
+         (¬(feval (FMS i) (λx. CHOICE (σ x) i) phi) \/
+          feval (FMS i) (λx. CHOICE (σ x) i) phi')} ∈ U` suffices_by 
+          (`{i | i ∈ I' ∧
+                 (¬(feval (FMS i) (λx. CHOICE (σ x) i) phi) \/
+                 feval (FMS i) (λx. CHOICE (σ x) i) phi')} = 
+            {i | i ∈ I' ∧
+                 (feval (FMS i) (λx. CHOICE (σ x) i) phi ⇒
+                 feval (FMS i) (λx. CHOICE (σ x) i) phi')}` suffices_by metis_tac[] >>
+          rw[EXTENSION] >>
+          metis_tac[]) >>
+        `{i | i ∈ I' ∧
+         (¬feval (FMS i) (λx. CHOICE (σ x) i) phi ∨
+          feval (FMS i) (λx. CHOICE (σ x) i) phi')} =
+         {i | i ∈ I' ∧
+         (¬feval (FMS i) (λx. CHOICE (σ x) i) phi)} ∪ 
+         {i | i ∈ I' ∧
+         (feval (FMS i) (λx. CHOICE (σ x) i) phi')}` by (rw[EXTENSION] >> metis_tac[]) >> rw[] >>
+        Cases_on `{i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U` >> cheat)
+        (* easy case argument *)
+     >- cheat (* same argument *)) 
   >- rw[feval_def] >> rw[EQ_IMP_THM] >> 
-     `∀a.
-            a ∈ (ultraproduct_folmodel U I' FMS).Dom ⇒
-            {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ(|n |-> a|) x) i) phi} ∈ U` by cheat >>
-     
- 
-    `!n phi. FALL n phi = fNOT (fEXISTS n (fNOT phi))` by cheat >> rw[] >>
-    ` ∀n U I.
-            ultrafilter U I ⇒
-            (feval (ultraproduct_folmodel U I FMS) σ (fNOT (fEXISTS n (fNOT phi))) ⇔
-             {i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) (fNOT (fEXISTS n (fNOT phi)))} ∈
-             U)` suffices_by cheat >>
-     rw[EQ_IMP_THM] 
-     >- `{i |
+   >- SPOSE_NOT_THEN ASSUME_TAC >> 
+      `{i |
          i ∈ I' ∧
-         ?a. a ∈ (FMS i).Dom /\ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi} NOTIN
-        U` suffices_by cheat >>
-        `∀a.
-            a ∈ (ultraproduct_folmodel U I' FMS).Dom ⇒
-            {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ(|n |-> a|) x) i) phi} ∈ U` by cheat >> 
-        `{i | i ∈ I' ∧ ?a.feval (FMS i) (λx. CHOICE (σ⦇n ↦ a⦈ x) i) phi /\ a ∈ (ultraproduct_folmodel U I' FMS).Dom} IN U` by cheat
-
-
-
- >> rw[ultraproduct_folmodel_def,feval_def] >> 
-     qabbrev_tac `UPM = <|Dom := ultraproduct U I' (folmodels2Doms FMS);
-                    Fun :=
-                      (λn fs.
-                           {y |
-                            (∀i. i ∈ I' ⇒ y i ∈ (FMS i).Dom) ∧
-                            {i |
-                             i ∈ I' ∧
-                             y i = (FMS i).Fun n (MAP (λfc. CHOICE fc i) fs)} ∈
-                            U});
-                    Pred :=
-                      (λp zs.
-                           {i |
-                            i ∈ I' ∧
-                            (FMS i).Pred p (MAP (λfc. CHOICE fc i) zs)} ∈ U)|>` >> fs[MAP_MAP_o] >> 
-  rw[o_DEF] >> 
-  cheat
-  >- rw[feval_def] >> rw[EQ_IMP_THM] >> 
-     Cases_on `{i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U` 
-     >- first_x_assum drule >> rw[] >> cheat >>
-  >- 
-
- (* two directions *)
- >- SPOSE_NOT_THEN ASSUME_TAC >> 
-    `{i |
+         ?a. a ∈ (FMS i).Dom /\ ¬ feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi} IN
+        U` by cheat (* need little lemmas *) >> 
+      qabbrev_tac `f = \i. CHOICE {a| a ∈ (FMS i).Dom ∧ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi}` >> 
+      `{i | i IN I' /\ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi} IN U` 
+          suffices_by (strip_tac >> 
+                      `?a. a ∈ (ultraproduct_folmodel U I' FMS).Dom /\
+                      ¬feval (ultraproduct_folmodel U I' FMS) σ⦇n ↦ a⦈ phi` suffices_by metis_tac[]>>
+                      qexists_tac `{g | Uequiv U I' (folmodels2Doms FMS) g f}` >> rw[]
+                      >- (* need lemma saying about belong to the equiv class *) cheat
+                      >- first_x_assum drule >> rw[] >> 
+                         first_x_assum (qspecl_then 
+                         [`σ⦇n ↦ {g | Uequiv U I' (folmodels2Doms FMS) g f}⦈`,`FMS`] assume_tac) >> 
+                         `{i | i ∈ I' ∧ feval (FMS i) (λx.
+                           CHOICE (σ⦇n ↦ {g | Uequiv U I' (folmodels2Doms FMS) g f}⦈ x) i) phi}
+                          NOTIN U /\
+                          IMAGE σ⦇n ↦ {g | Uequiv U I' (folmodels2Doms FMS) g f}⦈ 𝕌(:num) 
+                          ⊆ ultraproduct U I' (folmodels2Doms FMS)`
+                             suffices_by metis_tac[] >> (* need lemma image_update *) >>
+                         `{i | i ∈ I' ∧ ¬feval (FMS i) 
+                          (λx. CHOICE (σ⦇n ↦ {g | Uequiv U I' (folmodels2Doms FMS) g f}⦈ x)i) phi}
+                          IN U` suffices_by cheat (* need lemma: {i| i IN I' /\ P i} IN U <=>... *)>>
+                         `{i | i IN I' /\ 
+                             (λx. CHOICE (σ⦇n ↦ {g | Uequiv U I' (folmodels2Doms FMS) g f}⦈ x) i) = 
+                             (λx. CHOICE (σ x) i)⦇n ↦ f i⦈} ∩ 
+                         {i | i ∈ I' ∧ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi} ⊆
+                         {i | i ∈ I' ∧ ¬feval (FMS i) (λx.
+                                        CHOICE (σ⦇n ↦ {g | Uequiv U I' (folmodels2Doms FMS) g f}⦈ x)
+                                        i) phi}` by rw[SUBSET_DEF] >> 
+                          `{i | i ∈ I' ∧
+                           (λx. CHOICE (σ⦇n ↦ {g | Uequiv U I' (folmodels2Doms FMS) g f}⦈ x) i) =
+                           (λx. CHOICE (σ x) i)⦇n ↦ f i⦈} IN U` by 
+                          `{i | i IN I' /\ 
+                                (CHOICE {g | Uequiv U I' (folmodels2Doms FMS) g f}) i = f i} ⊆ 
+                           {i | i ∈ I' ∧
+                           (λx. CHOICE (σ⦇n ↦ {g | Uequiv U I' (folmodels2Doms FMS) g f}⦈ x) i) =
+                           (λx. CHOICE (σ x) i)⦇n ↦ f i⦈}` by rw[SUBSET_DEF] >>
+                          rw[APPLY_UPDATE_THM,FUN_EQ_THM] >> Cases_on `n = x'` >> rw[] (* checked well defined, enough. Thankfully*) >> cheat >> cheat )
+      (* reduce the goal to the subtle point of the SE post *)
+      `{i |
          i ∈ I' ∧
-         ?a. a ∈ (FMS i).Dom /\¬ feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi} IN
-        U` by cheat >> 
-    qabbrev_tac `f = \i. CHOICE {a | a IN (FMS i).Dom /\ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi}` >>
-    `{i |
-         i ∈ I' ∧
-         ∃a. a ∈ (FMS i).Dom ∧ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi} = 
-     {i |
-         i ∈ I' ∧
-         ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi}` by cheat >> 
-   `{i | i ∈ I' ∧ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi} IN U` by metis_tac[] >>
-   `{i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi} NOTIN U` by cheat >>
-   `{i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi} = 
-    {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ(|n |-> {y | Uequiv U I' (folmodels2Doms FMS) y f}|)  x) i) phi}` by cheat >> 
-   `!σ.  (feval (ultraproduct_folmodel U I' FMS) σ phi ⇔
-             {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U)` by cheat >> 
-   `?a. a IN (ultraproduct_folmodel U I' FMS).Dom /\
-            ¬feval (ultraproduct_folmodel U I' FMS) σ⦇n ↦ a⦈ phi` suffices_by metis_tac[] >>
-   qexists_tac `{y | Uequiv U I' (folmodels2Doms FMS) y f}` >> rw[] >- cheat 
-   first_x_assum (qspecl_then `)
+         ∃a. a ∈ (FMS i).Dom ∧ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi} ⊆ 
+       {i | i ∈ I' ∧ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi}` suffices_by cheat >>
+      (* again lemma about subset *)
+      rw[SUBSET_DEF] >> rw[Abbr`f`] >> 
+      `CHOICE
+               {a |
+                a ∈ (FMS x).Dom ∧
+                ¬feval (FMS x) (λx'. CHOICE (σ x') x)⦇n ↦ a⦈ phi} IN 
+       {a |
+                a ∈ (FMS x).Dom ∧
+                ¬feval (FMS x) (λx'. CHOICE (σ x') x)⦇n ↦ a⦈ phi}` by cheat >> fs[]
+    (* just prove the set is nonempty *)
+  
 
-   
-
+   >- (first_x_assum drule >> rw[] >> first_x_assum (qspecl_then [`σ(|n |-> a|)`,`FMS`] assume_tac)>>
+      `IMAGE σ⦇n ↦ a⦈ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms FMS) /\ 
+      {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ⦇n ↦ a⦈ x) i) phi} ∈ U` suffices_by metis_tac[] >>
+      rw[](* 2 *)
+      >- (* need a lemma saying updating with a member in the world *) cheat
+      >- (`{i |
+         i ∈ I' ∧
+         ∀a. a ∈ (FMS i).Dom ⇒ feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi} ⊆ 
+         {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ⦇n ↦ a⦈ x) i) phi}` suffices_by cheat >>
+         (* need a lemma saying ultrafilter closed upward *)
+         rw[SUBSET_DEF] >> first_x_assum (qspec_then `(CHOICE a) x` assume_tac) >> 
+         `(λx'. CHOICE (σ x') x)⦇n ↦ CHOICE a x⦈ = (λx'. CHOICE (σ⦇n ↦ a⦈ x') x)` 
+           by (rw[FUN_EQ_THM] >> Cases_on `x' = n` >> rw[APPLY_UPDATE_THM]) >> fs[] >>
+         first_x_assum irule >> cheat
+         (* CHOICE a x ∈ (FMS x).Dom must be true, if not, need ass well form assumption *))) 
 QED
 
 
