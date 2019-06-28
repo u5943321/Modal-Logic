@@ -553,5 +553,27 @@ Proof
   metis_tac[]
 QED
 
+Theorem ultrafilter_complement:
+ !U I. ultrafilter U I ==> !P. {i| i IN I /\ P i} IN U <=> {i | i IN I /\ ¬(P i)} NOTIN U
+Proof
+  rw[ultrafilter_def,proper_filter_def,filter_def] >> 
+  first_x_assum (qspec_then `{i| i IN I' /\ P i}` assume_tac) >> 
+  `{i | i IN I' /\ P i} IN (POW I')` by fs[SUBSET_DEF,POW_DEF] >> first_x_assum drule >> 
+  `I' DIFF {i | i ∈ I' ∧ P i} = {i | i ∈ I' ∧ ¬(P i)}` suffices_by metis_tac[] >> rw[EXTENSION] >>
+  metis_tac[]
+QED
+
+Theorem ultrafilter_SUBSET:
+   !U I. ultrafilter U I ==> !s1 s2. s1 IN U /\ s1 ⊆ s2 /\ s2 ⊆ I ==> s2 IN U
+Proof
+  rw[ultrafilter_def,proper_filter_def,filter_def] 
+QED
+
+
+Theorem ultrafilter_INTER:
+  !U I. ultrafilter U I ==> !s1 s2. s1 IN U /\ s2 IN U ==> (s1 ∩ s2) IN U
+Proof
+  rw[ultrafilter_def,proper_filter_def,filter_def]
+QED
 
 val _ = export_theory();
