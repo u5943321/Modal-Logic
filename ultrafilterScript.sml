@@ -499,7 +499,7 @@ val FIP_closed_under_intersection = store_thm(
                
 val countably_incomplete_def = Define`
   countably_incomplete U W <=> (ultrafilter U W /\ 
-                                ?IFS. IFS ⊆ U /\ (BIGINTER IFS) NOTIN U)`
+                                ?IFS. IFS ⊆ U /\ (BIGINTER IFS) = {})`
 
 Theorem example_2_72:
   (ultrafilter U (univ (:num)) /\ !n. {n} NOTIN U) ==> countably_incomplete U (univ (:num))
@@ -563,7 +563,7 @@ Proof
   metis_tac[]
 QED
 
-Theorem ultrafilter_SUBSET:
+Theorem ultrafilter_SUBSET':
    !U I. ultrafilter U I ==> !s1 s2. s1 IN U /\ s1 ⊆ s2 /\ s2 ⊆ I ==> s2 IN U
 Proof
   rw[ultrafilter_def,proper_filter_def,filter_def] 
@@ -574,6 +574,52 @@ Theorem ultrafilter_INTER:
   !U I. ultrafilter U I ==> !s1 s2. s1 IN U /\ s2 IN U ==> (s1 ∩ s2) IN U
 Proof
   rw[ultrafilter_def,proper_filter_def,filter_def]
+QED
+
+Theorem ultrafilter_INTER_EMPTY:
+  !U I. ultrafilter U I ==> !IFS. IFS ⊆ U /\ IFS <> {} /\ (BIGINTER IFS) NOTIN U ==> INFINITE IFS 
+Proof
+  rw[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
+  `BIGINTER IFS IN U` suffices_by metis_tac[] >> irule BIGINTER_FINITE >> rw[] >>
+  metis_tac[ultrafilter_INTER]
+QED
+
+
+
+
+Theorem countably_incomplete_chain:
+  !U I. countably_incomplete  U I ==> 
+       ?In. (!n:num. In n IN U /\ In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}
+Proof
+  rw[countably_incomplete_def] >> 
+  `?X. BIJ X (univ(:num)) IFS` by cheat >>(* use univ(:num only?*)
+  qexists_tac `PRIM_REC (X 0) (\Xn n. Xn ∩ (X (n + 1)))` >> strip_tac
+  >- (Induct_on `n` >> rw[PRIM_REC_THM] (* 5 *)
+   >- fs[BIJ_DEF,INJ_DEF,SURJ_DEF,SUBSET_DEF]
+   >- (`1 = SUC 0` by fs[] >> 
+     `PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) (SUC 0) SUBSET X 0` suffices_by metis_tac[] >>
+     `PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) (SUC 0) = 
+      (λXn n. Xn ∩ X (n + 1)) (PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) 0) 0` by fs[PRIM_REC_THM] >>
+     `(λXn n. Xn ∩ X (n + 1)) (PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) 0) 0 SUBSET X 0`  
+       suffices_by metis_tac[] >> fs[] >> rw[PRIM_REC_THM] )
+   >- (irule ultrafilter_INTER >> rw[] (* 2 *)
+     >- fs[BIJ_DEF,INJ_DEF,SURJ_DEF,SUBSET_DEF]
+     >- (qexists_tac `I'` >> rw[ultrafilter_def,proper_filter_def,filter_def]))
+   >- (`PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) (SUC n + 1) ⊆ 
+     PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) (n + 1)` suffices_by metis_tac[SUBSET_TRANS] >>
+     `PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) (SUC (n + 1)) ⊆
+     PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) (n + 1)` suffices_by fs[ADD] >>
+     rw[PRIM_REC_THM])
+   >- (rw[ADD,PRIM_REC_THM] >>
+     `PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) (n + 1) ⊆ X (n + 1)` 
+       suffices_by fs[INTER_DEF,SUBSET_DEF] >> 
+     `PRIM_REC (X 0) (λXn n. Xn ∩ X (n + 1)) (SUC n) ⊆ X (n + 1)` suffices_by fs[ADD1] >>
+     rw[PRIM_REC_THM]))
+  >- (rw[BIGINTER] >> rw[Once EXTENSION,EQ_IMP_THM] >> rw[PULL_EXISTS] >> SPOSE_NOT_THEN ASSUME_TAC >>
+     `x IN BIGINTER IFS` suffices_by metis_tac[MEMBER_NOT_EMPTY] >>
+     rw[BIGINTER] >> fs[BIJ_DEF,SURJ_DEF] >> first_x_assum drule >> rw[] >> Cases_on `y` (* 2 *)
+     >- (first_x_assum (qspec_then `0` assume_tac) >> fs[PRIM_REC_THM])
+     >- (first_x_assum (qspec_then `SUC n` assume_tac) >> fs[PRIM_REC_THM] >> fs[ADD1]))
 QED
 
 val _ = export_theory();

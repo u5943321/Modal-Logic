@@ -452,12 +452,12 @@ Proof
 QED
 
 val invar4bisim_def = Define`
-  invar4bisim μ ν phi <=> 
-     FV phi ⊆ {x} /\ 
+  invar4bisim x μ ν phi <=> 
+     (FV phi ⊆ {x} /\ 
      !(M:(num,μ) chap1$model) (N:(num,ν) chap1$model) v w.
-        bisim_world M N w v ==> 
-           (!σ. fsatis (mm2folm M) σ(|x |-> w|) phi <=> 
-                fsatis (mm2folm N) σ(|x |-> v|) phi)
+        bisim_world M N (w:μ) (v:ν) ==> 
+           (!(σm: num -> μ) (σn: num -> ν). fsatis (mm2folm M) σm(|x |-> w|) phi <=> 
+                    fsatis (mm2folm N) σn(|x |-> v|) phi))`
 
 
 

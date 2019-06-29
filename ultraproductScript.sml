@@ -645,7 +645,7 @@ completeInduct_on `term_size t` >> rw[] >> Cases_on `t` (* 2 *)
         `(λi. CHOICE (σ n) i) = CHOICE (σ n)` by (rw[FUN_EQ_THM] >> fs[]) >> fs[] >> 
         irule thm_A_19_i_V_l5 >> rw[] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) 
      >- (* proved thm *) metis_tac[prop_A_16]) 
-  >- Cases_on `l = []`
+  >- (Cases_on `l = []`
    >- (fs[] >> rw[termval_def,ultraproduct_folmodel_def] >>
       rw[EXTENSION,EQ_IMP_THM](* 3 *)
       >- (rw[Uequiv_def] (* 3 *) >- (rw[folmodels2Doms_def] >> metis_tac[MEMBER_NOT_EMPTY])
@@ -653,7 +653,7 @@ completeInduct_on `term_size t` >> rw[] >> Cases_on `t` (* 2 *)
                                 >- rw[Cart_prod_def,folmodels2Doms_def])
       >- fs[Uequiv_def,Cart_prod_def,folmodels2Doms_def]
       >- fs[Uequiv_def])
-   >- rw[termval_def,ultraproduct_folmodel_def] >>
+   >- (rw[termval_def,ultraproduct_folmodel_def] >>
       qabbrev_tac `UPM  =  <|Dom := ultraproduct U I' (folmodels2Doms FMS);
                          Fun :=
                            (λn fs.
@@ -795,10 +795,10 @@ completeInduct_on `term_size t` >> rw[] >> Cases_on `t` (* 2 *)
                {f |
                 Uequiv U I' (folmodels2Doms FMS) f
                   (λi. termval (FMS i) (λn. CHOICE (σ n) i) a)} i =
-             termval (FMS i) (λn. CHOICE (σ n) i) a}`] >> rw[] (* only one subgoal *)
+             termval (FMS i) (λn. CHOICE (σ n) i) a}`] >> rw[] (* only one subgoal *)>>
            rw[IMAGE_DEF])
         >- (rw[GSYM MEMBER_NOT_EMPTY] >> metis_tac[NULL_EQ,NOT_NULL_MEM])
-        >- (rw[SUBSET_DEF] >> metis_tac[]))
+        >- (rw[SUBSET_DEF] >> metis_tac[])) 
        (* all mem suffices tac end *)
       (* cheated! need a lemma here saying ultrafilter closed under finite inter (fixed)*) >> rw[] >> 
         `Uequiv U I' (folmodels2Doms FMS)
@@ -814,7 +814,7 @@ completeInduct_on `term_size t` >> rw[] >> Cases_on `t` (* 2 *)
             {i | i ∈ I' ∧ f i = termval (FMS i) (λn. CHOICE (σ n) i) a} ∈ U} IN 
            {f |
             f ∈ Cart_prod I' (folmodels2Doms FMS) ∧
-            {i | i ∈ I' ∧ f i = termval (FMS i) (λn. CHOICE (σ n) i) a} ∈ U}` suffices_by rw[]
+            {i | i ∈ I' ∧ f i = termval (FMS i) (λn. CHOICE (σ n) i) a} ∈ U}` suffices_by rw[] >> 
            (* very little suffice tac *)
           `{f |
            f ∈ Cart_prod I' (folmodels2Doms FMS) ∧
@@ -859,7 +859,7 @@ completeInduct_on `term_size t` >> rw[] >> Cases_on `t` (* 2 *)
            Uequiv U I' (λi. (FMS i).Dom) x y}` by 
          (`{y |(∀i. i ∈ I' ⇒ y i ∈ (FMS i).Dom) ∧
            Uequiv U I' (λi. (FMS i).Dom) x y} <> {}` suffices_by metis_tac[CHOICE_DEF] >>
-          rw[GSYM MEMBER_NOT_EMPTY] >> qexists_tac `x` >> rw[]) >> fs[])
+          rw[GSYM MEMBER_NOT_EMPTY] >> qexists_tac `x` >> rw[]) >> fs[]))
     (* cheated!!! need a lemma (λi. termval (FMS i) (λn. CHOICE (σ n) i) a) ∈
         Cart_prod I' (folmodels2Doms FMS)-----termval (FMS i) (λn. CHOICE (σ n) i) a ∈ (FMS i).Dom
  (fixed with a lemma which should go to model theory) *)
@@ -905,7 +905,7 @@ completeInduct_on `term_size t` >> rw[] >> Cases_on `t` (* 2 *)
               (FMS i).Fun n (MAP (λa. termval (FMS i) (λn. CHOICE (σ n) i) a) l)} =
               {i | i ∈ I' ∧ (FMS i).Fun n (MAP (λa. termval (FMS i) (λn. CHOICE (σ n) i) a) l) = x i}`
                 suffices_by metis_tac[] >> rw[EXTENSION] >> metis_tac[])))
-   >- metis_tac[prop_A_16]
+   >- metis_tac[prop_A_16]))
 QED
 
 Theorem IMAGE_UPDATE:
@@ -937,7 +937,12 @@ Theorem thm_A_19_ii:
 Proof
   Induct_on `phi` (* 4 *)
   >- (rw[feval_def] >> metis_tac[EMPTY_NOTIN_ultrafilter])
-  >- (rw[feval_def,ultraproduct_folmodel_def,feval_def,MAP_MAP_o,o_DEF] >> 
+  >- (rw[] >> Cases_on `l = []` >- (fs[] >> rw[ultraproduct_folmodel_def]) 
+
+
+
+(* apply for l <> []*)
+>- rw[feval_def,ultraproduct_folmodel_def,feval_def,MAP_MAP_o,o_DEF] >> 
      `<|Dom := ultraproduct U I' (folmodels2Doms FMS);
                         Fun :=
                           (λn fs.
@@ -973,8 +978,8 @@ Proof
      `BIGINTER { {i | i ∈ I' ∧ CHOICE (termval (ultraproduct_folmodel U I' FMS) σ a) i
               = (termval (FMS i) (λx. CHOICE (σ x) i) a)} | MEM a l} ⊆ I0` by
         (* split I0 inter small sets *)
-     (rw[SUBSET_DEF,Abbr`I0`] (* cheated! need a seperate case for l=[] *)
-     >- cheat
+     (rw[SUBSET_DEF,Abbr`I0`] (* cheated! need a seperate case for l=[](fixed) *)
+     >- (`?m. MEM m l` by metis_tac[NOT_NULL_MEM,NULL_EQ] >> fs[PULL_EXISTS] >> metis_tac[])
      >- (irule MAP_LIST_EQ >> rw[] >> fs[PULL_EXISTS])) >> 
      `BIGINTER { {i | i ∈ I' ∧ CHOICE (termval (ultraproduct_folmodel U I' FMS) σ a) i
               = (termval (FMS i) (λx. CHOICE (σ x) i) a)} | MEM a l} IN U`
@@ -988,10 +993,10 @@ Proof
         map_every qexists_tac [`{a| MEM a l}`,`\a.{i | i ∈ I' ∧
                               CHOICE (termval (ultraproduct_folmodel U I' FMS) σ a) i =
                               termval (FMS i) (λx. CHOICE (σ x) i) a}`] >> rw[] >>
-        rw[EQ_IMP_THM,EXTENSION] (* 2 *)
-        >- cheat (* cheated! need empty list a case *)
-        >- (rw[Abbr`BS`] >> qexists_tac `a` >> rw[EXTENSION] >> metis_tac[]))
-     >- (rw[GSYM MEMBER_NOT_EMPTY] (* cheated! same reason *) >> cheat)
+        rw[EQ_IMP_THM,Once EXTENSION] (* 2 *)
+        >- (fs[Abbr`BS`] >> metis_tac[])
+        >- (rw[Abbr`BS`] >> qexists_tac `a` >> metis_tac[]))
+     >- (rw[GSYM MEMBER_NOT_EMPTY] (* cheated! same reason (fixed)*) >> metis_tac[NOT_NULL_MEM,NULL_EQ])
      >- (rw[SUBSET_DEF] >> drule thm_A_19_i >> rw[] >> 
         `CHOICE
            {f |
@@ -1164,7 +1169,7 @@ Proof
                               `A ∩ 
                              {i | i ∈ I' ∧ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi} IN U`
                                by metis_tac[ultrafilter_INTER] >> 
-                              `B ⊆ I'` by rw[Abbr`B`,SUBSET_DEF] >> metis_tac[ultrafilter_SUBSET])>>
+                              `B ⊆ I'` by rw[Abbr`B`,SUBSET_DEF] >> metis_tac[ultrafilter_SUBSET'])>>
                            `{i | i IN I' /\ 
                                 (CHOICE {g | Uequiv U I' (folmodels2Doms FMS) g f}) i = f i} ⊆ 
                            {i | i ∈ I' ∧
@@ -1174,9 +1179,9 @@ Proof
                        qmatch_abbrev_tac `BIGSET IN U` >> 
                        `BIGSET ⊆ I'` by fs[Abbr`BIGSET`,SUBSET_DEF] >>
                        `{i |i ∈ I' ∧ CHOICE {g | Uequiv U I' (folmodels2Doms FMS) g f} i = f i} IN U`
-                         suffices_by metis_tac[ultrafilter_SUBSET] >> 
+                         suffices_by metis_tac[ultrafilter_SUBSET'] >> 
                  (* (* checked well defined, enough. Thankfully*) >> cheat >> cheat ) do not know hwat are the cheat for...*)
-      (* reduce the goal to the subtle point of the SE post *)
+      (* reduce the goal to the subtle point *)
       `Uequiv U I' (folmodels2Doms FMS) (CHOICE {g | Uequiv U I' (folmodels2Doms FMS) g f}) f`
         suffices_by 
       (* a suffice start here *)
@@ -1194,7 +1199,7 @@ Proof
            {g |
             g ∈ Cart_prod I' (folmodels2Doms FMS) ∧
             {i | i ∈ I' ∧ g i = f i} ∈ U} i = f i}` suffices_by metis_tac[]>>
-     rw[EXTENSION,EQ_IMP_THM]) >> 
+     rw[EXTENSION,EQ_IMP_THM]) >> (* the above suffices **a suffices ** end here *)
      `CHOICE {g | Uequiv U I' (folmodels2Doms FMS) g f} IN {g | Uequiv U I' (folmodels2Doms FMS) g f}`
        suffices_by fs[] >> 
      `{g | Uequiv U I' (folmodels2Doms FMS) g f} <> {}` suffices_by metis_tac[CHOICE_DEF] >> 
@@ -1240,13 +1245,13 @@ Proof
 (* reduce the goal ... just to save space do not indenting *) 
 qmatch_abbrev_tac `BS' IN U` >> 
  `{i | i ∈ I' ∧ ∃a. a ∈ (FMS i).Dom ∧ ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi} ⊆ BS'` 
-          suffices_by (`BS' ⊆ I'` by fs[SUBSET_DEF,Abbr`BS'`] >> metis_tac[ultrafilter_SUBSET]) >>
+          suffices_by (`BS' ⊆ I'` by fs[SUBSET_DEF,Abbr`BS'`] >> metis_tac[ultrafilter_SUBSET']) >>
       (* again lemma about subset (fixed) *)
 rw[SUBSET_DEF] >> rw[Abbr`BS'`] >>
 Cases_on `∃a.
                       a ∈ (FMS i).Dom ∧
                       ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi` (* 2 *) >>
-rw[Abbr`f`] >> fs[] (* 2 *)
+rw[Abbr`f`] >> fs[] (* 2same tactic applies for both cases *)
 >- (`CHOICE {a |a ∈ (FMS x).Dom ∧ ¬feval (FMS x) (λx'. CHOICE (σ x') x)⦇n ↦ a⦈ phi} IN
               {a |a ∈ (FMS x).Dom ∧ ¬feval (FMS x) (λx'. CHOICE (σ x') x)⦇n ↦ a⦈ phi}` 
         suffices_by fs[] >> irule CHOICE_DEF >> rw[GSYM MEMBER_NOT_EMPTY] >> metis_tac[])
@@ -1262,7 +1267,7 @@ rw[Abbr`f`] >> fs[] (* 2 *)
          ∀a. a ∈ (FMS i).Dom ⇒ feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi} ⊆ 
          {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ⦇n ↦ a⦈ x) i) phi}` suffices_by
           (* little suffice *) 
-          (rw[] >> irule ultrafilter_SUBSET >> rw[] (* 2 *)
+          (rw[] >> irule ultrafilter_SUBSET' >> rw[] (* 2 *)
           >- metis_tac[] >- (qexists_tac `I'` >> rw[SUBSET_DEF]))
           (* little suffice end *) >> 
         rw[SUBSET_DEF] >> 
@@ -1276,6 +1281,76 @@ rw[Abbr`f`] >> fs[] (* 2 *)
 QED
 
 
+
+
+Theorem ultraproduct_comm_termval:
+  !t U I MS. ultrafilter U I ==> term_functions t = {} ==>
+      !σ. (termval (mm2folm (ultraproduct_model U I MS)) σ t =
+           termval (ultraproduct_folmodel U I (\i. mm2folm (MS i))) σ t)
+Proof
+ Cases_on `t` >> rw[termval_def] 
+QED
+
+
+Theorem ultraproduct_comm_feval:
+  !phi U I MS. ultrafilter U I ==> form_functions phi = {} ==>
+            !σ. IMAGE σ (univ(:num)) ⊆ ultraproduct U I (models2worlds MS) ==>
+                (feval (mm2folm (ultraproduct_model U I MS)) σ phi <=>
+                 feval (ultraproduct_folmodel U I (\i. mm2folm (MS i))) σ phi)
+Proof
+  Induct_on `phi` 
+  >- rw[feval_def]
+  >- rw[feval_def] >> 
+     (* cheat to see what happens if the termval are same *)
+     `(MAP (termval (mm2folm (ultraproduct_model U I' MS)) σ) l) = 
+      (MAP (termval (ultraproduct_folmodel U I' (λi. mm2folm (MS i))) σ) l)` by 
+        (irule MAP_LIST_EQ >> rw[] >> irule ultraproduct_comm_termval >> rw[] >> SPOSE_NOT_THEN ASSUME_TAC
+        fs[GSYM MEMBER_NOT_EMPTY] >> 
+        `x IN LIST_UNION (MAP term_functions l)` suffices_by metis_tac[MEMBER_NOT_EMPTY] >>
+        simp[IN_LIST_UNION] >> qexists_tac `term_functions m` >> rw[MEM_MAP] >> metis_tac[]) >> rw[]
+     qabbrev_tac `mapl = (MAP (termval (ultraproduct_folmodel U I' (λi. mm2folm (MS i))) σ) l)` >> 
+     Cases_on `mapl = []`(* 2 *)
+     >- (fs[] >> rw[mm2folm_def,ultraproduct_folmodel_def,ultraproduct_model_def] >>
+        metis_tac[EMPTY_NOTIN_ultrafilter])
+     >- `(?a. l = [a]) \/ (?a b. l = [a;b]) \/ (?a b c d. l = a :: b :: c :: d)` by 
+            (Cases_on `l` >> fs[] >> Cases_on `t` >> fs[] >> Cases_on `t'` >> fs[]) >>
+        (* 3 *)
+        >- rw[] >> qabbrev_tac `sl = termval (mm2folm (ultraproduct_model U I' MS)) σ a` >>
+           rw[mm2folm_def,ultraproduct_folmodel_def,ultraproduct_model_def] >> rw[EQ_IMP_THM] (* 3 *) 
+
+
+     `(termval (mm2folm (ultraproduct_model U I' MS)) σ) = 
+     (termval (ultraproduct_folmodel U I' (λi. mm2folm (MS i))) σ)` by cheat >> rw[] >>
+     Cases_on `?a. l = [a]` >> rw[ultraproduct_model_def] 
+     `(mm2folm (ultraproduct_model U I' MS)).Pred = 
+       (ultraproduct_folmodel U I' (λi. mm2folm (MS i))).Pred` suffices_by metis_tac[] >>
+     rw[FUN_EQ_THM] >> Cases_on `?a. x' = [a]` (* just check what happens if length=1 *)
+    fs[mm2folm_def,ultraproduct_folmodel_def,ultraproduct_model_def]
+    (* seems to reduce to well defined issue *) cheat 
+     >- Cases_on `?a b. x' = [a;b]`
+        >- (* well defined issue again *)
+        `?w w2 v10 v11. x' = w::w2::v10::v11` by cheat >> fs[] (* {} NOTIN U*)
+    cheat
+  >-  rw[feval_def] 
+  >- rw[feval_def] >> rw[EQ_IMP_THM] (* 2 *)
+     >- first_x_assum (qspecl_then [`U`,`I'`,`MS`] assume_tac) >> rfs[]
+        first_x_assum (qspec_then `σ(|n |-> a|)` assume_tac) >>
+        `(ultraproduct_folmodel U I' (λi. mm2folm (MS i))).Dom = 
+         (mm2folm (ultraproduct_model U I' MS)).Dom` by cheat >>
+        ` IMAGE σ⦇n ↦ a⦈ 𝕌(:num) ⊆ ultraproduct U I' (models2worlds MS)` suffices_by metis_tac[] >>
+       cheat (* need same domain *)
+   >- cheat
+QED
+
+Theorem count_sat_folmodel_ultraproduct:
+  !U I MS. ultrafilter U I ==> 
+     countably_saturated (ultraproduct_folmodel U I (\i. mm2folm (MS i))) ==>
+              countably_saturated (mm2folm (ultraproduct_model U I MS))
+Proof
+  rw[countably_saturated_def,n_saturated_def,consistent_def,ftype_def,frealizes_def] >>
+  rpt (first_x_assum drule >> rw[]) >> 
+  
+QED
 
 Definition shift_term_def:
   shift_term n (V m) = V (m+n) /\
@@ -1340,6 +1415,9 @@ Proof
   >- rw[FC_def] >> first_x_assum 
 QED
 *)
+
+Theorem mm2folm_NO_functions:
+  !phi. fsatis 
 
 Theorem expansion_shift_feval:
   !M A M' f. expansion (mm2folm M) A M' f ==>
@@ -1413,12 +1491,30 @@ QED
 
 
 Theorem lemma_2_73:
+  !U I FMS. 
+         countably_incomplete U I ==>
+          !fs. (!fm. fm IN fs ==> FV fm ⊆ {x} ∪ K) ==> 
+            (!ss. FINITE ss /\ ss ⊆ fs ==> 
+                    ?σ. IMAGE σ (univ(:num)) ⊆ ultraproduct_folmodel U I FMS /\
+                        (!k. k IN K ==> σ k = f k) /\
+                        !phi. phi IN ss ==> feval (ultraproduct_folmodel U I FMS) σ phi)
+                ==> ?σ. IMAGE σ (univ(:num)) ⊆ ultraproduct_folmodel U I FMS /\
+                        (!k. k IN K ==> σ k = f k) /\ 
+                        !phi. phi IN fs ==> feval (ultraproduct_folmodel U I FMS) σ phi
+Proof
+
+QED
+ 
+
+
+Theorem lemma_2_73:
   !U I MS M. 
          countably_incomplete U I /\
          (!i. i IN I ==> MS i = M) ==>
              countably_saturated (mm2folm (ultraproduct_model U I MS))
 Proof
   rw[countably_saturated_def,n_saturated_def,consistent_def,ftype_def,frealizes_def] >>
+  
   `?In. (!n: num. In (n+1) ⊆ In n) /\
         (!n. (In n) IN U) /\
         BIGINTER {(In n)| n IN (univ (:num))} = {}` by cheat >>
