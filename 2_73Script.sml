@@ -83,13 +83,40 @@ Proof
   rw[mm2folm_def] >> metis_tac[CHOICE_DEF]
 QED
 
+
+Theorem termval_IN_ultraproduct_Dom:
+!U I MS. ultrafilter U I ==> 
+ !σ. IMAGE σ 𝕌(:num) ⊆ ultraproduct U I (models2worlds MS) ==>
+  !a. (termval (mm2folm (ultraproduct_model U I MS)) σ a) IN 
+      (ultraproduct U I (models2worlds MS))
+Proof
+  rw[] >>
+  `(ultraproduct U I' (models2worlds MS)) = (mm2folm (ultraproduct_model U I' MS)).Dom`
+  by metis_tac[mm2folm_ultraproduct_model_Dom] >>
+  rw[] >> irule termval_IN_Dom >> rw[] (* 2 *)
+  >- (irule mm2folm_well_formed >> fs[IMAGE_DEF,SUBSET_DEF] >>
+     `(ultraproduct_model U I' MS).frame.world =  
+      (mm2folm (ultraproduct_model U I' MS)).Dom` by fs[mm2folm_def] >> rw[] >> 
+     simp[GSYM MEMBER_NOT_EMPTY] >> fs[PULL_EXISTS] >> qexists_tac `σ x` >> rw[])
+  >- fs[mm2folm_def]     
+QED
+
+Theorem ultraproduct_val_IN_A:
+  !U I. ultrafilter U I ==> 
+     !A eqc. eqc IN ultraproduct U I A ==> 
+              !f. f IN eqc ==> (!i. i IN I ==> (f i) IN (A i))
+Proof
+  rw[] >> fs[ultraproduct_def,partition_def,Cart_prod_def] >> rfs[]
+QED
+
 Theorem ultraproduct_comm_feval:
-  !phi U I MS. ultrafilter U I ==> form_functions phi = {} ==>
+  !phi U I MS. ultrafilter U I (* /\ (!i. i IN I ==> (MS i).frame.world <> {})*)
+          ==> form_functions phi = {} ==>
             !σ. IMAGE σ (univ(:num)) ⊆ ultraproduct U I (models2worlds MS) ==>
                 (feval (mm2folm (ultraproduct_model U I MS)) σ phi <=>
                  feval (ultraproduct_folmodel U I (\i. mm2folm (MS i))) σ phi)
 Proof
-  Induct_on `phi` 
+  Induct_on `phi` (* 4 *)
   >- rw[feval_def]
   >- rw[feval_def] >> 
      (* cheat to see what happens if the termval are same (where is the cheat...) *)
@@ -110,7 +137,7 @@ Proof
         >- (rw[] >> qabbrev_tac `sl = termval (mm2folm (ultraproduct_model U I' MS)) σ a` >>
            rw[mm2folm_def,ultraproduct_folmodel_def,ultraproduct_model_def] >> rw[EQ_IMP_THM] (* 3 *) 
            >- (`{i | i IN I' /\ f i = (CHOICE sl) i} IN U` by 
-                (irule ultraproduct_same_eqclass >> rw[]
+                (irule ultraproduct_same_eqclass >> rw[] >>
                 map_every qexists_tac [`models2worlds MS`,`sl`] >> rw[] >>
                 `sl <> {}` suffices_by metis_tac[CHOICE_DEF] >> 
                  drule ultraproduct_eqclass_non_empty >> rw[] >> metis_tac[]) >>
@@ -126,19 +153,24 @@ Proof
               (* proved subset *)
               irule ultrafilter_SUBSET' >> rw[PULL_EXISTS] (* 2 *)
               >- metis_tac[ultrafilter_INTER]
-              >- qexists_tac `I'` >> rw[SUBSET_DEF])
+              >- (qexists_tac `I'` >> rw[SUBSET_DEF]))
            >- (drule ultraproduct_folmodel_well_formed >> rw[Abbr`sl`] >> 
               `ultraproduct U I' (models2worlds MS) = 
                (mm2folm (ultraproduct_model U I' MS)).Dom` by 
                 metis_tac[mm2folm_ultraproduct_model_Dom] >> 
               rw[] >> irule termval_IN_Dom >> rw[](* 2 *)
               >- (`(ultraproduct_model U I' MS).frame.world <> {}` suffices_by 
-                   metis_tac[mm2folm_well_formed] >> (* cheated! need assumption each MS i <> {}*)
-                 cheat)
+                   metis_tac[mm2folm_well_formed] >> (* cheated! (fixed)*)
+                   rw[Once ultraproduct_model_def] >> 
+                   fs[mm2folm_ultraproduct_model_Dom] >>
+                   fs[IMAGE_DEF,SUBSET_DEF,GSYM MEMBER_NOT_EMPTY] >> qexists_tac `σ x` >> rw[]>>
+                   metis_tac[])
               >- metis_tac[mm2folm_ultraproduct_model_Dom])
            >- (qexists_tac `CHOICE sl` >> rw[] (* 2 *)
-              >- (`sl <> {}` suffices_by metis_tac[CHOICE_DEF] >> cheat)
-                 (*once proved sl in world then true by some lemma cheated!!*)
+              >- (`sl <> {}` suffices_by metis_tac[CHOICE_DEF] >> 
+                  rw[Abbr`sl`] >> drule ultraproduct_eqclass_non_empty >> rw[] >>
+                  metis_tac[termval_IN_ultraproduct_Dom])
+                 (*once proved sl in world then true by some lemma (fixed)*)
               >- (irule ultrafilter_SUBSET' >> rw[PULL_EXISTS] (* 2 *)
                  >- (qexists_tac `{i | i ∈ I' ∧ CHOICE sl i ∈ (MS i).frame.world ∧
                                  (MS i).valt n (CHOICE sl i)}` >> rw[SUBSET_DEF,IN_DEF])
@@ -158,15 +190,46 @@ Proof
                 map_every qexists_tac [`models2worlds MS`,`sl2`] >> rw[] >>
                 `sl2 <> {}` suffices_by metis_tac[CHOICE_DEF] >> 
                 drule ultraproduct_eqclass_non_empty >> rw[] >> metis_tac[]) >>
-              cheat (* tedious! same as above *))
+              qmatch_abbrev_tac `BS IN U` >> 
+              `{i | i ∈ I' ∧ (MS i).frame.rel (f i) (g i)} ∩ 
+               {i | i ∈ I' ∧ f i = CHOICE sl1 i} ∩ {i | i ∈ I' ∧ g i = CHOICE sl2 i} ⊆ BS` by
+               (* start a proof subset *)
+               (rw[SUBSET_DEF,INTER_DEF,Abbr`BS`] (* 3 *)
+               >- fs[] 
+               >- (`f x IN (MS x).frame.world` suffices_by metis_tac[] >>
+                  drule ultraproduct_val_IN_A >> rw[] >> 
+                  first_x_assum (qspecl_then [`models2worlds MS`,`sl1`, `f`,`x`] assume_tac) >>
+                  fs[models2worlds_def] >> metis_tac[])
+               >- (`g x IN (MS x).frame.world` suffices_by metis_tac[] >>
+                  drule ultraproduct_val_IN_A >> rw[] >> 
+                  first_x_assum (qspecl_then [`models2worlds MS`,`sl2`, `g`,`x`] assume_tac) >>
+                  fs[models2worlds_def] >> metis_tac[]))
+              (*subset proof end*)
+              `BS ⊆ I'` by fs[Abbr`BS`,SUBSET_DEF] >> drule ultrafilter_INTER_INTER_SUBSET >> rw[] >>
+              first_x_assum irule >> metis_tac[](* tedious! same as above (fixed)*))
            >- (SPOSE_NOT_THEN ASSUME_TAC >> 
               `{i | i ∈ I' ∧ n = 0 ∧ (MS i).frame.rel (CHOICE sl1 i) (CHOICE sl2 i) ∧
                     CHOICE sl1 i ∈ (MS i).frame.world ∧
-                    CHOICE sl2 i ∈ (MS i).frame.world} = {}` rw[Once EXTENSION] >>
+                    CHOICE sl2 i ∈ (MS i).frame.world} = {}` by rw[Once EXTENSION] >>
               metis_tac[EMPTY_NOTIN_ultrafilter])
-           >- (map_every qexists_tac [`CHOICE sl1`,`CHOICE sl2`] (*just tedious...*)>> cheat)
-           >- (*  sl1 ∈ ultraproduct U I' (models2worlds MS) maybe really need lemmas...*) cheat
-           >- cheat)
+           >- (map_every qexists_tac [`CHOICE sl1`,`CHOICE sl2`] >> rw[] (* 3 *)
+              >- (`sl1 <> {}` suffices_by metis_tac[CHOICE_DEF] >> 
+                 drule ultraproduct_eqclass_non_empty >> rw[] >> rw[Abbr`sl1`] >>
+                 `termval (mm2folm (ultraproduct_model U I' MS)) σ a ∈
+                    ultraproduct U I' (models2worlds MS)` by metis_tac[termval_IN_ultraproduct_Dom]>>
+                 metis_tac[ultraproduct_eqclass_non_empty])
+              >- (`sl2 <> {}` suffices_by metis_tac[CHOICE_DEF] >> 
+                 drule ultraproduct_eqclass_non_empty >> rw[] >> rw[Abbr`sl2`] >>
+                 `termval (mm2folm (ultraproduct_model U I' MS)) σ b ∈
+                    ultraproduct U I' (models2worlds MS)` by metis_tac[termval_IN_ultraproduct_Dom]>>
+                 metis_tac[ultraproduct_eqclass_non_empty])
+              >- (irule ultrafilter_SUBSET' >> rw[] (* 2 *)
+                 >- (qexists_tac `{i |i ∈ I' ∧ n = 0 ∧(MS i).frame.rel (CHOICE sl1 i) (CHOICE sl2 i) ∧
+                             CHOICE sl1 i ∈ (MS i).frame.world ∧ CHOICE sl2 i ∈ (MS i).frame.world}`>>
+                    rw[SUBSET_DEF])
+                 >- (qexists_tac `I'` >> rw[SUBSET_DEF])))
+           >- (rw[Abbr`sl1`] >> irule termval_IN_ultraproduct_Dom >> rw[])
+           >- (rw[Abbr`sl2`] >> irule termval_IN_ultraproduct_Dom >> rw[]))
         >- (rw[mm2folm_def,ultraproduct_folmodel_def,ultraproduct_model_def] >>
            metis_tac[EMPTY_NOTIN_ultrafilter])) 
   >- rw[feval_def] 
@@ -180,7 +243,7 @@ Proof
      irule IMAGE_UPDATE >> rw[] >> 
      metis_tac[ultraproduct_comm_Dom,mm2folm_ultraproduct_model_Dom])
 QED
-
+(*
 Theorem count_sat_folmodel_ultraproduct:
   !U I MS. ultrafilter U I ==> 
      countably_saturated (ultraproduct_folmodel U I (\i. mm2folm (MS i))) ==>
@@ -190,6 +253,8 @@ Proof
   rpt (first_x_assum drule >> rw[]) >> 
   
 QED
+may not need it 
+*)
 
 (* theory on shift in order to pass from expansion to mm2folm model and then to ultraprodfol model*)
 

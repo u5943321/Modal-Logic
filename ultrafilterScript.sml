@@ -576,6 +576,17 @@ Proof
   rw[ultrafilter_def,proper_filter_def,filter_def]
 QED
 
+Theorem ultrafilter_INTER_INTER_SUBSET:
+  !U I. ultrafilter U I ==>
+       !s1 s2 s3. s1 IN U /\ s2 IN U /\ s3 IN U ==> 
+          !s4. s4 ⊆ I ==> s1 ∩ s2 ∩ s3 ⊆ s4 ==> s4 IN U
+Proof
+  rw[] >> irule ultrafilter_SUBSET' >> rw[] (* 2 *)
+  >- (qexists_tac `s1 ∩ s2 ∩ s3` >> rw[] >> irule ultrafilter_INTER >> rw[] (* 2 *)
+     >- metis_tac[ultrafilter_INTER] >- metis_tac[])
+  >- metis_tac[]
+QED
+
 Theorem ultrafilter_INTER_EMPTY:
   !U I. ultrafilter U I ==> !IFS. IFS ⊆ U /\ IFS <> {} /\ (BIGINTER IFS) NOTIN U ==> INFINITE IFS 
 Proof
