@@ -499,16 +499,21 @@ val FIP_closed_under_intersection = store_thm(
                
 val countably_incomplete_def = Define`
   countably_incomplete U W <=> (ultrafilter U W /\ 
-                                ?IFS. IFS ⊆ U /\ (BIGINTER IFS) = {})`
+                                ?IFS f. IFS ⊆ U /\ BIJ f (univ(:num)) IFS /\ (BIGINTER IFS) = {})`
 
 Theorem example_2_72:
   (ultrafilter U (univ (:num)) /\ !n. {n} NOTIN U) ==> countably_incomplete U (univ (:num))
 Proof
   rw[countably_incomplete_def] >> 
-  `?IFS. IFS ⊆ U /\ BIGINTER IFS = {}` suffices_by metis_tac[EMPTY_NOTIN_ultrafilter] >>
-  qexists_tac `{ (univ (:num)) DIFF {n} | n IN univ (:num)}` >> rw[] (* 2 *)
+  (*`?IFS. IFS ⊆ U /\ BIGINTER IFS = {}` suffices_by metis_tac[EMPTY_NOTIN_ultrafilter] >>*)
+  map_every qexists_tac [`{ (univ (:num)) DIFF {n} | n IN univ (:num)}`,
+                         `\n. (univ (:num)) DIFF {n}`] >> rw[] (* 3 *)
   >- (rw[SUBSET_DEF] >> fs[ultrafilter_def] >> first_x_assum (qspec_then `{n}` mp_tac) >>
      rw[POW_DEF])
+  >- (rw[BIJ_DEF,INJ_DEF,SURJ_DEF] (* 4 *)
+     >- metis_tac[]
+     >- (fs[EXTENSION] >> metis_tac[])
+     >> metis_tac[])
   >- (simp[BIGINTER,EXTENSION,PULL_EXISTS] >> rw[] >> 
      qexists_tac `(univ (:num)) DIFF {x}` >> simp[])
 QED 
@@ -552,6 +557,8 @@ Proof
   `s IN (POW 𝕌(:num))` by fs[POW_DEF,SUBSET_DEF] >>
   metis_tac[]
 QED
+
+
 
 Theorem ultrafilter_complement:
  !U I. ultrafilter U I ==> !P. {i| i IN I /\ P i} IN U <=> {i | i IN I /\ ¬(P i)} NOTIN U
@@ -603,7 +610,7 @@ Theorem countably_incomplete_chain:
        ?In. (!n:num. In n IN U /\ In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}
 Proof
   rw[countably_incomplete_def] >> 
-  `?X. BIJ X (univ(:num)) IFS` by cheat >>(* use univ(:num only?*)
+  `?X. BIJ X (univ(:num)) IFS` by metis_tac[] >> 
   qexists_tac `PRIM_REC (X 0) (\Xn n. Xn ∩ (X (n + 1)))` >> strip_tac
   >- (Induct_on `n` >> rw[PRIM_REC_THM] (* 5 *)
    >- fs[BIJ_DEF,INJ_DEF,SURJ_DEF,SUBSET_DEF]
