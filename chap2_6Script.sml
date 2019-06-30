@@ -66,7 +66,8 @@ val n_saturated_def = Define`
      !A M' G x f.
         (FINITE A /\ CARD A <= n /\ A SUBSET M.Dom /\
         expansion M A M' f /\ 
-        (!phi. phi IN G ==> !c. c IN (FC phi) ==> c IN (count (CARD A))) /\
+        (!phi. phi IN G ==> !c. c IN (form_functions phi) ==> 
+                               (FST c) IN (count (CARD A)) /\ SND c = 0) /\
 (* G SUBSET { phi | ok_form M' phi} /\ *)
         ftype x G /\ consistent M' G)
          ==>
@@ -74,6 +75,13 @@ val n_saturated_def = Define`
 
 val countably_saturated_def = Define`
   countably_saturated M <=> !n. n_saturated M n`;
+
+
+Theorem IMAGE_UPDATE:
+  !σ a. IMAGE σ A ⊆ B ==> !b. b IN B ==> IMAGE σ(|a |-> b|) A ⊆ B
+Proof
+  rw[IMAGE_DEF,SUBSET_DEF] >> Cases_on `x' = a` >> rw[APPLY_UPDATE_THM] >> metis_tac[]
+QED
 
 
 
@@ -180,7 +188,7 @@ val ST_FV_singleton = store_thm(
 
 --------------
 
-
+(*
 
 val diff_form_diff_ST = store_thm(
   "diff_form_diff_ST",
@@ -214,6 +222,7 @@ val ST_INJ = store_thm(
   "ST_INJ",
   ``!x s1 s2. (!f. f IN s1 ==> (ST x f) IN s2) ==> INJ (ST x) s1 s2``,
   rw[INJ_DEF] >> metis_tac[diff_form_diff_ST]);
+*)
 
 
   
@@ -239,7 +248,7 @@ val thm_2_65 = store_thm(
             fs[satisfiable_in_def] >>
 	    qabbrev_tac `ps = {x' | x' IN Σ /\ ?f. f IN G0 /\ f = ST x x'}` >>
             `ps SUBSET Σ` by fs[Abbr`ps`,SUBSET_DEF] >>
-	    `FINITE ps` 
+	    `FINITE ps` cheat (* cheated! need to be fixed by the fact about finitely many form map to same ST *)
 	        by (`(IMAGE (ST x) ps) SUBSET G0`
 		       by (fs[Abbr`ps`,SUBSET_DEF] >> metis_tac[]) >>
 	           `INJ (ST x) ps G0`
@@ -263,12 +272,12 @@ val thm_2_65 = store_thm(
 		  imp_res_tac prop_2_47_i >>
 		  `satis M ((λn. x') x) t` by metis_tac[] >>
                   `fsatis (mm2folm M) (λn. x') (ST x t)` by fs[] >>
-		  `FC (ST x t) = {}` by metis_tac[ST_FC_EMPTY] >>
+		  `FC (ST x t) = {}` by metis_tac[ST_FC_EMPTY] (* cheat !! *) >>
 		  `(mm2folm M).Dom = MA.Dom` by fs[mm2folm_def,Abbr`MA`] >>
 		  `(mm2folm M).Pred = MA.Pred` by fs[mm2folm_def,Abbr`MA`] >>
                   `(∀n l. l ≠ [] ⇒ (mm2folm M).Fun n l = MA.Fun n l)`
 		      by fs[mm2folm_def,Abbr`MA`] >>
-		  `fsatis MA (λn. x') phi` by metis_tac[FC_EMPTY_fsatis] >>
+		  `fsatis MA (λn. x') phi` by metis_tac[FC_EMPTY_fsatis](* cheat !! need to fix lemma*) >>
 		  fs[fsatis_def])))
 	  >-  (`!f. f IN G0 ==> f IN (IMAGE (ST x) Σ)`
 	       by (rpt strip_tac >>
@@ -334,7 +343,7 @@ val thm_2_65 = store_thm(
 	     `fconsts x' = {}` by metis_tac[] >> metis_tac[NOT_IN_EMPTY])) >>
 *)
 
-   `ftype x Σ'`
+   `ftype x Σ'` by cheat
        by (rw[ftype_def,SUBSET_DEF] >> fs[Abbr`Σ'`] (* 2 *)
           >- (`FV (fR (Fn 0 []) (fV x)) = {x}`
 	         by rw[FV_def,FVT_def] >>

@@ -106,6 +106,8 @@ Proof
   
 QED
 
+(* theory on shift in order to pass from expansion to mm2folm model and then to ultraprodfol model*)
+
 Definition shift_term_def:
   shift_term n (V m) = V (m+n) /\
   shift_term n (Fn m l) = if l = [] then (V m) else (Fn m (MAP (shift_term n) l))
@@ -138,7 +140,7 @@ Proof
       fs[mm2folm_def])
 QED
 
-(*
+
 Theorem expansion_shift_feval:
   !M A M' f. expansion (mm2folm M) A M' f ==>
             !phi. (∀c. c ∈ FC phi ⇒ c < CARD A) ==>
@@ -147,7 +149,7 @@ Theorem expansion_shift_feval:
                     (feval M' σ phi <=> 
                     feval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi))
 Proof
-  rw[] >> Induct_on `phi` (* 4 *)
+  strip_tac >> strip_tac >> strip_tac >> strip_tac >> strip_tac >> Induct_on `phi` (* 4 *)
   >- rw[feval_def,shift_form_def]
   >- (rw[feval_def,shift_form_def,shift_term_def,shift_valuation_def,expansion_def] >> 
      ` M'.Pred n (MAP (termval M' σ) l) ⇔
@@ -166,9 +168,32 @@ Proof
       (!c. c ∈ FC phi' ⇒ c < CARD A)` by metis_tac[] >> 
      first_x_assum drule >> first_x_assum drule >> rw[] >> 
      rw[EQ_IMP_THM,shift_form_def])
-  >- rw[FC_def] >> first_x_assum 
+  >- (rw[FC_def] >> first_x_assum drule >> rw[feval_def] >> rw[EQ_IMP_THM] 
+    >- (rw[shift_form_def] >>
+     `(shift_valuation (CARD A) σ f)⦇n + CARD A ↦ a⦈ = 
+      (shift_valuation (CARD A) σ(|n |-> a|) f)` by (* store as little lemma ?*) 
+         (rw[FUN_EQ_THM,shift_valuation_def] >> 
+         Cases_on `x < CARD A` (* 2 *)
+         >- rw[APPLY_UPDATE_THM] 
+         >- (Cases_on `x = n + CARD A` >> rw[APPLY_UPDATE_THM])) >>
+     rw[] >> first_x_assum (qspec_then `σ(|n |-> a|)` assume_tac) >> rw[] >> 
+     `IMAGE σ⦇n ↦ a⦈ 𝕌(:num) ⊆ M.frame.world /\ feval M' σ⦇n ↦ a⦈ phi` suffices_by metis_tac[] >>
+     rw[] (* 2 *) >- (irule IMAGE_UPDATE >> fs[mm2folm_def]) >- fs[mm2folm_def,expansion_def])
+    >- (first_x_assum (qspec_then `σ(|n |-> a|)` assume_tac) >>
+       `IMAGE σ⦇n ↦ a⦈ 𝕌(:num) ⊆ M.frame.world /\ 
+       feval (mm2folm M) (shift_valuation (CARD A) σ⦇n ↦ a⦈ f)
+           (shift_form (CARD A) phi)` suffices_by metis_tac[] >> rw[] (* 2 *)
+       >- (irule IMAGE_UPDATE >> fs[mm2folm_def,expansion_def] >> rfs[])
+       >- (fs[shift_form_def] >> first_x_assum (qspec_then `a` assume_tac) >> rw[] >> 
+          `a IN (mm2folm M).Dom` by (fs[mm2folm_def,expansion_def] >> rfs[]) >> fs[] >>
+          `(shift_valuation (CARD A) σ f)⦇n + CARD A ↦ a⦈ = 
+           (shift_valuation (CARD A) σ(|n |-> a|) f)` by (* store as little lemma ?*) 
+             (rw[FUN_EQ_THM,shift_valuation_def] >> 
+             Cases_on `x < CARD A` (* 2 *)
+              >- rw[APPLY_UPDATE_THM] 
+              >- (Cases_on `x = n + CARD A` >> rw[APPLY_UPDATE_THM])) >>
+         fs[])))
 QED
-*)
 
 Theorem ultraproduct_sat:
 !U I FMS x. countably_incomplete U I ==> 
