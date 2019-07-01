@@ -6,13 +6,12 @@ open relationTheory;
 open arithmeticTheory;
 open set_relationTheory;
 open pairTheory;
+open prim_recTheory;
 
 
 val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "ultrafilter";
-
-(* ultrafilters *)
 
 val filter_def = Define`
 filter FLT W <=> W <> {} /\
@@ -221,7 +220,7 @@ qexists_tac `{X | X ⊆ W' ∧ (X = W' ∨ ∃S. S ⊆ S' ∧ FINITE S ∧ S <> 
 >- (rw[Once SUBSET_DEF]
   >- (fs[POW_DEF,SUBSET_DEF] >> metis_tac[])
   >- (`∃S. S ⊆ S' ∧ FINITE S ∧ S ≠ ∅ ∧ BIGINTER S ⊆ x` by (qexists_tac `{x}` >> rw[]) >> metis_tac[])));
-
+ 
 
 
 val BIGINTER_IN_filter = store_thm(

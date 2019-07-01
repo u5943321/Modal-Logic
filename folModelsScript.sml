@@ -3,6 +3,7 @@ open HolKernel Parse boolLib bossLib;
 open listTheory pred_setTheory
 open folLangTheory
 
+val _ = ParseExtras.tight_equality()
 val _ = new_theory "folModels";
 
 val MAP_CONG' = REWRITE_RULE [GSYM AND_IMP_INTRO] MAP_CONG

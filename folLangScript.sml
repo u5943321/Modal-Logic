@@ -4,6 +4,8 @@ open pred_setTheory listTheory
 
 val _ = new_theory "folLang";
 
+val _ = ParseExtras.tight_equality()
+
 Definition LIST_UNION_def[simp]:
   (LIST_UNION [] = ∅) ∧
   (LIST_UNION (h::t) = h ∪ LIST_UNION t)
