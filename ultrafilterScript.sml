@@ -530,7 +530,8 @@ Proof
    rw[FIP_def] 
   >- rw[POW_DEF]
   >- (`!S. FINITE S ==> S <> {} ==> S ⊆ {𝕌(:num) DIFF X | FINITE X} ==> 
-       INFINITE (BIGINTER S)` suffices_by cheat >>
+       INFINITE (BIGINTER S)` suffices_by 
+        (rw[] >> SPOSE_NOT_THEN ASSUME_TAC >> first_x_assum drule>> rw[]) >>
      Induct_on `FINITE` >> rw[] >>
      Cases_on `S'' = {}` >> fs[] (* 2 *)
     >- (`INFINITE univ(:num) ==> (INFINITE X \/ INFINITE (univ(:num) DIFF X))` by 
