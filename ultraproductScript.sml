@@ -1439,7 +1439,7 @@ Induct_on `phi` (* 4 *)
         fs[ultraproduct_def,folmodels2Doms_def,partition_def,Cart_prod_def] >> rfs[])))
 QED
 
-Theorem ultraproduct_rep_independence_lemma:
+Theorem ultraproduct_rep_independence_FORALL:
 !U I FMS σ.
   ultrafilter U I ==> 
   IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==>
@@ -1486,13 +1486,156 @@ first_x_assum irule >> rw[] >> fs[IMAGE_DEF,SUBSET_DEF] >>
 metis_tac[ultraproduct_eqclass_non_empty,CHOICE_DEF]
 QED
 
+Theorem ultraproduct_rep_independence_EXISTS:
+!U I FMS σ.
+  ultrafilter U I ==> 
+  IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==>
+  !phi. FV phi <> {} ==> 
+  ({i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U <=>
+   (?rv. (!v. v IN (FV phi) ==> (rv v) IN (σ v)) /\ 
+   {i | i ∈ I ∧ feval (FMS i) (λv. (rv v) i) phi} ∈ U))
+Proof 
+rw[EQ_IMP_THM] (* 2 *) 
+>- (qexists_tac `\v. CHOICE (σ v)` >> fs[IMAGE_DEF,SUBSET_DEF] >>
+    metis_tac[ultraproduct_eqclass_non_empty,CHOICE_DEF]) >> 
+qmatch_abbrev_tac `s IN U` >>
+   `(BIGINTER 
+     { {i | i IN I' /\ 
+            CHOICE (σ v) i = rv v i
+       }
+          | v IN (FV phi)}) IN U`
+     suffices_by 
+      (drule ultrafilter_SUBSET' >> strip_tac >>
+       qmatch_abbrev_tac `A IN U ==> s IN U` >> 
+       first_x_assum (qspecl_then 
+       [`A ∩ {i | i ∈ I' ∧ feval (FMS i) (λv. rv v i) phi} `,`s`] assume_tac) >> 
+       rw[] >> first_x_assum irule >> rw[Abbr`A`,Abbr`s`,SUBSET_DEF] (* 2 *)
+       >- (drule ultrafilter_INTER >> rw[]) >>
+       fs[PULL_EXISTS] >> 
+       `feval (FMS x) (λx'. CHOICE (σ x') x) phi = 
+       feval (FMS x) (λv. rv v x) phi` suffices_by metis_tac[] >>
+       irule holds_valuation >> metis_tac[]) >>
+     (*suffices by tac end, reduce to proving biginter*)
+   irule BIGINTER_FINITE >> rw[] (* 4 *)
+   >- metis_tac[ultrafilter_INTER]
+   >- (`FINITE (FV phi)` by metis_tac[FV_FINITE] >>
+       qmatch_abbrev_tac `FINITE bs` >> 
+       `?f:num -> 'a -> bool. IMAGE f (FV phi) = bs` suffices_by metis_tac[IMAGE_FINITE] >>
+       qexists_tac `\v.{i | i ∈ I' ∧ CHOICE (σ v) i = rv v i}` >>
+       rw[EXTENSION,Abbr`bs`,IMAGE_DEF])
+   >- (fs[GSYM MEMBER_NOT_EMPTY] >> metis_tac[])
+   >- (rw[SUBSET_DEF] >> irule ultraproduct_same_eqclass >> rw[] >>
+       map_every qexists_tac [`folmodels2Doms FMS`,`σ v`] >> 
+       `σ v IN (ultraproduct U I' (folmodels2Doms FMS))` 
+        by 
+         (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
+       metis_tac[ultraproduct_eqclass_non_empty,CHOICE_DEF])
+QED
 
-Theorem ultraproduct_rep_independence:
-  !U I FMS σ.
-     IMAGE σ 𝕌(:num) ⊆ ultraproduct U I (folmodels2Doms FMS) ==> 
-     (∀i ff ll. i ∈ I ⇒ (FMS i).Fun ff ll ∈ (FMS i).Dom) ==>
-       (feval (ultraproduct_folmodel U I FMS) σ phi <=>
-        
+
+Theorem corollary_A_21:
+ !U I FMS.
+   ultrafilter U I ==> (!i. i IN I ==> FMS i = FM) ==>
+   (∀i ff ll. i ∈ I ⇒ FM.Fun ff ll ∈ FM.Dom) ==> 
+   !σ. 
+      IMAGE σ (univ(:num)) ⊆ FM.Dom ==>
+     !phi. FV phi <> {} ==>
+           (feval FM σ phi <=>
+            feval (ultraproduct_folmodel U I FMS)
+            (\x. {g | Uequiv U I (folmodels2Doms FMS) g (\i. σ x)}) phi)
+Proof
+rw[] >> drule thm_A_19_ii >> rw[] >> drule ultraproduct_rep_independence_lemma >> rw[] >>
+drule ultraproduct_rep_independence_EXISTS >> rw[] >>
+first_x_assum 
+  (qspecl_then 
+   [`FMS`,
+    `\x. {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)}`,
+    `phi`] assume_tac) >>
+rfs[] >> 
+`IMAGE 
+  (λx. {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)})
+     𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms FMS)`
+  by
+   (rw[IMAGE_DEF,SUBSET_DEF,ultraproduct_def,partition_def] >>
+    qexists_tac `\i. σ x'` >> rw[] (* 2 *)
+    >- (rw[Cart_prod_def,folmodels2Doms_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+    >- (rw[EXTENSION,Uequiv_SYM] >> rw[EQ_IMP_THM,Uequiv_def])) >>
+first_x_assum drule >> rw[] >> 
+first_x_assum drule >> rw[] >> 
+first_x_assum drule >> rw[] >>
+`feval FM σ phi <=>
+ {i | i ∈ I' ∧
+      feval (FMS i)
+           (λx. CHOICE {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)} i)
+           phi} ∈ U`
+ suffices_by metis_tac[] >>
+rw[EQ_IMP_THM] (* 2 *)
+>- (qexists_tac `\v i. σ v` >> rw[] (* 2 *)
+    >- (rw[Uequiv_def](*4*)
+        >- (fs[folmodels2Doms_def,GSYM MEMBER_NOT_EMPTY] >> metis_tac[])
+        >- (rw[Cart_prod_def,folmodels2Doms_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+        >- (rw[Cart_prod_def,folmodels2Doms_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+        >- fs[ultrafilter_def,proper_filter_def,filter_def])
+    >- (`{i | i ∈ I' ∧ feval (FMS i) (λv. σ v) phi} = I'`
+         by 
+          (rw[EXTENSION,EQ_IMP_THM] >> 
+           `(λv. σ v) = σ` by fs[FUN_EQ_THM] >> rw[]) >>
+        fs[ultrafilter_def,proper_filter_def,filter_def]))
+>- (drule ultraproduct_rep_independence_FORALL >> rw[] >>
+    `{i | i ∈ I' ∧
+         feval (FMS i)
+           (λx. CHOICE {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)} i)
+           phi} ∈ U` by metis_tac[] >> 
+    first_x_assum 
+     (qspecl_then 
+      [`FMS`,
+       `\x. {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)}`,
+       `phi`] assume_tac) >> 
+    first_x_assum drule_all >> strip_tac >> 
+    `{i |
+         i ∈ I' ∧
+         feval (FMS i)
+           (λx. CHOICE {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)} i)
+           phi} = 
+     {i |
+         i ∈ I' ∧
+         feval (FMS i)
+           (λx.
+                CHOICE
+                  ((λx. {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)}) x)
+                  i) phi}`
+      by
+       (simp[EXTENSION,EQ_IMP_THM] >> rpt strip_tac >> metis_tac[]) >>
+    `∀rv.
+            (∀v.
+                 v ∈ FV phi ⇒
+                 rv v ∈
+                 (λx. {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)}) v) ⇒
+            {i | i ∈ I' ∧ feval (FMS i) (λv. rv v i) phi} ∈ U` 
+     by metis_tac[] >> 
+    first_x_assum (qspec_then `\x i. σ x` assume_tac) >> 
+    `{i | i ∈ I' ∧ feval (FMS i) (λv. (λx i. σ x) v i) phi} ∈ U`
+     suffices_by
+      (qmatch_abbrev_tac `A IN U ==> _ ` >> rw[] >>
+       `A <> {}` by metis_tac[EMPTY_NOTIN_ultrafilter] >> 
+       fs[GSYM MEMBER_NOT_EMPTY] >> fs[Abbr`A`] >> 
+       `(\v. σ v) = σ` by fs[FUN_EQ_THM] >> metis_tac[]) >>
+    first_x_assum irule >> rw[] >>
+    rw[Uequiv_def](*4*)
+    >- (fs[folmodels2Doms_def,GSYM MEMBER_NOT_EMPTY] >> metis_tac[])
+    >- (rw[Cart_prod_def,folmodels2Doms_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+    >- (rw[Cart_prod_def,folmodels2Doms_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+    >- fs[ultrafilter_def,proper_filter_def,filter_def])
+QED
+           
+
+      
+
+
+val elementary_embedding_def = Define`
+  elementary_embedding f A B <=>
+  (!a. a IN A.Dom ==> (f a) IN B.Dom) /\
+  ()
 
 val _ = export_theory();
 
