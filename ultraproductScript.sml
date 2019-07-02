@@ -1455,17 +1455,17 @@ rw[EQ_IMP_THM] (* 2 *)
             CHOICE (σ v) i = rv v i
        }
           | v IN (FV phi)}) IN U`
-     suffice_by 
+     suffices_by 
       (drule ultrafilter_SUBSET' >> strip_tac >>
        qmatch_abbrev_tac `A IN U ==> s IN U` >> 
        first_x_assum (qspecl_then 
        [`A ∩ {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} `,`s`] assume_tac) >> 
        rw[] >> first_x_assum irule >> rw[Abbr`A`,Abbr`s`,SUBSET_DEF] (* 2 *)
-       >- (drule ultrafilter_INTER >> rw[])
-       >- (fs[PULL_EXISTS] >> 
-           `feval (FMS x) (λx'. CHOICE (σ x') x) phi = 
-            feval (FMS x) (λv. rv v x) phi` suffices_by metis_tac[] >>
-           irule holds_valuation >> metis_tac[])) >>
+       >- (drule ultrafilter_INTER >> rw[]) >>
+       fs[PULL_EXISTS] >> 
+       `feval (FMS x) (λx'. CHOICE (σ x') x) phi = 
+       feval (FMS x) (λv. rv v x) phi` suffices_by metis_tac[] >>
+       irule holds_valuation >> metis_tac[]) >>
      (*suffices by tac end, reduce to proving biginter*)
    irule BIGINTER_FINITE >> rw[] (* 4 *)
    >- metis_tac[ultrafilter_INTER]
@@ -1480,10 +1480,10 @@ rw[EQ_IMP_THM] (* 2 *)
        `σ v IN (ultraproduct U I' (folmodels2Doms FMS))` 
         by 
          (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
-       metis_tac[ultraproduct_eqclass_non_empty,CHOICE_DEF]))
->- (first_x_assum (qspec_then `\v. CHOICE (σ v)` assume_tac) >> fs[] >>
-    first_x_assum irule >> rw[] >> fs[IMAGE_DEF,SUBSET_DEF] >> 
-    metis_tac[ultraproduct_eqclass_non_empty,CHOICE_DEF])
+       metis_tac[ultraproduct_eqclass_non_empty,CHOICE_DEF])) >> 
+first_x_assum (qspec_then `\v. CHOICE (σ v)` assume_tac) >> fs[] >>
+first_x_assum irule >> rw[] >> fs[IMAGE_DEF,SUBSET_DEF] >> 
+metis_tac[ultraproduct_eqclass_non_empty,CHOICE_DEF]
 QED
 
 
