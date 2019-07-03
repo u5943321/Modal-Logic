@@ -13,6 +13,8 @@ val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "ultrafilter";
 
+(* ultrafilters *)
+
 val filter_def = Define`
 filter FLT W <=> W <> {} /\
                  FLT SUBSET (POW W) /\
@@ -605,7 +607,7 @@ QED
 
 
 
-Theorem countably_incomplete_chain:
+Theorem countably_incomplete_chain_lemma:
   !U I. countably_incomplete  U I ==> 
        ?In. (!n:num. In n IN U /\ In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}
 Proof
@@ -639,5 +641,95 @@ Proof
      >- (first_x_assum (qspec_then `0` assume_tac) >> fs[PRIM_REC_THM])
      >- (first_x_assum (qspec_then `SUC n` assume_tac) >> fs[PRIM_REC_THM] >> fs[ADD1]))
 QED
+
+Theorem countably_incomplete_chain:
+!U I. countably_incomplete U I ==> 
+       ?In. In 0 = I /\ (!n:num. In n IN U /\ In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}
+Proof
+rw[] >> drule countably_incomplete_chain_lemma >> rw[] >>
+qexists_tac `\n. if n = 0 then I' else In (n - 1)` >> rw[] (* 4 *)
+>- fs[ultrafilter_def,proper_filter_def,filter_def,countably_incomplete_def]
+>- (`In 0 IN U` by metis_tac[] >> 
+    fs[countably_incomplete_def,ultrafilter_def,proper_filter_def,filter_def,POW_DEF] >>
+    `!u. u IN U ==> u IN {s | s ⊆ I'}` by metis_tac[SUBSET_DEF] >> 
+    `In 0 IN {s | s ⊆ I'}` by metis_tac[] >> 
+    `In 0 IN {s | s ⊆ I'} ==> (In 0 ⊆ I')` suffices_by metis_tac[] >> 
+    rfs[])
+>- (Cases_on `n` >> fs[] >> first_x_assum (qspec_then `n'` assume_tac) >> fs[ADD1])
+>- (`BIGINTER {if n = 0 then I' else In (n − 1) | n | T} ⊆ 
+     BIGINTER {In n | n | T}` 
+      suffices_by
+       (qmatch_abbrev_tac `A ⊆ B ==> A = {}` >> rw[SUBSET_DEF]) >>
+    rw[SUBSET_DEF] >> fs[PULL_EXISTS] >> 
+    first_x_assum (qspec_then `n + 1` assume_tac) >> fs[])
+QED
+
+Theorem chain_TRANS:
+!In. (!n:num. In (n + 1) SUBSET In n) ==>
+  !a b. a <= b ==> In b ⊆ In a
+Proof
+rw[] >> `?k. b = a + k` by (qexists_tac `b - a` >> fs[]) >>
+rw[] >> Induct_on `k`
+>- rw[] >>
+rw[] >> `a <= a + k` by fs[] >> first_x_assum drule >> rw[] >> rw[ADD1] >>
+`(a + (k + 1)) = (a + k) + 1` by fs[] >> 
+first_x_assum (qspec_then `a + k` assume_tac) >> 
+`a + (k + 1) = (a + k) + 1` by fs[] >> metis_tac[SUBSET_TRANS]
+QED
+
+Theorem countably_incomplete_Ni_lemma:
+ !In. ((!n:num. In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}) ==>
+      (!i. i IN (In 0) ==> ?n. i IN (In n) /\ 
+                          (!a. a > n ==> i NOTIN In a))
+Proof
+rw[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
+`?x. x IN (BIGINTER {In n | n | T})` suffices_by metis_tac[MEMBER_NOT_EMPTY] >>
+qexists_tac `i` >> rw[BIGINTER,PULL_EXISTS] >> Induct_on `n` (* 2 *)
+>- rw[] >>
+first_x_assum drule >> rw[] >>
+fs[ADD1] >> `a >= n + 1` by fs[] >>
+`In a ⊆ In (n + 1)` suffices_by metis_tac[SUBSET_DEF] >>
+irule chain_TRANS >> fs[]
+QED
+
+Theorem countably_incomplete_Ni_EXISTS:
+!In. ((!n:num. In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}) ==>
+      ?Ni. 
+        (!i. i IN (In 0) ==> i IN (In (Ni i)) /\ 
+                        !a. a > (Ni i) ==> i NOTIN In a)
+Proof
+rw[] >> drule countably_incomplete_Ni_lemma >> rw[] >>
+`!i. i IN (In 0) ==> ∃n. i ∈ In n ∧ ∀a. a > n ⇒ i ∉ In a` by metis_tac[] >>
+qexists_tac `\i. CHOICE {n| i ∈ In n ∧ ∀a. a > n ⇒ i ∉ In a}` >> 
+`!i. i IN (In 0) ==> CHOICE {n | i ∈ In n ∧ ∀a. a > n ⇒ i ∉ In a} IN
+                     {n | i ∈ In n ∧ ∀a. a > n ⇒ i ∉ In a}`
+  suffices_by rw[] >>
+`!i. i IN (In 0) ==> {n | i ∈ In n ∧ ∀a. a > n ⇒ i ∉ In a} <> {}` 
+  suffices_by metis_tac[CHOICE_DEF] >>
+rw[GSYM MEMBER_NOT_EMPTY]
+QED
+
+Theorem two_chains_INTER:
+!In. ((!n:num. In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}) ==>
+  !Jn. (!n:num. Jn (n + 1) SUBSET Jn n) ==>
+     !n. (In (n+1)) ∩ (Jn (n+1)) ⊆ (In n) ∩ (Jn n) /\
+         BIGINTER {(In n) ∩ (Jn n) | n IN univ(:num)} = {}
+Proof
+rw[] (* 3 *)
+>- (`In (n + 1) ∩ Jn (n + 1) ⊆ In (n + 1)` suffices_by metis_tac[SUBSET_TRANS] >>
+    metis_tac[INTER_SUBSET])
+>- metis_tac[INTER_SUBSET,SUBSET_TRANS]
+>- (`BIGINTER {In n ∩ Jn n | n | T} ⊆ BIGINTER {In n | n | T}`
+      suffices_by
+       (qmatch_abbrev_tac `A ⊆ B ==> A = {}` >>
+        rw[SUBSET_DEF])  >>
+    rw[SUBSET_DEF,PULL_EXISTS])
+QED
+
+
+
+
+
+
 
 val _ = export_theory();

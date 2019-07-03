@@ -378,6 +378,17 @@ QED
 
 (*theory for shifting ends*)
 
+Theorem ultraproduct_sat_l1:
+!enum s. BIJ enum (univ(:num)) s ==>
+     !M σ. (!n. feval M σ (enum n)) ==>
+           (!phi. phi IN s ==> feval M σ phi)
+Proof
+rw[] >> fs[BIJ_DEF,INJ_DEF,SURJ_DEF] >>
+first_x_assum drule >> metis_tac[]
+QED
+
+
+
 Theorem ultraproduct_sat:
 !U I FMS x. countably_incomplete U I ==> 
    !f. IMAGE f (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==> 
@@ -393,115 +404,145 @@ Theorem ultraproduct_sat:
 Proof
 rw[] >> drule countably_incomplete_chain >> rw[] >>
 fs[countably_incomplete_def] >> drule thm_A_19_ii >> rw[] >> 
-`∃σ.
-   IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-   (∀n. n ∈ N ⇒ σ n = f n) ∧
-   ∀phi. phi ∈ s ⇒ {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U`
-  suffices_by 
-   (rw[] >> qexists_tac `σ` >> rw[] >> first_x_assum drule >>
-    metis_tac[ultraproduct_folmodel_Dom]) >> 
 `?enum. BIJ enum (univ(:num)) s` by cheat >>
-(*countability of s, need Godel numbering another case is finite, trivial*)
-(*qabbrev_tac `conj = PRIM_REC (enum 0) (\conjn n. fAND conjn (enum (n + 1)))` >> *)
-qabbrev_tac `conj = PRIM_REC (True) (\conjn n. fAND conjn (enum n))` >>
-qabbrev_tac `Jn = \n. {i | i IN I' /\ 
-                           ?σ. IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-                           (∀n. n ∈ N ⇒ σ n = f n) /\
-                            feval (FMS i) (λy. CHOICE (σ y) i) (fEXISTS x (conj n))}` >>
-  (* use y to be the variable, avoid name clash with FV x*)
-qabbrev_tac `Xn = \n. (In n) ∩ (Jn n)` >>
-`BIGINTER {Xn n | n IN (univ(:num))} = {}` by cheat (* because has In as subset *)
-`!i. i IN I' ==> ?ni. i IN (Xn ni) /\ 
-                      !ns. ns > ni ==> i NOTIN (Xn ns)` by cheat >>
-`!n. (Jn n) IN U` by cheat >>
-qabbrev_tac `Ni = \i. CHOICE {ni | i IN (Xn ni) /\ 
-                                   !ns. ns > ni ==> i NOTIN (Xn ns)}` >> 
-(*Ni i is the n(i) in the document Altought it is CHOICE, it is the unique one*)
-qabbrev_tac `ssn = \n. {enum m | m <= n}` >>
-`!n. FINITE (ssn n) /\ (ssn n) ⊆ s` by cheat >> 
-`?σ. IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-     (∀n. n ∈ N ⇒ σ n = f n) ∧
-     ∀k. {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) (enum k)} ∈ U` 
-  suffices_by cheat >>
-(* the above is because of the bijection *)
-`!M σ k. feval M σ (fIMP (conj k) (enum k))` by cheat >>
-(* conj k implies a conjunct*)
-`!n. Xn n IN U` by cheat >> 
-`∃σ.
-   IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-   (∀n. n ∈ N ⇒ σ n = f n) ∧
-   ∀k.
-    {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) (conj k)} ∈ U` 
-  suffices_by cheat >>
-`∀k. ∃σ.
-      IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-      (∀n. n ∈ N ⇒ σ n = f n) ∧
-      feval (ultraproduct_folmodel U I' FMS) σ (conj k)`
-  by cheat >>
-(*apply asumption to conj <=> fin set satis assum 5*)
-`∀k. ∃σ.
-      IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-      (∀n. n ∈ N ⇒ σ n = f n) ∧
-      {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) (conj k)} ∈ U` 
-  by cheat >>
-  (* apply Los thm*)               
+(* cheated! need Godel numbering*) 
+(*first suffices start, change the goal into feval each formula*)
+qabbrev_tac `upfm = (ultraproduct_folmodel U (In 0) FMS)` >>
+`?σ. IMAGE σ 𝕌(:num) ⊆ upfm.Dom ∧ (∀n. n ∈ N ⇒ σ n = f n) ∧
+     ∀n. feval upfm σ (enum n)`
+  suffices_by metis_tac[ultraproduct_sat_l1] >>
+(*first suffices end*)
+(*conj*)
+qabbrev_tac `conj = PRIM_REC (True) (\conjn n. fAND conjn (enum (n-1)))` >>
+(*cheated! need for each conj, conj n -> enum (n-1) better a theory in general*)
+`!M σ n. feval M σ (conj n) ==> feval M σ (enum (n-1))` by cheat >>
+(*second suffices begin, change the goal into feval of conj*)
+`∃σ. IMAGE σ 𝕌(:num) ⊆ upfm.Dom ∧ (∀n. n ∈ N ⇒ σ n = f n) ∧
+     ∀n. feval upfm σ (enum n)`
+  suffices_by rw[] >> 
+`∃rv.  (∀v i. i ∈ (In 0) ⇒ rv v i ∈ (FMS i).Dom) /\ 
+       (∀n. n ∈ N ⇒ {g | Uequiv U (In 0) (folmodels2Doms FMS) g (rv n)} = f n) ∧
+       ∀k:num. 
+             {i | i ∈ (In 0) ∧ feval (FMS i) (λv. rv v i) (conj k)} ∈ U` 
+ suffices_by 
+  (rw[] >> drule ultraproduct_suffices_rep >> rw[] >> 
+   first_x_assum (qspecl_then [`FMS`,`rv`] assume_tac) >>
+   qabbrev_tac `σ0 = (λv. {g | Uequiv U (In 0) (folmodels2Doms FMS) g (rv v)})` >>
+   qexists_tac `σ0` >> drule rep_give_wf_valuation >> strip_tac >>
+   first_x_assum (qspecl_then [`FMS`,`rv`] assume_tac) >> 
+   first_x_assum drule >> rw[] (*3*)
+   >- rw[Abbr`upfm`,ultraproduct_folmodel_Dom]
+   >- rw[Abbr`σ0`,FUN_EQ_THM]
+   >- (first_x_assum (qspec_then `conj (n + 1)` assume_tac) >> 
+       first_x_assum drule >> strip_tac >> first_x_assum drule >> strip_tac >>
+       (*∀M σ n. feval M σ (conj n) ⇒ feval M σ (enum (n − 1)) in assumption does not allow type to vary, so indeed need something general to avoid proving it twice
+       first_x_assum (qspecl_then [`upfm`,`σ0`,`n+1`] assume_tac) does not work*)
+       `feval upfm σ0 (conj (n+1))` suffices_by cheat >>
+       metis_tac[])) >>
+(*second suffices end*)
+(*construction of Jn, which forms a decending chain, may need extract out, here choose forall instead of exists for the σ since there is no free var*)
 qabbrev_tac 
-  `σk = \k. CHOICE {σ| IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-                       (∀n. n ∈ N ⇒ σ n = f n) ∧
-                       {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) (conj k)} ∈ U}` >> 
-(*can select such a σn according to existence in order to define the fp*)                    qabbrev_tac `fp = \i. if (Ni i) = 0 then CHOICE (FMS i).Dom
-                     else (CHOICE ((σk (Ni i)) x)) i` >>
-qabbrev_tac `fc = {g | Uequiv U I' (folmodels2Doms FMS) fp g}` >>
-qexists_tac `\n. if (n IN N) then (f n) else fc` >> rw[] (* 2 *)
->- cheat (*because fc in codomain and A ⊆ codomain 
-     !!!!! currently no assumption says this, need fix*)
->- qmatch_abbrev_tac `BS IN U` >> 
-   `?os. os IN U /\ os ⊆ BS` suffices_by cheat >>
-   qexists_tac `Xn k` >> rw[] >>
-   rw[SUBSET_DEF] >> rw[Abbr`BS`] (* 2 *)
-   >- cheat
-   >- `feval (FMS x') (λx''. CHOICE (if x'' ∈ N then f x'' else fc) x') (conj (Ni x'))`
-        suffices_by cheat (* since Ni x' >= k*) >>
-      `?σ0. (!v. v IN N \/ v = x ==> 
-               (λx''. CHOICE (if x'' ∈ N then f x'' else fc) x') v = σ0 v) /\
-      feval (FMS x') σ0 (conj (Ni x'))` 
-        suffices_by cheat >>
-      qexists_tac `\n. if n IN N then 
-      
+  `Jn = \n. {i | i IN I' /\ 
+                 (!σ.
+                    (!k. k IN N ==> σ k = CHOICE (f k) i) ==>
+                      feval (FMS i) σ (Exists x (conj n)) 
+                 )}` >>
+qabbrev_tac 
+  `Xn = \n. (In n) ∩ (Jn n)` >>
+`(!n. Xn (n + 1) ⊆ Xn n) /\ BIGINTER {Xn n | n IN (univ(:num))} = {}` by cheat >>
+(*cheated for the property of chains, not suppose to be hard*)
+`∃Ni. ∀i. i ∈ Xn 0 ⇒ i ∈ Xn (Ni i) ∧ ∀a. a > Ni i ⇒ i ∉ Xn a`
+  by 
+   (irule chain_Ni_EXISTS >> metis_tac[]) >>
+(*the above get the function n(i) in the paper*)
+(*
+`!k. ?σ. (∀n. n ∈ N ⇒ σ n = f n) /\
+         {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) (conj n)} ∈ U` 
+  by cheat >> what was I doing...*)
+qabbrev_tac  
+`σr =(\v i. if (v IN N) 
+        then (CHOICE (f v) i)
+       else 
+       (CHOICE 
+               {a | a IN (FMS i).Dom /\
+                    feval (FMS i) 
+                          (\n. if n IN N then ((CHOICE (f n)) i) 
+                               else a)
+                    (conj (Ni i))}))` >>
+qexists_tac `σr` >>
+(*even very first subgoal require being nonempty*)
+`!i. {a | a ∈ (FMS i).Dom ∧
+          feval (FMS i) (λn. if n ∈ N then CHOICE (f n) i else a)
+          (conj (Ni i))} <> {}` 
+  by 
+   (rw[GSYM MEMBER_NOT_EMPTY] >> 
+    `i IN I' /\
+     ∀σ. (∀k. k ∈ N ⇒ σ k = CHOICE (f k) i) ⇒
+          feval (FMS i) σ (fEXISTS x (conj (Ni i)))` by cheat >>
+    (*cheated to add the definition of Jn (Ni i)*)
+    fs[] >> 
+    first_x_assum (qspec_then `\n. CHOICE (f n) i` assume_tac) >>
+    (*specialize with the "canonical" function*)
+    fs[] >> qexists_tac `a` >> rw[] >> 
+    `feval (FMS i) (λn. CHOICE (f n) i)⦇x ↦ a⦈ (conj (Ni i)) <=>
+     feval (FMS i) (λn. if n ∈ N then CHOICE (f n) i else a) (conj (Ni i))`
+      suffices_by metis_tac[] >> 
+    irule holds_valuation >> 
+    (*it applies because the only FV are either some n IN N or x*) 
+    cheat) >> 
+(*hardest one, cheat here to see if suffices*)
+`(∀v i. i ∈ In 0 ⇒ σr v i ∈ (FMS i).Dom)`
+  by
+   (`!v. CHOICE (f v) IN (f v)` by cheat >>
+    (*this is because f has correct image*)
+    `!g v. g IN (f v) ==> (!i. i IN In 0 ==> (g i) IN (FMS i).Dom)` by cheat >>
+    (*maybe a lemma*)
+    rw[Abbr`σr`] (* 2 *)
+    >- metis_tac[] >> 
+    qmatch_abbrev_tac `CHOICE bs IN (FMS i).Dom` >>
+    `bs <> {}` by fs[Abbr`bs`] >>
+    `!a. a IN bs ==> a IN (FMS i).Dom` by fs[Abbr`bs`] >>
+    metis_tac[CHOICE_DEF]) >>
+(*one of 3 subgoals solved, just do not want to strip it*)
+`∀n. n ∈ N ⇒
+      {g | Uequiv U (In 0) (folmodels2Doms FMS) g (σr n)} = f n`
+  by 
+   (rw[Abbr`σr`] >> `(λi. CHOICE (f n) i) = CHOICE (f n)` by fs[FUN_EQ_THM] >>
+    rw[] >> cheat
+    (*`{g | Uequiv U (In 0) (folmodels2Doms FMS) g (CHOICE (f n))} = f n`
+     need rep independence lemma*)) >> rw[]
+(*last most subtle subgoal*)
+qmatch_abbrev_tac `bs IN U` >>
+`(Xn k) ⊆ bs` suffices_by cheat >>
+(*all the Xn's are in U, closure upward*)
+`!i. i IN (Xn k) ==> feval (FMS i) (λv. σr v i) (conj k)` suffices_by cheat >>
+(*the fact that is subset of I0 is trivial*)
+`!i. (i ∈ I' ∧
+      (∀σ. 
+          (!n. n IN N ==> σ n = CHOICE (f n) i) ⇒
+          feval (FMS i) σ (fEXISTS x (conj k))
+      )
+     ) ==> feval (FMS i) (λv. σr v i) (conj k)`
+  suffices_by cheat >> 
+rpt strip_tac >> 
+(*extract the only useful feature of Xn k*)
+`feval (FMS i) (λv. σr v i) (conj (Ni i))` suffices_by cheat >>
+(*do need that i is in Xn k ...  then this argument is valid: Assume 
+i is in Xn k, then (Ni i) >= k 
+here reduce the goal into  feval (FMS i) (λv. σr v i) (conj (Ni i)) *)
+rw[Abbr`σr`] >> 
+`CHOICE
+   {a | a ∈ (FMS i).Dom ∧
+        feval (FMS i) (λn. if n ∈ N then CHOICE (f n) i else a)
+                      (conj (Ni i))} IN
+   {a | a ∈ (FMS i).Dom ∧
+        feval (FMS i) (λn. if n ∈ N then CHOICE (f n) i else a)
+                      (conj (Ni i))}` suffices_by rw[]
+(*the above suffices is valid, so everything amounts to the set non empty*)
+(*but why it is not empty?*)
+(* we have i IN Xn (Ni i) by definition ! just cheat below since tedious*)
+metis_tac[CHOICE_DEF]
 
-
- `!a k. a IN (Xn k) ==> 
-
-
-
-
-qexists_tac `Xn k` >> rw[] >> rw[SUBSET_DEF] >- cheat >- 
-     `!s. CHOICE s IN s` by cheat (*cheat to see what happens because nothing is empty here*)
-     fs[Abbr`Xn`] >> fs[Abbr`Jn`]
-  
-
- 
- cheat >> 
-  (* this is according to Los thm, not give details because maybe the theorem can be fixed without the ugly assumption *)
-  `∀ss.
-            FINITE ss ∧ ss ⊆ s ⇒
-            ∃σ.
-                IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-                (∀n. n ∈ N ⇒ σ n = f n) ∧
-                ∀phi. phi ∈ ss ⇒ {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U`
-   by cheat >> (* according to Los theorem *)
-   `?δ. BIJ δ (univ(:num)) s` by cheat >>  (* here we only consider when s is countably infinite, the finite case is bording, the set is countably infinite because L is countable language, need Godel's numbering here *)
-   (*
-   qabbrev_tac `c = \i. CHOICE {a | (i IN X a) /\ (i NOTIN (X (a + 1)))}`
-   qabbrev_tac `ff = \i. if (c i = 0) then CHOICE (FMS i).Dom else 
-                             CHOICE {a | a IN (FMS i).Dom /\ 
-                                         (?σ. (!n. n IN N ==> σ n = f n) /\
-                                               feval (FMS i) σ phi) }`
-(\i. if ((c i) = 0) then CHOICE (FMS i).Dom else
-                         (CHOICE {a |?σ. (!n. n IN N ==> σ n = f n) /\
-                                         (a IN (FMS i).Dom) /\ 
-                                         (feval (FMS i) σ(|x |-> a|) (δ (c i)))}))`*)
- *) cheat
 QED
 
 
