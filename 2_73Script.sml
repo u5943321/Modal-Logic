@@ -883,17 +883,13 @@ first_x_assum irule >>
   by fs[expansion_def] >> rw[] >>
 fs[fsatis_def] (* 2 *)
 >- metis_tac[]
->- map_every qexists_tac [`A`,`f`,`x`] >> rw[] (* 3 *)
+>- (map_every qexists_tac [`A`,`f`,`x`] >> rw[] (* 4 *)
    >- (`FC phi ⊆ {FST c | c ∈ form_functions phi}` 
        by metis_tac[FC_form_functions] >>
       fs[SUBSET_DEF] >> metis_tac[])
    >- metis_tac[]
    >- (fs[SUBSET_DEF] >> metis_tac[])
-cheat
-
-(*need modify definition of expansion to force f to have codomain *)
->- (qexists_tac `x` >> rw[] >> cheat) >>
-  metis_tac[]
+   >- fs[expansion_def,mm2folm_def,ultraproduct_model_def])
 QED
 
 val _ = export_theory();

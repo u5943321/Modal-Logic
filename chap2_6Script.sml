@@ -51,8 +51,8 @@ val A_form_def = Define`A_form phi <=> FC phi ⊆ FDOM M.consts`
 
 val expansion_def = Define`
 expansion M A M' f <=> (M'.Dom = M.Dom) /\
-                        (BIJ f (count (CARD A)) A) /\
-                        (M'.Fun = \n args. if n < CARD A /\ args = [] then f n
+                       (BIJ f (count (CARD A)) A) /\
+                       (M'.Fun = \n args. if n < CARD A /\ args = [] then f n
                                            else CHOICE M.Dom) /\
                         M'.Pred = M.Pred`
 
@@ -64,6 +64,7 @@ val consistent_def = Define`
 val n_saturated_def = Define`
   n_saturated M n <=>
      !A M' G x f.
+        (IMAGE f (univ(:num)) ⊆ M.Dom) /\
         (FINITE A /\ CARD A <= n /\ A SUBSET M.Dom /\
         expansion M A M' f /\ 
         (!phi. phi IN G ==> !c. c IN (form_functions phi) ==> 
