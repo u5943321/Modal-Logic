@@ -375,15 +375,56 @@ Proof
   >- rw[form_functions_def,shift_form_def]     
 QED
 
+
+
 Theorem shift_FVT:
-!t. 
-  ((∀c. c ∈ term_functions t ⇒ FST c ∈ count (CARD A) ∧ SND c = 0) /\ 
-  FVT t ⊆ s) ==>
-  FVT (shift_term (CARD A) t) ⊆ (s ∪ count (CARD A))
+!t x. (FVT t ⊆ s /\
+       (∀c. c ∈ term_functions t ⇒ FST c ∈ count (CARD A) ∧ SND c = 0)
+      ) ==> 
+         (FVT (shift_term (CARD A) t)) DIFF (count (CARD A)) ⊆ {x + CARD A| x IN s}
 Proof
-completeInduct_on `term_size t` >> rw[] >> Cases_on `t` >> rw[shift_term_def]
+completeInduct_on `term_size t` >> Cases_on `t` >> rw[FVT_def,shift_term_def] >>
+rw[SUBSET_DEF] >> fs[MEM_MAP] >> rw[] >> fs[PULL_FORALL] >>
+first_x_assum (qspec_then `a'` assume_tac) >> drule term_size_lemma >>
+strip_tac >> first_x_assum (qspec_then `n` assume_tac) >> fs[ADD_CLAUSES] >>
+fs[PULL_EXISTS] >> 
+`FVT (shift_term (CARD A) a') DIFF count (CARD A) ⊆ {x + CARD A| x IN s}`
+  suffices_by rw[DIFF_DEF,SUBSET_DEF] >>
+first_x_assum irule >> rw[] (* 3 *)
+>- (fs[SUBSET_DEF,PULL_EXISTS,PULL_FORALL,MEM_MAP] >> metis_tac[])
+>- metis_tac[] >>
+metis_tac[]
+QED
 
-
+Theorem shift_FV:
+!phi s. (FV phi ⊆ s /\
+         (∀c. c ∈ form_functions phi ⇒ FST c ∈ count (CARD A) ∧ SND c = 0)
+        ) ==> 
+        (FV (shift_form (CARD A) phi)) DIFF (count (CARD A)) ⊆ {x + CARD A| x IN s}
+Proof
+Induct_on `phi` (* 4 *)
+>- rw[FV_def,shift_form_def]
+>- (rw[FV_def,shift_form_def,SUBSET_DEF,DIFF_DEF,PULL_FORALL,PULL_EXISTS] >>
+   fs[MEM_MAP,PULL_EXISTS,PULL_FORALL] >> rw[] >>
+   `FVT (shift_term (CARD A) y') DIFF count (CARD A) ⊆ {x + CARD A | x IN s}`
+     suffices_by rw[DIFF_DEF,SUBSET_DEF] >>
+   irule shift_FVT >> rw[] (* 3 *)
+   >- metis_tac[] >- metis_tac[] >> rw[SUBSET_DEF] >> metis_tac[])
+>- (rw[FV_def,shift_form_def,DIFF_DEF,SUBSET_DEF] (* 2 *)
+    >- (`FV (shift_form (CARD A) phi) DIFF count (CARD A) ⊆ {x + CARD A| x IN s}`
+         suffices_by fs[DIFF_DEF,SUBSET_DEF,count_def] >>
+        first_x_assum irule >> rw[SUBSET_DEF])
+    >- (`FV (shift_form (CARD A) phi') DIFF count (CARD A) ⊆ {x + CARD A| x IN s}`
+         suffices_by fs[DIFF_DEF,SUBSET_DEF,count_def] >>
+        first_x_assum irule >> rw[SUBSET_DEF]))
+>- (rw[shift_form_def,FV_def] >>
+    first_x_assum (qspec_then `n INSERT s` assume_tac) >> 
+    `FV (shift_form (CARD A) phi) DIFF count (CARD A) ⊆
+        {x + CARD A | x ∈ n INSERT s}`
+     suffices_by 
+      (fs[DIFF_DEF,DELETE_DEF,SUBSET_DEF,INSERT_DEF] >> rw[] >> metis_tac[]) >>
+    first_x_assum irule >> rw[] >> fs[SUBSET_DEF,DELETE_DEF,INSERT_DEF] >>
+    metis_tac[])
 QED
 
 (*theory for shifting ends*)
@@ -558,6 +599,8 @@ QED
 
 Theorem ultraproduct_sat':
 !U I MS x N f. countably_incomplete U I ==> 
+     (!i. i IN I ==> (MS i).frame.world <> {}) ==>
+     (IMAGE f 𝕌(:num) ⊆ ultraproduct U I (models2worlds MS)) ==>
   !s. (!phi. phi IN s ==> form_functions phi = {} /\ (FV phi) DIFF N ⊆ {x}) ==> 
        (!ss. FINITE ss /\ ss ⊆ s ==> 
           ?σ. (IMAGE σ (univ(:num)) ⊆ (mm2folm (ultraproduct_model U I MS)).Dom) /\ 
@@ -567,15 +610,34 @@ Theorem ultraproduct_sat':
            (!n. n IN N ==> σ n = f n)  /\ 
            (!phi. phi IN s ==> feval (mm2folm (ultraproduct_model U I MS)) σ phi))
 Proof
-  rw[] >> drule ultraproduct_sat >> rw[] >> fs[countably_incomplete_def] >>
-  drule ultraproduct_comm_feval >> rw[] >> 
-  `!σ phi FMS. feval (ultraproduct_folmodel U I' FMS) σ phi <=> 
-    feval (mm2folm (ultraproduct_model U I' MS)) σ phi` by cheat >>
-  (* assume compactible lemma applies must apply since no functions *)
-  fs[] >> 
-  `!FMS. (ultraproduct_folmodel U I' FMS).Dom = (mm2folm (ultraproduct_model U I' MS)).Dom` by cheat
-  (* just by definition *) >> fs[] >> first_x_assum irule >> rw[] >> (* trivial *) 
-  cheat (* confirmed this one can be implies by the above *)
+rw[] >> drule ultraproduct_sat >> rw[] >> fs[countably_incomplete_def] >>
+drule ultraproduct_comm_feval >> rw[] >> 
+`∃σ. IMAGE σ 𝕌(:num) ⊆ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
+     (∀n. n ∈ N ⇒ σ n = f n) ∧
+     ∀phi.
+        phi ∈ s ⇒ feval (ultraproduct_folmodel U I' (λi. mm2folm (MS i))) σ phi`
+  suffices_by
+   (rw[] >> qexists_tac `σ` >> rw[] >> 
+    `(mm2folm (ultraproduct_model U I' MS)).Dom = 
+     ultraproduct U I' (models2worlds MS)`
+     by rw[mm2folm_def,ultraproduct_model_def] >>
+    first_x_assum drule >> metis_tac[]) >>
+first_x_assum (qspecl_then [`λi. mm2folm (MS i)`,`x`,`f`,`s`] assume_tac) >>
+`(ultraproduct_folmodel U I' (λi. mm2folm (MS i))).Dom = 
+(mm2folm (ultraproduct_model U I' MS)).Dom` 
+ by metis_tac[ultraproduct_comm_Dom] >> fs[] >>
+first_x_assum irule >> rw[] (* 3 *)
+>- metis_tac[mm2folm_well_formed]
+>- (first_x_assum drule >> rw[] >> qexists_tac `σ` >> rw[] >>
+    `phi IN s` by fs[SUBSET_DEF] >> 
+    `form_functions phi = ∅` by metis_tac[] >>
+    first_x_assum drule >> 
+    `ultraproduct U I' (models2worlds MS) = 
+     (mm2folm (ultraproduct_model U I' MS)).Dom`
+     by rw[ultraproduct_model_def,mm2folm_def] >> metis_tac[]) >>
+`models2worlds MS = folmodels2Doms (λi. mm2folm (MS i))`
+  suffices_by metis_tac[] >>
+rw[FUN_EQ_THM,models2worlds_def,folmodels2Doms_def,mm2folm_def]
 QED
 
 
@@ -642,61 +704,33 @@ Proof
 *) (* confirmed it relies on the lemmas and can be proved*) cheat
 QED
 
-
-Theorem shift_FVT:
-!t x. (FVT t ⊆ s /\
-       (∀c. c ∈ term_functions t ⇒ FST c ∈ count (CARD A) ∧ SND c = 0)
-      ) ==> 
-         (FVT (shift_term (CARD A) t)) DIFF (count (CARD A)) ⊆ {x + CARD A| x IN s}
+Theorem FCT_term_functions:
+!t. FCT t ⊆ {FST c | c IN (term_functions t)}
 Proof
-completeInduct_on `term_size t` >> Cases_on `t` >> rw[FVT_def,shift_term_def] >>
-rw[SUBSET_DEF] >> fs[MEM_MAP] >> rw[] >> fs[PULL_FORALL] >>
-first_x_assum (qspec_then `a'` assume_tac) >> drule term_size_lemma >>
-strip_tac >> first_x_assum (qspec_then `n` assume_tac) >> fs[ADD_CLAUSES] >>
-fs[PULL_EXISTS] >> 
-`FVT (shift_term (CARD A) a') DIFF count (CARD A) ⊆ {x + CARD A| x IN s}`
-  suffices_by rw[DIFF_DEF,SUBSET_DEF] >>
-first_x_assum irule >> rw[] (* 3 *)
->- (fs[SUBSET_DEF,PULL_EXISTS,PULL_FORALL,MEM_MAP] >> metis_tac[])
->- metis_tac[] >>
-metis_tac[]
+completeInduct_on `term_size t` >> Cases_on `t` >> rw[FCT_def,term_functions_def]>>
+rw[SUBSET_DEF] >> fs[MEM_MAP,PULL_FORALL] >>
+first_x_assum (qspec_then `a` assume_tac) >> drule term_size_lemma >> 
+strip_tac >> `term_size a < n + (term1_size l + 1)` by fs[ADD_CLAUSES] >> fs[] >>
+rw[] >> fs[SUBSET_DEF] >> first_x_assum drule >> rw[PULL_EXISTS] >>
+qexists_tac `c` >> rw[] >> metis_tac[]
 QED
 
-Theorem shift_FV:
-!phi s. (FV phi ⊆ s /\
-         (∀c. c ∈ form_functions phi ⇒ FST c ∈ count (CARD A) ∧ SND c = 0)
-        ) ==> 
-        (FV (shift_form (CARD A) phi)) DIFF (count (CARD A)) ⊆ {x + CARD A| x IN s}
+Theorem FC_form_functions:
+!phi. FC phi ⊆ {FST c | c IN (form_functions phi)}
 Proof
-Induct_on `phi` (* 4 *)
->- rw[FV_def,shift_form_def]
->- (rw[FV_def,shift_form_def,SUBSET_DEF,DIFF_DEF,PULL_FORALL,PULL_EXISTS] >>
-   fs[MEM_MAP,PULL_EXISTS,PULL_FORALL] >> rw[] >>
-   `FVT (shift_term (CARD A) y') DIFF count (CARD A) ⊆ {x + CARD A | x IN s}`
-     suffices_by rw[DIFF_DEF,SUBSET_DEF] >>
-   irule shift_FVT >> rw[] (* 3 *)
-   >- metis_tac[] >- metis_tac[] >> rw[SUBSET_DEF] >> metis_tac[])
->- (rw[FV_def,shift_form_def,DIFF_DEF,SUBSET_DEF] (* 2 *)
-    >- (`FV (shift_form (CARD A) phi) DIFF count (CARD A) ⊆ {x + CARD A| x IN s}`
-         suffices_by fs[DIFF_DEF,SUBSET_DEF,count_def] >>
-        first_x_assum irule >> rw[SUBSET_DEF])
-    >- (`FV (shift_form (CARD A) phi') DIFF count (CARD A) ⊆ {x + CARD A| x IN s}`
-         suffices_by fs[DIFF_DEF,SUBSET_DEF,count_def] >>
-        first_x_assum irule >> rw[SUBSET_DEF]))
->- (rw[shift_form_def,FV_def] >>
-    first_x_assum (qspec_then `n INSERT s` assume_tac) >> 
-    `FV (shift_form (CARD A) phi) DIFF count (CARD A) ⊆
-        {x + CARD A | x ∈ n INSERT s}`
-     suffices_by 
-      (fs[DIFF_DEF,DELETE_DEF,SUBSET_DEF,INSERT_DEF] >> rw[] >> metis_tac[]) >>
-    first_x_assum irule >> rw[] >> fs[SUBSET_DEF,DELETE_DEF,INSERT_DEF] >>
-    metis_tac[])
+Induct_on `phi` >> rw[FC_def,form_functions_def] (* 3 *)
+>- (rw[SUBSET_DEF,MEM_MAP,PULL_EXISTS] >>
+    `FCT y ⊆ {FST c | c IN (term_functions y)}` by metis_tac[FCT_term_functions]>>
+    fs[SUBSET_DEF] >> metis_tac[]) >>
+fs[SUBSET_DEF] >> metis_tac[] 
 QED
 
 
 Theorem ultraproduct_sat'':
 !U I MS x. countably_incomplete U I ==> 
+       (∀i. i ∈ I ⇒ (MS i).frame.world ≠ ∅) ⇒
    !A M' f. expansion (mm2folm (ultraproduct_model U I MS)) A M' f ==> 
+           IMAGE f 𝕌(:num) ⊆ ultraproduct U I (models2worlds MS) ==>
   !s. (!phi. phi IN s ==>  (∀c. c ∈ form_functions phi ⇒ FST c ∈ count (CARD A) ∧ SND c = 0)
            /\ FV phi ⊆ {x}) ==> 
        (!ss. FINITE ss /\ ss ⊆ s ==> 
@@ -713,7 +747,10 @@ qabbrev_tac `sfs = {shift_form (CARD A) phi | phi IN s}` >>
    (rw[] (* 2 *)
     >- (fs[Abbr`sfs`] >> irule shift_form_functions_EMPTY >> 
         rw[count_def] >> (*2 same*) metis_tac[])
-    >- (fs[Abbr`sfs`] >> cheat (* cheated!! need a lemma saying about fv of shift add no more than N var *)))>>
+    >- (fs[Abbr`sfs`] >> `FV phi' ⊆ {x}` by metis_tac[] >> 
+        drule (shift_FV |> INST_TYPE [alpha |-> ``:('a -> 'b) -> bool``]) >>
+        rw[] >> `{x' + CARD A | x' = x} = {x + CARD A}` by fs[EXTENSION] >>
+        fs[] >> first_x_assum irule >> metis_tac[])) >>
 first_x_assum 
    (qspecl_then
    [`MS`,`x + CARD A`,`count (CARD A)`,`f`,`sfs`] assume_tac) >> 
@@ -739,29 +776,73 @@ first_x_assum
          feval (mm2folm (ultraproduct_model U I' MS))
            (shift_valuation (CARD A) σ' f) (shift_form (CARD A) phi)` 
           suffices_by metis_tac[] >>
-        first_x_assum irule >> rw[] (* 2 two very trivial ones cheated!!!*) cheat)
-     (*suffices within suffices end*)
+        first_x_assum irule >> rw[] (* 2 *)
+        >- (`!phi. FC phi ⊆ {FST c | c IN (form_functions phi)}`
+             suffices_by (rw[SUBSET_DEF] >> metis_tac[]) >> 
+            metis_tac[FC_form_functions])
+        >- fs[mm2folm_def]) >>
+    (*suffices within suffices end*)
     qexists_tac `\n. σ ((CARD A) + n)` >> rw[] (* 2 *)
-    >- trivial cheat (*cheated!! vary trivial*)
+    >- (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
     >- (first_x_assum (qspec_then `(shift_form (CARD A) phi)` assume_tac) >> 
-        `shift_form (CARD A) phi ∈ sfs`  by cheat (* cheated! by definition*) >>
+        `shift_form (CARD A) phi ∈ sfs`  
+         by (rw[Abbr`sfs`] >> metis_tac[]) >>
         first_x_assum drule >> rw[] >>
         `(shift_valuation (CARD A) (λn. σ (n + CARD A)) f) = σ` 
           suffices_by metis_tac[] >>
         rw[FUN_EQ_THM,shift_valuation_def] >> Cases_on `x' < CARD A` >> rw[])) >>
    (* big suffices tac end *)
 first_x_assum irule >> fs[] >> rw[] >> 
-`?s0. s0 ⊆ s /\ FINITE s0 /\ ss = IMAGE (shift_form (CARD A)) s0` by cheat >>
-   (*cheated!! by definition of sfs*)
+`?s0. s0 ⊆ s /\ FINITE s0 /\ ss = IMAGE (shift_form (CARD A)) s0` 
+ by 
+  (fs[SUBSET_DEF,Abbr`sfs`] >> 
+   qexists_tac 
+     `{CHOICE {phi | phi IN s /\ x = shift_form (CARD A) phi} | x IN ss}` >>
+   rw[] (* 3 *)
+   >- (`CHOICE {phi | phi ∈ s ∧ x'' = shift_form (CARD A) phi} ∈ 
+        {phi | phi ∈ s ∧ x'' = shift_form (CARD A) phi}` 
+         suffices_by fs[] >>
+       `{phi | phi ∈ s ∧ x'' = shift_form (CARD A) phi} <> {}`
+         suffices_by metis_tac[CHOICE_DEF] >> 
+       rw[GSYM MEMBER_NOT_EMPTY] >> metis_tac[])
+   >- (`{CHOICE {phi | phi ∈ s ∧ x = shift_form (CARD A) phi} | x ∈ ss} =
+        IMAGE CHOICE 
+        {{phi | phi ∈ s ∧ x = shift_form (CARD A) phi} | x ∈ ss} /\
+        FINITE {{phi | phi ∈ s ∧ x = shift_form (CARD A) phi} | x ∈ ss}`
+        suffices_by metis_tac[IMAGE_FINITE] >> rw[] (* 2 *)
+       >- rw[IMAGE_DEF,Once EXTENSION,EQ_IMP_THM,PULL_EXISTS,PULL_FORALL] 
+       >- (`{{phi | phi ∈ s ∧ x = shift_form (CARD A) phi} | x ∈ ss} =
+            IMAGE (\x. {phi | phi ∈ s ∧ x = shift_form (CARD A) phi}) ss`
+            suffices_by metis_tac[IMAGE_FINITE] >>
+           rw[IMAGE_DEF,Once EXTENSION,EQ_IMP_THM,PULL_EXISTS,PULL_FORALL]))
+   >- (rw[IMAGE_DEF,Once EXTENSION,EQ_IMP_THM,PULL_EXISTS,PULL_FORALL] (* 2 *)
+      >- (qexists_tac `x'` >> rw[] >> 
+          `CHOICE {phi | phi ∈ s ∧ x' = shift_form (CARD A) phi} ∈ 
+           {phi | phi ∈ s ∧ x' = shift_form (CARD A) phi}` 
+            suffices_by fs[] >>
+          `{phi | phi ∈ s ∧ x' = shift_form (CARD A) phi} <> {}`
+            suffices_by metis_tac[CHOICE_DEF] >> 
+          rw[GSYM MEMBER_NOT_EMPTY] >> metis_tac[])
+      >- (`CHOICE {phi | phi ∈ s ∧ x'' = shift_form (CARD A) phi} ∈ 
+           {phi | phi ∈ s ∧ x'' = shift_form (CARD A) phi}` 
+            suffices_by (fs[] >> metis_tac[]) >>
+          `{phi | phi ∈ s ∧ x'' = shift_form (CARD A) phi} <> {}`
+            suffices_by metis_tac[CHOICE_DEF] >> 
+          rw[GSYM MEMBER_NOT_EMPTY] >> metis_tac[]))) >>
 first_x_assum (qspec_then `s0` assume_tac) >> rfs[] >> 
 qexists_tac `shift_valuation (CARD A) σ f` >> rw[] (* 3 *)
->- cheat (*cheated! since f has image in dom*)
+>- (fs[SUBSET_DEF,IMAGE_DEF,shift_valuation_def,
+   mm2folm_def,ultraproduct_model_def] >> metis_tac[])
 >- rw[shift_valuation_def]
->- `(∀c. c ∈ FC x' ⇒ c < CARD A) ∧
-    IMAGE σ 𝕌(:num) ⊆ (ultraproduct_model U I' MS).frame.world` 
-     suffices_by metis_tac[]
-     cheat (*cheated! just to check if the condition is ok *)
-*) (* confirmed it relies on the lemmas and can be proved*) cheat
+>- (`(∀c. c ∈ FC x' ⇒ c < CARD A) ∧
+     IMAGE σ 𝕌(:num) ⊆ (ultraproduct_model U I' MS).frame.world` 
+     suffices_by metis_tac[] >> 
+    `(ultraproduct_model U I' MS).frame.world = 
+     (mm2folm (ultraproduct_model U I' MS)).Dom` by fs[mm2folm_def] >>
+    rw[] >> 
+    `FC x' ⊆ {FST c | c ∈ form_functions x'}` 
+      by metis_tac[FC_form_functions] >>
+    fs[SUBSET_DEF] >> metis_tac[])
 QED
 
 
@@ -770,32 +851,48 @@ QED
 
 
 Theorem lemma_2_73:
-  !U I MS M. 
+  !U I MS. 
+        (!i. i IN I ==> (MS i).frame.world <> {}) ==>
          countably_incomplete U I ==>
              countably_saturated (mm2folm (ultraproduct_model U I MS))
 Proof
-  rw[countably_saturated_def,n_saturated_def,consistent_def,ftype_def,frealizes_def] >>
-  drule ultraproduct_sat'' (*cheated key theorem*)>> rw[] >> first_x_assum drule >> rw[] >> 
-  `∃σ.
-                IMAGE σ 𝕌(:num) ⊆ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
-                ∀phi. phi ∈ G ⇒ feval M' σ phi` suffices_by
+rw[countably_saturated_def,n_saturated_def,
+consistent_def,ftype_def,frealizes_def] >>
+drule ultraproduct_sat'' (*cheated key theorem*)>> rw[] >> 
+first_x_assum drule >> rw[] >> 
+`∃σ. IMAGE σ 𝕌(:num) ⊆ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
+     ∀phi. phi ∈ G ⇒ feval M' σ phi`
+ suffices_by
   (rw[] >> qexists_tac `σ x` >> rw[] (* 2 *)
-   >- (`(mm2folm (ultraproduct_model U I' MS)).Dom = M'.Dom` by fs[expansion_def] >> 
-      fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+   >- (`(mm2folm (ultraproduct_model U I' MS)).Dom = M'.Dom` 
+        by fs[expansion_def] >> 
+       fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
    >- (rw[fsatis_def] (* 2 *)
       >- (rw[valuation_def] >> Cases_on `n' = x` >> rw[APPLY_UPDATE_THM] (* 2 *)
-         >- (`(mm2folm (ultraproduct_model U I' MS)).Dom = M'.Dom` by fs[expansion_def] >> 
-            fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
-         >- (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]))
+          >- (`(mm2folm (ultraproduct_model U I' MS)).Dom = M'.Dom` 
+               by fs[expansion_def] >> 
+              fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+          >- (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]))
       >- (`feval M' σ phi <=> feval M' σ'⦇x ↦ σ x⦈ phi` suffices_by metis_tac[] >> 
-         irule holds_valuation >> 
-         `FV phi ⊆ {x}` by (fs[SUBSET_DEF] >> metis_tac[]) >> 
-         fs[SUBSET_DEF,APPLY_UPDATE_THM]))) >>
+          irule holds_valuation >> 
+          `FV phi ⊆ {x}` by (fs[SUBSET_DEF] >> metis_tac[]) >> 
+          fs[SUBSET_DEF,APPLY_UPDATE_THM]))) >>
   (*suffices tactic end*)
-  first_x_assum irule >> 
-  `(mm2folm (ultraproduct_model U I' MS)).Dom = M'.Dom` by fs[expansion_def] >> rw[] >>
-  fs[fsatis_def] (* 2 *)
-  >- (qexists_tac `x` >> rw[] >> cheat) >>
+first_x_assum irule >> 
+`(mm2folm (ultraproduct_model U I' MS)).Dom = M'.Dom` 
+  by fs[expansion_def] >> rw[] >>
+fs[fsatis_def] (* 2 *)
+>- metis_tac[]
+>- map_every qexists_tac [`A`,`f`,`x`] >> rw[] (* 3 *)
+   >- (`FC phi ⊆ {FST c | c ∈ form_functions phi}` 
+       by metis_tac[FC_form_functions] >>
+      fs[SUBSET_DEF] >> metis_tac[])
+   >- metis_tac[]
+   >- (fs[SUBSET_DEF] >> metis_tac[])
+cheat
+
+(*need modify definition of expansion to force f to have codomain *)
+>- (qexists_tac `x` >> rw[] >> cheat) >>
   metis_tac[]
 QED
 
