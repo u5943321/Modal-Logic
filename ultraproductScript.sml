@@ -68,6 +68,13 @@ Proof
   metis_tac[]
 QED
 
+
+Theorem ultraproduct_eqclass_non_empty:
+  !U I A. ultrafilter U I ==> 
+      !fc. fc IN (ultraproduct U I A) ==> fc <> {}
+Proof
+  rw[ultraproduct_def] >> drule prop_A_16 >> rw[] >> metis_tac[EMPTY_NOT_IN_partition]
+QED
 Theorem eqc_CHOICE:
 !U I. ultrafilter U I ==>
    !A fc. fc IN (ultraproduct U I A) ==>
@@ -95,12 +102,6 @@ rw[EXTENSION,Uequiv_def,EQ_IMP_THM] (* 5 *)
 QED
           
 
-Theorem ultraproduct_eqclass_non_empty:
-  !U I A. ultrafilter U I ==> 
-      !fc. fc IN (ultraproduct U I A) ==> fc <> {}
-Proof
-  rw[ultraproduct_def] >> drule prop_A_16 >> rw[] >> metis_tac[EMPTY_NOT_IN_partition]
-QED
 
 val models2worlds_def = Define`
   models2worlds MS = \i. (MS i).frame.world`;
@@ -1563,7 +1564,7 @@ Theorem corollary_A_21:
             feval (ultraproduct_folmodel U I FMS)
             (\x. {g | Uequiv U I (folmodels2Doms FMS) g (\i. σ x)}) phi)
 Proof
-rw[] >> drule thm_A_19_ii >> rw[] >> drule ultraproduct_rep_independence >> rw[] >>
+rw[] >> drule thm_A_19_ii >> rw[] >> drule ultraproduct_rep_independence_lemma >> rw[] >>
 `IMAGE 
   (λx. {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)})
      𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms FMS)`
@@ -1649,7 +1650,7 @@ Theorem ultraproduct_suffices_rep:
      feval (ultraproduct_folmodel U I FMS)
            (\v. {g | Uequiv U I (folmodels2Doms FMS) g (rv v)}) phi 
 Proof
-rw[] >> drule thm_A_19_ii >> rw[] >> drule ultraproduct_rep_independence >> rw[] >>
+rw[] >> drule thm_A_19_ii >> rw[] >> drule ultraproduct_rep_independence_lemma >> rw[] >>
 first_x_assum 
  (qspecl_then 
   [`phi`,

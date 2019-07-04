@@ -677,7 +677,7 @@ first_x_assum (qspec_then `a + k` assume_tac) >>
 `a + (k + 1) = (a + k) + 1` by fs[] >> metis_tac[SUBSET_TRANS]
 QED
 
-Theorem countably_incomplete_Ni_lemma:
+Theorem chain_Ni_lemma:
  !In. ((!n:num. In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}) ==>
       (!i. i IN (In 0) ==> ?n. i IN (In n) /\ 
                           (!a. a > n ==> i NOTIN In a))
@@ -692,13 +692,13 @@ fs[ADD1] >> `a >= n + 1` by fs[] >>
 irule chain_TRANS >> fs[]
 QED
 
-Theorem countably_incomplete_Ni_EXISTS:
+Theorem chain_Ni_EXISTS:
 !In. ((!n:num. In (n + 1) SUBSET In n) /\ BIGINTER {In n | n IN univ(:num)} = {}) ==>
       ?Ni. 
         (!i. i IN (In 0) ==> i IN (In (Ni i)) /\ 
                         !a. a > (Ni i) ==> i NOTIN In a)
 Proof
-rw[] >> drule countably_incomplete_Ni_lemma >> rw[] >>
+rw[] >> drule chain_Ni_lemma >> rw[] >>
 `!i. i IN (In 0) ==> ∃n. i ∈ In n ∧ ∀a. a > n ⇒ i ∉ In a` by metis_tac[] >>
 qexists_tac `\i. CHOICE {n| i ∈ In n ∧ ∀a. a > n ⇒ i ∉ In a}` >> 
 `!i. i IN (In 0) ==> CHOICE {n | i ∈ In n ∧ ∀a. a > n ⇒ i ∉ In a} IN

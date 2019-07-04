@@ -11,6 +11,7 @@ open combinTheory;
 open folLangTheory;
 open folModelsTheory;
 open chap2_4revisedTheory;
+
 open equiv_on_partitionTheory;
 open ultraproductTheory;
 open ultrafilterTheory;
@@ -854,68 +855,6 @@ rw[FUN_EQ_THM,models2worlds_def,folmodels2Doms_def,mm2folm_def]
 QED
 
 
-Theorem ultraproduct_sat'':
-!U I MS x. countably_incomplete U I ==> 
-   !A M' f. expansion (mm2folm (ultraproduct_model U I MS)) A M' f ==> 
-  !s. (!phi. phi IN s ==>  (∀c. c ∈ form_functions phi ⇒ FST c ∈ count (CARD A) ∧ SND c = 0)
-           /\ FV phi ⊆ {x}) ==> 
-       (!ss. FINITE ss /\ ss ⊆ s ==> 
-          ?σ. (IMAGE σ (univ(:num)) ⊆ (mm2folm (ultraproduct_model U I MS)).Dom) /\ 
-              (*(!n. n IN N ==> σ n = f n) /\ *)
-              (!phi. phi IN ss ==> feval M' σ phi)) ==>
-      (?σ. (IMAGE σ (univ(:num)) ⊆ (mm2folm (ultraproduct_model U I MS)).Dom) /\ 
-           (*(!n. n IN N ==> σ n = f n)  /\ *)
-           (!phi. phi IN s ==> feval M' σ phi))
-Proof
-  rw[] >> drule ultraproduct_sat' >> rw[] >> drule expansion_shift_feval >> rw[] >>
-  qabbrev_tac `sfs = {shift_form (CARD A) phi | phi IN s}` >> 
-  `!phi. phi IN sfs ==> form_functions phi = ∅ ∧ (FV phi) DIFF (count (CARD A)) ⊆ {x + CARD A}` by (* cheat *)
-     (rw[] (* 2 *)
-     >- (fs[Abbr`sfs`] >> irule shift_form_functions_EMPTY >> rw[count_def] >> (*2 same*) metis_tac[])
-     >- (fs[Abbr`sfs`] >> cheat (* cheated!! need a lemma saying about fv of shift add no more than N var *)))>>
-  first_x_assum (qspecl_then [`MS`,`x + CARD A`,`count (CARD A)`,`f`,`sfs`] assume_tac) >> 
-  `∃σ.
-            IMAGE σ 𝕌(:num) ⊆ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
-            (∀n. n ∈ count (CARD A) ⇒ σ n = f n) ∧
-            ∀phi.
-                phi ∈ sfs ⇒
-                feval (mm2folm (ultraproduct_model U I' MS)) σ phi` suffices_by 
-   (rw[] >> 
-    (* suffices within suffices*)
-   `∃σ.
-            IMAGE σ 𝕌(:num) ⊆ (mm2folm (ultraproduct_model U I' MS)).Dom ∧
-            ∀phi. phi ∈ s ⇒ 
-            feval (mm2folm (ultraproduct_model U I' MS))
-               (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi)` suffices_by
-    (rw[] >> qexists_tac `σ'` >> rw[] >> first_x_assum (qspec_then `phi` assume_tac) >> rfs[] >>
-    first_x_assum (qspecl_then [`phi`,`σ'`] assume_tac) >> 
-    `(feval M' σ' phi ⇔
-         feval (mm2folm (ultraproduct_model U I' MS))
-           (shift_valuation (CARD A) σ' f) (shift_form (CARD A) phi))` suffices_by metis_tac[] >>
-    first_x_assum irule >> rw[] (* 2 two very trivial ones cheated!!!*) cheat)
-   (*suffices within suffices end*)
-   qexists_tac `\n. σ ((CARD A) + n)` >> rw[] (* 2 *)
-   >- trivial cheat (*cheated!! vary trivial*)
-   >- (first_x_assum (qspec_then `(shift_form (CARD A) phi)` assume_tac) >> 
-      `shift_form (CARD A) phi ∈ sfs`  by cheat (* cheated! by definition*) >>
-      first_x_assum drule >> rw[] >>
-      `(shift_valuation (CARD A) (λn. σ (n + CARD A)) f) = σ` suffices_by metis_tac[] >>
-      rw[FUN_EQ_THM,shift_valuation_def] >> Cases_on `x' < CARD A` >> rw[])) >>
-   (* big suffices tac end *)
-  first_x_assum irule
-  `N = count (CARD A)` by cheat (*cheated!! because the sloppyness*) >> fs[] >>
-  rw[] >> 
-  `?s0. s0 ⊆ s /\ FINITE s0 /\ ss = IMAGE (shift_form (CARD A)) s0` by cheat >>
-   (*cheated!! by definition of sfs*)
-  first_x_assum (qspec_then `s0` assume_tac) >> rfs[] >> 
-  qexists_tac `shift_valuation (CARD A) σ f` >> rw[] (* 3 *)
-  >- cheat (*cheated! since f has image in dom*)
-  >- rw[shift_valuation_def]
-  >- `(∀c. c ∈ FC x' ⇒ c < CARD A) ∧
-            IMAGE σ 𝕌(:num) ⊆ (ultraproduct_model U I' MS).frame.world` suffices_by metis_tac[]
-     cheat (*cheated! just to check if the condition is ok *)
-*) (* confirmed it relies on the lemmas and can be proved*) cheat
-QED
 
 Theorem FCT_term_functions:
 !t. FCT t ⊆ {FST c | c IN (term_functions t)}
@@ -1057,11 +996,6 @@ qexists_tac `shift_valuation (CARD A) σ f` >> rw[] (* 3 *)
       by metis_tac[FC_form_functions] >>
     fs[SUBSET_DEF] >> metis_tac[])
 QED
-
-
-
-
-
 
 Theorem lemma_2_73:
   !U I MS. 
