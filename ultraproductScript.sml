@@ -68,6 +68,33 @@ Proof
   metis_tac[]
 QED
 
+Theorem eqc_CHOICE:
+!U I. ultrafilter U I ==>
+   !A fc. fc IN (ultraproduct U I A) ==>
+          fc = {g | Uequiv U I A g (CHOICE fc)}
+Proof
+rw[EXTENSION,Uequiv_def,EQ_IMP_THM] (* 5 *)
+>- (fs[ultraproduct_def,partition_def,Cart_prod_def] >> 
+    metis_tac[MEMBER_NOT_EMPTY])
+>- (fs[ultraproduct_def,partition_def,Cart_prod_def] >> rfs[])
+>- (`fc <> {}` by metis_tac[ultraproduct_eqclass_non_empty] >>
+    `CHOICE fc IN fc` by metis_tac[CHOICE_DEF] >>
+    fs[ultraproduct_def,partition_def,Cart_prod_def] >>
+    rfs[])
+>- (irule ultraproduct_same_eqclass >> rw[] >> 
+    map_every qexists_tac [`A`,`fc`] >> rw[] >>
+    `fc <> {}` by metis_tac[ultraproduct_eqclass_non_empty] >>
+    metis_tac[CHOICE_DEF])
+>- (`CHOICE fc IN fc /\ (CHOICE fc IN fc <=> x IN fc)` suffices_by metis_tac[] >>
+    `fc <> {}` by metis_tac[ultraproduct_eqclass_non_empty] >>
+    `CHOICE fc IN fc` by metis_tac[CHOICE_DEF] >>
+    strip_tac >- rw[] >>
+    irule ultraproduct_go_to_same_eq_class >>
+    map_every qexists_tac [`A`,`I'`,`U`] >> rw[] (* 2 same*) >>
+    fs[Cart_prod_def])
+QED
+          
+
 Theorem ultraproduct_eqclass_non_empty:
   !U I A. ultrafilter U I ==> 
       !fc. fc IN (ultraproduct U I A) ==> fc <> {}

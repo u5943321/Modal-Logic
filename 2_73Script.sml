@@ -438,10 +438,82 @@ rw[] >> fs[BIJ_DEF,INJ_DEF,SURJ_DEF] >>
 first_x_assum drule >> metis_tac[]
 QED
 
+(*conj enum*)
+
+val fCONJ_def = Define`
+fCONJ enum = PRIM_REC (True) (\conjn n. fAND conjn (enum n))`
+
+Theorem fAND_feval:
+!M σ. feval M σ (fAND p q) <=> 
+      (feval M σ p /\ feval M σ q)
+Proof
+rw[feval_def,fAND_def,fNOT_def,fDISJ_def]
+QED
+
+Theorem fCONJ_imp_enum:
+!n enum M σ.
+   feval M σ (fCONJ enum n) ==>
+    !m. m < n ==> feval M σ (enum m)
+Proof
+Induct_on `n` (* 2 *)
+>- rw[fCONJ_def,PRIM_REC_THM,feval_def] >>
+rw[fCONJ_def,feval_def] >> Cases_on `m < n` (* 2 *)
+>- (first_x_assum irule >> fs[PRIM_REC_THM,fAND_feval,fCONJ_def]) >>
+`m = n` by fs[] >> fs[PRIM_REC_THM]
+QED
+
+Theorem fCONJ_imp_fCONJ:
+!n enum M σ.
+   feval M σ (fCONJ enum (n + 1)) ==>
+    feval M σ (fCONJ enum n)
+Proof
+rw[fCONJ_def,fAND_feval,PRIM_REC_THM,GSYM ADD1]
+QED
+
+Theorem fCONJ_imp_fCONJ_LE:
+!n enum M σ.
+   feval M σ (fCONJ enum n) ==>
+    !m. m <= n ==> feval M σ (fCONJ enum m)
+Proof
+Induct_on `n` (* 2 *)
+>- rw[fCONJ_def,feval_def,PRIM_REC_THM,True_def,fNOT_def] >>
+rw[] >> Cases_on `m <= n` (* 2 *)
+>- (first_x_assum irule >> 
+   fs[fCONJ_def,feval_def,PRIM_REC_THM,True_def,fNOT_def]) >>
+`m = SUC n` by fs[] >> rw[]
+QED
+
+Theorem fAND_FV:
+!p q. FV (fAND p q) = FV p ∪ FV q
+Proof
+rw[FV_def,fAND_def,fNOT_def,fDISJ_def,EXTENSION] >> metis_tac[]
+QED
+
+Theorem fCONJ_FV:
+!enum s.
+  (!n. FV (enum n) ⊆ s) ==>
+    !k. (FV (fCONJ enum k) ⊆ s)
+Proof
+strip_tac >> strip_tac >> strip_tac >> Induct_on `k` (* 2 *)
+>- rw[fCONJ_def,FV_def,PRIM_REC_THM,SUBSET_DEF,True_def,fNOT_def,fDISJ_def] >>
+fs[fCONJ_def,PRIM_REC_THM,fAND_FV]
+QED
+
+Theorem enum_imp_fCONJ:
+!n enum M σ.
+  (!t. t < n ==> feval M σ (enum t)) ==> feval M σ (fCONJ enum n)
+Proof
+Induct_on `n` >> rw[] (* 2 *)
+>- rw[fCONJ_def,feval_def,True_def,PRIM_REC_THM] >>
+`!t. t < n ==> feval M σ (enum t)` by rw[] >>
+first_x_assum drule >> 
+rw[fCONJ_def,FV_def,PRIM_REC_THM,SUBSET_DEF,True_def,fNOT_def,fDISJ_def]
+QED
 
 
-Theorem ultraproduct_sat:
+Theorem ultraproduct_sat_case2:
 !U I FMS x. countably_incomplete U I ==> 
+  !N. x IN N ==>
    !f. IMAGE f (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==> 
    (∀i ff ll. i ∈ I ⇒ (FMS i).Fun ff ll ∈ (FMS i).Dom) ==> 
   !s. (!phi. phi IN s ==> form_functions phi = {} /\ (FV phi) DIFF N ⊆ {x}) ==> 
@@ -453,7 +525,34 @@ Theorem ultraproduct_sat:
             (!n. n IN N ==> σ n = f n)  /\ 
             (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
 Proof
-(*rw[] >> drule countably_incomplete_chain >> rw[] >>
+rw[] >>
+qexists_tac `f` >> rw[] (* 2 *)
+>- rw[ultraproduct_folmodel_def] >>
+`FINITE {phi}` by fs[] >>
+`{phi} ⊆ s` by fs[SUBSET_DEF] >>
+first_x_assum drule >> rw[] >> 
+`feval (ultraproduct_folmodel U I' FMS) σ phi = 
+ feval (ultraproduct_folmodel U I' FMS) f phi` suffices_by metis_tac[] >>
+irule holds_valuation >> 
+`!x. x IN FV phi ==> x IN N` suffices_by metis_tac[] >> rw[] >>
+last_x_assum drule >> rw[DIFF_DEF,EXTENSION] >> metis_tac[]
+QED
+
+Theorem ultraproduct_sat_case1:
+!U I FMS x. countably_incomplete U I ==> 
+  !N. x NOTIN N ==>
+   !f. IMAGE f (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==> 
+   (∀i ff ll. i ∈ I ⇒ (FMS i).Fun ff ll ∈ (FMS i).Dom) ==> 
+  !s. (!phi. phi IN s ==> form_functions phi = {} /\ (FV phi) DIFF N ⊆ {x}) ==> 
+       (!ss. FINITE ss /\ ss ⊆ s ==> 
+          ?σ. (IMAGE σ (univ(:num)) ⊆ (ultraproduct_folmodel U I FMS).Dom) /\ 
+              (!n. n IN N ==> σ n = f n) /\
+              (!phi. phi IN ss ==> feval (ultraproduct_folmodel U I FMS) σ phi)) ==>
+       (?σ. (IMAGE σ (univ(:num)) ⊆ (ultraproduct_folmodel U I FMS).Dom) /\ 
+            (!n. n IN N ==> σ n = f n)  /\ 
+            (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
+Proof
+rw[] >> drule countably_incomplete_chain >> rw[] >>
 fs[countably_incomplete_def] >> drule thm_A_19_ii >> rw[] >> 
 `?enum. BIJ enum (univ(:num)) s` by cheat >>
 (* cheated! need Godel numbering*) 
@@ -464,9 +563,7 @@ qabbrev_tac `upfm = (ultraproduct_folmodel U (In 0) FMS)` >>
   suffices_by metis_tac[ultraproduct_sat_l1] >>
 (*first suffices end*)
 (*conj*)
-qabbrev_tac `conj = PRIM_REC (True) (\conjn n. fAND conjn (enum (n-1)))` >>
-(*cheated! need for each conj, conj n -> enum (n-1) better a theory in general*)
-`!M σ n. feval M σ (conj n) ==> feval M σ (enum (n-1))` by cheat >>
+qabbrev_tac `conj = fCONJ enum` >> 
 (*second suffices begin, change the goal into feval of conj*)
 `∃σ. IMAGE σ 𝕌(:num) ⊆ upfm.Dom ∧ (∀n. n ∈ N ⇒ σ n = f n) ∧
      ∀n. feval upfm σ (enum n)`
@@ -486,30 +583,105 @@ qabbrev_tac `conj = PRIM_REC (True) (\conjn n. fAND conjn (enum (n-1)))` >>
    >- rw[Abbr`σ0`,FUN_EQ_THM]
    >- (first_x_assum (qspec_then `conj (n + 1)` assume_tac) >> 
        first_x_assum drule >> strip_tac >> first_x_assum drule >> strip_tac >>
-       (*∀M σ n. feval M σ (conj n) ⇒ feval M σ (enum (n − 1)) in assumption does not allow type to vary, so indeed need something general to avoid proving it twice
-       first_x_assum (qspecl_then [`upfm`,`σ0`,`n+1`] assume_tac) does not work*)
-       `feval upfm σ0 (conj (n+1))` suffices_by cheat >>
+       `feval upfm σ0 (conj (n+1))` 
+         suffices_by 
+          (`n < n + 1` by fs[] >> metis_tac[fCONJ_imp_enum,Abbr`conj`]) >>
        metis_tac[])) >>
 (*second suffices end*)
 (*construction of Jn, which forms a decending chain, may need extract out, here choose forall instead of exists for the σ since there is no free var*)
 qabbrev_tac 
-  `Jn = \n. {i | i IN I' /\ 
+  `Jn = \n. {i | i IN (In 0) /\ 
                  (!σ.
                     (!k. k IN N ==> σ k = CHOICE (f k) i) ==>
                       feval (FMS i) σ (Exists x (conj n)) 
                  )}` >>
+(*prove property of Jn*)
+`!n. Jn (n + 1) ⊆ Jn n`
+  by
+   (rw[Abbr`Jn`,SUBSET_DEF] >> first_x_assum drule >> rw[] >>
+    metis_tac[fCONJ_imp_fCONJ]) >>
+`!phi. phi IN s ==> FV phi ⊆ N ∪ {x}`
+  by
+   (rw[] >> `FV phi DIFF N ⊆ {x}` by metis_tac[] >>
+    rw[SUBSET_DEF,UNION_DEF] >> fs[DIFF_DEF,SUBSET_DEF] >> metis_tac[]) >>
+`!n. FV (enum n) ⊆ N ∪ {x}`
+  by fs[BIJ_DEF,SURJ_DEF] >>
+`!n. FV (conj n) ⊆ N ∪ {x}`
+  by metis_tac[fCONJ_FV] >> 
+`!n. (Jn n) IN U` 
+  by
+   (rw[Abbr`Jn`] >> 
+    `FINITE {enum t | t < n} /\ {enum t | t < n} ⊆ s` 
+     by
+      (rw[] (* 2 *)
+       >- (`IMAGE enum (count n) = {enum t | t < n}` 
+            suffices_by metis_tac[IMAGE_FINITE,FINITE_COUNT] >>
+           rw[IMAGE_DEF,EXTENSION])
+       >- (fs[SUBSET_DEF,BIJ_DEF,INJ_DEF] >> metis_tac[])) >>
+    first_x_assum drule >> first_x_assum drule >> rw[] >>
+    first_x_assum (qspec_then `(fEXISTS x (conj n))` assume_tac) >> 
+    pop_assum (assume_tac o SYM) >>
+    `feval upfm f (fEXISTS x (conj n))`
+     by
+      (rw[feval_def] >> qexists_tac `σ x` >> rw[] (* 2 *)
+       >- (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+       >- (`(feval upfm f⦇x ↦ σ x⦈ (conj n) <=> feval upfm σ (conj n)) /\ 
+            feval upfm σ (conj n)` 
+             suffices_by metis_tac[] >>
+           rw[] (* 2 *)
+           >- (irule holds_valuation >> rw[] >>
+               `x' IN N \/ x' = x`
+                by (fs[SUBSET_DEF,UNION_DEF] >> metis_tac[]) (* 2 same *) >>
+               fs[APPLY_UPDATE_THM])
+           >- (`(!t. t < n ==> feval upfm σ (enum t)) 
+                 ==> feval upfm σ (conj n)` suffices_by metis_tac[] >>
+               metis_tac[enum_imp_fCONJ])
+          )
+      ) >>
+     (* by tactic for feval ends*)
+    qmatch_abbrev_tac `BS IN U` >>
+    `{i | i ∈ In 0 ∧ 
+          feval (FMS i) (λx. CHOICE (f x) i) (fEXISTS x (conj n))} ⊆ BS`
+     suffices_by 
+      (`BS ⊆ In 0` by fs[Abbr`BS`,SUBSET_DEF] >> 
+       metis_tac[ultrafilter_SUBSET']) >>
+    rw[SUBSET_DEF,Abbr`BS`] >> qexists_tac `a` >> rw[] >>
+    `!v. v IN FV (conj n) ==> 
+      (λx. CHOICE (f x) x')⦇x ↦ a⦈ v = σ'⦇x ↦ a⦈ v`
+     suffices_by metis_tac[holds_valuation] >>
+    rw[] >>
+    `v IN N \/ v = x` 
+     by (fs[SUBSET_DEF,UNION_DEF] >> metis_tac[]) >> (*2 same*)
+    fs[APPLY_UPDATE_THM]
+   ) >>
+(*by tac for Jn n IN U ends*)
 qabbrev_tac 
   `Xn = \n. (In n) ∩ (Jn n)` >>
-`(!n. Xn (n + 1) ⊆ Xn n) /\ BIGINTER {Xn n | n IN (univ(:num))} = {}` by cheat >>
-(*cheated for the property of chains, not suppose to be hard*)
+(*begin with the construction of Xn*)
+`!n. Xn n IN U`
+  by 
+   (rw[Abbr`Xn`] >> metis_tac[ultrafilter_INTER]) >>
+`(!n. Xn (n + 1) ⊆ Xn n) /\ BIGINTER {Xn n | n IN (univ(:num))} = {}`
+  by
+   (simp[Abbr`Xn`] >> 
+    `∀n. In (n + 1) ∩ Jn (n + 1) ⊆ In n ∩ Jn n ∧
+         BIGINTER {In n ∩ Jn n | n ∈ 𝕌(:num)} = ∅` 
+     suffices_by rw[] >> 
+    irule two_chains_INTER >> 
+    rw[]) >>
+(*cheated for the property of chains, not suppose to be hard need to fix FV
+where is the cheat ...*)
 `∃Ni. ∀i. i ∈ Xn 0 ⇒ i ∈ Xn (Ni i) ∧ ∀a. a > Ni i ⇒ i ∉ Xn a`
   by 
    (irule chain_Ni_EXISTS >> metis_tac[]) >>
+`Jn 0 = In 0` 
+  by 
+   (rw[EXTENSION,EQ_IMP_THM,Abbr`Jn`,Abbr`conj`,
+       True_def,fNOT_def,fCONJ_def,feval_def,PRIM_REC_THM] >> 
+    metis_tac[]) >>
+`Xn 0 = In 0`
+  by rw[Abbr`Xn`] >> 
 (*the above get the function n(i) in the paper*)
-(*
-`!k. ?σ. (∀n. n ∈ N ⇒ σ n = f n) /\
-         {i | i ∈ I' ∧ feval (FMS i) (λx. CHOICE (σ x) i) (conj n)} ∈ U` 
-  by cheat >> what was I doing...*)
 qabbrev_tac  
 `σr =(\v i. if (v IN N) 
         then (CHOICE (f v) i)
@@ -521,16 +693,17 @@ qabbrev_tac
                                else a)
                     (conj (Ni i))}))` >>
 qexists_tac `σr` >>
-(*even very first subgoal require being nonempty*)
-`!i. {a | a ∈ (FMS i).Dom ∧
+`!i. i IN In 0 ==> {a | a ∈ (FMS i).Dom ∧
           feval (FMS i) (λn. if n ∈ N then CHOICE (f n) i else a)
           (conj (Ni i))} <> {}` 
   by 
    (rw[GSYM MEMBER_NOT_EMPTY] >> 
-    `i IN I' /\
-     ∀σ. (∀k. k ∈ N ⇒ σ k = CHOICE (f k) i) ⇒
-          feval (FMS i) σ (fEXISTS x (conj (Ni i)))` by cheat >>
-    (*cheated to add the definition of Jn (Ni i)*)
+    `∀σ. (∀k. k ∈ N ⇒ σ k = CHOICE (f k) i) ⇒
+          feval (FMS i) σ (fEXISTS x (conj (Ni i)))` 
+     by 
+      (`i IN (Xn (Ni i))` by metis_tac[] >> 
+       `i IN (Jn (Ni i))` by fs[Abbr`Xn`] >>
+       fs[Abbr`Jn`]) >>
     fs[] >> 
     first_x_assum (qspec_then `\n. CHOICE (f n) i` assume_tac) >>
     (*specialize with the "canonical" function*)
@@ -538,16 +711,33 @@ qexists_tac `σr` >>
     `feval (FMS i) (λn. CHOICE (f n) i)⦇x ↦ a⦈ (conj (Ni i)) <=>
      feval (FMS i) (λn. if n ∈ N then CHOICE (f n) i else a) (conj (Ni i))`
       suffices_by metis_tac[] >> 
-    irule holds_valuation >> 
-    (*it applies because the only FV are either some n IN N or x*) 
-    cheat) >> 
-(*hardest one, cheat here to see if suffices*)
-`(∀v i. i ∈ In 0 ⇒ σr v i ∈ (FMS i).Dom)`
+    irule holds_valuation >> strip_tac >>
+    rw[] (* 2 *)
+    >- (fs[APPLY_UPDATE_THM] >> 
+       `x <> x'` by metis_tac[] >> rw[])
+    >- (`x' = x` 
+         by (fs[SUBSET_DEF] >> metis_tac[]) >> 
+        rw[APPLY_UPDATE_THM])
+    ) >> 
+`∀v i. i ∈ In 0 ⇒ σr v i ∈ (FMS i).Dom`
   by
-   (`!v. CHOICE (f v) IN (f v)` by cheat >>
-    (*this is because f has correct image*)
-    `!g v. g IN (f v) ==> (!i. i IN In 0 ==> (g i) IN (FMS i).Dom)` by cheat >>
-    (*maybe a lemma*)
+   (`!v. CHOICE (f v) IN (f v)` 
+     by 
+      (`!v. (f v) <> {}` suffices_by metis_tac[CHOICE_DEF] >> rw[] >>
+       fs[IMAGE_DEF,SUBSET_DEF] >> 
+       metis_tac[ultraproduct_eqclass_non_empty]) >>
+    `!g v. g IN (f v) ==> (!i. i IN In 0 ==> (g i) IN (FMS i).Dom)` 
+     by 
+      (rw[] >> 
+       `f v IN (ultraproduct U (In 0) (folmodels2Doms FMS))` 
+         by (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
+       `f v IN (partition (Uequiv U (In 0) (folmodels2Doms FMS))
+               (Cart_prod (In 0) (folmodels2Doms FMS)))`
+         by fs[ultraproduct_def] >>
+       fs[partition_def,Cart_prod_def,folmodels2Doms_def] >> 
+       `g IN {y | (∀i. i ∈ In 0 ⇒ y i ∈ (FMS i).Dom) ∧
+                   Uequiv U (In 0) (λi. (FMS i).Dom) x' y}` by metis_tac[] >>
+       fs[]) >>
     rw[Abbr`σr`] (* 2 *)
     >- metis_tac[] >> 
     qmatch_abbrev_tac `CHOICE bs IN (FMS i).Dom` >>
@@ -559,28 +749,33 @@ qexists_tac `σr` >>
       {g | Uequiv U (In 0) (folmodels2Doms FMS) g (σr n)} = f n`
   by 
    (rw[Abbr`σr`] >> `(λi. CHOICE (f n) i) = CHOICE (f n)` by fs[FUN_EQ_THM] >>
-    rw[] >> cheat
-    (*`{g | Uequiv U (In 0) (folmodels2Doms FMS) g (CHOICE (f n))} = f n`
-     need rep independence lemma*)) >> rw[]
+    rw[] >> drule eqc_CHOICE >> strip_tac >> 
+    first_x_assum (qspecl_then [`(folmodels2Doms FMS)`,`f n`] assume_tac) >>
+    `f n ∈ ultraproduct U (In 0) (folmodels2Doms FMS)`
+      suffices_by metis_tac[] >>
+    fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
+rw[] >>
 (*last most subtle subgoal*)
 qmatch_abbrev_tac `bs IN U` >>
-`(Xn k) ⊆ bs` suffices_by cheat >>
-(*all the Xn's are in U, closure upward*)
-`!i. i IN (Xn k) ==> feval (FMS i) (λv. σr v i) (conj k)` suffices_by cheat >>
-(*the fact that is subset of I0 is trivial*)
-`!i. (i ∈ I' ∧
-      (∀σ. 
-          (!n. n IN N ==> σ n = CHOICE (f n) i) ⇒
-          feval (FMS i) σ (fEXISTS x (conj k))
-      )
-     ) ==> feval (FMS i) (λv. σr v i) (conj k)`
-  suffices_by cheat >> 
+`(Xn k) ⊆ bs` 
+  suffices_by 
+   (`bs ⊆ In 0` by fs[Abbr`bs`,SUBSET_DEF] >> rw[] >>
+    irule ultrafilter_SUBSET' >> rw[] (* 2 same *)
+    >> metis_tac[]) >>
+`!i. i IN (Xn k) ==> feval (FMS i) (λv. σr v i) (conj k)` 
+  suffices_by rw[Abbr`bs`,Abbr`Xn`,Abbr`Jn`,SUBSET_DEF] >>
 rpt strip_tac >> 
-(*extract the only useful feature of Xn k*)
-`feval (FMS i) (λv. σr v i) (conj (Ni i))` suffices_by cheat >>
-(*do need that i is in Xn k ...  then this argument is valid: Assume 
-i is in Xn k, then (Ni i) >= k 
-here reduce the goal into  feval (FMS i) (λv. σr v i) (conj (Ni i)) *)
+`k <= Ni i`
+  by 
+   (SPOSE_NOT_THEN ASSUME_TAC >>
+    `k > Ni i` by fs[] >>
+    `i IN Xn 0` suffices_by metis_tac[] >> 
+    `0 <= k` by fs[] >>
+    `Xn k ⊆ Xn 0` by metis_tac[chain_TRANS] >>
+    metis_tac[SUBSET_DEF]) >> 
+(*need trans feval lemma of conj cheated!*)
+`feval (FMS i) (λv. σr v i) (conj (Ni i))` 
+  suffices_by metis_tac[fCONJ_imp_fCONJ_LE] >>
 rw[Abbr`σr`] >> 
 `CHOICE
    {a | a ∈ (FMS i).Dom ∧
@@ -588,13 +783,31 @@ rw[Abbr`σr`] >>
                       (conj (Ni i))} IN
    {a | a ∈ (FMS i).Dom ∧
         feval (FMS i) (λn. if n ∈ N then CHOICE (f n) i else a)
-                      (conj (Ni i))}` suffices_by rw[]
-(*the above suffices is valid, so everything amounts to the set non empty*)
-(*but why it is not empty?*)
-(* we have i IN Xn (Ni i) by definition ! just cheat below since tedious*)
+                      (conj (Ni i))}` suffices_by rw[] >>
+`0 <= k` by fs[] >>
+`Xn k ⊆ Xn 0` by metis_tac[chain_TRANS] >>
+`i IN Xn 0` by metis_tac[SUBSET_DEF] >> 
 metis_tac[CHOICE_DEF]
-*)cheat
 QED
+
+Theorem ultraproduct_sat:
+!U I FMS x. countably_incomplete U I ==> 
+   !f. IMAGE f (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==> 
+   (∀i ff ll. i ∈ I ⇒ (FMS i).Fun ff ll ∈ (FMS i).Dom) ==> 
+  !s. (!phi. phi IN s ==> form_functions phi = {} /\ (FV phi) DIFF N ⊆ {x}) ==> 
+       (!ss. FINITE ss /\ ss ⊆ s ==> 
+          ?σ. (IMAGE σ (univ(:num)) ⊆ (ultraproduct_folmodel U I FMS).Dom) /\ 
+              (!n. n IN N ==> σ n = f n) /\
+              (!phi. phi IN ss ==> feval (ultraproduct_folmodel U I FMS) σ phi)) ==>
+       (?σ. (IMAGE σ (univ(:num)) ⊆ (ultraproduct_folmodel U I FMS).Dom) /\ 
+            (!n. n IN N ==> σ n = f n)  /\ 
+            (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
+Proof
+rw[] >> Cases_on `x IN N`
+>- (irule ultraproduct_sat_case2 >> rw[] >> metis_tac[]) >>
+irule ultraproduct_sat_case1 >> rw[] >> metis_tac[]
+QED
+
 
 
 Theorem ultraproduct_sat':
