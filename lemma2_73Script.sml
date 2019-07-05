@@ -11,13 +11,78 @@ open combinTheory;
 open folLangTheory;
 open folModelsTheory;
 open chap2_4revisedTheory;
+open prim_recTheory;
 
 open equiv_on_partitionTheory;
 open ultraproductTheory;
 open ultrafilterTheory;
 
 val _ = ParseExtras.tight_equality()
-val _ = new_theory "2_73";
+val _ = new_theory "lemma2_73";
+
+Definition FCT_def[simp]:
+  (FCT (V v) = {}) /\
+  (FCT (Fn s ts) = if ts = [] then {s} else (LIST_UNION (MAP FCT ts)))
+Termination
+  WF_REL_TAC `(measure (term_size))` >> rw[term_size_lemma]
+End
+
+Definition FC_def[simp]:
+  (FC False = {}) /\
+  (FC (Pred n ts) = LIST_UNION (MAP FCT ts)) /\
+  (FC (IMP f1 f2) = FC f1 ∪ FC f2) /\
+  (FC (FALL x f) = FC f)
+End
+
+
+val ftype_def = Define`
+  ftype x G <=> G ⊆ {phi | FV phi SUBSET {x}}`;
+
+val frealizes_def = Define`
+  frealizes M x G <=> ?w. ftype x G /\ w IN M.Dom /\
+                          !σ phi. (IMAGE σ univ(:num)) SUBSET M.Dom /\ phi IN G ==> fsatis M ((x=+w)σ) phi`;
+
+
+(*
+val A_form_def = Define`A_form phi <=> FC phi ⊆ FDOM M.consts`
+*)
+
+val expansion_def = Define`
+expansion M A M' f <=> (M'.Dom = M.Dom) /\
+                       (BIJ f (count (CARD A)) A) /\
+                       (M'.Fun = \n args. if n < CARD A /\ args = [] then f n
+                                           else CHOICE M.Dom) /\
+                        M'.Pred = M.Pred`
+
+
+val consistent_def = Define`
+  consistent M G <=>
+      !G0. FINITE G0 /\ G0 ⊆ G ==> ?σ. IMAGE σ univ(:num) SUBSET M.Dom /\ !phi. phi ∈ G0 ==> fsatis M σ phi `;
+  
+val n_saturated_def = Define`
+  n_saturated M n <=>
+     !A M' G x f.
+        (IMAGE f (univ(:num)) ⊆ M.Dom) /\
+        (FINITE A /\ CARD A <= n /\ A SUBSET M.Dom /\
+        expansion M A M' f /\ 
+        (!phi. phi IN G ==> !c. c IN (form_functions phi) ==> 
+                               (FST c) IN (count (CARD A)) /\ SND c = 0) /\
+(* G SUBSET { phi | ok_form M' phi} /\ *)
+        ftype x G /\ consistent M' G)
+         ==>
+        frealizes M' x G`;
+
+val countably_saturated_def = Define`
+  countably_saturated M <=> !n. n_saturated M n`;
+
+
+Theorem IMAGE_UPDATE:
+  !σ a. IMAGE σ A ⊆ B ==> !b. b IN B ==> IMAGE σ(|a |-> b|) A ⊆ B
+Proof
+  rw[IMAGE_DEF,SUBSET_DEF] >> Cases_on `x' = a` >> rw[APPLY_UPDATE_THM] >> metis_tac[]
+QED
+
+
 
 
 
