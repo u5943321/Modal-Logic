@@ -104,7 +104,7 @@ QED
 
 Theorem ultraproduct_folmodel_well_formed:
 !U I.  ultrafilter U I ==> 
-  !FMS n l. (!n0 l0 i. ((FMS i).Fun n0 l0) IN (FMS i).Dom) ==> 
+  !FMS n l. (!n0 l0 i. i IN I ==> ((FMS i).Fun n0 l0) IN (FMS i).Dom) ==> 
          ((ultraproduct_folmodel U I FMS).Fun n l) IN (ultraproduct_folmodel U I FMS).Dom
 Proof
   rw[ultraproduct_folmodel_def] >> 
