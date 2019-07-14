@@ -606,5 +606,29 @@ val KG_provable_G = store_thm(
     fs[KG_provable_def] >> rw[SUBSET_DEF] >>
     qexists_tac `[]` >> metis_tac[KGproof_rules]);
 
+
+
+(*prop symbols*)
+
+val prop_letters_def = Define`
+  (prop_letters (VAR p) = {p}) /\
+  (prop_letters FALSE = {}) /\ 
+  (prop_letters (DISJ f1 f2) = (prop_letters f1) ∪ (prop_letters f2)) /\
+  (prop_letters (NOT f) = prop_letters f) /\
+  (prop_letters (DIAM f) = prop_letters f)`
+
+
+Theorem exercise_1_3_1:
+!phi M1 M2.
+   M1.frame = M2.frame ==>
+   (!p. p IN (prop_letters phi) ==> M1.valt p = M2.valt p) ==>
+   (!w. w IN M1.frame.world ==> (satis M1 w phi <=> satis M2 w phi))      
+Proof
+Induct_on `phi` >> rw[satis_def] (* 4 *)
+>- fs[prop_letters_def] >>
+fs[prop_letters_def] >> metis_tac[]
+QED
+
+
 val _ = export_theory();
 
