@@ -136,6 +136,24 @@ qexists_tac `DISJ e ff` >> rw[] (* 2 *)
 rw[satis_def] >> metis_tac[]
 QED
 
+Theorem PE_BIGCONJ_DIST_TYPE:
+!ss. FINITE ss ==> 
+     (!f. f IN ss ==> PE f) ==>
+      ?ff. PE ff /\
+           (!M w:β. w IN M.frame.world ==>
+                  (satis M w ff <=> (!f. f IN ss ==> satis M w f))) /\
+           (!M w:γ. w IN M.frame.world ==>
+                  (satis M w ff <=> (!f. f IN ss ==> satis M w f)))
+Proof
+Induct_on `FINITE` >> rw[] 
+>- (qexists_tac `TRUE` >> rw[satis_def,PE_rules,TRUE_def]) >>
+`!f. f IN ss ==> PE f` by metis_tac[] >> 
+first_x_assum drule >> strip_tac >> 
+qexists_tac `AND e ff` >> rw[] (* 2 *)
+>- metis_tac[PE_rules] >>
+rw[satis_AND] >> metis_tac[]
+QED
+
 
 Theorem exercise_2_7_1:
 !M M' w w'. 
@@ -145,18 +163,30 @@ Theorem exercise_2_7_1:
              (satis M w phi ==> satis M' w' phi)) ==>
      ?Z. sim Z M M' /\ Z w w'
 Proof
-(*rw[] >>
+rw[] >>
 qexists_tac `\w1 w2. (!phi. PE phi ==> satis M w1 phi ==> satis M' w2 phi)` >> 
-rw[sim_def] (* 3 *)
->- (`satis M w1 (VAR p) ==> satis M' w2 (VAR p)` by metis_tac[] >>
-    fs[satis_def])
->- SPOSE_NOT_THEN ASSUME_TAC >> 
-   `∀w2'. w2' ∈ M'.frame.world /\ M'.frame.rel w2 w2' ==>
-      (?phi. satis M w1' phi /\¬ satis M' w2' phi)` by metis_tac[] >>
-
-
->- metis_tac[]
-   `*)cheat         
+rw[sim_def] (* 2 *)
+>- (`satis M w1 (VAR p) ==> satis M' w2 (VAR p)` by metis_tac[PE_rules] >>
+    fs[satis_def]) >>
+qabbrev_tac `d = {phi | PE phi /\ satis M w1' phi}` >> fs[M_sat_def] >>
+`satisfiable_in d {v | v ∈ M'.frame.world ∧ M'.frame.rel w2 v} M'`
+  suffices_by
+   (rw[satisfiable_in_def] >> qexists_tac `x` >> rw[] >> fs[Abbr`d`]) >>
+first_x_assum irule >> rw[fin_satisfiable_in_def,satisfiable_in_def,SUBSET_DEF] >>
+drule PE_BIGCONJ_DIST_TYPE >> strip_tac >> 
+`∀f. f ∈ S' ⇒ PE f` by fs[Abbr`d`] >> first_x_assum drule >> strip_tac >>
+`∃x. (x ∈ M'.frame.world ∧ M'.frame.rel w2 x) ∧
+     satis M' x ff` suffices_by metis_tac[] >>
+`satis M' w2 (DIAM ff)` 
+  suffices_by metis_tac[satis_def] >> 
+first_x_assum irule >>
+`PE (DIAM ff)` by metis_tac[PE_rules] >>
+rw[satis_def] >>
+`?v. M.frame.rel w1 v ∧ v ∈ M.frame.world ∧ 
+     (∀f. f ∈ S' ⇒ satis M v f)` 
+  suffices_by metis_tac[] >>
+qexists_tac `w1'` >> rw[] >>
+fs[Abbr`d`]
 QED
 
 
