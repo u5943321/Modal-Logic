@@ -15,6 +15,7 @@ open prim_recTheory;
 open listTheory;
 open finite_mapTheory;
 open combinTheory;
+open ultrafilterTheory;
 
 
 val _ = ParseExtras.tight_equality()

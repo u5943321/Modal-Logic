@@ -1,5 +1,10 @@
-\documentclass{report}
+\documentclass[letterpaper]{article}
 
+\setlength{\voffset}{-0.5in}
+\setlength{\textheight}{710pt}
+
+
+\usepackage[margin=1in,footskip=0.25in]{geometry}
 \usepackage{holtexbasic}
 \renewcommand{\HOLConst}[1]{{\textsf{\upshape\small #1}}}
 \renewcommand{\HOLinline}[1]{\ensuremath{#1}}
@@ -7,6 +12,8 @@
 \renewcommand{\HOLKeyword}[1]{\texttt{#1}}
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
+\newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
+\renewcommand{\baselinestretch}{0.9}
 
 \title{Modal Logic Mechanisation in HOL4}
 \author{Yiming Xu}
@@ -15,6 +22,578 @@
 \begin{document}
 
 \maketitle
+
+\section{Getting Start}
+
+In our formalisation, we only consider the most standard modal language, called the basic modal language. The basic modal language is defined using a set $\Phi$ of propositional formulas, and only one modal operator $\Diamond$. A formula in the basic modal language is either a propositional symbol $p$ where $p\in \Phi$, or a disjunction $\psi\lor\phi$  of prmodal formulas $\psi$ and $\phi$, or the negation $\lnot \phi$ of a modal formula $\phi$, or else of the form $\Diamond \phi$ obtained by putting a diamond before a modal formula. In the HOL, we create a datatype called `form' of the formulas of this modal language. 
+
+\begin{holmath}
+  \HOLthm{chap1.datatype_form}
+\end{holmath}
+
+When we say an `$\alpha$ form', we mean a formula in the basic modal language defined on a set $\Phi$ with elements of type $\alpha$, such a set is called an $\alpha$ set, and of type $\alpha \to bool$. Note that we have the notion of the conjunction `$\land$', the implication $\to$, and the truth `$\top$', but they are not primitive, and defined as:
+
+\begin{holmath}
+  \HOLthm{chap1.AND_def}
+  \HOLthm{chap1.IMP_def}
+  \HOLthm{chap1.TRUE_def}
+\end{holmath}
+
+As an analogue of the duality of the universal quantifier is the dual of the existential quantifier, in the sense that $\exists$ is defined to be $\lnot\forall\lnot$, we have a modal operator that is dual to the diamond, defined by $\Box \phi:= \lnot\Diamond \lnot \phi$. 
+
+\begin{holmath}
+  \HOLthm{chap1.BOX_def}
+\end{holmath}
+
+If a modal formula does not use any diamond, then it is also a propositional formula:
+
+\begin{holmath}
+  \HOLthm{chap1.propform_def}
+\end{holmath}
+
+Knowing how does the modal formulas we are interested in look like, now we want to consider what does they mean. If the modal formula defined using propositional symbols in an $\alpha$-set $\Phi$ is a propositional formula, then to talk about its truth value, what we need is just an assignment of truth value of the propositional letters in $\Phi$, that is, a function $\Phi\to bool$. In the HOL, to define a function from an $\alpha$-set, where $\alpha$ is any type, we are not allowed to only assign values to the elements of the set, instead, we must define the function on for all the terms that has type $\alpha$. Hence we can define the function of evaluating propositional formulas as takes a function $\sigma:\alpha\to bool$ and an $\alpha$ propositional formula, and let it spit out the truth value of the propositional formula under the assignment $\sigma$.
+
+\begin{holmath}
+  \HOLthm{chap1.peval_def}
+\end{holmath}
+
+However, to interpret a modal formula that involves diamonds, an assignment of truth value is not enough. We need a model of our language. A model of the basic modal language consists of two pieces of informations. The first thing we need is a frame. A frame consists of two things, a set, and a relation defined on elements in this set. If the underlying set of a frame is an $\beta$-set, then the frame is called an $\beta$-frame.
+\begin{holmath}
+  \HOLthm{chap1.datatype_frame}
+\end{holmath}
+
+The second thing we need is a valuation. If we are taking about interpret an $\alpha$-form on a $\beta$-frame, a valuation is a function of type $\beta\to\alpha\to bool$. The information that a valuation gives is that, for each point in the frame, an assignment of truth value of each propositional symbol. We get a model by putting a frame and a valuation together.
+
+\begin{holmath}
+  \HOLthm{chap1.datatype_model}
+\end{holmath}
+
+When we say an $(\alpha,\beta)$-model, we mean a model for $\alpha$-forms with a $\beta$-set as its underlying set.
+
+Now we can interpret modal formulas in the basic modal language on a model by defining satisfication.
+\begin{holmath}
+  \HOLthm{chap1.satis_def}
+\end{holmath}
+
+(insert an example of model and satisfication here)
+
+Just as in first order logic and propositional logic, we can define the notion of logical equivalence of modal formulas which is an equivalence relation between formulas which use propositional symbols of the same type:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.equiv0_def}
+  \HOLthm{IBCDNFrevised.equiv0_equiv_on}
+\end{holmath}
+
+A notable thing is that \HOLtm{equiv0} need to take a type itself, denoted as \HOLtm{μ}, and if \HOLtm{μ} denotes the type \HOLtm{α} itself and \HOLtm{f1}, \HOLtm{f2} are \HOLtm{β} formulas, \HOLtm{equiv0 μ f1 f2} means for any $(\alpha,\beta)$-model \HOLtm{M} and any world \HOLtm{w} in it, we have \HOLtm{satis  M w f1 <=> satis M w f2}. We are not allowed to omit the \HOLtm{μ} in the definition, since then we will introduce a type, namely the type of models \HOLtm{M}, that only appear on the right hand side but not on the left hand side of the definition, which is not allowed. Also we are not allowed to quantify over the \HOLtm{μ}, and something like `equiv f1 f2 $\Leftrightarrow$ !$\mu$. equiv0 $\mu$ f1 f2' is also not allowed. This is actually a inconvenience of the HOL, since when we mention equivalence of formulas in usual mathematical language, we are implicitly taking about the class of all models, but the constrain here bans us from talking about all models at once.
+
+We can immediately prove that for $\mu$ denotes any type, if \HOLtm{equiv0 μ f g} then \HOLtm{equiv0 μ (DIAM f) (DIAM g)}, but the converse does not hold under our definition. In the usual mathematical notion of equivalence, if two diamond formulas \HOLtm{DIAM f} and \HOLtm{DIAM g} are equivalent, then \HOLtm{f} and \HOLtm{g} must be equivalent. It is because if $f$ and $g$ are not equivalent, then there eixsts a model \HOLtm{M} and a world $w$ such that $w$ satisfies $f$ but not $g$, then we can attach a world that is only linked to $w$, and the world we add is a witness of the fact that \HOLtm{DIAM f} and \HOLtm{DIAM g} are not equivalent. But under our definition in the HOL, if the $\mu$ denotes a finite type, then it is possible that we have \HOLtm{equiv0 μ (DIAM f) (DIAM g)} but \HOLtm{¬equiv0 μ f g}. For example, consider the type that has only two inhabitants $a,b$, then in the model below, we have \HOLtm{equiv0 μ (DIAM (VAR p)) (DIAM (VAR q))} but \HOLtm{¬equiv0 μ (VAR p) (VAR q)}.
+
+(add the picture of example, how to draw it?)
+
+As the situition above is only because of our special definition, such case is uninteresting. For any model, regardless its world set is of a finite type or not, we can always create a copy of the model in an infinite type. So it is harmless to just consider equivalence of formulas for models whose underlying set is of an infinite type. When $\mu$ denotes an infinite type, as we can always come up with a fresh world that allows the proof of equivalence between $f$ and $g$ from the equivalence of $\Diamond f$ and $\Diamond g$ as in the usual sense to go through, we do have a double implication:
+
+\begin{holmath}
+  \HOLthm{chap2_3.equiv0_DIAM}
+\end{holmath}
+
+
+Given a modal formula, we can extract the set of propositional symbols appear in it, as:
+\begin{holmath}
+  \HOLthm{chap1.prop_letters_def}
+\end{holmath}
+
+Then we can show when evaluating a formula $\phi$ on a model, the only relevant information in the valuation is the assignment it makes to the propositional letters actually occurring in $\phi$:
+
+\begin{holmath}
+  \HOLthm{chap1.exercise_1_3_1}
+\end{holmath}
+
+In particular, if we are interpreting a propositional formula, then we do not need the relation on the model, as we can prove from definition:
+
+\begin{holmath}
+  \HOLthm{chap2_3.peval_satis}
+\end{holmath}
+
+Moreover, we only need the truth values of the propositional symbols that appears in the formula:
+
+\begin{holmath}
+  \HOLthm{chap2_3.peval_satis_strengthen}
+\end{holmath}
+
+One may confused why are we allowed to write $\lambda \ a. w \in M.valt \ a) \cap s$ here, for $\lambda \ a. (w \in M.valt\ a)$ is a function but $s$ is a set. This is because both the $\alpha$-set $s$ and the function $\lambda \ a. (w \in M.valt)$ has type $\alpha\to bool$, so they can be feeded to the function $\cap$, which has type $(\alpha\to bool)\to (\alpha\to bool)\to (\alpha\to bool)$. Hence for the set $s$, we can either view it as a collection of elements of type $\alpha$, or a function that assigns each term of type $\alpha$ a truth value, where the truth value assigned to $a:\alpha$ is $T$ if and only if $a\in s$.
+
+(change subforms to propsyms later?)
+
+\section{Invariant results and bisimulations}
+
+
+The key concept we are interested in this chapter is called `modal equivalent', by `two worlds $w\in M.frame.world,w'\in M'.frame.world$ are modal equivalent', we mean they satisfies exactly the same modal formulas.
+
+\begin{holmath}
+  \HOLthm{chap2_5.modal_eq_tau}
+\end{holmath}
+
+In this chapter, we investigate when can we get modal equivalence. In the first section, we talk about how can we get new models from old models without affect modal satisfication, and then we introduce morphisms between models, and find out under which condition we can map a point of a model to another model and preserve satisfication. In the second section, we investigate a kind of relation between models, called bisimulation, that gives arise to modal equivalence, in the sense of two worlds that are related by a bisimulation satisfies the same modal formulas.
+
+
+\subsection{Operations on models}
+
+Here we introduce two operations on models, called disjoint union and generated submodels respectively. 
+
+The operation on models that leads to invarience of formulas in the most straightforward way is the disjoint union:
+
+\begin{holmath}
+   \HOLthm[def]{chap2_1.DU_def}
+\end{holmath} 
+
+
+Disjoint union is defined as a function that takes a function that takes a function $f:\beta\to (\alpha,\gamma)$-model and a $\beta$-set $dom$, which plays the role of the index set that we take the disjoint union over. The function $f$ are defined for all terms of type $\beta$, but actually we only need its value on elements in $dom$. Given a family of models indexed by the set $dom$, the world set of the disjoint union of this family has elements of form $(i,w)$ where $i\in dom$ and $w\in (f \ i).frame.world$. For a propositional letter $p$ and a world $(i,w)$, we have $DU \ (f,dom).valt \ p\ (i,w)$ iff $(f \ i).valt \ p \ w$, and $DU \ (f,dom).rel \ (i,w) \ (i',w')$ iff $i=i'$ and $(f\ i).frame.rel \ w \ w'$, means that $(i,w)$ and $(i',w')$ come from the same model and are related by the relation in that model. 
+
+The disjoint union does nothing except for collecting a set of models together, so it is unsurprising that we can prove by induction that:
+
+\begin{holmath}
+  \HOLthm{chap2_1.prop_2_3}
+\end{holmath}
+
+Disjoint union is the operation we use when we want to expand out scope from a smaller model to a large model. Accordingly, we have an operation that allows us to restrict our scope to a smaller model, this is called `generated submodel' construction. 
+
+When we say `$M_1$ is a submodel of $M_2$, we mean $M_1$ is a part of $M_2$.
+
+\begin{holmath}
+  \HOLthm[def]{chap2_1.SUBMODEL_def}
+\end{holmath}
+
+It is not necessary that submodel construction preserves modal satisfication, since we can discard relations between worlds and hence destroy the satisfication of formulas with diamonds. 
+
+
+%(Give an easy example?)
+
+But after adding some constrains to the relations that we need to preserve, we can have a special kind of submodels, called generated submodels, that preserves modal satisfication.
+
+\begin{holmath}
+  \HOLthm{chap2_1.GENSUBMODEL_def}
+\end{holmath}
+
+Note that for a model $M_1$ to be a generated submodel of $M_2$, we only require all the worlds $w'$ which have a link from a world $w$ in $M_1$ to be also included in the world set of $M_1$, and we are allowed to completely ignore everthing that is linked to a world in $M_1$. This is because modal formulas cannot `look back', in the sense that linking or discard links to a world does not change the set of satisfied formulas at the world. 
+
+%(prove a little proposition about it?)
+
+Also by induction, we can prove the invariance of modal satisfication under taking generated submodels:
+
+\begin{holmath}
+  \HOLthm{chap2_1.prop_2_6}
+\end{holmath}
+
+
+\subsection{Morphisms between models}
+
+In this section, we talk about various kind of `morphisms' between models. Similar as in mathematics, the notion of `morphism' here is used to describe maps that preserves structures. For instance, a homomorphism is a rather notion of `structure-preserving':
+
+\begin{holmath}
+  \HOLthm{chap2_1.hom_def}
+\end{holmath}
+
+Although a homomorphism preserves link between worlds in the source model, we allow the existence of extra link in the target model which has no counterpart in the source. Because of this, we cannot guarentee any world in the source is mapped to a world that satisfies exactly the same set of modal formulas under a homomorphism. As an attempt to obtain an equivlence, we strongthen the condition of being a homomorphism, and what we get after strengthening is called a strong homomorphism:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_1.strong_hom_def}
+\end{holmath}
+
+A strong homomorphism that is a bijection on the world set is called an isomorphism, and an isomorphism will certainly preserves everthing. Just for the sake of modal equivalence, we do not really require an isomorphism, instead, a surjective strong morphism is enough:
+
+\begin{holmath}
+   \HOLthm{chap2_1.prop_2_9}
+\end{holmath}
+
+Now we have a desired modal equivalence from strong homomorphism. The problem is that the condition of being a strong homomorphism is too strong. We want a suitably weakened condition on a morphism that gives arise of such equivalence, our answer is bounded morphism:
+
+\begin{holmath}
+   \HOLthm[def]{chap2_1.bounded_mor_def}
+\end{holmath}
+
+%(the book says many invarient map are not strong homomorphism, but do not say every map that give arise to equivalence is bounded morphism, strongthen into a characterisation?)
+
+The invariance result that bounded morphism gives is stated as:
+
+\begin{holmath}
+  \HOLthm{chap2_1.prop_2_14}
+\end{holmath}
+
+
+As an application, we will use it to prove the tree-like property of modal formulas. The tree-like property of modal formula says that for any formula $\phi$ satisfied on any point in any model, there exists a tree-like model such that $\phi$ is satisfied at the root of the tree. As the name indicates, a tree-like model is a model such that its underlying frame is a tree. Formally, a tree is defined as:
+
+\begin{holmath}
+   \HOLthm[def]{chap2_1.tree_def}
+\end{holmath}
+
+Here \HOLtm{RTC} denotes the reflexive and transitive closure, and \HOLtm{RESTRICT} is a function that takes a relation and a set and return a relation that can only possibly hold on the set we give:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_1.RESTRICT_def}
+\end{holmath}
+
+We read `$tree \ S \ r$' as `$S$ is a tree with root $r$'. By definition, any tree like model is rooted. An induction on reflextive and transitive closure proves a tree has no loop:
+
+\begin{holmath}
+  \HOLthm{chap2_1.tree_no_loop}
+\end{holmath}
+
+
+We now prove the tree-like property of modal formulas:
+
+\begin{holmath}
+  \HOLthm{chap2_1.prop_2_15_corollary}
+\end{holmath}
+
+Proof:
+  Suppose \HOLtm{satis M w phi} By the invariance result of rooted model, we have \HOLtm{satis M' w phi} where \HOLtm{M} is the rooted model generated by \HOLtm{w}. By the invariance result for bounded morphisms, it suffices to prove \HOLtm{M'} is the image of some bounded morphism from some tree-like model where the root of the tree is mapped to the root of \HOLtm{M'}. We construct such a model \HOLtm{M''} as follows: Take the set of worlds to be the finite sequences [$w=u_0;u_1;\cdots ;u_n$] such that $n>0$ and $M.frame.rel \ u_i\ u_{i+1}$ for all $i$. Define $M''.frame.rel \ [w;u_1;\cdots ;u_n]\ [w;v_1;\cdots ;v_m]$ iff $m=n+1$, $m_i=v_i$ for $i\le n$ and $M.frame.rel \ u_n\ v_m$. The valuation is given by $[w;u_1;\cdots;u_n]\in M''.valt \ p$ iff $u_n\in M.valt \ p$. In the HOL, such a model looks like:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_1.bounded_preimage_rooted_def}
+\end{holmath}  
+
+It is straightforward to check the map that sends a world in \HOLtm{bounded_preimage_rooted M' w} to its last member is a bounded morphism, and $[w]$ in \HOLtm{M''} is sent to $w$ in \HOLtm{M'}, as desired.
+
+
+
+\subsection{Bisimulation}
+
+The three approachs to obtain modal equivalence has a common feature: all of them leads to a relation between models such that related states satisfies exactly the same set of propositional letters, and once we are able to make a transition in one model, we can make a corresponding transition in the other. This observation leads us to the concept of bisimulation: 
+
+\begin{holmath}
+  \HOLthm[def]{chap2_2.bisim_def}
+\end{holmath}
+
+If we have \HOLtm{bisim Z M M'}, it means that \HOLtm{Z} is a bisimulation relation between worlds in \HOLtm{M} and \HOLtm{M'}. We require any two worlds related by a bisimulation to have same atomic information and matching transition possibilities. We can see all of the three constructions we introduced before give arise to bisimulations:
+
+\begin{holmath}
+  \HOLthm{chap2_2.prop_2_19_ii}
+  \HOLthm{chap2_2.prop_2_19_iii}
+  \HOLthm{chap2_2.prop_2_19_iv}
+\end{holmath}
+
+Proof: For (i), the bisimulation relation is \HOLtm{λa b. (b = (i, a))}, which is linking a world to its corresponding copy in the disjoint union. For (ii), the relation is \HOLtm{λn1 n2. n1 = n2}. And for (iii), the relation is \HOLtm{λn1 n2. (n2 = f n1)}
+
+
+The clauses on forth and back condition for a bisimulation relation provide precisely the information to push the induction on formula for proving the following invariance theorem about bisimulations through:
+
+\begin{holmath}
+  \HOLthm{chap2_2.thm_2_20}
+\end{holmath}
+
+The theorem above provides alternative proofs to the invariance theorems for disjoint union, generated submodels, and bounded morphisms. Hence we can say the three former constructions is actually `the same thing'. But it is not the end of the story. A natural question to ask is : is bisimulation and modal equivalence the `same thing'? More precisely, a bisimulation will always give a modal equivalence, conversely, is that the fact that a modal equivalence always give a bisimulation?
+
+The answer is no. Nonetheless, we can prove the converse of the theorem above with an extra condition on the models. A model \HOLtm{M} is called image finite if for any world \HOLtm{w IN M.frame.world}, there are only finitely many worlds in \HOLtm{M} that is related to \HOLtm{w}.
+
+\begin{holmath}
+  \HOLthm[def]{chap2_2.image_finite_def}
+\end{holmath}
+
+Our main theorem is called Hennessy-Milner theorem, it says that for image finite models, modal equivalence and bisimulation coincides:
+
+\begin{holmath}
+  \HOLthm{chap2_2.thm_2_24}
+\end{holmath}
+
+Proof:
+The implication from right to left is just the invariance theorem for bisimulation. We prove the implication from left to right. Given \HOLtm{w} and \HOLtm{w'} are worlds in \HOLtm{M} and \HOLtm{M'} which are modal equivalent, we prove the relation \HOLtm{λn1 n2. (!form. satis M n1 form <=> satis M' n2 form)} gives a bisimulation. The first clause is immediate to check. For the second one, assume \HOLtm{modal_eq M M' n1 n2} and \HOLtm{M.frame.rel n1 n1'} for some \HOLtm{n1' IN M.frame.world}, we prove the existence of the world \HOLtm{n2' IN M'.frame.world} such that \HOLtm{M'.frame.rel n2 n2'} and \HOLtm{modal_eq M M' n1' n2'}. Suppose such a \HOLtm{n2'} does not exist, we derive a contradiction. Consider the set $S :=$\HOLtm{ u' IN M'.frame.world /\ M'.frame.rel n2 u' }%how to do set!!!
+, the first claim is that this set is finite and nonempty. Finiteness comes from the fact that \HOLtm{M'} is image finite, and if the set is empty, then \HOLtm{BOX FALSE} will be a formula which holds for \HOLtm{n2} but not for \HOLtm{n1}, contradicts the modal equivalence between \HOLtm{n1} and \HOLtm{n2}. By assumption, for each world in $S$, there is a formula \HOLtm{phi} such that \HOLtm{satis M n1' phi} but \HOLtm{¬satis M' n2' phi}. As the set $S$ is finite, the set of such \HOLtm{phi}s is finite. Then we can take the conjunction of such \HOLtm{phi}s to obtain a formula \HOLtm{psi}. Then we will have \HOLtm{satis M n1 (DIAM psi)} but \HOLtm{¬satis M n2 (DIAM psi)}.
+
+The trick is what to do to capture the big conjunction. Certainly we can define a big conjunction inductively as a function that takes a finite set and give us the formula that conjuncts them together, but here is a much more direct approach such that allows us to directly obtain the \HOLtm{psi}. We can prove:
+
+\begin{holmath}
+  \HOLthm{chap2_2.FINITE_BIGCONJ}
+\end{holmath}
+
+Using this lemma, we obtain the \HOLtm{psi} we want by plugging in $S$ to be the $s$. 
+
+\section{Finite model property}
+
+In this chapter, we prove the finite model property of our modal language, which says if a modal formula is satisfied on an arbitary mode, then it can be satisfied on a finite model, where finite model means the finitness of the set of worlds. We will discuss two methods for building finite models for satisfiable modal formulas, namely via filteration and selection.
+
+\subsection{Finite model property via filteration}
+
+One way to get a finite model is by taking the quotient of the world set. The quotient model we will get is called filtration of a model. The equivalence relation that we will use for taking the quotient is defined using the concept of `closed under subformulas'. Firstly, subformulas is a function that takes a formula and gives a set of the subformulas of this formula, defined by:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.subforms_def}
+\end{holmath}
+
+The definition says a subformula of a formula is a part of a formula which is itself a formula. Some properties of subformulas can be proved immediately, for instance, we have any formula is a subformula of itself. Also subformulas are transitive, and the set of subformulas for any formula is finite. 
+
+\begin{holmath}
+  \HOLthm{chap2_3.subforms_phi_phi}
+  \HOLthm{chap2_3.subforms_trans}
+  \HOLthm{chap2_3.subforms_FINITE}
+\end{holmath}
+
+We say a set \HOLtm{Σ} is closed under formula if for any formula \HOLtm{phi} in the set, any subformula of \HOLtm{phi} is also in \HOLtm{Σ}.
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.CUS_def}
+\end{holmath}
+
+We can easily check the set of subformulas of any formulas is closed under subformulas:
+
+\begin{holmath}
+  \HOLthm{chap2_3.subforms_phi_CUS}
+\end{holmath}
+
+And for a model \HOLtm{M}, the equivalence relation we will use to filtrate its world set is:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.REL_CUS_def}
+\end{holmath}
+
+
+Under this equivalence relation, for any world \HOLtm{w IN M.frame.world}, the equivalence class it belongs to looks like:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.EC_CUS_def}
+\end{holmath}
+
+We can take these equivalence class to be the set of worlds for the filtrated model, but then the model we get will have different type from the original model. To avoid changing the type, we define \HOLtm{EC_REP Σ M w} to be the representative from the equivalence class where \HOLtm{w} lives in, and we will use \HOLtm{EC_REP_SET Σ M} to be the set of worlds for the filtrated model.
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.EC_REP_def}
+  \HOLthm[def]{chap2_3.EC_REP_SET_def}
+\end{holmath}
+
+The definition of filtration of a model \HOLtm{M} via a subformula-closed set is given by a relation, we read as \HOLtm{filtration M Σ} $FLT$ as `$FLT$ is a filteration of \HOLtm{M} under \HOLtm{Σ}.
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.filtration_def}
+\end{holmath}
+
+The definition above forces filtration to only make sense for subformula closed sets. For any model \HOLtm{M} and set \HOLtm{Σ} which is closed under subformulas, we can find some model such that it is a filtration of \HOLtm{M} under \HOLtm{Σ}. One construction of filtration is given by:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.FLT_def}
+\end{holmath}
+
+In fact, it is not the fact that we always have a unique filtration of a model under a subformula closed set, but we will just use the one defined above. It is routine to check the above definition does give a filtration:
+
+\begin{holmath}
+  \HOLthm{chap2_3.FLT_EXISTS}
+\end{holmath}
+
+We are interested in two properties of filtration of models that directly give the proof of finite model property. Firstly, filtrating a model using a finite set gives a finite model:
+
+\begin{holmath}
+  \HOLthm{chap2_3.prop_2_38}
+\end{holmath}
+
+Proof: As \HOLtm{Σ} is finite, it suffices to give an injection from the world set of $FLT$ to \HOLtm{POW Σ}. Such an injection is given by sending a world $w$ to the set of formulas in \HOLtm{Σ} that is satisfies at $w$. % unable to use set...
+
+
+Secondly, we need the satisfication of modal formula to be preserved under filtration, in the following sense:
+
+\begin{holmath}
+  \HOLthm{chap2_3.thm_2_39}
+\end{holmath}
+
+
+Putting the last two theorems together and we get the finite model property via filtration:
+
+\begin{holmath}
+  \HOLthm{chap2_3.thm_2_41}
+\end{holmath}
+
+\subsection{Finite model property via filtration}
+
+Another method to build finite models for an arbitary model is by selection. The intuition of this method is that only finitely many diamonds can occur in a modal formula, so any formula can only capture the information of finitely depth. To make the notion of `depth' precise, we define the degree of a modal formula, which count the diamonds appear in a model formula and hence measure how much of the model can a modal formula see from the current state:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.DEG_def}
+\end{holmath}
+
+A modal formula of degree zero is exactly a propositional formula:
+
+\begin{holmath}
+  \HOLthm{chap2_3.DEG_0_propform}
+\end{holmath}
+
+The crucial fact that we will use about the degree of formulas is the following lemma:
+
+\begin{holmath}
+  \HOLthm{chap2_3.prop_2_29_strengthen}
+\end{holmath}
+
+The proof of this lemma is by induction on the degree $n$. We prove it in the following interlude:
+
+\section{Interlude I: Finiteness of non-equivalent modal formulas in each degree}
+
+\subsection{Base case}
+For the base case, we need to prove if we only use propositional letters in $s$ where $s$ is a finite set, then up to equivalence, we can only onbtain finitely many propositional formulas. To prove this, it suffices to find out an injection from the set of equivalence class of propositional formulas that only uses propositional letters in $s$ to a finite set. We will prove the function that sends an equivalence class of formulas to its image under the function $\lambda f. \{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$, which sends a formula $f$ to the set $\{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$ of assignments of truth value on propositional letters in $s$ that makes $f$ holds, is an injection to the finite set \HOLtm{POW(POW(POW(s)))}. We can see the function we define has correct codomain: A formula $f$ is sent to a set of subsets of $s$, which is an element of \HOLtm{POW(POW(s))}, so a equivalence class has image as a set of elements in \HOLtm{POW(POW (s))}, which lies in \HOLtm{POW(POW(POW(s)))}.
+
+Let us firstly investigate what the function $\lambda f. \{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$ does. We claim the image of each equivalence class of this function is a singleton:
+
+\begin{holmath}
+  \HOLthm{chap2_3.IMAGE_peval_singlton_strengthen}
+\end{holmath}
+
+Indeed, if two $f1$ and $f2$ formulas are equivalent, then for any assignment of truth value of propositional symbols, it makes $f1$ true iff it makes $f2$ true:
+
+\begin{holmath}
+  \HOLthm{chap2_3.peval_equiv0}
+\end{holmath}
+
+It is because if we have a \HOLtm{peval σ f1 /\ ¬peval σ f2}, then we can construct a model with only one world $w$, no relation, and define the valuation at $w$ for propositional symbols to be $\sigma$. Then by \texttt{peval_satis}, we get \HOLtm{satis M w f1 /\ ¬satis M w f2}, a contradiction. As a consequence, we have:
+
+\begin{holmath}
+  \HOLthm{chap2_3.partition_to_peval_well_defined}
+\end{holmath}
+
+which says if two formulas are equivalent, then the sets of valuations that makes them hold are identical. As a consequence, these two sets will still be equal after taking inter section with $POW\ s$. This proves \texttt{IMAGE_peval_singlton_strengthen}.
+
+Recall we proved the condition for a propositional formula to hold as the lemma \texttt{peval_satis_strengthen}, it gives arise to this useful lemma:
+
+\begin{holmath}
+  \HOLthm{chap2_3.equiv0_peval_strengthen}
+\end{holmath}
+
+Proof: Suppose \HOLtm{satis M w f1} for some model \HOLtm{M}, then by \texttt{peval_satis_strengthen}, we have \HOLtm{peval ((λa. w IN M.valt a) INTER s) f1}. As \HOLtm{(λa. w IN M.valt a) INTER s} gives a subset of $s$, we conclude \HOLtm{peval ((λa. w IN M.valt a) INTER s) f2} by assumption, and then \HOLtm{satis M w f2} by \texttt{peval_satis_strengthen} again. The other direction is the same.
+
+
+We can now prove the injection:
+
+\begin{holmath}
+  \HOLthm{chap2_3.INJ_peval_partition_strengthen}
+\end{holmath}
+
+Proof: If two equivalence classes represented by $x$ and $x'$ respectively has identical image under the function $\lambda f. \{s \mid peval\ s f\} \cap POW \ s$, then by \texttt{IMAGE_peval_singlton_strengthen}, it gives $ \{\{\sigma \mid peval\ \sigma x\} \cap POW\ s\}$. This means \HOLtm{!σ. σ IN (POW s) ==> peval σ x <=> peval σ x'}, which means $x$ and $x'$ are equivalent by \texttt{equiv0_peval_strengthen}.
+
+
+
+\subsection{Step case}
+
+The key observation for proving the step case is that any formulas which only uses propositional letters in a fixed finite set $ss$ and of degree no more than $n+1$ is obtained by boolean combination on the set $s$ formed by formulas of form \HOLtm{DIAM phi} which also only uses propositional letters in $ss$ where \HOLtm{DEG phi <= n} and propositional letters in $ss$. Saying a formula $f$ is a boolean combination of a set $s$ of formulas is to say $f$ is either itself an element in $s$, or can be obtained by combining elements in $s$ using the connectives $\lnot$ and $\lor$. We define boolean combination as an inductive relation, where \HOLtm{IBC f s} reads `$f$ is a boolean combination of elements in the set $s$':
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.IBC_rules}
+  \HOLthm{IBCDNFrevised.IBC_ind}
+  \HOLthm{IBCDNFrevised.IBC_cases}
+\end{holmath}
+
+We can prove our claim in the last paragraph with induction:
+
+\begin{holmath}
+  \HOLthm{chap2_3.DEG_IBC_strengthen}
+\end{holmath}
+
+
+Observe a formula which is a boolean combinations on an empty set is either equivalent to $\bot$ or $\top$:
+
+\begin{holmath}
+  \HOLthm{chap2_3.IBC_EMPTY_lemma}
+\end{holmath}
+
+so we are interested in boolean combination of non-empty sets along our proof, and leave the empty case to be treat separately at the very end. Our aim is to prove the set of boolean combinations on a set which contains only finitely many non-equivalent formulas only contain finitely many non-equivalent formulas:
+
+\begin{holmath}
+  \HOLthm{chap2_3.FINITE_FINITE_IBC}
+\end{holmath}
+
+Note that it suffices to prove the set of formulas obtained by boolean combination on a finite set is finite up to equivalence. Since then as $fs$ have only finitely many non-equivalent formulas, the set \HOLtm{IMAGE CHOICE (fs//E μ)} of representatives of the equivalence classes is finite. There is a surjection $\lambda s. \{y \mid IBC\ y\ fs \land !f. f \in s \implies equiv0\ \mu\ y\ f\}$ from 
+$\{f \mid IBC\ f\ (IMAGE\ CHOICE\ (fs//E\ \mu))\}//E\ \mu$ to $\{f \mid IBC\ f\ fs\}//E\ \mu$ is a surjection, showing the codomain is finite. 
+
+The strategy we used to prove this is to prove that any formula obtained by a boolean combination on a set is equivalent to a formula in disjunction normal form on the same set. The disjunction normal form is defined by:
+
+\begin{holmath}
+  \HOLthm[def]{IBCDNFrevised.DNF_OF_def}
+\end{holmath}
+
+where \HOLtm{CONJ_OF} is defined by:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.CONJ_OF_rules}
+  \HOLthm{IBCDNFrevised.CONJ_OF_ind}
+  \HOLthm{IBCDNFrevised.CONJ_OF_cases}
+\end{holmath}
+
+and for a formula $f$, we say \HOLtm{DISJ_OF f fs} when $f$ is either the `$\bot$' or a formula such that \HOLtm{DISJ_OF0 f fs}
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.DISJ_OF0_rules}
+  \HOLthm{IBCDNFrevised.DISJ_OF0_ind}
+  \HOLthm{IBCDNFrevised.DISJ_OF0_cases}
+  \HOLthm[def]{IBCDNFrevised.DISJ_OF_def}
+\end{holmath}
+
+As an example, the four \HOLtm{CONJ_OF} formulas on the set $\{f1,f2\}$ are \HOLtm{AND f1 f2}, \HOLtm{AND (NOT f1) f2} \HOLtm{AND f1 (NOT f2)} and \HOLtm{AND (NOT f1) (NOT f2)}. For another example, consider the set $fs:=\{f1,f2,f3\}$ of three formulas, we can say \HOLtm{CONJ_OF (AND f3 (AND f1 f2)) fs}, \HOLtm{CONJ_OF (AND f2 (AND (NOT f1) f3)) fs}, \HOLtm{CONJ_OF (AND (NOT f3) (AND f2 f1)) fs} and so on. But it is not the fact that \HOLtm{CONJ_OF f1 fs}, since from the definition, any element of fs or its negation must appear exactly once in a \HOLtm{CONJ_OF} formula on $fs$. Let $CO:=\{f\mid$\HOLtm{CONJ_OF f fs}$\}$, then we can say \HOLtm{DISJ_OF (DISJ (AND f3 (AND f1 f2)) (AND f2 (AND (NOT f1) f3))) CO}, \HOLtm{DISJ_OF (AND f2 (AND (NOT f1) f3)) CO} and so on, so both these two formulas are disjunction normal form on $fs$, but we cannot say \HOLtm{DISJ_OF (DISJ (AND f2 (AND (NOT f1) f3)) (AND f2 (AND (NOT f1) f3))) CO} or \HOLtm{DISJ_OF (DISJ (AND f2 (AND (NOT f1) f3)) (NOT (AND f2 (AND (NOT f1) f3)))) CO}, since any formula in $CO$ or its negation is only allowed to appear in a \HOLtm{DISJ_OF} formula on $CO$ for at most once, so these two are not in disjunction normal form.
+
+If we start with a finite set, by induction on finiteness using \texttt{FINITE_COMPLETE_INDUCTION} , we conclude the set of \HOLtm{CONJ_OF} formulas and \HOLtm{DISJ_OF0}, hence the \HOLtm{DNF_OF} formulas on this set is finite:
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.FINITE_CONJ_OF}
+  \HOLthm{IBCDNFrevised.FINITE_DISJ_OF0}
+  \HOLthm{chap2_3.FINITE_DNF}
+\end{holmath}
+
+Once we prove:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.IBC_DNF_EXISTS}
+\end{holmath}
+
+we get \texttt{FINITE_FINITE_IBC}, which leads to a proof of the step case of \texttt{prop_2_29_strengthen} goes as follows: 
+Suppose $\{f | DEG\ f \le n \land \forall a. VAR \ a \in subforms\ f \implies a \in s\}//E \ \mu$ is finite and let $A = (\{VAR\ v | v \in s\} \cup \{\Diamond psi | DEG \ psi \le n \land \forall a. (VAR\ a) \in subforms\ psi \implies a \in s\})$. By \texttt{DEG_IBC_strengthen}, we have $B:=\{f | DEG\ f \le n+1 \land \forall a. VAR \ a \in subforms\ f \implies a \in s\}=\{phi | IBC\ phi \ A\}$, we prove $B$ is finite up to equivalence. If $A=\emptyset$, then by \texttt{IBC_EMPTY_lemma}, $B$ contains only two non-equivaelent formulas $\bot$ and $\top$. Otherwise, by \texttt{FINITE_FINITE_IBC}, it suffices to prove $A$ is finite up to equivalence. Under the assumption \HOLtm{INFINITE univ(:'b)}, \HOLtm{equiv0 μ (DIAM f) (DIAM g)} iff \HOLtm{equiv0 μ f g}, so the inductive hypothesis together  with the assumption \HOLtm{FINITE s} gives the finiteness of $A$.
+
+Therefore, it remains to give a proof of \texttt{IBC_DNF_EXISTS}. The proof is by rule induction on \HOLtm{IBC}, the things to prove are:
+
+Base case:
+\begin{itemize}
+  \item The falsity $\bot$ is equivalent to a disjunction normal form on $fs$.
+  \item For any element $f\in fs$, it is equivalent to a disjunction normal form on $fs$.
+\end{itemize}
+
+Step case:
+
+\begin{itemize}
+  \item Under the assumption that $fs$ is finite and non-empty, if $f1,f2$ are boolean combination of the set $fs$ which are equivalent to $p1,p2$ of disjunction normal form respectively, then \HOLtm{DISJ f1 f2} is equivalent to a formula in disjunction normal form.
+  \item With the same assumption on $fs$, if $f$ is a boolean combination of $fs$ and equivalent to $p$ in disjunction normal form, then \HOLtm{NOT f} is equivalent to a formula in disjunction normal form.
+\end{itemize}
+
+
+The first item of base case is trivial since $\bot$ itself is in disjunction normal form, we begin by proving the second item of the base case.
+
+\subsubsection{Case for $f\in fs$}
+
+We aim to prove:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.IBC_DNF_EXISTS_case4}
+\end{holmath}
+
+Let us consider what does the \HOLtm{DNF_OF} formula $p$ on $fs$ that is equivalent to and element of $fs$ look like: We require $p$ to be satisfied if and only if $f$ is satisfied. As $p$ is of disjunction normal form, $p$ is satisfied once some of its disjuncts is satisfied. Hence we require the satisfication of each disjuncts of $p$ to imply the satisfication of $f$, that is, $f$ is a conjunct of each disjunct of $p$. So up to rearrangement, $p$ is a disjunction of conjunctions $f\land f_1\cdots f_n$ where each formula in $fs/\{f\}$ or its negation appears exactly once in these $f_i$'s. Such a formula is equivalent to $f\land g$, where $g$ is the disjunction of the formulas obtained by taking $f$ out of each conjunct of $p$. And $f\land g$ is equivalent to $f$ if and only if $g$ is equivalent to $\top$. Hence, $g$ must be the disjunction of all the \HOLtm{CONJ_OF} formulas on $fs/\{f\}$. By conclusion, a disjunction normal form we need can be taken as the disjunction of conjunctions starting with $f$, with its tail ranging over all possible combination of negated and unnegated formulas in $fs/\{f\}$. Use the set $\{f_1,f_2,f_3\}$ as example again, an example of disjunction normal form equivalent to $f_1$ is the formula $(f_1\land f_2\land f_3)\lor (f_1\land\lnot f_2\land f_3)\lor (f_1\land f_2\land \lnot f_3)\lor (f_1\land \lnot f_2\land\lnot f_3)$, note that such a formula is equivalent to $f_1\land ((f_2\land f_3)\lor (\lnot f_2\land f_3)\lor (f_2\land \lnot f_3)\lor (\lnot n_2\land \lnot f_3))$, where $(f_2\land f_3)\lor (\lnot f_2\land f_3)\lor (f_2\land \lnot f_3)\lor (\lnot f_2\land \lnot f_3)$ is equivalent to \HOLtm{TRUE}.
+
+To formalise the idea above, we want to be able to building disjunction normal form piece by piece. We use the following definitions as our tool:
+
+\begin{holmath}
+  \HOLthm[def]{IBCDNFrevised.negf_def}
+  \HOLthm[def]{IBCDNFrevised.lit_list_to_form_def}
+  \HOLthm[def]{IBCDNFrevised.lit_list_to_form2_def}
+\end{holmath}
+
+A pair $(f,tv)$ where $f\in fs$ and $tv$ is a truth value encodes a formula in $fs$ or its negation. Such a pair is turned to a formula $f$ or $\lnot f$ by \HOLtm{negf}, depends on the truth value given in its second coordinate.  For a finite $fs$, we are interested in non-empty lists of such pairs with the condition that \HOLtm{set (MAP FST l) =fs} and \HOLtm{ALL_DISTINCT (MAP FST l)}, where \HOLtm{MAP} takes a function $f$ and a list $[a_1;\cdots,a_n]$, and return the list $[f(a_1);\cdots;f(a_n)]$. The function \HOLtm{set} takes a list and gives the set of its members, and \HOLtm{ALL_DISTINCT} takes a list and return the truth value of whether all the member of the list. These conditions precisely say that each member of $fs$ occurs exactly once in the list. As a consequence, we can build \HOLtm{CONJ_OF} formulas from such list using  \texttt{lit_list_to_form}.
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.list_to_CONJ_OF}
+\end{holmath}
+
+Under the same condition on the list, we obtain \HOLtm{DISJ_OF0} formulas using \texttt{lit_list_to_form2}.
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.list_to_DISJ_OF0}
+\end{holmath}
+
+Put the two things together, we can build \HOLtm{DNF_OF} formulas using \texttt{lit_list_to_form} and \texttt{list_list_to_form2}
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.list_to_DNF_lemma}
+\end{holmath}
+
+Now we launch on the proof of \texttt{IBC_DNF_EXISTS_case4}, given an $f\in fs$, the desired $p$ is given by \HOLtm{lit_list_to_form} 
+
 
 This is a report for summarizing my learning of interactive theorem proving in the HOL. This paper consists of two parts, the first part it about the correspondence theorem on group theory, through the process of searching for methods of proving it, I get known to some basics tools, mainly the simplifiers of the HOL. The second part is about modal logic, where I think is my starting point of being exposed to more advanced and useful tools.
 

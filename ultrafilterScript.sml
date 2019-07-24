@@ -522,7 +522,7 @@ QED
 
 
 (* Prove that the collection of co-finite subsets of 􏰟 has the finite intersection prop- erty.
-(b) Showthatthereareultrafiltersover􏰟 thatdonotcontainanyfiniteset
+(b) Showthatthereareultrafiltersover􏰟 thatdonotcontainanyfinitese
 *)
 
 Theorem exercise_2_5_4_a :

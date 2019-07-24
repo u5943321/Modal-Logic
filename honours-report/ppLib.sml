@@ -1,7 +1,8 @@
 structure ppLib =
 struct
 
-local open HolKernel Parse boolLib chap2_1Theory chap2_2Theory
+local open HolKernel Parse boolLib chap2_1Theory chap2_2Theory chap2_3Theory chap2_5Theory chap2_6Theory
+           IBCDNFrevisedTheory
 in
 
 val _ = temp_remove_termtok { tok = "=", term_name ="="}

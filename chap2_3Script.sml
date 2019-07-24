@@ -741,7 +741,8 @@ Induct_on `x` >> rw[DEG_def]
 >- fs[Once IBC_cases,subforms_def]);
 
 
-val IBC_EMPTY_lemma = prove(
+val IBC_EMPTY_lemma = store_thm(
+  "IBC_EMPTY_lemma",
   ``∀f s. IBC f s ==> s = {} ==> equiv0 μ f TRUE \/ equiv0 μ f FALSE``,
   Induct_on `IBC` >> rw[] >> fs[equiv0_def,satis_def,TRUE_def]);
 

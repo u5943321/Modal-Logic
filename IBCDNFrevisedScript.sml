@@ -660,12 +660,12 @@ val equiv0_DISJ_DISJ_absorb = store_thm(
 rw[equiv0_def,satis_def] >> metis_tac[satis_in_world]);
 
 val equiv0_DISJ_comm_assoc = store_thm(
-"equiv0_DISJ_COMM_ASSOC",
+"equiv0_DISJ_comm_assoc",
 ``!f g h μ. equiv0 μ (DISJ f (DISJ g h)) (DISJ g (DISJ f h))``,
 rw[equiv0_def,satis_def] >> metis_tac[satis_in_world]);
 
 val equiv0_DISJ_assoc = store_thm(
-"equiv0_DISJ_ASSOC",
+"equiv0_DISJ_assoc",
 ``!f g h μ. equiv0 μ (DISJ (DISJ f g) h) (DISJ f (DISJ g h))``,
 rw[equiv0_def,satis_def] >> metis_tac[satis_in_world]);
 
@@ -1805,6 +1805,9 @@ val IBC_DNF_EXISTS_case3 = store_thm(
   `satis M w f ⇔ dsatis M w ({c | is_lset c fs} DIFF cs)` by metis_tac[] >>
   `dsatis M w cs ⇔ ¬dsatis M w ({c | is_lset c fs} DIFF cs)` by metis_tac[dsatis_is_lset_complement] >>
   metis_tac[satis_def]));
+
+(*maybe I did something stupid with case 3!*)
+
 
 val IBC_DNF_EXISTS = store_thm(
 "IBC_DNF_EXISTS",
