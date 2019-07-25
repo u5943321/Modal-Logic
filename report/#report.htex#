@@ -20,9 +20,17 @@
 
 Interlude : Finitness of formulas obtained by boolean combination of a finite set.
 
-\begin{holmath}
-  \HOLthm{IBCDNF.DISJ_OF0_SUBSET}
-\end{holmath}
+prop_2_29
+
+prop_2_29_strengthen
+``!s. FINITE s /\ INFINITE univ(:'b) ==> 
+       !n. FINITE (partition (equiv0 (μ:'b itself)) 
+            {f| DEG f <= n /\ (!a. (VAR a) IN (subforms f) ==> a IN s)})``
+
+
+
+
+
 
 
 This is a report for summarizing my learning of interactive theorem proving in the HOL. This paper consists of two parts, the first part it about the correspondence theorem on group theory, through the process of searching for methods of proving it, I get known to some basics tools, mainly the simplifiers of the HOL. The second part is about modal logic, where I think is my starting point of being exposed to more advanced and useful tools.

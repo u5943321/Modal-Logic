@@ -1,8 +1,8 @@
 structure ppLib =
 struct
 
-local open HolKernel Parse boolLib chap2_1Theory chap2_2Theory chap2_3Theory chap2_5Theory chap2_6Theory
-           IBCDNFrevisedTheory
+local open HolKernel Parse boolLib set_relationTheory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_5Theory chap2_6Theory folLangTheory folModelsTheory
+           IBCDNFrevisedTheory ultrafilterTheory
 in
 
 val _ = temp_remove_termtok { tok = "=", term_name ="="}

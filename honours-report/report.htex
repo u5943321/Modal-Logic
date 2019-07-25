@@ -399,7 +399,7 @@ Putting the last two theorems together and we get the finite model property via 
   \HOLthm{chap2_3.thm_2_41}
 \end{holmath}
 
-\subsection{Finite model property via filtration}
+\subsection{Finite model property via selection}
 
 Another method to build finite models for an arbitary model is by selection. The intuition of this method is that only finitely many diamonds can occur in a modal formula, so any formula can only capture the information of finitely depth. To make the notion of `depth' precise, we define the degree of a modal formula, which count the diamonds appear in a model formula and hence measure how much of the model can a modal formula see from the current state:
 
@@ -574,16 +574,18 @@ To formalise the idea above, we want to be able to building disjunction normal f
   \HOLthm[def]{IBCDNFrevised.lit_list_to_form2_def}
 \end{holmath}
 
-A pair $(f,tv)$ where $f\in fs$ and $tv$ is a truth value encodes a formula in $fs$ or its negation. Such a pair is turned to a formula $f$ or $\lnot f$ by \HOLtm{negf}, depends on the truth value given in its second coordinate.  For a finite $fs$, we are interested in non-empty lists of such pairs with the condition that \HOLtm{set (MAP FST l) =fs} and \HOLtm{ALL_DISTINCT (MAP FST l)}, where \HOLtm{MAP} takes a function $f$ and a list $[a_1;\cdots,a_n]$, and return the list $[f(a_1);\cdots;f(a_n)]$. The function \HOLtm{set} takes a list and gives the set of its members, and \HOLtm{ALL_DISTINCT} takes a list and return the truth value of whether all the member of the list. These conditions precisely say that each member of $fs$ occurs exactly once in the list. As a consequence, we can build \HOLtm{CONJ_OF} formulas from such list using  \texttt{lit_list_to_form}.
+A pair $(f,tv)$ where $f\in fs$ and $tv$ is a truth value is called a literal, it encodes a formula in $fs$ or its negation. Such a pair is turned to a formula $f$ or $\lnot f$ by \HOLtm{negf}, depends on the truth value given in its second coordinate.  For a finite $fs$, we are interested in non-empty lists of literals with the condition that \HOLtm{set (MAP FST l) =fs} and \HOLtm{ALL_DISTINCT (MAP FST l)}, where \HOLtm{MAP} takes a function $f$ and a list $[a_1;\cdots,a_n]$, and return the list $[f(a_1);\cdots;f(a_n)]$. The function \HOLtm{set} takes a list and gives the set of its members, and \HOLtm{ALL_DISTINCT} takes a list and return the truth value of whether all the member of the list. These conditions precisely say that each member of $fs$ occurs exactly once in the list. As a consequence, we can build \HOLtm{CONJ_OF} formulas from such list using  \texttt{lit_list_to_form}. Conversely, each \HOLtm{CONJ_OF} formula can be obtained from such a list.
 
 \begin{holmath}
   \HOLthm{IBCDNFrevised.list_to_CONJ_OF}
+  \HOLthm{IBCDNFrevised.CONJ_OF_AND_lemma}
 \end{holmath}
 
-Under the same condition on the list, we obtain \HOLtm{DISJ_OF0} formulas using \texttt{lit_list_to_form2}.
+Under the same condition on the list, the corresponding result holds for \texttt{lit_list_to_form} and \HOLtm{DISJ_OF0}:
 
 \begin{holmath}
   \HOLthm{IBCDNFrevised.list_to_DISJ_OF0}
+  \HOLthm{IBCDNFrevised.DISJ_OF0_DISJ_lemma_EQ}
 \end{holmath}
 
 Put the two things together, we can build \HOLtm{DNF_OF} formulas using \texttt{lit_list_to_form} and \texttt{list_list_to_form2}
@@ -592,7 +594,622 @@ Put the two things together, we can build \HOLtm{DNF_OF} formulas using \texttt{
   \HOLthm{IBCDNFrevised.list_to_DNF_lemma}
 \end{holmath}
 
-Now we launch on the proof of \texttt{IBC_DNF_EXISTS_case4}, given an $f\in fs$, the desired $p$ is given by \HOLtm{lit_list_to_form} 
+By induction on list, we can prove the distributivity and symmetry of \texttt{lit_list_to_form2}:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.list_demorgan}
+  \HOLthm{IBCDNFrevised.lit_list_to_form2_SYM}
+\end{holmath}
+
+
+
+Use the lemmas above, by induction on finiteness, we prove the disjunction of all possible conjunctions is equivalent to the truth:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.ALL_POSSIBLE_VALUE_TRUE}
+\end{holmath}
+
+Now we launch on the proof of \texttt{IBC_DNF_EXISTS_case4}:
+
+Given an $f\in fs$, the desired $p$ is given by $\phi:=$\HOLtm{lit_list_to_form}(\HOLtm{SET_TO_LIST} $\{f\land c\mid c\mid CONJ\_OF \ c \ (fs/\{f\})\}$. Here \HOLtm{SET_TO_LIST} is a function takes a set and form a list with all the elements of the set as members. There are two things to check: Using \HOLtm{CONJ_OF_AND_lemma} and \texttt{list_to_DNF_lemma}, it is immediate to prove $\phi$ is in disjunction normal form. To prove $\phi$ is equivalent to $f$, we have:
+
+\HOLtm{lit_list_to_form}(\HOLtm{SET_TO_LIST} $\{f\land c\mid c\mid CONJ\_OF \ c \ (fs/\{f\})\}$
+
+=\HOLtm{lit_list_to_form}(\HOLtm{MAP (\a. AND f a)}(\HOLtm{SET_TO_LIST} $\{c\mid CONJ\_OF \ c \ (fs/\{f\})\}$))
+
+$\overset{\text{list\_demorgan}}\equiv f\land$ \HOLtm{lit_list_to_form}(\HOLtm{SET_TO_LIST}$\{c\mid CONJ\_OF \ c \ (fs/\{f\})\}$)
+
+$\overset{\text{ALL\_POSSIBLE\_VALUE\_TRUE}}\equiv f \land \top$
+
+$\equiv f$
+
+Hence we are done with the base case of \texttt{IBC_DNF_EXISTS}.
+
+\subsubsection{Case for disjunction}
+
+The following lemma directly implies our goal by the fact that if $f1$ is equivalent $p1$ and $f2$ is equivalent to $p2$, then $f1\lor f2$ is equivalent to $p1\lor p2$ and the transitivity of being equivalent.
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.DNF_OF_DISJ_equiv0}
+\end{holmath}
+
+Expanding the definition of \HOLtm{DNF_OF} and \HOLtm{DISJ_OF0} gives four cases, the only interesting one among them is stated as this lemma:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.DNF_OF_DISJ_equiv0_case4}
+\end{holmath}
+
+Proof:
+By induction on \HOLtm{DISJ_OF0}, the base case is by a straightfoward two-layer induction, for the step case, suppose \HOLtm{f1 IN fs} and \HOLtm{DISJ_OF0 p1 (fs DELETE f1)} and \HOLtm{DISJ_OF0 p2 fs}, we are asked to prove:
+
+ \HOLtm{∃f. DISJ_OF0 f fs ∧ equiv0 μ f (DISJ (DISJ f1 p1) p2)}
+from the inductive hypothesis 
+
+\HOLtm{∀p2.
+            DISJ_OF0 p2 (fs DELETE f1) ⇒
+            ∃f. DISJ_OF0 f (fs DELETE f1) ∧ equiv0 μ f (DISJ p1 p2)}
+
+If \HOLtm{DISJ_OF0 p2 (fs DELETE f1)}, then we are done by inductive hypothesis, otherwise we need a trick: If \HOLtm{DISJ_OF0 p2 fs} but \HOLtm{¬DISJ_OF0 p2 (fs DELETE f1)}, it must be the case that $f_1$ appears in $p_2$, hence we can extract $f_1$ out of $p_2$ to split $p_2$ as a disjunction $t\lor f_1$, using the following lemma proved by induction on \HOLtm{DISJ_OF0}:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.DISJ_OF0_split}
+\end{holmath}
+Applying the lemma above allows us to finish the proof by using the inductive hypothesis.
+
+
+\subsubsection{Case for negation}
+
+Let us consider our last case, which amounts to prove:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.IBC_DNF_EXISTS_case3}
+\end{holmath}
+
+The idea of this proof is to use the concept `complement'. Consider a disjunction normal form $p$ on a finite set $fs$, we find a formula of disjunction normal form $f$ which is its negation, that is, we require $f$ to be satisfied if and only if $\lnot p$ is satisfied. As $p$ is a disjunction, $\lnot p$ is satisfied once none of $p$'s conjuncts is satisfied. As a disjunction normal form, all of $p$'s disjuncts are taken from the set of all of the \HOLtm{CONJ_OF} formulas on $fs$, and these disjuncts form a subset of $ss\subseteq\{c\mid CONJ\_OF \ c \ fs\}$. Since none of these conjunctions is satisfied, it must be the case that the satisfied conjunction is in $\{c\mid CONJ\_OF \ c \ fs\}/ss$. Again, let $fs = \{f_1,f_2\}$ and $p:= (f_1\land f_2)\lor (\lnot f_1\land f_2)$ is in disjunction normal form. For $\lnot p$ is satisfied, neither $f_1\land f_2$ nor
+$ f_1\land\lnot f_2$ is satisfied, so it must be the case that either $\lnot f_1\land\lnot f_2$ or $\lnot f_1\land f_2$. We take the conjunction of the elements in the set $\{\lnot f_1\land\lnot f_2,\lnot f_1\land f_2\}$ formed by taking out the disjuncts appear in $p$ from the total set $\{f_1\land f_2, (\lnot f_1\land f_2,\lnot f_1\land\lnot f_2,\lnot f_1\land f_2\}$, it gives the formula $(\lnot f_1\land\lnot f_2)\lor (\lnot f_1\land f_2)$, which is equivalent to the negation of $p$.
+
+Although it may be possible to stick to using our former tools \texttt{lit_list_to_form} and \texttt{list_list_to_form2}, it is much more natural to directly use the completement of set to deal with our issue here. Again, for a finite set $fs$, we will use literals to encode formulas in $fs$ or its negation. But instead of using list of literals, we will use sets of literals this time.
+
+We define satisfication of a literal as:
+
+\begin{holmath}
+  \HOLthm[def]{IBCDNFrevised.lsatis_def}
+\end{holmath}
+
+That is, for a model \HOLtm{M} and a world \HOLtm{w}, a literal $(f,T)$ is satisfied at $w$ if \HOLtm{satis M w f}, and $(f,F)$ is satisfied at $w$ if \HOLtm{satis M w (NOT f)}. We want to construct \HOLtm{CONJ_OF} formulas from well-formed sets of literals, such a well-formed set is called an `lset':
+
+\begin{holmath}
+  \HOLthm[def]{IBCDNFrevised.is_lset_def}
+\end{holmath}
+
+Note the condition of being an \texttt{lset} corresponds the condition on the list as in the story about the base case. An \texttt{lset} corresponds a conjunction, for instance, $ls:=\{(f_1,T),(f_2,T)\}$ corresponds to the formula $f_1\land f_2$. We care about when all the literals in the set are satisfied, and call a set $c$-satisfied for this situation. 
+
+\begin{holmath}
+  \HOLthm[def]{IBCDNFrevised.csatis_def}
+\end{holmath}
+
+If two \texttt{lset}s are different, the union of them must contains a literal of opposite sign, hence the union of two distinct \texttt{lsets} can never be $c$-satisfied:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.NEQ_lsets_FALSE}
+\end{holmath}
+
+By induction on \HOLtm{CONJ_OF} and the finiteness of \texttt{lset} respectively, we prove for any \texttt{lset}, it is $c$-satisfied at a world in a model iff its corresponding \HOLtm{CONJ_OF} formula is satisfied at the same point. Conversely, for any \HOLtm{CONJ_OF} formula, there is an \texttt{lset} that corresponds to it: 
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.CONJ_OF_lset}
+  \HOLthm{IBCDNFrevised.is_lset_CONJ_OF_EXISTS}
+\end{holmath}
+
+A disjunction of \HOLtm{CONJ_OF} formula is captured by sets of literal sets. For instance, the set $\{\{(f_1,T),(f_2,T)\},\{(f_1,F),(f_2,T)\}\}$ encodes the formula $(f_1\land f_2)\lor (\lnot f_1\land f_2)$ of disjunction normal form on the set $\{f_1,f_2\}$. And the satisfication of \HOLtm{DISJ_OF0} formulas is captured by $d$-satisfication:
+
+\begin{holmath}
+  \HOLthm[def]{IBCDNFrevised.dsatis_def}
+\end{holmath}
+
+There is a set-version of the the previous proposition \texttt{ALL_POSSIBLE_VALUE_TRUE}, looks like:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.dsatis_ALL_POSSIBLE_VALUE}
+\end{holmath}
+
+Using this as a lemma, we can prove the a critical statement about our idea of `complement', saying that a set of \texttt{lset}s are $d$-satisfied iff its complement in the `total set' of all the \texttt{lset}s is not $d$-satisfied.
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.dsatis_is_lset_complement}
+\end{holmath}
+
+Proof:
+For the implication from left to right, suppose both \HOLtm{dsatis M w cs} and \HOLtm{dsatis M w}$\{c\mid is\_lset\ cfs\}/cs$, then by definition of \HOLtm{dsatis}, it means two distinct \texttt{lset}s are $c$-satisfied at the same point, which contradicts \texttt{NEQ_lsets_FALSE}. For the implication from right to left, suppose \HOLtm{¬dsatis M w cs}, by \texttt{dsatis_ALL_POSSIBLE_VALUE_TRUE}, the \texttt{lset} which holds on $w$ must lies in $\{c\mid is\_lset\ cfs\}/cs$. This completes the proof.
+
+
+
+And we have a correspondence of set of \texttt{lset}s and \HOLtm{DISJ_OF0} formulas. 
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.DISJ_OF0_cset}
+\end{holmath}  
+
+Altoghther, there are the correspondence results of set of \texttt{lset}s and \HOLtm{DNF_OF} formulas. The first one, which is a immediate consequence of \texttt{DISJ_OF0_cset}, says each \HOLtm{DNF_OF} formula corresponds a set of \texttt{lset}s.
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.DNF_OF_cset}
+\end{holmath}
+
+
+The second one says each set of \texttt{lset}s gives a \HOLtm{DNF_OF} formula:
+
+\begin{holmath}
+  \HOLthm{IBCDNFrevised.is_lset_DNF_OF_EXISTS}
+\end{holmath}
+
+Proof:
+The proof is by induction on \HOLtm{FINITE s}. For the base case that $s=\emptyset$, the required formula $f$ is obviously $\bot$. Suppose for $s$ a finite set of \texttt{lset}s and there exists a formula $f$ in disjunction normal form such that \HOLtm{satis M w f <=> dsatis M w s} for any model \HOLtm{M} and any \HOLtm{w IN M.frame.world}, we find a formula $g$ such that \HOLtm{satis M w g <=> dsatis M w (e INSERT s)}. By \texttt{is_lset_CONJ_OF_EXISTS}, there is a \HOLtm{CONJ_OF} formula $f'$ on $fs$ with the property that \HOLtm{satis M w f' <=> csatis M w e} for arbitary \HOLtm{M}. If $f$ is equivalent to $\bot$, then $f'$ is the $g$ we want, and vice versa. If both of them are not equivalent to $\bot$, we can take $f'\lor f$ as the $g$ we want. The first desired condition is easy to check, it remains to prove $f'\lor f$ is in disjunction normal form, which is suffices by proving \HOLtm{DISJ_OF0 f} $\{c\mid CONJ\_OF\ c\ fs\}/ \{f'\}$. Suppose not, then there exists a $p$ such that \HOLtm{DISJ_OF0 p} $\{c\mid CONJ\_OF\ c \ fs\}/\{f'\}$ and \HOLtm{equiv0 μ f (DISJ f' p)} by \texttt{DISJ_OF0_split}. To obtain a contradiction, we find a model with a world satisfies $f'$ but not $f$. With the equivalence conditions on $f$ and $f'$, it amounts to find a modal \HOLtm{M} with a world \HOLtm{w IN M.frame.world} such that \HOLtm{csatis M w e} but \HOLtm{¬dsatis M w s}. The claim is any world $c$-satisfying $e$ cannot $d$-satisfy $s$, otherwise it contradicts \texttt{dsatis_is_lset_completment}. Also since $f'$ is not equivalent to $\bot$, a model satisfying $f'$ exists, so we are done. 
+
+Now we have all the ingredients to prove our last case.
+
+Proof:
+As \HOLtm{DNF_OF p fs}, by \texttt{DNF_OF_cset} we obtain a \texttt{lset} $cs$ such that \HOLtm{satis M w p <=> dsatis M w cs} for any \HOLtm{M} and $w$. Consider its complement $\{c\mid is\_lset\ c\ fs\}/cs$, by \texttt{is_lset_DNF_OF_EXISTS} we obtain a formula $f$ such that \HOLtm{DNF_OF f fs} and \HOLtm{satis M w f} iff \HOLtm{dsatis M w} $\{c\mid is\_lset\ c\ fs\}/cs$ for any \HOLtm{M} and $w$. By \texttt{dsatis_is_lset_complement}, \HOLtm{dsatis M w} $\{c\mid is\_lset\ c\ fs\}/cs$ iff \HOLtm{¬dsatis M w cs}, so $f$ is equivalent to $\lnot p$.
+
+
+Here we are done with the proof of \texttt{prop_2_29_strengthen}. This is the end of the interlude.
+
+This is time to return to discussion about the proof of finite model property. Recall in the last chapter, we have seen that a bisimulation gives arise to modal equivalence, modal equivalence is `satisfiying exactly the same formulas', but when we are building a finite model for a formula $\phi$, we do not care about the satisfication of any formula of degree above \HOLtm{DEG phi}, since such formula cannot affect the satisfication of $\phi$. Therefore, a finite approximation of bisimulation is enough, a finite approximation of depth $n$ is called an $n$-bisimulation. Let \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world}, $w$ and $w'$ are $n$-bisimilar if there exists a sequence of relations $Z_n\subseteq \cdots\subseteq Z_0$ such that:
+\begin{itemize}
+  \item $w$ and $w'$ are related by $Z_n$
+  \item If \HOLtm{v IN M.frame.world} and \HOLtm{v' IN M'frame.world} are related by $Z_0$, then $v$ and $v'$ satisfy the same propositional letters.
+  \item If \HOLtm{v IN M.frame.world} and \HOLtm{v' IN M'frame.world} are related by $Z_{i+1}$ and we have \HOLtm{M.frame.rel v u} for \HOLtm{u IN M.frame.world}, then there exists \HOLtm{u' IN M'.frame.world} such that \HOLtm{M'.frame.rel v' u'} with $u$ and $u'$ related by $Z_i$.
+  \item If \HOLtm{v IN M.frame.world} and \HOLtm{v' IN M'frame.world} are related by $Z_{i+1}$ and we have \HOLtm{M'.frame.rel v' u'} for \HOLtm{u' IN M.frame.world}, then there exists \HOLtm{u IN M.frame.world} such that \HOLtm{M.frame.rel v u} with $u$ and $u'$ related by $Z_i$.
+\end{itemize}
+
+Such a sequence of $Z_i$ is a family of relations indexed by natural numbers. When the world set of \HOLtm{M} has type $\beta$ and the world set of \HOLtm{M'} has type $\gamma$, we encode such a family using functions $f:num\to \beta\to\gamma\to bool$. Such a function assigns each natural number a relation, so the \HOLtm{f i} is the relation $Z_i$ in the usual mathematical definition, and \HOLtm{nbisim M M' f n w w'} means $w$ and $w'$ are worlds in \HOLtm{M} and \HOLtm{M'} respectively which are $n$ bisimilar via the family of relations given by $f$.
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.nbisim_def}
+\end{holmath} 
+
+
+By induction on $n$, we see if two worlds \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} are related by an $n$-bisimulation, then they agree on all modal formulas up to degree $n$:
+
+\begin{holmath}
+  \HOLthm{chap2_3.prop_2_31_half1}
+\end{holmath}
+
+The converse of the above holds when our modal language is defined on a finite set of propositional letters and the type of world sets of our models are infinite. It can be proved by an argument analogue to the proof of Hennessy-Milner theorem, with \HOLtm{λn n1 n2. (!(phi: 'a chap1$form). DEG phi <= n ==> (satis M n1 phi <=> satis M' n2 phi))} gives an $n$-bisimulation relation linking $w$ and $w'$:
+
+\begin{holmath}
+  \HOLthm{chap2_3.prop_2_31_half2}
+\end{holmath} 
+
+
+\HOLtm{DEG} is a concept that measure the depth of a formula, we also want a concept that measure the depth of a model, as `depth' is a relative concept measuring the distance of two points. To talk about the depth of a world \HOLtm{w IN M.frame.world}, we need \HOLtm{M} to be naturally equipped with a base point, so the `height' of a world only makes sense to rooted model. To tell the HOL about this definition, we start by defining \HOLtm{heightLE}:
+
+\begin{holmath}
+  \HOLthm{chap2_3.heightLE_rules}
+  \HOLthm{chap2_3.heightLE_ind}
+  \HOLthm{chap2_3.heightLE_cases}
+\end{holmath}
+
+Recall how we defined rooted model: \HOLtm{rooted_model M x M'} means `\HOLtm{M} is a rooted model generated by the world $x$ in the ambient model \HOLtm{M'}'. As \HOLtm{heightLE} is designed to be only make sense for rooted models, we encode the information about the rootedness of the model we are talking about into this definition. \HOLtm{heightLE M x M' w n} reads `for the rooted model \HOLtm{M} generated by the root $x$ in \HOLtm{M'}, the distance from the world \HOLtm{w} to the root $x$ is less or equal to $n$. The height of such a world $w$ is the smallest natural number $n$ such that \HOLtm{heightLE M x M' w n}. And a height of model is the maximum $n$ such that there is a world of height $n$ in the model.
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.height_def}
+  \HOLthm[def]{chap2_3.model_height_def}
+\end{holmath}
+
+Obviously, the root of any rooted model have height $0$. We are particularly interested in talking about heights in tree-like model. When \HOLtm{M} is tree-like, if \HOLtm{w IN M.frame.world} has height $n$, then any world \HOLtm{w' IN M.frame.world} such that \HOLtm{M.frame.rel w w'} will have height $n+1$, this is proved using the induction principle \texttt{RTC_INDUCT_RIGHT1}:
+
+\begin{holmath}
+  \HOLthm{chap2_3.tree_height_rel_lemma}
+\end{holmath}
+
+The restriction of a rooted model \HOLtm{M} to the height $k$ is the submodel consisting of all the worlds in \HOLtm{M} of height up to $k$. The restriction of a tree-like model is again a tree-like model:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_3.hrestriction_def}
+  \HOLthm{chap2_3.tree_hrestriction_tree}
+\end{holmath}
+
+Restriction of rooted model gives arise of $n$-bisimulation: If we restrict a rooted model \HOLtm{M} to height $k$, then a world $w$ of height $m$ in the restricted model is $k-m$-bisimilar to itself in the original model:
+
+\begin{holmath}
+  \HOLthm{chap2_3.lemma_2_33}
+\end{holmath}
+
+Proof:
+The $n$-bisimilar relation is give as \HOLtm{λn w1 w2. w1 = w2 /\ height M x M' w1 <= k - n}.
+
+Now we can start building a finite model via selection:
+
+\begin{holmath}
+  \HOLthm{chap2_3.thm_2_34}
+\end{holmath}
+
+Proof: Suppose \HOLtm{satis M1 w1 phi} where $w_1:\beta,\phi:\alpha\ form$, then by \texttt{prop_2_15_corollary}, there exists a tree-like model \HOLtm{M2} with \HOLtm{phi} satisfied at its root \HOLtm{w2}. Such an \HOLtm{M2} obtained from \texttt{prop_2_15_corollary} has its world set of type $\beta\ list$, so all the lemmas proved before with a infinite universe assumption applies for any model with its world set a subset of \HOLtm{M2.frame.world} . Define $M_3:=$\HOLtm{hrestriction M2 w2 M2 k} to be the restriction of \HOLtm{M2} to height $k$, then $M_3$ is rooted and there is a \HOLtm{nbisim M3 M2 f k w2 w2} by \texttt{lemma_2_33}. Hence \HOLtm{satis M3 w2 phi} by \texttt{prop_2_31_half1}. By \texttt{exercise_1_3_1} proved in the first chapter, if a propositional letter does not appear in $\phi$, then it has no effect to the satisfication of $\phi$, so we can discard all the propositional letters in \HOLtm{M3} which does not occur in $\phi$ to obtain the model \HOLtm{M3' =
+   <| frame := <| world := M3.frame.world ;
+                    rel := M3.frame.rel ;
+                |>;
+       valt := \p v. if ((VAR p) IN (subforms phi)) then (M3.valt p v) else F |>}, and still have \HOLtm{satis M3' w2 phi}. We select a finite model inductively from \HOLtm{M3'}.
+
+Let $s$ denote the set of propositional letters used by $\phi$, so $s$ is finite. By \texttt{prop_2_29_strengthen}, there are only finitely many non-equivalent formulas of degree less or equal to $k$ which only use propositional letters in $s$, that is, the set $distfp:=\{f \mid DEG\ f \le k \land \forall a. VAR\ a \in subforms\ f \implies a \in s\}//E\ \mu$ is a finite. We care about the equivalence classes in $distfp$ which are equivalence classes of formulas starting with a $\Diamond$. For such a equivalence class, taking the intersection with the set $\{d \mid ?d0. d = \Diamond d0\}$ does not give the empty set. Take the image of $distfp$ under the function $\lambda s. s\cap \{d \mid ?d0. d = \Diamond d0\}$ and delete the empty set from the image, we obtain a set $fs$ of sets of formulas, where for each $x\in fs$, $x$ consists of equivalent formulas of degree less or equal to $k$, only use propositional letters in $s$, and starts with diamond. Hence 
+$rs:=(IMAGE\ CHOICE ((IMAGE \ (\lambda s. s \cap \{d \mid ?d0. d = \Diamond d0\}) \ distfp) \ DELETE \ \{\})$ can be taken as the set of representatives of formulas with desired properties, it is finite as an image of a finite set. 
+
+We will construct sets $S_0,\cdots S_k$ of worlds in \HOLtm{M3'}, where the points in $S_n$ have height $n$. Start with $S_0:=\{w_2\}$, and inductively, assume $S_0,\cdots S_n$ has been defined, construct $S_{n+1}$ as follows: Consider an element in $v\in S_n$, for each $\Diamond \phi\in rs$ such that \HOLtm{satis M3' w2 (DIAM phi)}, pick a world \HOLtm{u IN M3'.frame.world} such that \HOLtm{M3'.frame.rel v u} and \HOLtm{satis M3' u phi}. Do the same thing to all the $v\in S_n$, then $S_{n+1}$ is the set of all the such $u$'s which are seleted in this way. 
+
+The we we taken to formalise the definition of such $S_i$'s is to define a primitive recursive function: $ss:= PRIM_REC\ \{w2\}
+                 (\lambda s0:\beta\ list\ set\ n. 
+                      \{CHOICE\ uset \mid
+	              ?phi \ v. satis\ M3'\ v\ (\Diamond phi) \land 
+	              ((\Diamond phi) \in 
+                       (IMAGE\ CHOICE\
+                             ((IMAGE\ 
+                               (\lambda s. s \cap \{d \mid ?d0. d = \Diamond d0\})
+                               distfp) 
+                               DELETE \emptyset)) \land
+                      v \in s0 \land
+		      uset = \{ u \mid M3'.frame.rel\ v\ u \land u \in M3'.frame.world \land
+		                   satis\ M3'\ u\ phi\})\})$
+
+For each $i\le k$, $ss\ i$ will be our $S_i$. By induction on $i$, we can prove each $ss\ i$ is finite, so the set $W4 := \bigcup_i \{ss\ i\mid i \le k\}$ is finite. The resultant finite model we select is: \HOLtm{M4 = <| frame:= <| world := W4;
+                                  rel := M3.frame.rel |>;
+		        valt:= M3'.valt |>}
+To prove \HOLtm{satis M4 w2 phi}, it suffices to give a $k$-bisimulation between \HOLtm{M4} and \HOLtm{M3'} relating $w2$ to itself. Such a $k$-bisimulation is: \HOLtm{\n a1 a2. a1 IN M4.frame.world /\ a2 IN M3'.frame.world /\
+                 height M3' w2 M3' a1 = height M3' w2 M3' a2 /\
+		 height M3' w2 M3' a1 <= k - n /\
+                 (!phi. (DEG phi <= n /\ (∀a. VAR a ∈ subforms phi ⇒ a ∈ s))
+                     ==> (satis M3' a1 phi <=> satis M3' a2 phi))}
+The rest of the proof amounts to check the above indeed gives a $k$-bisimulation, the proof is not hard using a similar argument as we proved the Hennessy-Milner theorem.
+
+As we took a detour through \texttt{prop_2_15_corollary}, this construction of finite model changes the type of model. 
+
+
+\section{Reaching out to the world of first order logic}
+
+Modal logic is not an isolated formal system, in this chapter, we start linking modal logic with the wider logical world by discussing about the relation to first order logic. In the first half of the chapter, we define standard translation as our link between modal logic and first order logic, and in the second half of the chapter, with the help of standard translation, we introduce another construction on models which will give modal equivalence, and lead to an elegant result about bisimulation: modal equivalence implies bisimilarity-somewhere-else.
+
+\subsection{Standard Translation}
+
+To discuss the relationship between modal logic and first order logic, firstly we need to build some basics of first order logic in the HOL. First order logic is formalised in HOL light in 1998 as in (reference), we take our construction of first-order model theory as in the paper.
+
+For a first order language, a term is either a variable letter $x$ or a function symbol $f$ applied on a list of terms, which looks like $f(t_1,\cdots,t_n)$, where the $t$'s can either be variable letters or itself a function applied on some terms. To avoid specifying the type every where, we restrict our scope to countable language, by using only natural numbers to denote variable and function symbols:
+
+\begin{holmath}
+  \HOLthm{folLang.datatype_term}
+\end{holmath}
+
+Hence our terms will look like \HOLtm{fV 6}, \HOLtm{Fn 1 [fV 1; fV 2]}, \HOLtm{Fn 2 [Fn 0 []]}, etc. A constant is just a nullary function symbol.
+
+Our formulas are defined inductively as well, using minimal amount of logical connectives, by choosing the falsity, atoms, implication and universal quantification as primitive, predicate symbols are also represented by natural numbers. In particular, an $n$-ary relation symbol is a predicate symbol that takes lists of length $n$:
+
+\begin{holmath}
+  \HOLthm{folLang.datatype_form}
+\end{holmath}
+
+A quantified variable is called a bounded variable, otherwise it is called free. We define a function that returns the set of free variables of the formula, starting by collecting variables occur in the terms of formulas, and then delete the bounded ones:
+
+\begin{holmath}
+  \HOLthm[def]{folLang.FVT_def}
+  \HOLthm[def]{folLang.FV_def}
+\end{holmath}
+
+Here \HOLtm{LIST_UNION} is a function that takes a list of sets, and give us the union of all the sets in the list:
+
+\begin{holmath}
+  \HOLthm[def]{folLang.LIST_UNION_def}
+\end{holmath}
+
+Similarly, we have functions called \texttt{form_functions} and \texttt{form_predicates}, that take a formula and give the set of functions and predicates appear in the formula respectively.
+
+
+The non-primitive connectives are defined in the canonical way:
+
+\begin{holmath}
+  \HOLthm[def]{folLang.Not_def}
+  \HOLthm[def]{folLang.True_def}
+  \HOLthm[def]{folLang.Or_def}
+  \HOLthm[def]{chap2_4revised.fAND_def}
+  \HOLthm[def]{folLang.Exists_def}
+\end{holmath}
+
+To interpret these formulas, we need models for first order logic. A first order model of type $\alpha$ is a triple consists of an $\alpha$-set which is its domain, a interpretation of function symbols, and a interpretation of predicate symbols.
+
+\begin{holmath}
+  \HOLthm{folModels.datatype_model}
+\end{holmath}
+
+Given a first order model \HOLtm{M}, we can interpret formulas or terms by assigning each variable symbol an element in \HOLtm{M.Dom}. Such an assignment is given by a valuation, which is a function from the universe of natural numbers to the domain of \HOLtm{M}:
+
+\begin{holmath}
+  \HOLthm[def]{folModels.valuation_def}
+\end{holmath} 
+
+Interpretation of terms and formulas are given as \HOLtm{termval} and \texttt{feval}, where \HOLtm{termval} takes a model, an assignment of variable letters and a term, gives us an element of \HOLtm{M.Dom}. And \texttt{feval} takes a model, an assignment of variable letters and a first order formula, gives us the truth value whether the formula we give holds on the model under the current assignment of variable letters, we only care about when the an assignment of variable letters is indeed a valuation as defined above, when $\sigma$ is a valuation and \HOLtm{feval M σ fform}, we say `$fform$ is satisfied in \HOLtm{M} under the valuation $\sigma$'.
+
+\begin{holmath}
+  \HOLthm[def]{folModels.termval_def}
+  \HOLthm[def]{chap2_4revised.fsatis_def}
+\end{holmath}
+
+ (Why the holds def not work?!)
+
+By induction on first order formula, we show that the truth value of a first order formula only depends on where the valuation sends the free variables to:
+
+\begin{holmath}
+  \HOLthm{folModels.holds_valuation}
+\end{holmath}
+
+
+Models for modal language can be viewed as a first order model and hence be used to interpret some first order formula, and a first order model can be also viewed as a modal model. These conversions can be done using the following two functions:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_4revised.mm2folm_def}
+  \HOLthm[def]{chap2_6.folm2mm_def}
+\end{holmath}
+
+Note that the above constructions are not inverses in general, since by viewing a first order model as a modal model, we lose all the function symbols and predicate symbols except for the unary ones, and the binary one denoted by $0$. Also the range of formulas which makes sense to first order model obtained by converting a modal model is quite limited, we can only use these model to interpret formulas with only one binary predicate symbol corresponds to the relation in the model, denoted by $0$, and no function symbol. A first order model which do not have `superfluous' symbols contains the same amount of information as a modal model. For such a first order model, converting it to a modal model and then to a first order model again get the original model back, in the sense of the resultant model satisfied exactly the same first order formulas without function symbols. The fact that we that we need the assumption \HOLtm{form_functions f = ∅} is not a real constrain, since any formulas with function symbol does not make sense to both the original model and the resultant model we get by conversion:
+
+\begin{holmath}
+  \HOLthm{chap2_6.mm2folm_folm2mm_feval}
+\end{holmath}
+
+
+Under this construction of the basic theory of first order logic, we can define standard translation:
+
+\begin{holmath}
+  \HOLthm{chap2_4revised.ST_def}
+\end{holmath}
+
+Here \HOLtm{fP} is the abbrevation of \HOLtm{λp t. Pred p [t]}, and \HOLtm{fR} is the abbrevation of \HOLtm{λw1 w2. Pred 0 [w1; w2]}. Any formula obtained by standard translation only has one free variable $x$, which is used to mark the current state, and a standard translation can never have function symbols:
+
+\begin{holmath}
+  \HOLthm{chap2_6.ST_FV_singleton}
+  \HOLthm{chap2_6.ST_FC_EMPTY}
+\end{holmath}
+
+Two interesting features that will be useful in later chapter is that we can conjunct standard tranalations to get a standard translation. And the negation of standard translation is again a standard translation:
+
+\begin{holmath}
+  \HOLthm{chap2_6.ST_BIGCONJ}
+  \HOLthm{chap2_6.ST_fNOT}
+\end{holmath}
+
+
+
+Standard translation defined like this can be regarded as a first-order reformulation of modal satisfication, since we have the precise correspondence of modal satisfication and first-order satisfication for standard translations:
+
+\begin{holmath}
+  \HOLthm{chap2_4revised.prop_2_47_i}
+\end{holmath}
+
+Hence we say the current definition of standard translation makes good semantical sense, but it has syntactical deficiency. The formula \HOLtm{DIAM (DIAM f)} with $a_1$ marking its state is translated to $\exists a_2(R a_1 a_2\land\exists a_3(Ra_2a_3 \land ST_{a_3}(f)))$, it uses three variables $a_1,a_2$ and $a_3$, which is unnecessary: the formula above is equivalent to $\exists a_2(R a_1 a_2\land\exists a_1(Ra_2a_1\land ST_{a_1}(f)))$. With this observation, we conclude that we do not need to always come up with a variable symbol for each \HOLtm{DIAM}, instead, we can use only two variable symbols alternating in each layer. As a consequence, we can redefine standard translation as follows:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_4revised.ST_alt_def}
+\end{holmath}
+
+(prove only two variables?)
+
+Note that the above definition is designed to only use $0$ or $1$ as the $x$. It is evident from the follow proposition that our new definition of translation is equally nice from the semantical aspect as the former one:
+
+\begin{holmath}
+  \HOLthm{chap2_4revised.prop_2_47_i_alt}
+\end{holmath}
+
+By conclusion, every modal formula is equivalent to a first order formula containing only two variables.
+
+\subsection{Modal Saturation via ultrafilter extensions}
+
+In the second chapter, we have seen bisimilarity implies modal equivalence, but only proved the converse for image finite models. In this section, we are interested in another particular class of models which modal equivalence implies bisimilarity, which is the class of m-saturated models. 
+
+A set of formulas \HOLtm{Σ} is called satisfiable in a set of worlds $X$ of a model \HOLtm{M} if there exists a world in $X$ such that all the formulas in \HOLtm{Σ} are satisfied, and is called finitely satisfiable if any finite subset of \HOLtm{Σ} is satisfiable:
+
+\begin{holmath}
+  \HOLthm[def]{chap2_5.satisfiable_in_def}
+  \HOLthm[def]{chap2_5.fin_satisfiable_in_def}
+\end{holmath}
+
+A model \HOLtm{M} is called m-saturated if for each \HOLtm{w IN M.frame.world} and any set \HOLtm{Σ} of formulas, if \HOLtm{Σ} is finitely satisfiable in the set of successors of $w$, then it is satisfiable in the set of successors of $w$. 
+
+\begin{holmath}
+  \HOLthm[def]{chap2_5.M_sat_def}
+\end{holmath}
+
+In fact, a class of model where modal equivalence implies bisimilarity has a name, it is called a Hennessy-Milner class. If we want to formalise the definition of Hennessy-Milner class in the HOL, we could write:
+
+\begin{holmath}
+  \HOLthm{chap2_5.HM_class_def}
+\end{holmath} 
+  
+But in fact, such a definition is useless, since we are not allowed to have a `class' in the HOL, we can only have set, and any set is only allowed to have elements of the same type. Hence if we use this definition, we will only be allowed to talk about bisimulations between models with the same type. As a consequence, we do not make usage of this definition in the following formalisation of the proposition which says the class of m-saturation has the Hennessy-Milner property, instead, we state it as:
+
+\begin{holmath}
+  \HOLthm{chap2_5.prop_2_54_DIST_TYPE}
+\end{holmath}
+
+Proof: Let \HOLtm{M} and \HOLtm{M'} be $(\alpha,\beta),(\alpha,\gamma)$ models respectively. Under the assumptions, the bisimulation relation is given by \HOLtm{λn1 n2. (!form. satis M n1 form <=> satis M' n2 form)}. To only non-trivial clause of being a bisimulation to check is that for worlds $w,v$ of \HOLtm{M} and world $w'$ of \HOLtm{M'} such that \HOLtm{M.frame.rel w v} and $w$ and $w'$ are modal equivalent, we can find a world $v'$ of \HOLtm{M'} such that \HOLtm{M'.frame.rel w' v'} and $v$ and $v'$ are modal equivalent. 
+
+Let \HOLtm{Σ} denote the set of formulas satisfied by $v$, it suffices to find a successor of $w'$ that realises \HOLtm{Σ}. As \HOLtm{M'} is m-saturated, it suffices to prove each finite subset $\Delta\subseteq \Sigma$ is satisfied in some successor of $w'$. Take such a $\Delta$, then it is satisfied at $v$. As $\Delta$ is finite, we can prove that there exists a formula $ff$ such that for all $(\alpha,\beta)$-models, $ff$ is satisfied at a world if and only if all elements in $\Delta$ are satisfied:
+
+\begin{holmath}
+  \HOLthm{chap2_5.BIGCONJ_EXISTS_2}
+\end{holmath}
+
+We have \HOLtm{satis M v ff}, and therefore \HOLtm{satis M w (DIAM ff)}. By modal equivalence of $w$ and $w'$, we then get \HOLtm{satis M w' (DIAM ff)}, so there exists a successor of $w'$ that satisfies $ff$. 
+
+But it is not what we want! Instead, we need a successor of $w'$ which satisfies all elements in $\Sigma$, but we cannot get it if we just use the lemma above, since the equivalence of the set of formulas and its big conjunction we proved only works for $(\alpha,\beta)$ models, but we are in \HOLtm{M'} which is an $(\alpha,\gamma)$-model. By embedding any arbitary model into a common infinite type, it may possible to prove that under some condition on universe, if a big conjunction works for a model of one type, then it works for any other types. But it is way too complicated and will involve an ugly assumption. The key observation is that what we need is no more than a big conjunction formula that simutinously works for two distinct types. Therefore, it suffices to prove:
+
+\begin{holmath}
+  \HOLthm{chap2_5.BIGCONJ_EXISTS_DIST_TYPE}
+\end{holmath}
+
+This lemma works perfectly, so we will not get stuck at the former point and we are done with the proof.
+
+Since m-saturated models are nice, here is a natural question: How can we get such models. It turns out that every models can give arise to a m-saturated model, by taking its ultrafilter extension. In order to talk about ultrafilter extesnions, we need to build a theory of ultrafilers in HOL.
+
+\section{Interlude II: Ultrafilters}
+
+As its name suggests, an ultrafilter is a special kind of filter. Given a non-empty set $W$, a set $F$ which is a subset of the power set of $W$, written as $POW(W)$ in the HOL, is called a filter if it contains $W$ itself, closed under binary intersection, and closed upward.
+
+\begin{holmath}
+  \HOLthm[def]{ultrafilter.filter_def}
+\end{holmath}
+
+By induction, closure under binary intersection implies that a filter is closed under finite intersection.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.BIGINTER_IN_filter}
+\end{holmath}
+
+Obviously for any set $W$, $POW(W)$ is a filter on $W$. By upward closure, any filter which contains the empty set must be $POW(W)$.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.POW_filter}
+  \HOLthm{ultrafilter.empty_improper_filter}
+\end{holmath}
+
+But $POW(W)$ is very boring as a filter, we are mainly interested in filters which are not the whole power set, these filters are called proper filer:
+
+\begin{holmath}
+  \HOLthm{ultrafilter.proper_filter_def}
+\end{holmath}
+
+If we have a set proper filters such that for any two members $A,B$ of it, either $A\subset B$ or $B\subseteq A$, the union of this set is a proper filter.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.UNION_proper_proper}
+\end{holmath}
+
+Another important kind of filter is the generated filter. For $W\ne \emptyset$ and $F_0\subseteq POW(W)$, the generated filter is the minimal filter on $W$ containing $F_0$.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.generated_filter_def}
+\end{holmath}
+
+The advantage of the above definition is that we get the fact that a generated filter is indeed a filter for free.
+
+But sometimes we want to explicitly talk about elements in generated filter, then we can just spell out the its construction: We put any subset $W$ that contains a finite intersection of elements in $F$ in the generated filter of $F$, such subsets are precisely the ones that are required by the definition. We can prove generated filter is indeed a filter under this definition:
+
+\begin{holmath}
+  \HOLthm{ultrafilter.generated_filter_alt_filter}
+\end{holmath}
+
+%modify the theorem to remove extra?
+
+%prove all the three definitions agree?
+
+For any element $w\in W$, the set of all the subset containing $w$ forms a filter, it is called the principle filter generated by $w$. In fact, principle filters are filter generated by singletons.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.principle_UF_def}
+\end{holmath}
+
+ An ultrafilter on a set $W$ is a proper filter $F$ such that for any $S\subseteq W$, either $S$ or $W/S$ is in $F$, but not both.
+
+\begin{holmath}
+  \HOLthm[def]{ultrafilter.ultrafilter_def}
+\end{holmath}
+
+Principle filters are examples of the type of filters of our main interest, that is, the ultrafilters. 
+
+\begin{holmath}
+  \HOLthm{ultrafilter.principle_UF_UF}
+\end{holmath}
+
+Since ultrafilter are important, we may ask when can we get an ultrafilter on $W$ from a subset of $POW(W)$. We will prove later that the answer is for any subset of $POW(W)$ with finite intersection property, we can extend it into an ultrafilter. A subset of $POW(W)$ has finite intersection property if it is closed under finite intersection:
+
+\begin{holmath}
+  \HOLthm{ultrafilter.FIP_def}
+\end{holmath}
+
+Any proper filter $U$ has the finite intersection property. Moreover, for $B\subseteq W$ such that neither $B$ nor $W/B$ is in $U$, then inserting $B$ to $U$ does not destory the finite intersection property of $U$.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.proper_filter_FIP}
+  \HOLthm{ultrafilter.proper_filter_INSERT_FIP}
+\end{holmath}
+
+Proof: \texttt{proper_filter_FIP} is immediate from closure under finite intersection. We prove \texttt{proper_filter_INSERT_FIP}. Take a finite subset $S\subseteq \{B\}\cup U$, if $B\notin S$, then we are done by \texttt{proper_filter_FIP}. Otherwise, if we have $\bigcap S = B \cap (\bigcap U')$ for some finite $U'\subseteq U$, which implies $\bigcap U'\subseteq W/ B$, hence $W/B\in U$ by upward closure, contradicting the assumption that $W/B\notin U$.
+
+Towards the goal of extending a set with finite intersection property, we firstly prove that such sets can be extended into a proper filter.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.FIP_PSUBSET_proper_filter}
+\end{holmath}
+
+Proof: The desired proper filter is given by the generated filter of $S$, checking its property is straightfoward.
+
+A proper filter which is not properly contained by any proper filter is called a maximal filter.
+We can readily check ultrafilters are maximal. With the last two lemmas about finite intersection property, we can prove maximal filters are ultrafilters, so maximal filters and ultrafilters turns out to be the same thing.
+% add a lemma about iff?
+\begin{holmath}
+  \HOLthm{ultrafilter.maximal_ultrafilter}
+\end{holmath}
+
+Proof: If a maximal filter $U$ on $W$ is not an ultrafilter, then for some $A$, either $A\in U\land W/A\in U$ or $A\notin U\land W/A\notin U$. In the first case we have $\emptyset\in U$, contradicts the properness of maximal filter. In the second case, by \texttt{proper_filter_INSERT_FIP}, the set $U\cup \{A\}$ has the finite intersection property, hence extends to a proper filter $U'$ by \texttt{FIP_PSUBSET_proper_filter}. But then $U$ is properly contained in $U'$, contradicts the maximality of $U$. This completes the proof. 
+
+Together with the Zorn's lemma which is already in the HOL library, now we have all ingredients of the proof of ultrafilter.
+%talk about Zorn's lemma in the HOL?
+
+\begin{holmath}
+  \HOLthm{ultrafilter.ultrafilter_theorem}
+\end{holmath}
+
+Proof:Given a property filter $F$, we will find out a ultrafilter containing it. Consider the set $S$ of all the proper filters containing $F$, ordered by inclusion, we will apply Zorn's lemma on $S$. The Zorn's lemma in the HOL looks like:
+
+\begin{holmath}
+  \HOLthm{set_relation.zorns_lemma}
+\end{holmath}
+
+Here $s$ is a set, $r$ is a relation that takes a pair of elements $(a,b)$ with $a,b\in s$ and return the truth value whether $a$ and $b$ are related. For a set $t$ with the same type as $s$, we have \HOLtm{chain t r} if for any $a,b\in t$, we have either $(a,b)\in r$ or $(b,a)\in r$. Here our $s$ is the set $S$ defined above. $r$ is defined by inclusion. For $A,B\in S$, $(A,B)\in r$ iff $A\subseteq B$, so a chain $T$ on $S$ is a subset of $S$ such that $A\subseteq B$ or $B\subseteq A$ for any $A,B\in T$.
+
+The thing to check is that any chain $T$ on $S$ has an upper bound. If the chain is empty, then the upper bound is clearly $F$. Otherwise, we claim the union of the chain is the upper bound. To prove the claim, it amounts to check:
+
+\begin{itemize}
+  \item $\bigcup T$ is a proper filer containing $F$.
+  \item Any element in $T$ is a subset of $\bigcup T$.
+\end{itemize}
+  The second item is trivial, the first one is by \texttt{UNION_proper_proper}.
+
+Applying the Zorn's lemma gives a proper filter $X\in S$ which is an maximal element of $S$, it suffices to prove $X$ is an ultrafilter. The fact that $X$ is the maximal element of $S$ proves $X$ is a maximal filter, hence we are done by \texttt{maximal_ultrafilter}.
+
+As a corollary, we can extend any set with finite intersection into an ultrafilter:
+
+\begin{holmath}
+  \HOLthm{ultrafilter.ultrafilter_theorem_corollary}
+\end{holmath}
+
+Proof: For $S\subseteq POW(W)$ with finite intersection property, by \texttt{FIP_PSUBSET_proper_filter}, we have a proper filter $P$ containing $S$, and $P$ extends to an ultrafiler $S\subseteq P\subseteq U$ by \texttt{ultrafilter_theorem}.
+
+%A special kind of ultrafilters, called countably incomplete ultrafilters, will play an important role in our discussion about ultraproducts in the next interlude, so we also give some basics about countably incomplete ultrafilters here. Firstly, the definition is:
+
+As an application of \texttt{ultrafilter_theorem_corollary}, we prove the existence of countably incomplete ultrafilters. A countably incomplete ultrafilter is an ultrafilter which is not closed under countably infinite intersection.
+
+\begin{holmath}
+  \HOLthm[def]{ultrafilter.countably_incomplete_def}
+\end{holmath}
+
+It is not hard to see any ultrafilter $U$ on the natural numbers $\mathbb N$ which does not contain any singleton is countably incomplete, since the countable intersection of the sets $\mathbb N/\{n\}$ which are members of $U$ yields the empty set.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.example_2_72}
+\end{holmath}
+
+We find out an ultrafilter on $\mathbb N$ which does not contain any singleton, we will done if we can prove the existence of an ultrafilter on $\mathbb N$ which does not contain any finite set. By \texttt{ultrafilter_theorem_corollary}, it suffices to prove:
+
+\begin{holmath}
+  \HOLthm{ultrafilter.exercise_2_5_4_a}
+\end{holmath}
+
+Proof: By unfolding the definition of finite intersection property and induct on finiteness of the set we are intersecting.
+
+A countably incomplete ultrafilter has useful features, one of them is that such an ultrafilter $U$ has a chain $I=I_0\supseteq I_1\supseteq I_2\supseteq\cdots$ such that each $I_i$ is in $U$, and $\bigcap_{n\in \mathbb N}I_n=\emptyset$.
+
+\begin{holmath}
+  \HOLthm{ultrafilter.countably_incomplete_chain}
+\end{holmath}
+
+Proof: By definition of countably incompleteness, there exists a family $X_n$ in $U$ indexed by natural numbers such that $\bigcap_{n\in \mathbb N}X_n=\emptyset$. Define $J_n:=\bigcap_{m\le n}X_n$, so $J_{n+1}\supseteq J_n$ for all $n\in\mathbb N$, and moreover $\bigcap_{n\in \mathbb N}I_n=\emptyset$. In the HOL, the family $J_n$ is defined using a primitive recursive function, defined by \HOLtm{ PRIM_REC (X 0) (\Xn n. Xn ∩ (X (n + 1)))}. We get the desired chain $I_n$ by inserting $I$ at the begining of $J_n$.
+
 
 
 This is a report for summarizing my learning of interactive theorem proving in the HOL. This paper consists of two parts, the first part it about the correspondence theorem on group theory, through the process of searching for methods of proving it, I get known to some basics tools, mainly the simplifiers of the HOL. The second part is about modal logic, where I think is my starting point of being exposed to more advanced and useful tools.
@@ -1120,7 +1737,7 @@ This is proved by using \texttt{ho_match_mp_tac} with the induction principle \t
   \HOLthm{relation.RTC_STRONG_INDUCT_RIGHT1}
 \end{holmath}
 
-Quite related, we have a definition of rooted model. A rooted model is a submodel of a model generated by a single point. For a rooted model, it would definitly be a submodel for some model, and the world set of a rooted model is exactly all the worlds that a world links to via the transitive closure of the relation of the model. \HOLtm{rooted_model M x M'} reads ``\HOLtm{M} is a rooted model with root $x$, and it is a submodel of \HOLtm{M'}''.
+Quite related, we have a definition of rooted model. A rooted model is a submodel of a model generated by a single point. For a rooted model, it would definitly be a submodel for some model, and the world set of a rooted model is exactly all the worlds that a world links to via the transitive closure of the relation of the model. \HOLtm{rooted_model M x M'} reads `\HOLtm{M} is a rooted model with root $x$, and it is a submodel of \HOLtm{M'}'.
 
 \begin{holmath}
   \HOLthm[def]{chap2_1.rooted_model_def}
