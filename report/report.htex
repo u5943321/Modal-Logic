@@ -18,6 +18,18 @@
 
 
 
+Interlude : Finitness of formulas obtained by boolean combination of a finite set.
+
+prop_2_29
+
+prop_2_29_strengthen
+``!s. FINITE s /\ INFINITE univ(:'b) ==> 
+       !n. FINITE (partition (equiv0 (μ:'b itself)) 
+            {f| DEG f <= n /\ (!a. (VAR a) IN (subforms f) ==> a IN s)})``
+
+
+
+
 
 
 

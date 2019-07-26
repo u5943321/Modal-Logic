@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  26 JUL 2019 11:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  26 JUL 2019 22:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -140,21 +140,66 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 730.
 LaTeX Info: Redefining \[ on input line 2844.
 LaTeX Info: Redefining \] on input line 2845.
 ))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/stmaryrd/stmaryrd.sty
+Package: stmaryrd 1994/03/03 St Mary's Road symbol package
+\symstmry=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `stmry' in version `bold'
+(Font)                  U/stmry/m/n --> U/stmry/b/n on input line 89.
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amscls/amsthm.sty
+Package: amsthm 2017/10/31 v2.20.4
+\thm@style=\toks22
+\thm@bodyfont=\toks23
+\thm@headfont=\toks24
+\thm@notefont=\toks25
+\thm@headpunct=\toks26
+\thm@preskip=\skip46
+\thm@postskip=\skip47
+\thm@headsep=\skip48
+\dth@everypar=\toks27
+) (./proof.sty
+Package: proof 1995/05/22
+\inferLineSkip=\dimen120
+\inferLabelSkip=\dimen121
+\@LeftOffset=\dimen122
+\@RightOffset=\dimen123
+\@SavedLeftOffset=\dimen124
+\UpperWidth=\dimen125
+\LowerWidth=\dimen126
+\LowerHeight=\dimen127
+\UpperLeftOffset=\dimen128
+\UpperRightOffset=\dimen129
+\UpperCenter=\dimen130
+\LowerCenter=\dimen131
+\UpperAdjust=\dimen132
+\RuleAdjust=\dimen133
+\LowerAdjust=\dimen134
+\RuleWidth=\dimen135
+\HLabelAdjust=\dimen136
+\VLabelAdjust=\dimen137
+\WidthAdjust=\dimen138
+\@UpperPart=\box30
+\@LowerPart=\box31
+\@LabelPart=\box32
+\ResultBox=\box33
+)
+\c@defn=\count106
+
 (./report.aux)
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -190,42 +235,45 @@ LaTeX Font Info:    ... okay on input line 22.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 24.
+LaTeX Font Info:    Try loading font information for U+msa on input line 29.
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 24.
+LaTeX Font Info:    Try loading font information for U+msb on input line 29.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1
+)
+LaTeX Font Info:    Try loading font information for U+stmry on input line 29.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/stmaryrd/Ustmry.fd) [1
 
 {/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Try loading font information for U+euf on input line 91.
+LaTeX Font Info:    Try loading font information for U+euf on input line 96.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
-) [2] [3]
-Overfull \hbox (38.35548pt too wide) in paragraph at lines 170--171
+) [2]
+Overfull \hbox (38.35548pt too wide) in paragraph at lines 175--176
 \OT1/cmr/m/n/10 The key con-cept we are in-ter-ested in this chap-ter is called
  `modal equiv-a-lent', by `two worlds $\OML/cmm/m/it/10 w \OMS/cmsy/m/n/10 2 \O
 ML/cmm/m/it/10 M:frame:world; w[] \OMS/cmsy/m/n/10 2
  []
 
-[4] [5] [6] [7] [8] [9] [10] [11]
-Overfull \hbox (28.23677pt too wide) detected at line 466
+[3] [4] [5] [6] [7]
+Overfull \hbox (28.23677pt too wide) detected at line 471
 []
  []
 
-[12] [13] [14] [15]
-Overfull \hbox (3.32793pt too wide) in paragraph at lines 642--643
+[8] [9] [10]
+Overfull \hbox (3.32793pt too wide) in paragraph at lines 647--648
 []\OT1/cmr/m/n/10 Recall we proved the con-di-tion for a propo-si-tional for-mu
 la to hold as the lemma \OT1/cmtt/m/n/10 peval_-satis_-strengthen\OT1/cmr/m/n/1
 0 ,
  []
 
 
-Overfull \hbox (10.30952pt too wide) in paragraph at lines 652--653
+Overfull \hbox (10.30952pt too wide) in paragraph at lines 657--658
 []\OT1/cmr/m/n/10 Proof: Sup-pose $[] \U/euf/m/n/10 M \OT1/cmr/m/it/10 w []$ \O
 T1/cmr/m/n/10 for some model $\U/euf/m/n/10 M$\OT1/cmr/m/n/10 , then by \OT1/cm
 tt/m/n/10 peval_-satis_-strengthen\OT1/cmr/m/n/10 , we have $[] ((\OML/cmm/m/it
@@ -233,20 +281,21 @@ tt/m/n/10 peval_-satis_-strengthen\OT1/cmr/m/n/10 , we have $[] ((\OML/cmm/m/it
 n/10 2
  []
 
-[16] [17] [18]
-Overfull \hbox (124.06111pt too wide) detected at line 767
+[11]
+Overfull \hbox (124.06111pt too wide) detected at line 759
 []
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 784.
+[12]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 776.
 
-(/usr/local/texlive/2019/texmf-dist/tex/latex/base/omscmr.fd
+ (/usr/local/texlive/2019/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 784.
- [19] [20]
-Overfull \hbox (8.5677pt too wide) in paragraph at lines 883--884
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 776.
+ [13]
+Overfull \hbox (8.5677pt too wide) in paragraph at lines 875--876
 []\OT1/cmr/m/n/10 Given an $\OML/cmm/m/it/10 f \OMS/cmsy/m/n/10 2 \OML/cmm/m/it
 /10 fs$\OT1/cmr/m/n/10 , the de-sired $\OML/cmm/m/it/10 p$ \OT1/cmr/m/n/10 is g
 iven by $\OML/cmm/m/it/10 ^^^ \OT1/cmr/m/n/10 :=$$[]$($[]$ $\OMS/cmsy/m/n/10 f\
@@ -256,8 +305,8 @@ OML/cmm/m/it/10 f \OMS/cmsy/m/n/10 ^ \OML/cmm/m/it/10 c \OMS/cmsy/m/n/10 j \OML
 cmr/m/n/10 )\OMS/cmsy/m/n/10 g$\OT1/cmr/m/n/10 .
  []
 
-[21] [22] [23]
-Overfull \hbox (81.95738pt too wide) in paragraph at lines 993--994
+[14] [15]
+Overfull \hbox (81.95738pt too wide) in paragraph at lines 985--986
 []\OT1/cmr/m/n/10 A dis-junc-tion of $[]$ for-mula is cap-tured by sets of lit-
 eral sets. For in-stance, the set $\OMS/cmsy/m/n/10 ff\OT1/cmr/m/n/10 (\OML/cmm
 /m/it/10 f[]; T\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 (\OML/cmm/m/
@@ -268,7 +317,7 @@ it/10 f[]; T\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 g\OML/cmm/m/it/10 ; \OMS/cmsy/m/n
  []
 
 
-Overfull \hbox (3.77626pt too wide) in paragraph at lines 1017--1019
+Overfull \hbox (3.77626pt too wide) in paragraph at lines 1009--1011
 []\OT1/cmr/m/n/10 Proof: For the im-pli-ca-tion from left to right, sup-pose bo
 th $[] \U/euf/m/n/10 M \OT1/cmr/m/it/10 w []$ \OT1/cmr/m/n/10 and $[] \U/euf/m/
 n/10 M \OT1/cmr/m/it/10 w$$\OMS/cmsy/m/n/10 f\OML/cmm/m/it/10 c \OMS/cmsy/m/n/1
@@ -276,76 +325,80 @@ n/10 M \OT1/cmr/m/it/10 w$$\OMS/cmsy/m/n/10 f\OML/cmm/m/it/10 c \OMS/cmsy/m/n/1
 r/m/n/10 ,
  []
 
-[24] [25] [26] [27] [28] [29] [30] [31]
-Overfull \hbox (229.61916pt too wide) detected at line 1292
+[16] [17] [18] [19] [20]
+Overfull \hbox (229.61916pt too wide) detected at line 1279
+[]
+ []
+
+[21]
+
+LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <10> not available
+(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 1300
+.
+
+[22] [23] [24] [25] [26]
+Overfull \hbox (12.48987pt too wide) detected at line 1620
+[]
+ []
+
+[27] [28]
+Overfull \hbox (45.84813pt too wide) detected at line 1739
 []
  []
 
 
-Overfull \hbox (36.68214pt too wide) detected at line 1316
-[]
- []
-
-[32] [33] [34] [35] [36] [37] [38] [39]
-Overfull \hbox (12.48987pt too wide) detected at line 1617
-[]
- []
-
-[40] [41]
-Overfull \hbox (45.84813pt too wide) detected at line 1736
-[]
- []
-
-[42]
-Overfull \hbox (0.61987pt too wide) in paragraph at lines 1771--1772
+Overfull \hbox (0.61987pt too wide) in paragraph at lines 1774--1775
 []\OT1/cmr/m/n/10 This is ac-tu-ally a spe-cial case of the fol-low-ing propo-s
 i-tion, where $\OML/cmm/m/it/10 u$ \OT1/cmr/m/n/10 is taken as $[] \OT1/cmr/m/i
 t/10 w \U/euf/m/n/10 M\OML/cmm/m/it/10 :[]:[]$\OT1/cmr/m/n/10 .
  []
 
-[43] [44]
-Overfull \hbox (9.31306pt too wide) in paragraph at lines 1818--1819
+[29]
+Overfull \hbox (9.31306pt too wide) in paragraph at lines 1821--1822
 []\OT1/cmr/m/n/10 Proof:Bisimulation im-plies modal equiv-a-lence by \OT1/cmtt/
 m/n/10 thm_-2_-20\OT1/cmr/m/n/10 . For the re-verse di-rec-tion, if $\OT1/cmr/m
 /it/10 w  \OMS/cmsy/m/n/10 2 [] \U/euf/m/n/10 M\OML/cmm/m/it/10 :[]:[]$
  []
 
-[45] (./report.aux) ) 
+[30] [31] [32] [33] [34] [35] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 2223 strings out of 492616
- 29216 string characters out of 6129481
- 115173 words of memory out of 5000000
- 6131 multiletter control sequences out of 15000+600000
- 14970 words of font info for 58 fonts, out of 8000000 for 9000
+ 2519 strings out of 492616
+ 32802 string characters out of 6129481
+ 122353 words of memory out of 5000000
+ 6405 multiletter control sequences out of 15000+600000
+ 17756 words of font info for 70 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,12n,32p,2979b,198s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2019/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmbx10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmbx12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmex10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmmi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmmi7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmr12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mr17.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
-5.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.p
-fb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pf
-b></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb>
-</usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></
-usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></u
-sr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr
-/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/
-local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.pfb></usr/lo
-cal/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/loc
-al/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/l
-ocal/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></u
-sr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
-></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.
-pfb>
-Output written on report.pdf (45 pages, 385572 bytes).
+ 34i,15n,32p,2979b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2019/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2019/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2019/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmitt10.pfb></usr/local/texlive/2019/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2019/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2019/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2019/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2019/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2019/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmss10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmss8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmss9.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmssi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmsy10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmsy7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmti10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmti7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmtt10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts
+/euler/eufm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfon
+ts/symbols/msam10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/am
+sfonts/symbols/msbm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/publi
+c/amsfonts/symbols/msbm7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/pu
+blic/stmaryrd/stmary10.pfb>
+Output written on report.pdf (35 pages, 415047 bytes).
 PDF statistics:
- 239 PDF objects out of 1000 (max. 8388607)
- 168 compressed objects within 2 object streams
+ 217 PDF objects out of 1000 (max. 8388607)
+ 153 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

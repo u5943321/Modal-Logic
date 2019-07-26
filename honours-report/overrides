@@ -11,3 +11,6 @@ form 1 \ensuremath{\phi}
 form1 1 \ensuremath{\phi\sb{1}}
 form2 1 \ensuremath{\phi\sb{2}}
 − 1 \ensuremath{-}
+⦇ 1 \ensuremath{\llparenthesis}
+⦈ 1 \ensuremath{\rrparenthesis}
+↦ 1 \ensuremath{\mapsto}
