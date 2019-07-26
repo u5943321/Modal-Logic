@@ -13,7 +13,7 @@
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
-\renewcommand{\baselinestretch}{0.9}
+\renewcommand{\baselinestretch}{1.4}
 
 \title{Modal Logic Mechanisation in HOL4}
 \author{Yiming Xu}
@@ -607,9 +607,9 @@ The crucial fact that we will use about the degree of formulas is the following 
 
 The proof of this lemma is by induction on the degree $n$. We prove it in the following interlude:
 
-\section{Interlude I: Finiteness of non-equivalent modal formulas in each degree}
+\subsection{Interlude I: Finiteness of non-equivalent modal formulas in each degree}
 
-\subsection{Base case}
+\subsubsection{Base case}
 For the base case, we need to prove if we only use propositional letters in $s$ where $s$ is a finite set, then up to equivalence, we can only onbtain finitely many propositional formulas. To prove this, it suffices to find out an injection from the set of equivalence class of propositional formulas that only uses propositional letters in $s$ to a finite set. We will prove the function that sends an equivalence class of formulas to its image under the function $\lambda f. \{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$, which sends a formula $f$ to the set $\{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$ of assignments of truth value on propositional letters in $s$ that makes $f$ holds, is an injection to the finite set \HOLinline{\HOLConst{POW}\;(\HOLConst{POW}\;(\HOLConst{POW}\;\HOLFreeVar{s}))}. We can see the function we define has correct codomain: A formula $f$ is sent to a set of subsets of $s$, which is an element of \HOLinline{\HOLConst{POW}\;(\HOLConst{POW}\;\HOLFreeVar{s})}, so a equivalence class has image as a set of elements in \HOLinline{\HOLConst{POW}\;(\HOLConst{POW}\;\HOLFreeVar{s})}, which lies in \HOLinline{\HOLConst{POW}\;(\HOLConst{POW}\;(\HOLConst{POW}\;\HOLFreeVar{s}))}.
 
 Let us firstly investigate what the function $\lambda f. \{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$ does. We claim the image of each equivalence class of this function is a singleton:
@@ -664,7 +664,7 @@ Proof: If two equivalence classes represented by $x$ and $x'$ respectively has i
 
 
 
-\subsection{Step case}
+\subsubsection{Step case}
 
 The key observation for proving the step case is that any formulas which only uses propositional letters in a fixed finite set $ss$ and of degree no more than $n+1$ is obtained by boolean combination on the set $s$ formed by formulas of form \HOLinline{\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{phi}} which also only uses propositional letters in $ss$ where \HOLinline{\HOLConst{DEG}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenLeq{}}\;\HOLFreeVar{n}} and propositional letters in $ss$. Saying a formula $f$ is a boolean combination of a set $s$ of formulas is to say $f$ is either itself an element in $s$, or can be obtained by combining elements in $s$ using the connectives $\lnot$ and $\lor$. We define boolean combination as an inductive relation, where \HOLinline{\HOLConst{IBC}\;\HOLFreeVar{f}\;\HOLFreeVar{s}} reads `$f$ is a boolean combination of elements in the set $s$':
 
@@ -1270,7 +1270,7 @@ A quantified variable is called a bounded variable, otherwise it is called free.
 \HOLConst{FV}\;(\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLFreeVar{f\sb{\mathrm{2}}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{FV}\;\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenUnion{}}\;\HOLConst{FV}\;\HOLFreeVar{f\sb{\mathrm{2}}}\\
 \HOLConst{FV}\;(\HOLConst{FALL}\;\HOLFreeVar{x}\;\HOLFreeVar{f})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{FV}\;\HOLFreeVar{f}\;\HOLConst{DELETE}\;\HOLFreeVar{x}
 \end{holmath}
-
+%add bounded ones?
 Here \HOLinline{\HOLConst{LIST_UNION}} is a function that takes a list of sets, and give us the union of all the sets in the list:
 
 \begin{holmath}
@@ -1348,7 +1348,7 @@ Models for modal language can be viewed as a first order model and hence be used
 \;\;\HOLFieldName{valt}\;:=\;(\HOLTokenLambda{}\HOLBoundVar{v}\;\HOLBoundVar{w}.\;\HOLFreeVar{FM}.\HOLFieldName{Pred}\;\HOLBoundVar{v}\;[\HOLBoundVar{w}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{FM}.\HOLFieldName{Dom})\HOLTokenRightrec{}
 \end{holmath}
 
-Note that the above constructions are not inverses in general, since by viewing a first order model as a modal model, we lose all the function symbols and predicate symbols except for the unary ones, and the binary one denoted by $0$. Also the range of formulas which makes sense to first order model obtained by converting a modal model is quite limited, we can only use these model to interpret formulas with only one binary predicate symbol corresponds to the relation in the model, denoted by $0$, and no function symbol. A first order model which do not have `superfluous' symbols contains the same amount of information as a modal model. For such a first order model, converting it to a modal model and then to a first order model again get the original model back, in the sense of the resultant model satisfied exactly the same first order formulas without function symbols. The fact that we that we need the assumption \HOLinline{\HOLConst{form_functions}\;\HOLFreeVar{f}\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}} is not a real constrain, since any formulas with function symbol does not make sense to both the original model and the resultant model we get by conversion:
+Note that the above constructions are not inverses in general, since by viewing a first order model as a modal model, we lose all the function symbols and predicate symbols except for the unary ones, and the binary one denoted by $0$. Also the range of formulas which makes sense to first order model obtained by converting a modal model is quite limited, we can only use these model to interpret formulas with only one binary predicate symbol corresponds to the relation in the model, denoted by $0$, and no function symbol. A first order model which do not have `superfluous' symbols contains the same amount of information as a modal model. For such a first order model, converting it to a modal model and then to a first order model again get the original model back, in the sense of the resultant model satisfied exactly the same first order formulas without function symbols. The fact that we that we need the assumption \HOLinline{\HOLConst{form_functions}\;\HOLFreeVar{f}\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}} is not a real constrain, but merely an assumption for well-formedness, since any formulas with function symbol does not make sense to both the original model and the resultant model we get by conversion:
 
 \begin{holmath}
   \ensuremath{\HOLTokenTurnstile}\HOLConst{form_functions}\;\HOLFreeVar{f}\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}\;\HOLSymConst{\HOLTokenImp{}}\\
@@ -1360,9 +1360,21 @@ Note that the above constructions are not inverses in general, since by viewing 
 \;\;\;\;\;\;\;\;\;(\HOLConst{feval}\;(\HOLConst{mm2folm}\;(\HOLConst{folm2mm}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}))\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{f})
 \end{holmath}
 
+Let us build intuition about how does modal formulas corresponds to first order formulas. Observe that unlike modal formulas which atomic formulas are propositional letters standing alone, even the atomic first order formula have a variable symbols involved. Hence to translate a modal formula into a first order formula, we must get variables involved as well. This variables is used to mark the state we are looking at. And moreover, once we see a $\Diamond$ in a modal formula, we start talking about some other state which is related to the current state, so we will need another variable symbol to mark the new state of interest. Hence in mathematical language, the natural correspondence of modal and first order formulas is given by:
 
-Under this construction of the basic theory of first order logic, we can define standard translation:
+$ST_x(p)= Px$
 
+$ST_x(\bot)=\bot$
+
+$ST_x(\lnot \phi)=\lnot ST_x(\phi)$
+
+$ST_x(\phi\lor \psi) =ST_x(\phi)\lor ST_x(\psi)$
+
+$ST_x(\Diamond\phi)=\exists y(Rxy\land ST_y(\phi))$
+
+
+
+We can read $ST_x \phi$ as `the standard translation of $\phi$ at $x$'. In the following definition, the $x$, which is a variable symbol in our construction, is a natural number. Each time we see a $\Diamond$, we come with a fresh variable denotes by $x+1$:
 \begin{holmath}
   \ensuremath{\HOLTokenTurnstile}(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{x}\;\HOLBoundVar{p}.\;\HOLConst{ST}\;\HOLBoundVar{x}\;(\HOLConst{VAR}\;\HOLBoundVar{p})\;\HOLSymConst{=}\;\HOLConst{fP}\;\HOLBoundVar{p}\;(\HOLConst{fV}\;\HOLBoundVar{x}))\;\HOLSymConst{\HOLTokenConj{}}\\
 \;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{x}.\;\HOLConst{ST}\;\HOLBoundVar{x}\;\HOLSymConst{\ensuremath{\bot}}\;\HOLSymConst{=}\;\HOLConst{fFALSE})\;\HOLSymConst{\HOLTokenConj{}}\\
@@ -1375,14 +1387,14 @@ Under this construction of the basic theory of first order logic, we can define 
 \;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{fAND}\;(\HOLConst{fR}\;(\HOLConst{fV}\;\HOLBoundVar{x})\;(\HOLConst{fV}\;(\HOLBoundVar{x}\;\HOLSymConst{\ensuremath{+}}\;\HOLNumLit{1})))\;(\HOLConst{ST}\;(\HOLBoundVar{x}\;\HOLSymConst{\ensuremath{+}}\;\HOLNumLit{1})\;\HOLBoundVar{phi}))
 \end{holmath}
 
-Here \HOLinline{\HOLTokenLambda{}\HOLBoundVar{p}\;\HOLBoundVar{t}.\;\HOLConst{fP}\;\HOLBoundVar{p}\;\HOLBoundVar{t}} is the abbrevation of \HOLinline{\HOLTokenLambda{}\HOLBoundVar{p}\;\HOLBoundVar{t}.\;\HOLConst{fP}\;\HOLBoundVar{p}\;\HOLBoundVar{t}}, and \HOLinline{\HOLTokenLambda{}\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}.\;\HOLConst{fR}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}} is the abbrevation of \HOLinline{\HOLTokenLambda{}\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}.\;\HOLConst{fR}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}}. Any formula obtained by standard translation only has one free variable $x$, which is used to mark the current state, and a standard translation can never have function symbols:
+Here \HOLinline{\HOLTokenLambda{}\HOLBoundVar{p}\;\HOLBoundVar{t}.\;\HOLConst{fP}\;\HOLBoundVar{p}\;\HOLBoundVar{t}} is the abbrevation of \HOLinline{\HOLTokenLambda{}\HOLBoundVar{p}\;\HOLBoundVar{t}.\;\HOLConst{fP}\;\HOLBoundVar{p}\;\HOLBoundVar{t}}, and \HOLinline{\HOLTokenLambda{}\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}.\;\HOLConst{fR}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}} is the abbrevation of \HOLinline{\HOLTokenLambda{}\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}.\;\HOLConst{fR}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}}. Any formula obtained by standard translation only has one free variable $x$, and a standard translation can never have function symbols:
 
 \begin{holmath}
   \ensuremath{\HOLTokenTurnstile}\HOLConst{FV}\;(\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLFreeVar{f})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLTokenLeftbrace{}\HOLFreeVar{x}\HOLTokenRightbrace{}
   \ensuremath{\HOLTokenTurnstile}\HOLConst{form_functions}\;(\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLFreeVar{f})\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}
 \end{holmath}
 
-Two interesting features that will be useful in later chapter is that we can conjunct standard tranalations to get a standard translation. And the negation of standard translation is again a standard translation:
+We can conjunct standard tranalations to get a standard translation. And the negation of standard translation is again a standard translation:
 
 \begin{holmath}
   \ensuremath{\HOLTokenTurnstile}\HOLConst{FINITE}\;\HOLFreeVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
@@ -1398,7 +1410,7 @@ Two interesting features that will be useful in later chapter is that we can con
 
 
 
-Standard translation defined like this can be regarded as a first-order reformulation of modal satisfication, since we have the precise correspondence of modal satisfication and first-order satisfication for standard translations:
+Standard translation defined like this can be regarded as a first-order reformulation of modal satisfication, since we have the precise correspondence of modal satisfication and first-order satisfication for standard translations. A modal formula is satisfied a point $w$ in a modal model iff its standrad translation at $x$ is satisfied at the same modal viewed as a first order model when $x$ is valuated to $w$:
 
 \begin{holmath}
   \ensuremath{\HOLTokenTurnstile}\HOLConst{IMAGE}\;\HOLFreeVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
@@ -1506,7 +1518,7 @@ This lemma works perfectly, so we will not get stuck at the former point and we 
 
 Since m-saturated models are nice, here is a natural question: How can we get such models. It turns out that every models can give arise to a m-saturated model, by taking its ultrafilter extension. In order to talk about ultrafilter extesnions, we need to build a theory of ultrafilers in HOL.
 
-\section{Interlude II: Ultrafilters}
+\subsection{Interlude II: Ultrafilters}
 
 As its name suggests, an ultrafilter is a special kind of filter. Given a non-empty set $W$, a set $F$ which is a subset of the power set of $W$, written as $POW(W)$ in the HOL, is called a filter if it contains $W$ itself, closed under binary intersection, and closed upward.
 
@@ -1695,898 +1707,120 @@ A countably incomplete ultrafilter has useful features, one of them is that such
 
 Proof: By definition of countably incompleteness, there exists a family $X_n$ in $U$ indexed by natural numbers such that $\bigcap_{n\in \mathbb N}X_n=\emptyset$. Define $J_n:=\bigcap_{m\le n}X_n$, so $J_{n+1}\supseteq J_n$ for all $n\in\mathbb N$, and moreover $\bigcap_{n\in \mathbb N}I_n=\emptyset$. In the HOL, the family $J_n$ is defined using a primitive recursive function, defined by \HOLinline{\HOLConst{PRIM_REC}\;(\HOLFreeVar{X}\;\HOLNumLit{0})\;(\HOLTokenLambda{}\HOLBoundVar{Xn}\;\HOLBoundVar{n}.\;\HOLBoundVar{Xn}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLFreeVar{X}\;(\HOLBoundVar{n}\;\HOLSymConst{\ensuremath{+}}\;\HOLNumLit{1}))}. We get the desired chain $I_n$ by inserting $I$ at the begining of $J_n$.
 
-
-
-This is a report for summarizing my learning of interactive theorem proving in the HOL. This paper consists of two parts, the first part it about the correspondence theorem on group theory, through the process of searching for methods of proving it, I get known to some basics tools, mainly the simplifiers of the HOL. The second part is about modal logic, where I think is my starting point of being exposed to more advanced and useful tools.
-
-\section{Correspondence Theorem in the HOL}
-
-The main theorem is, stated in usual-sense mathematical language (version on Artin's Algebra):
-
-For a homomorphism $\phi: G \to {\cal G}$, call its kernel $K$. Let $H$ be a subgroup of $G$ that contains $K$, and let ${\cal H}$ be a subgroup of ${\cal G}$.
-Then: \\
-(1) $\phi (H)$ is a subgroup of ${\cal G}$. \\
-(2) $\phi^{-1}({\cal H})$ is a subgroup of $G$. \\
-(3) $\phi^{-1}({\cal H})$ contains $K$. \\
-(4) ${\cal H}$ is a normal subgroup of ${\cal G}$ if and only if $\phi^{-1}({\cal H})$ is a normal subgroup of $G$. \\
-(5) $\phi (\phi^{-1}({\cal H})) = {\cal H}$. \\
-(6) $\phi^{-1}(\phi (H)) = H$. \\
-(7) $|\phi^{-1}({\cal H})| = |{\cal H}| |K|$ \\
-
-In the language of the HOL, the correspondence theorem is stated as:
-
-
-The $h < < g$ denotes the fact that \HOLinline{\HOLFreeVar{h}} is a normal subgroup of \HOLinline{\HOLFreeVar{g}}. And $h \le g$ denotes the fact that \HOLinline{\HOLFreeVar{h}} is a subgroup of \HOLinline{\HOLFreeVar{g}}. All the definitions about group theory are given as functions that take an ``object'' and returns a boolean to judge whether it satisfies its definition. For instance, \HOLinline{\HOLFreeVar{Group}\;\HOLFreeVar{g}} reads ``$g$ is a group''.
-
-The right hand side of the arrow is a conjunction, which means that we can split our main goal as smaller subgoals for each conjuncts using \texttt{rpt strip_tac} and then prove each subgoal as a lemma. Once we have proved all these lemmas, we can give the remaining work to \texttt{metis_tac}.
-
-\subsection{lemma 1: $\phi (H)$ is a subgroup of ${\cal G}$}
-
-My Goal:
-
-In the algebra library there are two versions of definition of subgroup, namely \texttt{Subgroup} and \texttt{subgroup}. Our goal only involves the version \texttt{Subgroup}, which it our $\leq$, but one of the theorems in the library which would be used to prove this goal uses the definition \texttt{subgroup}. In order to use it, we need to prove that version of definition of subgroup we use implies the other verision. That is:
-
-As this is proved, we can use the existing theorems
-
-The proof would then be strightforward: As $h \leq g1$ then \HOLinline{\HOLFreeVar{subgroup}\;\HOLFreeVar{h}\;\HOLFreeVar{g\sb{\mathrm{1}}}}, then together with the fact \HOLinline{\HOLFreeVar{GroupHomo}\;\HOLFreeVar{f}\;\HOLFreeVar{g\sb{\mathrm{1}}}\;\HOLFreeVar{g\sb{\mathrm{2}}}}, by the first lemma \HOLinline{\HOLFreeVar{GroupHomo}\;\HOLFreeVar{f}\;\HOLFreeVar{h}\;\HOLFreeVar{k}}. And also $h\leq g$ gives \HOLinline{\HOLFreeVar{Group}\;\HOLFreeVar{h}} and \HOLinline{\HOLFreeVar{Group}\;\HOLFreeVar{g}}, then by the last lemma above the goal is proved.
-
-\subsection{lemma 2: $\phi^{-1}({\cal H})$ is a subgroup of $G$}
-
-Goal:
-Note the usage of \HOLinline{\HOLFreeVar{preimage\HOLTokenUnderscore{}group}}, which is a function defined as:
-
-It is a function that take a function $f$, two ``groups'' $g_1,g_2$ of types $\alpha,\beta$ respectively, and a subset $h$ of $g_2$.
-
-The word ``groups'' has a quotation mark because it does not denote the group in mathematical sence, instead, it denotes the datatype ``group'', which consists by three pieces of informations: the underlying set, which it also called the carrier, the identity element, and the operation function defined for every pair of elements in the carrier and returns an element in the carrier.
-
-We cannot encode the information that $f$ is a homomorphism and the $g$s are groups directly in the definition of \HOLinline{\HOLFreeVar{preimage\HOLTokenUnderscore{}group}}. This is because we are only allowed to define anything on the whole universe of a type. Also the function \HOLinline{\HOLFreeVar{preimage\HOLTokenUnderscore{}group}} does not directly return a group. We only know that the output of it consists of the three pieces of information that a group needs as mentioned above, and to conclude that it is indeed a group when $g_1,g_2$ are real groups, $f$ is a homomorphism and $h$ is an actual subgroup, we need to prove that the three pieces of information defined by this sort of inputs of \HOLinline{\HOLFreeVar{preimage\HOLTokenUnderscore{}group}} satisfies the group axioms.
-
-To prove this goal, we mainly want to prove that the preimage of a subgroup of a group under a homomorphism is a group. Once we prove
-
-then the main goal then easily followes from here.
-
-\subsection{lemma 3: $K\subseteq\phi^{-1}({\cal H})$}
-
-\section{Modal logic in the HOL}
-
-My Script files on modal logic basically follow the book of Blackburn's book ``Modal Logic''.
-
-\subsection{Chapter 1}
-\subsubsection{Basic Constructions}
-
-Everything discussed in this report is with respect to the following modal language-called the basic modal language. In this language, a formulas of a type $\alpha$ are:
+ 
+Our theory of ultrafilters built above is to enable us to talk about ultrafilter extensions. Ultrafilter extension is defined as a function that takes a model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, and give the extended model. The world set of \HOLinline{\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is the set of all the ultrafilters on the world set of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}. And the relation of these worlds requires some explaination. For \HOLinline{\HOLFreeVar{X}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}}, there comes two interesting sets of worlds, one is the set of worlds that is linked to some world in $X$, and the other one is the set of worlds that are only linked to worlds in $X$. These two sets are dual to each other:
 
 \begin{holmath}
-\ensuremath{\alpha}\;\HOLTyOp{chap1\$form}\;=\\
-\;\;\;\;\HOLConst{VAR}\;\ensuremath{\alpha}\\
-\;\;\HOLTokenBar{}\;\HOLConst{DISJ}\;(\ensuremath{\alpha}\;\HOLTyOp{chap1\$form})\;(\ensuremath{\alpha}\;\HOLTyOp{chap1\$form})\\
-\;\;\HOLTokenBar{}\;\HOLSymConst{\ensuremath{\bot}}\\
-\;\;\HOLTokenBar{}\;(\HOLSymConst{\HOLTokenNeg{}})\;(\ensuremath{\alpha}\;\HOLTyOp{chap1\$form})\\
-\;\;\HOLTokenBar{}\;\HOLSymConst{\ensuremath{\Diamond}}\;(\ensuremath{\alpha}\;\HOLTyOp{chap1\$form})
+  \HOLConst{can_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{X}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{w}\;\HOLTokenBar{}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{x}.\;\HOLBoundVar{x}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{X}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w}\;\HOLBoundVar{x}\HOLTokenRightbrace{}
+  \HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{X}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{w}\;\HOLTokenBar{}\\
+\;\;\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{x}.\;\HOLBoundVar{x}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w}\;\HOLBoundVar{x}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{x}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{X}\HOLTokenRightbrace{}
+  \ensuremath{\HOLTokenTurnstile}\HOLFreeVar{X}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{can_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{X}\;\HOLSymConst{=}\\
+\;\;\;\;\;\;\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLConst{DIFF}\;\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;(\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLConst{DIFF}\;\HOLFreeVar{X})
+  \ensuremath{\HOLTokenTurnstile}\HOLFreeVar{X}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{X}\;\HOLSymConst{=}\\
+\;\;\;\;\;\;\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLConst{DIFF}\;\HOLConst{can_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;(\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLConst{DIFF}\;\HOLFreeVar{X})
 \end{holmath}
 
-The $\Box,\rightarrow,\land,\leftrightarrow$ and the tautology are defined as:
+Directly from their definitions, the worlds satisfying \HOLinline{\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{phi}} are the worlds that can see a world satisfying $\phi$. And the worlds satisfying \HOLinline{\HOLSymConst{\ensuremath{\Box}}\;\HOLFreeVar{phi}} are the worlds that can only see worlds that satisfies $\phi$, and the set of worlds which only see $X\cap Y$ is the intersection of worlds only see $X$ and worlds only see $Y$:
 
 \begin{holmath}
-  \HOLSymConst{\ensuremath{\Box}}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Diamond}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{\ensuremath{\phi}})
-\end{holmath}
-
-\begin{holmath}
-  \HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLFreeVar{f\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{DISJ}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{f\sb{\mathrm{1}}})\;\HOLFreeVar{f\sb{\mathrm{2}}}
-\end{holmath}
-
-\begin{holmath}
-  \HOLConst{AND}\;\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLFreeVar{f\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLConst{DISJ}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{f\sb{\mathrm{1}}})\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{f\sb{\mathrm{2}}})
-\end{holmath}
-
-\begin{holmath}
-  \HOLConst{DOUBLE_IMP}\;\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLFreeVar{f\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{AND}\;(\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLFreeVar{f\sb{\mathrm{2}}})\;(\HOLFreeVar{f\sb{\mathrm{2}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLFreeVar{f\sb{\mathrm{1}}})
-\end{holmath}
-
-\begin{holmath}
-  \HOLConst{TRUE}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\bot}}
-\end{holmath}
-
-respectively.
-
-We can define any function that sends each element in the universal set of type $\alpha$ to a $\beta$-formula, such a function $f$ induces a map from the collection of all the $\alpha$-formulas to the collections of $\beta$-formulas. It is called the substitution map induced by the function $f$, it is defined as:
-
-\begin{holmath}
-\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLSymConst{\ensuremath{\bot}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\ensuremath{\bot}}\\
-\HOLConst{subst}\;\HOLFreeVar{f}\;(\HOLConst{VAR}\;\HOLFreeVar{p})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLFreeVar{f}\;\HOLFreeVar{p}\\
-\HOLConst{subst}\;\HOLFreeVar{f}\;(\HOLConst{DISJ}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{DISJ}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}})\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}})\\
-\HOLConst{subst}\;\HOLFreeVar{f}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}}\\
-\HOLConst{subst}\;\HOLFreeVar{f}\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\ensuremath{\Diamond}}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}})
-\end{holmath}
-
-Directly from its definition, the substitution rule on a formula involved the \HOLinline{\HOLSymConst{\ensuremath{\Box}}} is given by:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{subst}\;\HOLFreeVar{f}\;(\HOLSymConst{\ensuremath{\Box}}\;\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{=}\;\HOLSymConst{\ensuremath{\Box}}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}})
-\end{holmath}
-
-We would study formulas in basic modal language on models. A model of type $\alpha$ consists of three pieces of informations: a set of worlds, a relation defined on the set of worlds, and a evaluation map from the set of propositional letters of type $\alpha$ to the power set of the set of worlds. The first two pieces together is called a frame. It is created as a type(for further convenience, we only allow the worlds in a model to be natural numbers):
-
-\begin{holmath}
-  \ensuremath{\alpha}\;\HOLTyOp{frame} = \HOLTokenLeftrec{}\;\HOLFieldName{world}\;:\;\ensuremath{\alpha}\;\ensuremath{\rightarrow}\;\HOLTyOp{bool};\;\HOLFieldName{rel}\;:\;\ensuremath{\alpha}\;\ensuremath{\rightarrow}\;\ensuremath{\alpha}\;\ensuremath{\rightarrow}\;\HOLTyOp{bool}\;\HOLTokenRightrec{}
-\end{holmath}
-
-And a model is defined as a type based on a frame, it is:
-
-\begin{holmath}
-  (\ensuremath{\alpha},\;\ensuremath{\beta})\;\HOLTyOp{chap1\$model} = \HOLTokenLeftrec{}\\
-\;\;\;\HOLFieldName{frame}\;:\;\ensuremath{\beta}\;\HOLTyOp{frame};\\
-\;\;\;\HOLFieldName{valt}\;:\;\ensuremath{\alpha}\;\ensuremath{\rightarrow}\;\ensuremath{\beta}\;\ensuremath{\rightarrow}\;\HOLTyOp{bool}\\
-\HOLTokenRightrec{}
-\end{holmath}
-
-A large part of study of formulas of basic modal language is about modal satisfication. Satisfication is defined on the elements of the world set of a model, so we need to ensure that once we say ``a formula is satisfied at a world of a model'', we must ensure that the world we are talking about is actually in model. So the definition of satisfication is encoded as:
-
-\begin{holmath}
-  \HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;(\HOLConst{VAR}\;\HOLFreeVar{p})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{valt}\;\HOLFreeVar{p}\\
-\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLSymConst{\ensuremath{\bot}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{F}\\
-\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\phi}}\\
-\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;(\HOLConst{DISJ}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\HOLTokenDisj{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}}\\
-\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{v}.\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLFreeVar{w}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{v}\;\HOLFreeVar{\ensuremath{\phi}}
-\end{holmath}
-
-Thus latter if we want to to prove a formula is satisfied at some point in the model, firstly we need the fact that the point is indeed in the world set of the model.
-
-Instead of regarding a single formula, we can also say a set of formulas of some fixed type is satisfied at a world. We say a set of formulas is satisfied at a point of a model when each formula in the set is satisfied in at this point. In the HOL, it looks like:
-
-\begin{holmath}
-  \HOLConst{satis_set}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\Sigma}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a}.\;\HOLBoundVar{a}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\Sigma}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLBoundVar{a}
-\end{holmath}
-
-Regarding a formula and its satisfiability on a given model, it is universally true if it is satisfied at every world in the model, it is satisfiable if there exists some worlds in the model where it is satisfied, and it is refutable if there exists some worlds in the model where its negation is satisfied, just as:
-
-\begin{holmath}
-  \HOLConst{stfable}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{w}.\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;\HOLFreeVar{\ensuremath{\phi}}
-\end{holmath}
-
-\begin{holmath}
-  \HOLConst{refutable}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{w}.\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{\ensuremath{\phi}})
-\end{holmath}
-
-We use a bunch of definition regarding ``validness'' to describe the satisfiability of a formula over a frame. In fact, the validness of a formula can be defined on the level of a state of a frame, a frame or a class of frames. A formula $\phi$ is valid at a state $w$ in a frame if for any model over this frame, $\phi$ is satisfied at $w$. $\phi$ is valid in a frame if it is valid at every state in the frame, and is valid in a class $C$ of frames if for any frame $f$ in $C$, $\phi$ is valid in $f$. Finally, to say a formula is valid is to say that for any frame $f$, it is valid in $f$. These definitions are expressed as follows:
-
-\begin{holmath}
-  \HOLConst{valid_frame_state}\;\HOLFreeVar{f}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}\;\HOLSymConst{=}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\phi}}
-\end{holmath}
-
-\begin{holmath}
-  \HOLConst{valid_frame}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w}.\;\HOLConst{valid_frame_state}\;\HOLFreeVar{f}\;\HOLBoundVar{w}\;\HOLFreeVar{\ensuremath{\phi}}
-\end{holmath}
-
-\begin{holmath}
-  \HOLConst{valid_class}\;\HOLFreeVar{C}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{f}.\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{C}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{valid_frame}\;\HOLBoundVar{f}\;\HOLFreeVar{\ensuremath{\phi}}
-\end{holmath}
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{valid}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{f}.\;\HOLConst{valid_frame}\;\HOLBoundVar{f}\;\HOLFreeVar{\ensuremath{\phi}}
-\end{holmath}
-
-For a class of frames, the ``logic'' of it is the collection of all formulas that are valid in every frames in this class:
-
-\begin{holmath}
-  \HOLConst{LOGIC}\;\HOLFreeVar{C}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{\ensuremath{\phi}}\;\HOLTokenBar{}\;\HOLConst{valid_class}\;\HOLFreeVar{C}\;\HOLBoundVar{\ensuremath{\phi}}\HOLTokenRightbrace{}
-\end{holmath}
-
-For a set $S$ of $\alpha$-models and a set $\Sigma$ for $\alpha$-formulas, saying an $\alpha$-formula $\phi$ is a local semantic consequence of $\Sigma$ over $S$ is saying that for any model $M$ in $S$, and any point $w$ in $M$, if $\Sigma$ is satisfied, then $\phi$ must be satisfied. Stated in the language of HOL, it is:
-
-\begin{holmath}
-  \HOLConst{LSC}\;\HOLFreeVar{\ensuremath{\Sigma}}\;\HOLFreeVar{S}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}.\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis_set}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;\HOLFreeVar{\ensuremath{\Sigma}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;\HOLFreeVar{\ensuremath{\phi}}
+  \ensuremath{\HOLTokenTurnstile}\HOLTokenLeftbrace{}\HOLBoundVar{w}\;\HOLTokenBar{}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{\ensuremath{\phi}})\HOLTokenRightbrace{}\;\HOLSymConst{=}\\
+\;\;\;\;\;\;\;\HOLConst{can_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLTokenLeftbrace{}\HOLBoundVar{v}\;\HOLTokenBar{}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{v}\;\HOLFreeVar{\ensuremath{\phi}}\HOLTokenRightbrace{}
+  \ensuremath{\HOLTokenTurnstile}\HOLTokenLeftbrace{}\HOLBoundVar{w}\;\HOLTokenBar{}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;(\HOLSymConst{\ensuremath{\Box}}\;\HOLFreeVar{\ensuremath{\phi}})\HOLTokenRightbrace{}\;\HOLSymConst{=}\\
+\;\;\;\;\;\;\;\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLTokenLeftbrace{}\HOLBoundVar{v}\;\HOLTokenBar{}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{v}\;\HOLFreeVar{\ensuremath{\phi}}\HOLTokenRightbrace{}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;(\HOLFreeVar{X}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLFreeVar{Y})\;\HOLSymConst{=}\;\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{X}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{Y}
 \end{holmath}
 
 
-So far what we have already defined are all about semantics, and in fact, there is a syntactic mechanism of obtaining the collection of valid formulas. This syntactic mechanism involves the usage of K-proof. In usual language, it is defined as:
 
-A K-proof is a finite sequence of formulas, each of which is an axiom, or follows from one or more earlier items in the sequence by applying a rule of proof.
-
-For the axioms, they are all propositional tautologies plus:
-
-$\Box(p\rightarrow q)\rightarrow(\Box p \rightarrow\Box q)$
-
-$\Diamond p\leftrightarrow \lnot\Box\lnot p$
-
-And the rules are:
-(1) Modens ponens: if $\phi$ and $\phi \rightarrow \psi$ both occurs as lines of some line of a K-proof, then we can append a line $\psi$ so the resulting list is also a K-proof.\\
-(2) Uniform substitution: if $\phi$ occurs as a line of a K-proof, then we can append a line $\theta$ where $\theta$ is obtained from $\phi$ by applying some substitution function.\\
-(3) Generalization: if $\phi$ occurs as a line of a K-proof, then we can append a line $\Box \phi$ to the original list and obtain a K-proof.
-
-Given the rules of the K-proof, we can know about three things: the rule itself which defines what sort of list is called a K-proof, a induction principle according to the rule which allows us to use in proving things about Kproofs by induction, and if a given list is a K-proof, what are the possible cases of its form. So we can define these three things altogether, with the application of \texttt{Hol_reln}:
-
-It gives three statements at once, namely:
+We define two ultrafilter $u,v$ to be related if any world set of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} in $v$ can only see world sets in $u$. Such a definition has a reformulation: for any world set of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, if the set of worlds that it can only see is in $u$, then this set is in $v$:
 
 \begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{Kproof}\;[]\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{Kproof}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi\sb{2}}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{f}.\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{Kproof}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLConst{subst}\;\HOLBoundVar{f}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{Kproof}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{Kproof}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{Kproof}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{Kproof}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{f}.\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ptaut}\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{Kproof}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{f}])
+  \HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{v}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;\HOLConst{ultrafilter}\;\HOLFreeVar{u}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ultrafilter}\;\HOLFreeVar{v}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{X}.\;\HOLBoundVar{X}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{v}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{can_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{X}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{u}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{u}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ultrafilter}\;\HOLFreeVar{v}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{v}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{Y}\;\HOLTokenBar{}\;\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{Y}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{u}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{Y}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{v})
 \end{holmath}
 
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLFreeVar{Kproof\sp{\prime}}\;[]\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{Kproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{Kproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi\sb{2}}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{f}.\;\HOLFreeVar{Kproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{Kproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLConst{subst}\;\HOLBoundVar{f}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{Kproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{Kproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{Kproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{Kproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{Kproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{Kproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{Kproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{Kproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{f}.\;\HOLFreeVar{Kproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ptaut}\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{Kproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{f}]))\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a\sb{\mathrm{0}}}.\;\HOLConst{Kproof}\;\HOLBoundVar{a\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{Kproof\sp{\prime}}\;\HOLBoundVar{a\sb{\mathrm{0}}}
-\end{holmath}
+The ultrafilter extension is defined as follows:
 
 \begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{Kproof}\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenEquiv{}}\\
-\;\;\;\;\;\;\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;[]\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi\sb{2}}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{f}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLConst{subst}\;\HOLBoundVar{f}\;\HOLBoundVar{\ensuremath{\phi}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{Kproof}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{Kproof}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{Kproof}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{f}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{f}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{Kproof}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ptaut}\;\HOLBoundVar{f}
-\end{holmath}
-
-The significance of the K-proof system can be seen through this fact: A basic modal formula is K-provable if and only if it is valid.
-
-The definition of normal modal logic is a direct abstraction from the definition of the K-proof system. It is defined as a set of formulas closed under modens ponens, uniform substitution and generalization, Which is expressed as:
-
-\begin{holmath}
-  \HOLConst{NML}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{A}\;\HOLBoundVar{B}\;\HOLBoundVar{p}\;\HOLBoundVar{q}\;\HOLBoundVar{f}\;\HOLBoundVar{\ensuremath{\phi}}.\\
-\;\;\;\;\;\;(\HOLConst{ptaut}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S})\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLSymConst{\ensuremath{\Box}}\;(\HOLBoundVar{p}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{q})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{p}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{q})\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{p}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{p}))\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{p})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;(\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{subst}\;\HOLBoundVar{f}\;\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S})\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;((\HOLBoundVar{A}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{B})\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{B}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S})
-\end{holmath}
-
-\subsubsection{Exercises}
-
-There are two exercises in chapter 1.6 which have been proved in my file.
-
-\paragraph{Exercise 1.6.2}
-
-Goal: Let $\phi^-$ be the `demodalized' version of a modal formula $\phi$, that is, $\phi^-$ is obtained from $\phi$ by erasing all the diamonds. Then if $\phi$ is K-provable, then $\phi^-$ is a propositional tautology.
-
-To solve this exercise, firstly we need to define the demodalization for a formula. Demodalizing is the operation that for diamonded formulas, removing the diamond, and extending to all the formulas, that is(quite similar to the definition of substitution map):
-
-\begin{holmath}
-  \HOLConst{demodalize}\;\HOLSymConst{\ensuremath{\bot}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\ensuremath{\bot}}\\
-\HOLConst{demodalize}\;(\HOLConst{VAR}\;\HOLFreeVar{p})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{VAR}\;\HOLFreeVar{p}\\
-\HOLConst{demodalize}\;(\HOLConst{DISJ}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{DISJ}\;(\HOLConst{demodalize}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}})\;(\HOLConst{demodalize}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}})\\
-\HOLConst{demodalize}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLConst{demodalize}\;\HOLFreeVar{\ensuremath{\phi}}\\
-\HOLConst{demodalize}\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{demodalize}\;\HOLFreeVar{\ensuremath{\phi}}
-\end{holmath}
-
-Secondly, we need to state clearly which kind of formula is a propositional tautology. To do this, firstly we need to define what is a propositional formula, then the definition of propositional tautology would be given by: for a formula $\phi$, $\phi$ is a propositional tautology if and only if $\phi$ is a propositional tautology, and $\phi$ `always holds'.
-
-A propositional formula is just a modal formula without the diamond, so it can be defined as:
-
-\begin{holmath}
-  \HOLConst{propform}\;(\HOLConst{VAR}\;\HOLFreeVar{p})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{T}\\
-\HOLConst{propform}\;(\HOLConst{DISJ}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{propform}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{propform}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}}\\
-\HOLConst{propform}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{f})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{propform}\;\HOLFreeVar{f}\\
-\HOLConst{propform}\;\HOLSymConst{\ensuremath{\bot}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{T}\\
-\HOLConst{propform}\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{f})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{F}
-\end{holmath}
-
-Similar as mentioned in section on the correspondence theorem. \HOLinline{\HOLConst{propform}} is a function that takes a formula and returns a truth-value, that is, it judges whether a modal formula is a propositional formula.
-
-Then we will need to describe what is `always holds' for a propositional formula. Here we describe this property as: for any assignment of truth values of propositional symbols involved in this formula, the truth value of the whole formula must be \HOLinline{\HOLConst{T}}. Here we need to define a evaluation function that can give us a truth value of a propositional formula for each assignment of the propositional symbols. it is defined as:
-
-\begin{holmath}
-  \HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLConst{VAR}\;\HOLFreeVar{p})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{p}\\
-\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLConst{DISJ}\;\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLFreeVar{f\sb{\mathrm{2}}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenDisj{}}\;\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{f\sb{\mathrm{2}}}\\
-\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLSymConst{\ensuremath{\bot}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{F}\\
-\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{f})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{f}\\
-\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{f})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{F}
-\end{holmath}
-
-Here $\sigma$ is an assignment of truth-values on the propositional symbols, it is a function sending each propositional symbol to its assigned truth-value.
-
-Thus as explained above, we can define propositional tautology as:
-
-\begin{holmath}
-  \HOLConst{ptaut}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{propform}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}.\;\HOLConst{peval}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{T}
-\end{holmath}
-
-Have these definitions constructed, now we are aim to prove that once a formula $\phi$ is K-provable, means that it occurs at the bottom line of a K-proof, then $\phi^-$ is a propostional tautology. Noting that almost everything here is defined inductively, so this goal is suitable to be prove by induction on `K-proof'. The trick is a stronger goal gives a stronger inductive hypothesis, which can be more useful. Here to make the inductive hypothesis more useful, we strongthen the goal as:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{Kproof}\;\HOLFreeVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{f}.\;\HOLConst{MEM}\;\HOLBoundVar{f}\;\HOLFreeVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{ptaut}\;(\HOLConst{demodalize}\;\HOLBoundVar{f})
-\end{holmath}
-
-That is, for every line in a K-proof, it can be demodalized to give a propositional tautology.
-
-The induction gives subgoals looks like:
-\[
-\begin{array}{l}
-\HOLinline{\HOLConst{ptaut}\;(\HOLConst{demodalize}\;\HOLFreeVar{f})}\\ \hline
-0. \;\;\HOLinline{\HOLConst{Kproof}\;\HOLFreeVar{p}}\\
-1. \;\;\HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{f}.\;\HOLConst{MEM}\;\HOLBoundVar{f}\;\HOLFreeVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{ptaut}\;(\HOLConst{demodalize}\;\HOLBoundVar{f})}\\
-2. \;\;\HOLinline{\HOLConst{MEM}\;(\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}})\;\HOLFreeVar{p}}\\
-3. \;\;\HOLinline{\HOLConst{MEM}\;\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLFreeVar{p}}\\
-4. \;\;\HOLinline{\HOLConst{MEM}\;\HOLFreeVar{f}\;(\HOLFreeVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLFreeVar{\ensuremath{\phi\sb{2}}}])}
-\end{array}
-\]
-
-The line above the solid line is the goal, and the lines under the line are the assumptions. To prove it, observing that by assumption 4, either \HOLinline{\HOLFreeVar{f}} in \HOLinline{\HOLFreeVar{p}} or \HOLinline{\HOLFreeVar{f}\;\HOLSymConst{=}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}}}. For the first case, the inductive hypothesis, which is assumption 1, applies. For the second case, by assumption 3 and the inductive hypothesis, \HOLinline{\HOLFreeVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLFreeVar{\ensuremath{\phi\sb{2}}}} is a propositional tautology, and then we can prove
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{ptaut}\;(\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLFreeVar{f\sb{\mathrm{2}}})\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ptaut}\;\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{ptaut}\;\HOLFreeVar{f\sb{\mathrm{2}}}
-\end{holmath}
-  
-from definitions ``peval'' and ``ptaut''.
-
-Then by the lemma above, the subgoal is solved. All the subgoals except the following one can be solved in a similar way.
-
-The trickest subgoal is:
-\[
-\begin{array}{l}
-\HOLinline{\HOLConst{ptaut}\;(\HOLConst{demodalize}\;\HOLFreeVar{f\sp{\prime}})}\\ \hline
-0. \;\;\HOLinline{\HOLConst{Kproof}\;\HOLFreeVar{p}}\\
-1. \;\;\HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{f}.\;\HOLConst{MEM}\;\HOLBoundVar{f}\;\HOLFreeVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{ptaut}\;(\HOLConst{demodalize}\;\HOLBoundVar{f})}\\
-2. \;\;\HOLinline{\HOLConst{MEM}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLFreeVar{p}}\\
-3. \;\;\HOLinline{\HOLConst{MEM}\;\HOLFreeVar{f\sp{\prime}}\;(\HOLFreeVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}}])}
-\end{array}
-\]
-
-As before, \HOLinline{\HOLFreeVar{f\sp{\prime}}} is either in \HOLinline{\HOLFreeVar{p}} or is \HOLinline{\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}}}. The former case is trivial by assumption 1. And for the later case, we aim to prove that \HOLinline{\HOLConst{demodalize}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}})} is a propositional tautology, means that \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}.\;\HOLConst{peval}\;\HOLBoundVar{\ensuremath{\sigma}}\;(\HOLConst{demodalize}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}}))\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{T}}. As as \HOLinline{\HOLFreeVar{\ensuremath{\phi}}} is in the list \HOLinline{\HOLFreeVar{p}}, by the inductive hypothesis, \HOLinline{\HOLConst{demodalize}\;\HOLFreeVar{\ensuremath{\phi}}} is a tautology. So once we prove that \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
-\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{\ensuremath{\sigma}\sp{\prime}}.\\
-\;\;\;\;\;\;\;\;\HOLFreeVar{pevel}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLConst{demodalize}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenEquiv{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{peval}\;\HOLBoundVar{\ensuremath{\sigma}\sp{\prime}}\;(\HOLConst{demodalize}\;\HOLFreeVar{\ensuremath{\phi}})}, as the right hand side has truth value $T$, then we are done.
-
-So we prove:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{propform}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;(\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLConst{demodalize}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}}))\;\HOLSymConst{\HOLTokenEquiv{}}\\
-\;\;\;\;\;\;\;\;\HOLConst{peval}\;(\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLSymConst{\HOLTokenCompose}\;\HOLConst{demodalize}\;\HOLSymConst{\HOLTokenCompose}\;\HOLFreeVar{f})\;\HOLFreeVar{\ensuremath{\phi}})
-\end{holmath}
-
-by inducting on \HOLinline{\HOLFreeVar{\ensuremath{\phi}}} and using the definition of demodalization.
-
-Note that \HOLinline{\HOLConst{demodalize}\;\HOLFreeVar{f}} is a propositional formula so the above lemma applies, and after proving:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{demodalize}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}})\;\HOLSymConst{=}\\
-\;\;\;\;\;\;\;\HOLConst{demodalize}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;(\HOLConst{demodalize}\;\HOLFreeVar{\ensuremath{\phi}}))
-\end{holmath}
-
-We can conclude \HOLinline{\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLConst{demodalize}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;(\HOLConst{demodalize}\;\HOLFreeVar{\ensuremath{\phi}})))\;\HOLSymConst{\HOLTokenEquiv{}}\\
-\;\;\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLConst{demodalize}\;(\HOLConst{subst}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\phi}}))} $=$ \HOLinline{\HOLConst{peval}\;(\HOLConst{peval}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLSymConst{\HOLTokenCompose}\;\HOLConst{demodalize}\;\HOLSymConst{\HOLTokenCompose}\;\HOLFreeVar{f})\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{T}}.
-
-  
-\paragraph{Exercise 1.6.6}
-
-Goal: Given a set of formulas $\Gamma$. Suppose we form the axiom system \HOLinline{\HOLFreeVar{K\ensuremath{\Gamma}}} by adding as axioms all the formulas in $\Gamma$ to K. Then the Hilbert system \HOLinline{\HOLFreeVar{K\ensuremath{\Gamma}}} proves precisely the formulas contained in the normal modal logic \HOLinline{\HOLFreeVar{K\ensuremath{\Gamma}}}.
-
-Firstly, we setup the Hilbert system K$\Gamma$ by defining the rule of proving things in \HOLinline{\HOLFreeVar{K\ensuremath{\Gamma}}}. Almost the same as the definition of K-proof, we use \texttt{Hol_reln} to give:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;[]\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi\sb{2}}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{f}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLConst{subst}\;\HOLBoundVar{f}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ptaut}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi}}])
-\end{holmath}
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLFreeVar{KGproof\sp{\prime}}\;[]\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{KGproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi\sb{2}}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{f}.\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{KGproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLConst{subst}\;\HOLBoundVar{f}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{KGproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{KGproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{KGproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{KGproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ptaut}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{KGproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{KGproof\sp{\prime}}\;(\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi}}]))\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a\sb{\mathrm{0}}}.\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{a\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{KGproof\sp{\prime}}\;\HOLBoundVar{a\sb{\mathrm{0}}}
-\end{holmath}
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenEquiv{}}\\
-\;\;\;\;\;\;\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;[]\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi\sb{2}}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{f}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLConst{subst}\;\HOLBoundVar{f}\;\HOLBoundVar{\ensuremath{\phi}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Box}}\;(\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{\ensuremath{\phi\sb{2}}}]\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{\ensuremath{\phi}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ptaut}\;\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenDisj{}}\\
-\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{p}\;\HOLBoundVar{\ensuremath{\phi}}.\;\HOLFreeVar{a\sb{\mathrm{0}}}\;\HOLSymConst{=}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenDoublePlus}\;[\HOLBoundVar{\ensuremath{\phi}}]\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\Gamma}}
-\end{holmath}
-
-Also similar to the mentioned definition of normal modal logic, we define the normal modal logic K$\Gamma$ as:
-
-\begin{holmath}
-  \HOLConst{NMLG}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{BIGINTER}\;\HOLTokenLeftbrace{}\HOLBoundVar{A}\;\HOLTokenBar{}\;\HOLConst{NML}\;\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLBoundVar{A}\HOLTokenRightbrace{}
-\end{holmath}
-
-\HOLinline{\HOLConst{NMLG}\;\HOLFreeVar{\ensuremath{\Gamma}}} is the smallest normal modal logic containing $\Gamma$. Once we mention the word ``smallest'', we know that there is a induction principle here, we can derive this principle as:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{A}\;\HOLBoundVar{B}\;\HOLBoundVar{p}\;\HOLBoundVar{q}\;\HOLBoundVar{f}\;\HOLBoundVar{\ensuremath{\phi}}.\\
-\;\;\;\;\;\;\;\;\;\;(\HOLConst{ptaut}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P})\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLSymConst{\ensuremath{\Box}}\;(\HOLBoundVar{p}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{q})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{p}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{q})\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{p}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{p}))\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLSymConst{\ensuremath{\Box}}\;(\HOLSymConst{\HOLTokenNeg{}}\HOLBoundVar{p})\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLSymConst{\ensuremath{\Diamond}}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;(\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{subst}\;\HOLBoundVar{f}\;\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P})\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLSymConst{\ensuremath{\Box}}\;\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;((\HOLBoundVar{A}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLBoundVar{B})\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{A}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{B}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}))\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{G}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{P}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{NMLG}\;\HOLFreeVar{G}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{P}
-\end{holmath}
-
-This principle is used to derive a conclusion that once a formula is in the normal modal logic, the predicate $P$ holds for this formula. In one direction, we are proving that all the formulas in the normal modal logic is $K\Gamma$-provable. The goal looks like:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{NMLG}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{\ensuremath{\phi}}\;\HOLTokenBar{}\;\HOLConst{KG_provable}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLBoundVar{\ensuremath{\phi}}\HOLTokenRightbrace{}
-\end{holmath}
-
-It matchs the conclusion of our induction principle exactly, so we can use \texttt{ho_match_mp_tac} to match it onto the induction principle above, and the remaining part of the proof would become straightforward.
-
-The other half the goal, which is saying any $K\Gamma$-provable formula is in the normal modal logic $K\Gamma$:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{KGproof}\;\HOLFreeVar{\ensuremath{\Gamma}}\;\HOLFreeVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{MEM}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLFreeVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{NMLG}\;\HOLFreeVar{\ensuremath{\Gamma}}
-\end{holmath}
-
-is proved by induct on \HOLinline{\HOLConst{KGproof}}.
-
-\subsection{Chapter 2}
-
-\subsubsection{2.1 Invariance Results}
-
-Section 2.1 of Blackburn's textbook is talking about obtaining new models from old ones without affecting modal satisfication. There are basically 3 ways to do it:
-
-\paragraph{Disjoint union}
-
-To define disjoint union in the HOL, noting that the disjoint union is defined on a family of models. For further convenience, we will only allow the elements of the index set to be natural numbers, so a family of models indexed by natural numbers is just a function that assigns each natural number in the index set a model. So taking the disjoint union is taking such a function and a index set as inputs, and returns a model:
-
-\begin{holmath}
-  \HOLConst{DU}\;(\HOLFreeVar{f}\HOLSymConst{,}\HOLFreeVar{dom})\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+  \HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
 \;\;\HOLTokenLeftrec{}\HOLFieldName{frame}\;:=\\
-\;\;\;\;\HOLTokenLeftrec{}\HOLFieldName{world}\;:=\\
-\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{w}\;\HOLTokenBar{}\;\HOLConst{FST}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{dom}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{SND}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{f}\;(\HOLConst{FST}\;\HOLBoundVar{w})).\HOLFieldName{frame}.\HOLFieldName{world}\HOLTokenRightbrace{};\\
-\;\;\;\;\;\;\HOLFieldName{rel}\;:=\\
-\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{FST}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLSymConst{=}\;\HOLConst{FST}\;\HOLBoundVar{w\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{FST}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{dom}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLFreeVar{f}\;(\HOLConst{FST}\;\HOLBoundVar{w\sb{\mathrm{1}}})).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLConst{SND}\;\HOLBoundVar{w\sb{\mathrm{1}}})\;(\HOLConst{SND}\;\HOLBoundVar{w\sb{\mathrm{2}}}))\HOLTokenRightrec{};\\
-\;\;\HOLFieldName{valt}\;:=\;(\HOLTokenLambda{}\HOLBoundVar{v}\;\HOLBoundVar{w}.\;(\HOLFreeVar{f}\;(\HOLConst{FST}\;\HOLBoundVar{w})).\HOLFieldName{valt}\;\HOLBoundVar{v}\;(\HOLConst{SND}\;\HOLBoundVar{w}))\HOLTokenRightrec{}
+\;\;\;\;\HOLTokenLeftrec{}\HOLFieldName{world}\;:=\;\HOLTokenLeftbrace{}\HOLBoundVar{u}\;\HOLTokenBar{}\;\HOLConst{ultrafilter}\;\HOLBoundVar{u}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\HOLTokenRightbrace{};\\
+\;\;\;\;\;\;\HOLFieldName{rel}\;:=\;\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\HOLTokenRightrec{};\\
+\;\;\HOLFieldName{valt}\;:=\\
+\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{p}\;\HOLBoundVar{v}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{ultrafilter}\;\HOLBoundVar{v}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{valt}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{v})\HOLTokenRightrec{}
 \end{holmath}
 
-As for a model in a disjoint union, both the index of the model any world in the model are natural numbers, if $w$ is a world of a model $M_n$, then the copy of the world $w$ in the disjoint union is expressed as \HOLinline{\HOLFreeVar{n}\;\HOLSymConst{\ensuremath{\otimes}}\;\HOLFreeVar{w}}.So the worlds in the disjoint union are all ``npair''s. And the two worlds in the disjoint union is related iff they come from the same model, and in the model that they come from they are related. The fact that two worlds $n_1,n_2$ in the disjoint union come from the same model is encoded as the first coordinate of them, which corresponds to the index of the model they comes from, are the same, that is, \HOLinline{\HOLConst{nfst}\;\HOLFreeVar{n\sb{\mathrm{1}}}\;\HOLSymConst{=}\;\HOLConst{nfst}\;\HOLFreeVar{n\sb{\mathrm{2}}}}. And we can see from the code above that the for a propostional letter $v$, an element $n$ in the disjoint union is in $V(v)$ if and only if in the world indexed by $nfst n$ that $n$ comes from, the point $nsnd n$ in that model that corresponds to $n$ is in the evalution set of $v$. 
-
-The special case of the union of two models $M_1,M_2$ is given by:
+The ultrafilter extension also changes the type of model, namely, it change the type of world set from $\beta$ to $(\beta\to bool)\to bool$, it is indeed an extension, in the sense that \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is embedded in \HOLinline{\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}} by the function sending \HOLinline{\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}} to the principle ultrafilter \HOLinline{\HOLConst{principle_UF}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}} generated by $w$. In general, this embedding does not necessarily give a generated submodel, nevertheless, we have an invariance result for this embedding:
 
 \begin{holmath}
-  \HOLConst{M_union}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLConst{DU}\;((\HOLTokenLambda{}\HOLBoundVar{n}.\;\HOLKeyword{if}\;\HOLBoundVar{n}\;\HOLSymConst{=}\;\HOLNumLit{0}\;\HOLKeyword{then}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLKeyword{else}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}})\HOLSymConst{,}\HOLTokenLeftbrace{}\HOLBoundVar{x}\;\HOLTokenBar{}\;\HOLBoundVar{x}\;\HOLSymConst{=}\;\HOLNumLit{0}\;\HOLSymConst{\HOLTokenDisj{}}\;\HOLBoundVar{x}\;\HOLSymConst{=}\;\HOLNumLit{1}\HOLTokenRightbrace{})
+  \ensuremath{\HOLTokenTurnstile}\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{modal_eq}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{w}\;(\HOLConst{principle_UF}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world})
 \end{holmath}
 
-That is, taking the \HOLinline{\HOLFreeVar{dom}} to be the two-element set.
-
-We can induct on the structure of formula to prove the invarience result for disjoint unions, which says a formula is satisfies in a world in a disjoint union iff is it satisfied at the corresponding world in the model that this world comes from:
+This is actually a special case of the following proposition, where $u$ is taken as \HOLinline{\HOLConst{principle_UF}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}}. This proposition captures the idea that ultrafilters are used to describe the sense of `most of', where the sets in the ultrafilters can be regarded as `sets which are large enough'. From this aspect, the proposition says that a formula $\phi$ is satisfied in an ultrafilter $u$ iff $\phi$ is satisfied at most of worlds in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, where the sense of `most of' is measured by $u$.
 
 \begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{FST}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{dom}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;(\HOLConst{satis}\;(\HOLFreeVar{f}\;(\HOLConst{FST}\;\HOLFreeVar{w}))\;(\HOLConst{SND}\;\HOLFreeVar{w})\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\\
-\;\;\;\;\;\;\;\;\HOLConst{satis}\;(\HOLConst{DU}\;(\HOLFreeVar{f}\HOLSymConst{,}\HOLFreeVar{dom}))\;\HOLFreeVar{w}\;\HOLFreeVar{phi})
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{u}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLTokenLeftbrace{}\HOLBoundVar{w}\;\HOLTokenBar{}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;\HOLFreeVar{phi}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{u}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\HOLConst{satis}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{u}\;\HOLFreeVar{phi})
 \end{holmath}
 
-\paragraph{generated submodel}
+Proof:
+By induction on \HOLinline{\HOLFreeVar{phi}}. Everything except for the diamond case is by unwinding the definitions of \HOLinline{\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}} and ultrafilter. We only give the proof of the diamond case. 
 
-For two models \HOLinline{(\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\HOLSymConst{,}\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}})}, we say \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}} is a submodel of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}} if the world set of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}} is a subset of that of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}}, and the relation and evaluation map of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}} is given by that of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}} restricted on the world set of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}}.
+From right to left: Suppose \HOLinline{\HOLConst{satis}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{u}\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{phi})}, then \HOLinline{\HOLConst{satis}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{u\sp{\prime}}\;\HOLFreeVar{psi}} for some \HOLinline{\HOLFreeVar{UE\HOLTokenUnderscore{}REL}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{u\sp{\prime}}}. By inductive hypothesis, \HOLinline{\HOLConst{satis}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{u\sp{\prime}}\;\HOLFreeVar{phi}} implies $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u'$. And then by definition of \HOLinline{\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, this implies \HOLinline{\HOLConst{can_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}} $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u$. But this set is exactly the set $\{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}$ by the observation in \texttt{valt_can_see}.
+
+From left to right: Suppose  $\{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}\in u$, we need to find out an ultrafilter $u'$ such that \HOLinline{\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{u\sp{\prime}}} and \HOLinline{\HOLConst{satis}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{u\sp{\prime}}\;\HOLFreeVar{phi}}. Using \texttt{exercise_2_5_5}, \HOLinline{\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{u\sp{\prime}}} is equivalent to $s:=\{Y\mid only\_see(Y)\in u\land Y\subseteq M.frame.world\}\subseteq u'$. We prove $s\cup\{w\mid  w \in M.frame.world\land satis \ M \ w \ phi\}$ has finite intersection property. It suffices to check (1) $s$ is closed under intersection, and (2) The interesection of any element in $s$ with $\{w\mid  w \in M.frame.world\land satis \ M \ w \ phi\}$ is non-empty. 
+
+For (1), if $a,b\in s$, then both \HOLinline{\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{a}} and \HOLinline{\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{b}} are in $u$, and hence there intersection. By \texttt{only_see_INTER}, \HOLinline{\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{a}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{b}\;\HOLSymConst{=}\;\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;(\HOLFreeVar{a}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLFreeVar{b})}, hence $a\cap b\in u$.
+
+For (2), let $Y\in s$, then \HOLinline{\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{Y}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{u}}, as also $\{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}\in u$, by closure under intersection for an ultrafilter, $only\_see(Y)\cap \{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}\ne \emptyset$, we obtaine an element of $Y\cap \{w\mid  w \in M.frame.world\land satis \ M \ w \ phi\}$ from any element $x$ of it. As $x\in \{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}$, there exists \HOLinline{\HOLFreeVar{y}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}} such that \HOLinline{\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{y}\;\HOLFreeVar{phi}}, as $x\in only\_see(Y)$, we have $y\in Y$.
+
+The rest of the proof of finite intersection property is done by induction. Hence by \texttt{ultrafilter_theorem_corollary}, there exists an ultrafilter $u'$ such that $s\cup\{w\mid  w \in M.frame.world\land satis \ M \ w \ phi\}\subseteq u'$. This is the $u'$ we want: We have \HOLinline{\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{u\sp{\prime}}} since $\{Y\mid only\_see(Y)\in u\}=s\subseteq u'$, and $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u'$, we get \HOLinline{\HOLConst{satis}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{u\sp{\prime}}\;\HOLFreeVar{phi}} by inductive hypothesis.
+
+The above proposition leads to a proof of m-saturatedness of ultrafilter extensions.
 
 \begin{holmath}
-  \HOLConst{SUBMODEL}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w\sb{\mathrm{1}}}.\\
-\;\;\;\;\;\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v}.\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{valt}\;\HOLBoundVar{v}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{valt}\;\HOLBoundVar{v}\;\HOLBoundVar{w\sb{\mathrm{1}}})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w\sb{\mathrm{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{w\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;(\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}})
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{M_sat}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})
 \end{holmath}
 
-The generated submodel is a concept defined upon submodels. Saying a submodel \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}} is a generating submodel of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}}, we mean that for any point $v$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}}, if the relation defined on \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}} relates it to a point \HOLinline{\HOLFreeVar{w}} of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}}, then the \HOLinline{\HOLFreeVar{w}} must be in the world set of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}} as well:
+Proof:
+Suppose \HOLinline{\HOLFreeVar{\ensuremath{\Sigma}}} is a set of formulas which is finitely satisfiable in the set of successors of a world \HOLinline{\HOLFreeVar{u}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}).\HOLFieldName{frame}.\HOLFieldName{world}}, we need to find a world \HOLinline{\HOLFreeVar{u\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}).\HOLFieldName{frame}.\HOLFieldName{world}} such that \HOLinline{\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{u\sp{\prime}}} and \HOLinline{\HOLConst{satis}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{u\sp{\prime}}\;\HOLFreeVar{phi}} for all \HOLinline{\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\Sigma}}}. By \texttt{exercise_2_5_5} and \texttt{prop_2_59_i}, it amounts to find an ultrafilter $u'$ on \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}} such that $\{Y\mid only\_see(Y)\in u\}\subseteq u'$ and $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u'$ for all \HOLinline{\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\Sigma}}}.
+
+Consider the set $\Delta:= \{\{w\mid w \in M.frame.world \land \forall \phi.\phi\in s\implies satis \ M \ w\ \phi\}\mid FINITE \ s \land s\subseteq \Sigma\}\cup \{Y\mid only\_see\ M \ Y \in w\land Y\subseteq M.frame.world\}$. Similar as in the proof of \texttt{prop_2_59_i}, we check $\Delta$ has the finite intersection property. The only nontrivial thing to check is that for $a\in \{\{w\mid w \in M.frame.world \land \forall \phi.\phi\in s\implies satis \ M \ w\ \phi\}\mid FINITE \ s \land s\subseteq \Sigma\}$ and $b\in \{Y\mid only\_see\ M \ Y \in w\land Y\subseteq M.frame.world\}$, we have $a\cap b\ne\emptyset$.
+
+Suppose $s \subseteq\Sigma$ is finite, and $b$ is a set of worlds in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} such that \HOLinline{\HOLConst{only_see}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{b}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{u}}, we show $\{w\mid w \in M.frame.world \land \forall\phi.\phi\in s\implies satis \ M \ w \phi\}\cap b\ne\emptyset$. Recall \HOLinline{\HOLFreeVar{\ensuremath{\Sigma}}} is finitely satisfiable in the set of successors of $u$, we have a world $u''$ such that \HOLinline{\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{u\sp{\prime\prime}}} and \HOLinline{\HOLConst{satis}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{u\sp{\prime\prime}}\;\HOLFreeVar{phi}} for all $\phi \in s$, in other worlds, $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u''$ for all $\phi\in s$. Then $\{w\mid w \in M.frame.world \land \forall\phi.\phi\in s\implies satis \ M \ w \phi\}\cap b\ne\emptyset$ is a big intersection of sets in $u''$, and hence is in $u''$. By \texttt{exercise_2_5_5} again, \HOLinline{\HOLConst{UE_rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{u}\;\HOLFreeVar{u\sp{\prime\prime}}} gives $\{Y\mid only\_see (Y)\in u\land Y\subseteq M.frame.world\}\subseteq u''$, so $b\in u''$ as well. As two elements in $u''$ has nonempty intersection, we are done.
+
+Hence by \texttt{ultrafilter_theorem_corollary}, there exists an ultrafilter $u'$ contains $\Delta$, it is trivial to check $u'$ is what we want.
+
+
+Finally, as claimed at the begining of this chapter, we arrive at the characterisation of modal equivalence as bisimilarity somewhere else:
 
 \begin{holmath}
-  \HOLConst{GENSUBMODEL}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLConst{SUBMODEL}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w\sb{\mathrm{1}}}.\\
-\;\;\;\;\;\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w\sb{\mathrm{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{w\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w\sb{\mathrm{1}}}\;\HOLBoundVar{w\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{w\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}
+  \ensuremath{\HOLTokenTurnstile}\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLConst{modal_eq}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w}\;\HOLFreeVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\HOLConst{bisim_world}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}})\\
+\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{principle_UF}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world})\\
+\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{principle_UF}\;\HOLFreeVar{w\sp{\prime}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}))
 \end{holmath}
 
-The invarience theorem of generated submodel stated in the HOL is:
+Proof:Bisimulation implies modal equivalence by \texttt{thm_2_20}. For the reverse direction, if \HOLinline{\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}} and \HOLinline{\HOLFreeVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}} are modal equivalence, then \HOLinline{\HOLConst{principle_UF}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}).\HOLFieldName{frame}.\HOLFieldName{world}} is modal equivalent to \HOLinline{\HOLConst{principle_UF}\;\HOLFreeVar{w\sp{\prime}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}).\HOLFieldName{frame}.\HOLFieldName{world}}. As \HOLinline{\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}} and \HOLinline{\HOLConst{UE}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} are m-saturated by \texttt{prop_2_61}, the result follows by \texttt{prop_2_54_DIST_TYPE}.
 
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{GENSUBMODEL}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;(\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{n}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLFreeVar{n}\;\HOLFreeVar{phi})
-\end{holmath}
+\section{Invariant under bisimulations and simulations}
 
-It says that if $M_1$ is a generated submodel of $M_2$, then for any formula $\phi$, $\phi$ is satisfied at the world $n$ in $M_1$ if and only if $\phi$ is satisfied at $n$ in $M_2$. As from the definition of generated submodel, the world set of a generated submodel $M_1$ of $M_2$ is a subset of the world set of $M_2$, the corresponding point of $n$ in $M_2$ is just $n$ itself.
 
-\paragraph{morphisms for modalities}
-
-In this section we firstly give a bunch of definitions of morphisms between models, they are all maps between elements of world sets satisfying some extra conditions:
-
-If $f:W\to W'$ is a function from the world set of a model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} to the world set of a model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} then it is a homomorphism if
-
-(i) For each propositional letter $p$ and each element $w$ from \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, if $w\in V(p)$, then $f(w) \in V'(p)$.\\
-(ii) If $Rwu$ then $R'f(w)f(u)$.
-
-\begin{holmath}
-  \HOLConst{hom}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w}.\\
-\;\;\;\;\;\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\HOLFreeVar{f}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}.\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{valt}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{f}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{valt}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{u}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{u}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w}\;\HOLBoundVar{u}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{w})\;(\HOLFreeVar{f}\;\HOLBoundVar{u})
-\end{holmath}
-
-It is a strong homomorphism if
-
-(i) For each propositional letter $p$ and each element $w$ from \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, $w\in V(p)$ iff $f(w) \in V'(p)$.\\
-(ii) If $Rwu$ then $R'f(w)f(u)$.
-
-\begin{holmath}
-  \HOLConst{strong_hom}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w}.\\
-\;\;\;\;\;\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\HOLFreeVar{f}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{p}.\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{valt}\;\HOLBoundVar{p}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLFreeVar{f}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{valt}\;\HOLBoundVar{p})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{u}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{u}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;(\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w}\;\HOLBoundVar{u}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{w})\;(\HOLFreeVar{f}\;\HOLBoundVar{u}))
-\end{holmath}
-
-A strong homomorphism is called an embedding if it is injective.
-
-\begin{holmath}
-  \HOLConst{embedding}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLConst{strong_hom}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{INJ}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{world}
-\end{holmath}
-
-And a strong morphism which is bijective is called an isomorphism.
-
-\begin{holmath}
-  \HOLConst{iso}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLConst{strong_hom}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{BIJ}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{1}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}\sb{2}}}.\HOLFieldName{frame}.\HOLFieldName{world}
-\end{holmath}
-
-For descibing the concept ``equivalence of modalities'', we introduce a bunch of definitions about $\tau$-theory. The $\tau$-theory of a point in a model is the set of formulas satisfied at this point. And the $\tau$-theory of a model is the set of the the formula that is satisfied at any point in the model.
-
-\begin{holmath}
-  \HOLConst{tau_theory}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{\ensuremath{\phi}}\;\HOLTokenBar{}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLBoundVar{\ensuremath{\phi}}\HOLTokenRightbrace{}
-\end{holmath}
-
-\begin{holmath}
-  \HOLConst{tau_theory_model}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{\ensuremath{\phi}}\;\HOLTokenBar{}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w}.\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;\HOLBoundVar{\ensuremath{\phi}}\HOLTokenRightbrace{}
-\end{holmath}
-
-The above definitions enables us to define modal equivalence on two levels: for points or for models: Two points from two models are called modally equivalent if their $\tau$-theory of points are the same.
-
-\begin{holmath}
-  \HOLConst{modal_eq}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w}\;\HOLFreeVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{tau_theory}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLSymConst{=}\;\HOLConst{tau_theory}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w\sp{\prime}}
-\end{holmath}
-
-Similarly, two models are called modally equivalent if their $\tau$-theory of models are the same.
-
-\begin{holmath}
-  \HOLConst{modal_eq_model}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{tau_theory_model}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{=}\;\HOLConst{tau_theory_model}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}
-\end{holmath}
-
-Here comes our invarience theorem for strong homomorphisms
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{strong_hom}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{f}\;\HOLFreeVar{w}\;\HOLSymConst{=}\;\HOLFreeVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\HOLConst{SURJ}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLConst{modal_eq}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w}\;\HOLFreeVar{w\sp{\prime}}
-\end{holmath}
-
-which says if we have a surjective from a model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} to a model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}}, then if the point $w$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is sent to $w'$ under $f$, then $w$ and $w'$ are modally equivalent, means that they have the same $\tau$-theory.
-
-And the invarience theorem for the isomorphisms
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{iso}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{modal_eq_model}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}
-\end{holmath}
-
-which says if two models are isomorphic, then they are modally equivalent. It is directly by the invarience theorem for strong homomorphisms.
-
-We prove the first one by firstly proving a equivalent statement without mentioning $\tau$-theory:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{strong_hom}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{f}\;\HOLFreeVar{w}\;\HOLSymConst{=}\;\HOLFreeVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\HOLConst{SURJ}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;(\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w\sp{\prime}}\;\HOLFreeVar{\ensuremath{\phi}})
-\end{holmath}
-
-Then we quote this lemma and expand the definition of modal equivalence and $\tau$-theory to finish the proof.
-
-We also have the notion of bounded morphism. It is just a homomorphism plus a backward condition, (use the notations as the definition of all other morphisms)which is ``If $R'f(w)v'$, then there exists a $v$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} such that $Rwv$ and $f(v)=v'$''.
-
-\begin{holmath}
-  \HOLConst{bounded_mor}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w}.\\
-\;\;\;\;\;\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\HOLFreeVar{f}\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a}.\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;(\HOLConst{VAR}\;\HOLBoundVar{a})\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;(\HOLFreeVar{f}\;\HOLBoundVar{w})\;(\HOLConst{VAR}\;\HOLBoundVar{a}))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v}.\\
-\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{w})\;(\HOLFreeVar{f}\;\HOLBoundVar{v}))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v\sp{\prime}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{v\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{w})\;\HOLBoundVar{v\sp{\prime}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{v}.\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{f}\;\HOLBoundVar{v}\;\HOLSymConst{=}\;\HOLBoundVar{v\sp{\prime}}
-\end{holmath}
-
-If we have a surjective bounded morphism from $M$ to $M'$, then $M'$ is called the bounded morphic image of $M$ under $f$. That is:
-
-\begin{holmath}
-  \HOLConst{bounded_mor_image}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLConst{bounded_mor}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{SURJ}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}
-\end{holmath}
-
-The invarience theorem for bounded morphism is:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{bounded_mor}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;(\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLFreeVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;(\HOLFreeVar{f}\;\HOLFreeVar{w})\;\HOLFreeVar{\ensuremath{\phi}})
-\end{holmath}
-
-It states that if $f$ is a bounded morphism from \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} to \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}}, then for any world $w$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, $w$ and $f(w)$ are modally equivalent. Same as the invarience theorem for the previous constructions, it is proved by structual induction on formulas.
-
-Now we give a definition of a important class of models, the tree-like models. Here we define a tree as a type of frame, so a tree-like model is just a model defined upon a frame which is a tree.
-
-We say a frame $S$ is a tree with the root $r$ if the $r$ is a point in the frame, satisfying:
-
-(1) For any world in $S$, the root $r$ is linked to it via the transitive closure of the relation defined on $S$.\\
-(2) There is no point in $S$ that is linked to the root via the relation on $S$.\\
-(3) For any non-root point in $S$, there exists a unique point that is linked to it via the relation on $S$.
-
-\begin{holmath}
-  \HOLConst{tree}\;\HOLFreeVar{S}\;\HOLFreeVar{r}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLFreeVar{r}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{t}.\;\HOLBoundVar{t}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLConst{RESTRICT}\;\HOLFreeVar{S}.\HOLFieldName{rel}\;\HOLFreeVar{S}.\HOLFieldName{world})\HOLSymConst{\HOLTokenSupStar{}}\;\HOLFreeVar{r}\;\HOLBoundVar{t})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{r\sb{\mathrm{0}}}.\;\HOLBoundVar{r\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLFreeVar{S}.\HOLFieldName{rel}\;\HOLBoundVar{r\sb{\mathrm{0}}}\;\HOLFreeVar{r})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{t}.\;\HOLBoundVar{t}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{t}\;\HOLSymConst{\HOLTokenNotEqual{}}\;\HOLFreeVar{r}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLSymConst{\HOLTokenUnique{}}\HOLBoundVar{t\sb{\mathrm{0}}}.\;\HOLBoundVar{t\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{S}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{S}.\HOLFieldName{rel}\;\HOLBoundVar{t\sb{\mathrm{0}}}\;\HOLBoundVar{t}
-\end{holmath}
-
-This definition is slightly different from the definition of the tree in the textbook, which does not say $(\forall r_0 \in S.world)(\lnot S.rel \ r_0 r)$, but states that a tree has no loop as $(\forall t) \lnot S^+ \ t \ t$. To unify these two versions of definitions, we need to prove a tree has no loop as the following lemma:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{tree}\;\HOLFreeVar{s}\;\HOLFreeVar{r}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{t\sb{\mathrm{0}}}\;\HOLBoundVar{t}.\;(\HOLConst{RESTRICT}\;\HOLFreeVar{s}.\HOLFieldName{rel}\;\HOLFreeVar{s}.\HOLFieldName{world})\HOLSymConst{\HOLTokenSupPlus{}}\;\HOLBoundVar{t\sb{\mathrm{0}}}\;\HOLBoundVar{t}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{t\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenNotEqual{}}\;\HOLBoundVar{t}
-\end{holmath}
-
-This is proved by using \texttt{ho_match_mp_tac} with the induction principle \texttt{RTC_STRONG_INDUCT_RIGHT1}:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{x}.\;\HOLFreeVar{P}\;\HOLBoundVar{x}\;\HOLBoundVar{x})\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{x}\;\HOLBoundVar{y}\;\HOLBoundVar{z}.\;\HOLFreeVar{P}\;\HOLBoundVar{x}\;\HOLBoundVar{y}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{R}\HOLSymConst{\HOLTokenSupStar{}}\;\HOLBoundVar{x}\;\HOLBoundVar{y}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{R}\;\HOLBoundVar{y}\;\HOLBoundVar{z}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{P}\;\HOLBoundVar{x}\;\HOLBoundVar{z})\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{x}\;\HOLBoundVar{y}.\;\HOLFreeVar{R}\HOLSymConst{\HOLTokenSupStar{}}\;\HOLBoundVar{x}\;\HOLBoundVar{y}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{P}\;\HOLBoundVar{x}\;\HOLBoundVar{y}
-\end{holmath}
-
-Quite related, we have a definition of rooted model. A rooted model is a submodel of a model generated by a single point. For a rooted model, it would definitly be a submodel for some model, and the world set of a rooted model is exactly all the worlds that a world links to via the transitive closure of the relation of the model. \HOLinline{\HOLConst{rooted_model}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{x}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} reads `\HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is a rooted model with root $x$, and it is a submodel of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}}'.
-
-\begin{holmath}
-  \HOLConst{rooted_model}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{x}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLFreeVar{x}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a}.\\
-\;\;\;\;\;\;\;\HOLBoundVar{a}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenEquiv{}}\\
-\;\;\;\;\;\;\;\;\;\HOLBoundVar{a}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{RESTRICT}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world})\HOLSymConst{\HOLTokenSupStar{}}\;\HOLFreeVar{x}\;\HOLBoundVar{a})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{n\sb{\mathrm{2}}}.\\
-\;\;\;\;\;\;\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;(\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenEquiv{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLConst{RESTRICT}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{n\sb{\mathrm{2}}}))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v}\;\HOLBoundVar{n}.\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{valt}\;\HOLBoundVar{v}\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{valt}\;\HOLBoundVar{v}\;\HOLBoundVar{n}
-\end{holmath}
-
-There is a significant result pointing out the importance of tree-like models and the connection between tree-like models, rooted models and bounded morphisms:
-
-It says for any rooted model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, there is a tree-like model $T$ such that \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is a bounded morphic image of $T$ under some bounded morphism. So together with the invarience result for bounded morphisms, any satisfiable $\tau$-formula is satisfiable in a tree-like model.
-
-So to prove it, we need to specify such a bounded morphism and a tree-like model. For a rooted model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} whose root it $x$, the corresponding tree-like model is:
-
-\begin{holmath}
-  \HOLConst{bounded_preimage_rooted}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{x}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLTokenLeftrec{}\HOLFieldName{frame}\;:=\\
-\;\;\;\;\HOLTokenLeftrec{}\HOLFieldName{world}\;:=\\
-\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{l}\;\HOLTokenBar{}\\
-\;\;\;\;\;\;\;\;\;\HOLConst{HD}\;\HOLBoundVar{l}\;\HOLSymConst{=}\;\HOLFreeVar{x}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{LENGTH}\;\HOLBoundVar{l}\;\HOLSymConst{\HOLTokenGt{}}\;\HOLNumLit{0}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{m}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{m}\;\HOLSymConst{\HOLTokenLt{}}\;\HOLConst{LENGTH}\;\HOLBoundVar{l}\;\HOLSymConst{\ensuremath{-}}\;\HOLNumLit{1}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{RESTRICT}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;(\HOLConst{EL}\;\HOLBoundVar{m}\;\HOLBoundVar{l})\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{EL}\;(\HOLBoundVar{m}\;\HOLSymConst{\ensuremath{+}}\;\HOLNumLit{1})\;\HOLBoundVar{l})\HOLTokenRightbrace{};\\
-\;\;\;\;\;\;\HOLFieldName{rel}\;:=\\
-\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{l\sb{\mathrm{1}}}\;\HOLBoundVar{l\sb{\mathrm{2}}}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{LENGTH}\;\HOLBoundVar{l\sb{\mathrm{1}}}\;\HOLSymConst{\ensuremath{+}}\;\HOLNumLit{1}\;\HOLSymConst{=}\;\HOLConst{LENGTH}\;\HOLBoundVar{l\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{RESTRICT}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;(\HOLConst{LAST}\;\HOLBoundVar{l\sb{\mathrm{1}}})\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{LAST}\;\HOLBoundVar{l\sb{\mathrm{2}}})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{m}.\;\HOLBoundVar{m}\;\HOLSymConst{\HOLTokenLt{}}\;\HOLConst{LENGTH}\;\HOLBoundVar{l\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{EL}\;\HOLBoundVar{m}\;\HOLBoundVar{l\sb{\mathrm{1}}}\;\HOLSymConst{=}\;\HOLConst{EL}\;\HOLBoundVar{m}\;\HOLBoundVar{l\sb{\mathrm{2}}})\HOLTokenRightrec{};\\
-\;\;\HOLFieldName{valt}\;:=\;(\HOLTokenLambda{}\HOLBoundVar{v}\;\HOLBoundVar{n}.\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{valt}\;\HOLBoundVar{v}\;(\HOLConst{LAST}\;\HOLBoundVar{n}))\HOLTokenRightrec{}
-\end{holmath}
-
-That is, the worlds in this model are lists, encoded as natural numbers using \texttt{numlistTheory}. The definition actually says a list $(u_0,u_1,...,u_n)$ is in the world of this model iff the list is nonempty, begining with the root $x$, and recording a path in $M$ from the root $x$ to $u_n$. A list $l_1$ is related to a list $l2$ iff $l2$ is one-element longer then $l_1$, if we put $l_1$ and $l_2$ in parallel and compare their members, they are all the same until the $l_1$ is end, and the last element of $l_1$ is linked to the last element of $l_2$ via the relation in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}. And the evaluation map is defined by a list $l_1\in V_{rooted}(p)$ iff the last element of $l_1\in V(p)$ where $V$ is the evaluation map of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}. The model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is then the bounded morphic image of it under the bounded morphism defined by taking the last element of the list, this is the function ``nlast''.
-
-So we have two things to prove. One thing is that the model defined above is indeed a tree:
-
-
-Beyond the works about numlistTheory(Here I have omitted all the works about the \texttt{numlistTheory}, otherwise the description of this part would be even longer then the already existing article.), The trickest part is to prove the unique existence of the predecessor of a non-root element. For a non-root element, its predecessor is the list obtained by discarding the last element of the list. discarding the last element of a numlist is defined as a function \HOLinline{\HOLConst{nfront}}, and the following lemmas proves that for a list \HOLinline{\HOLFreeVar{t}}, \HOLinline{\HOLConst{nfront}\;\HOLFreeVar{t}} is indeed a predecessor of \HOLinline{\HOLFreeVar{t}} by proving that it is both in the world of our defined model, and it is linked to \HOLinline{\HOLFreeVar{t}} by the relation on the model.
-
-For proving that the predecessor is unique, note that an numlist is uniquely defined by the members in it. so once we conclude that if a list is a predecessor of a given list \HOLinline{\HOLFreeVar{t}}, then each member of it is fixed, then we are done. And the information that ``given a non-root element, each member of its predecessor is fixed'' can be extracted from the third clauses of the definition of relation in \texttt{bounded_preimage_rooted_def}.
-
-Having proved the first half. The other thing is that for the rooted model $M$ with root $x$ it is indeed the bounded morphic image of the model we construct above under the bounded morphism ``nlast''.
-
-For the proof of this, rewriting with the definition of bounded morphic image gives four subgoals. Among them, a non-trivial one is the fact that if \HOLinline{\HOLFreeVar{n}} is a list in the world set of the model we have defined, then \HOLinline{\HOLConst{nlast}\;\HOLFreeVar{n}} is in the world set of $M$. To deal with it, note that \HOLinline{\HOLConst{nlast}\;\HOLFreeVar{n}\;\HOLSymConst{=}\;\HOLConst{nel}\;(\HOLConst{LENGTH}\;(\HOLConst{listOfN}\;\HOLFreeVar{n})\;\HOLSymConst{\ensuremath{-}}\;\HOLNumLit{1})\;\HOLFreeVar{n}}, then we can prove a lemma that for a numlist in our constructed model, every member of the list is in the world of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}:
-
-to proves the desired fact.
-
-Another non-trivial part is the surjectiveness of the map \HOLinline{\HOLConst{nlast}}, this is proved as a lemma:
-
-by induction on the reflexive transitive closure relation. To actually apply the above lemma into our proof. We also need to prove
-
-which tells us for any element in a rooted model, it is linked to the root by the reflextive transitive closure. So we can get the anticedent of our lemma holds, which allows us to apply it.
-
-With the two above theorems proved, the main theorem can be solved easily by applying \texttt{qexists_tac} and \texttt{metis_tac} with the above two lemmas.
-
-\subsubsection{2.2 Bisimulations}
-
-This section talks about bisimulations, which is defined as a relation between elements in the world sets of two models satisfying some conditions:
-
-\begin{holmath}
-  \HOLConst{bisim}\;\HOLFreeVar{Z}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w}\;\HOLBoundVar{w\sp{\prime}}.\\
-\;\;\;\;\;\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{Z}\;\HOLBoundVar{w}\;\HOLBoundVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a}.\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;(\HOLConst{VAR}\;\HOLBoundVar{a})\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{w\sp{\prime}}\;(\HOLConst{VAR}\;\HOLBoundVar{a}))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v}.\\
-\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{v\sp{\prime}}.\;\HOLBoundVar{v\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{Z}\;\HOLBoundVar{v}\;\HOLBoundVar{v\sp{\prime}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w\sp{\prime}}\;\HOLBoundVar{v\sp{\prime}})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v\sp{\prime}}.\\
-\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{v\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w\sp{\prime}}\;\HOLBoundVar{v\sp{\prime}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{v}.\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{Z}\;\HOLBoundVar{v}\;\HOLBoundVar{v\sp{\prime}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{w}\;\HOLBoundVar{v}
-\end{holmath}
-
-As we can read from the code, for a relation $Z$ between models $M$ and $M'$ to be a bisimulation, the worlds which are related must satisfies the same propositional letters, and the forward consition:
-
-If $wZw'$ and $Rwv$, then there exists a world $v'$ in $M'$ such that $vZv'$ and $R'w'v'$.
-
-And the backward condition:
-
-If $wZw'$ and $R'w'v'$, then there exists a world $v$ in $M$ such that $vZv'$ and $Rwv$.
-
-If two points in two models are related by a bisimulation, then we call the two points are bisimilar:
-
-We can also say that two models are bisimilar if there is a bisimulation between them:
-
-In fact, there are many situations where we can obtain a bisimulation:
-
-(1) If \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}$\cong$\HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}}, then \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is bisimilar to \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}}. (The bisimulation is given by relating a world to its image under the isomorphism.)
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{iso}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{bisim_model}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}
-\end{holmath}
-
-(2) For a disjoint union \HOLinline{\HOLConst{DU}\;(\HOLFreeVar{f}\HOLSymConst{,}\HOLFreeVar{dom})} of models, any model \HOLinline{\HOLFreeVar{f}\;\HOLFreeVar{i}} where \HOLinline{\HOLFreeVar{i}} is in the \HOLinline{\HOLFreeVar{dom}} is bisimilar to the unioned model. (The bisimulation is given by relating a world to its copy in the disjoint union.)
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLFreeVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{dom}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{f}\;\HOLFreeVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLConst{bisim_world}\;(\HOLFreeVar{f}\;\HOLFreeVar{i})\;(\HOLConst{DU}\;(\HOLFreeVar{f}\HOLSymConst{,}\HOLFreeVar{dom}))\;\HOLFreeVar{w}\;(\HOLFreeVar{i}\HOLSymConst{,}\HOLFreeVar{w})
-\end{holmath}
-
-(3) If \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is a generated submodel of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}}, then \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is bisimilar to \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}}. (The bisimulation is given by relating a world to itself.)
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{GENSUBMODEL}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w}.\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{bisim_world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{w}\;\HOLBoundVar{w}
-\end{holmath}
-
-(4) If \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} is a bounded morphic image of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} under the bounded morphism $f$, then \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is bisimilar to \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}}. (The bisimulation is given by relating to a world to its image under the bounded morphism.)
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{bounded_mor_image}\;\HOLFreeVar{f}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{w}.\;\HOLBoundVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{bisim_world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{w}\;(\HOLFreeVar{f}\;\HOLBoundVar{w})
-\end{holmath}
-
-Similar to the last section, there is also an invarience theorem for bisimulations. It says that if \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} and \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} are models, then if two worlds $w,w'$ in the two models are linked by a bisimulation, then they are modally equivalent.
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{bisim_world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w}\;\HOLFreeVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{modal_eq}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w}\;\HOLFreeVar{w\sp{\prime}}
-\end{holmath}
-
-A natural question is that whether the converse of the above theorem holds. That is, if two worlds in two models are modally equivalent, whether they are bisimilar or not. In general, it does not. But the converse of the above theorem does hold for a special kind of models, called image-finite models. This kind of model is defined as the model has a special property that each point in the model is only related to a finite number of worlds, as defined below:
-
-\begin{holmath}
-  \HOLConst{image_finite}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
-\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{x}.\\
-\;\;\;\;\;\;\HOLBoundVar{x}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\HOLConst{FINITE}\;\HOLTokenLeftbrace{}\HOLBoundVar{y}\;\HOLTokenBar{}\;\HOLBoundVar{y}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{x}\;\HOLBoundVar{y}\HOLTokenRightbrace{}
-\end{holmath}
-
-The invarience theorem of this kind of model is called Hennessy-Milner Theorem:
-
-It says that for worlds in image-finite models, modal equivalence is equivalent to being linked by a bisimulation. Half of this theorem is just a special case of the invarience theorem of bisimulations, the part that requires a proof is:
-
-\begin{holmath}
-  \ensuremath{\HOLTokenTurnstile}\HOLConst{image_finite}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{image_finite}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\HOLFreeVar{w\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{w}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w\sp{\prime}}\;\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLConst{bisim_world}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{w}\;\HOLFreeVar{w\sp{\prime}}
-\end{holmath}
-
-We will prove that for two image-finite models, if two worlds are modally equivalent, then the relation $Z$ that $wZw'$ iff $w$ and $w'$ are modally equivalent is a bisimulation.
-
-If we use \texttt{qexists_tac} to specify the bisimulation \HOLinline{\HOLTokenLambda{}\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{n\sb{\mathrm{2}}}.\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLBoundVar{\ensuremath{\phi}}} and expand the definition of bisimulation of proving it, the HOL would ask us to prove two subgoals: both the forward condition and the backward consition. But the bisimulation we use here is actually special: it is a equivalence relation which is symmetric, so the forward and backward condition makes no difference, means that it suffices to prove only one of them. To convince the HOL that we just want prove only one of them, we prove this lemma:
-
-The \HOLinline{\HOLFreeVar{P}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{N}} here is the \HOLinline{\HOLConst{image_finite}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{image_finite}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} in the theorem, and \HOLinline{\HOLFreeVar{Z}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{N}\;\HOLFreeVar{u}\;\HOLFreeVar{v}} corresponds to \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}'}}\;\HOLFreeVar{n\sb{\mathrm{2}}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{\ensuremath{\phi}}}. So once we prove this theorem, we can match it to the original statement with \texttt{ho_match_mp_tac} to give:
-
-\begin{holmath}
-  (\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\\
-\;\;\;\;\;\HOLConst{image_finite}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{image_finite}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLConst{image_finite}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{image_finite}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}})\;\HOLSymConst{\HOLTokenConj{}}\\
-(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLBoundVar{n\sb{\mathrm{1}}}.\\
-\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenConj{}}\\
-\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}.\\
-\;\;\;\;\HOLConst{image_finite}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{image_finite}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{n\sb{\mathrm{2}}}.\\
-\;\;\;\;\;\;\;\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a}.\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{n\sb{\mathrm{1}}}\;(\HOLConst{VAR}\;\HOLBoundVar{a})\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;(\HOLConst{VAR}\;\HOLBoundVar{a}))\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n\sb{\mathrm{1}}\sp{\prime}}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{n\sb{\mathrm{1}}\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{n\sb{\mathrm{1}}}\;\HOLBoundVar{n\sb{\mathrm{1}}\sp{\prime}}\;\HOLSymConst{\HOLTokenImp{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{n\sb{\mathrm{2}}\sp{\prime}}.\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{n\sb{\mathrm{2}}\sp{\prime}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\phi}}.\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{n\sb{\mathrm{1}}\sp{\prime}}\;\HOLBoundVar{\ensuremath{\phi}}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{n\sb{\mathrm{2}}\sp{\prime}}\;\HOLBoundVar{\ensuremath{\phi}})\;\HOLSymConst{\HOLTokenConj{}}\\
-\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}.\HOLFieldName{frame}.\HOLFieldName{rel}\;\HOLBoundVar{n\sb{\mathrm{2}}}\;\HOLBoundVar{n\sb{\mathrm{2}}\sp{\prime}}
-\end{holmath}
-
-After \texttt{rpt strip_tac}, we can see many of the subgoals are trivial, and the only remaining task if prove one of the forward/backward condtion. So we can save labour on repeating the same proof.
-
-The thing remains to prove to is that if $n_1$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}},$n_2$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} are modally equivalent, then for all $n_1'$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} with $Rn_1n_1'$, there exists an $n_2'\in M'$ such that $R'n_2n_2'$ and $n_1'$ and $n_2'$ are modally equivalent. It is proved by assuming that there exists a point in $n_1'$ such that $Rn_1n_1'$, and for all $n_2'$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} such that $R'n_2n_2'$, $n_1'$ is not modally equivalent to $n_2'$, then we will reach a contradiction by proving then $n_1$ and $n_2$ would not be modally equivalent. To conclude this, we need to find out a formula that is satisfied at $n_1$ but not $n_2$. It turns out that the formula we need is one with a diamond in the front. So it suffices to prove that there is a formula that is satisfied at $n_1'$, but is not satisfied at any the world that is related to $n_2$. It turns out that we can find a formula which is a big conjunction that satisfies this condition. But the problem is: We have not got a definition of big conjunction by hand. To tackle this problem, we choose to do not use \texttt{qexists_tac} to specify an explict formula, but to prove its existence as a lemma.
-
-
-We are given that \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}},\HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} are both image finite, so the set of the worlds related to $n_2$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}'}}} is finite. Also the set of such worlds is non-empty, since otherwise the formula $\Box \bot$ is vacuously true at $n_2$ but is false at $n_1$. 
-
-So once this lemma is proved, we can apply it to our case where $s$ is the set of worlds that are related to $n_2$, $v$ is the $n_1'$, and then the ``psi'' in the conclusion gives the desire formula which gives the contradiction. Then by the argument above, we have proved the main theorem.
-                 
+           
 \end{document}
 
 % Local variables:

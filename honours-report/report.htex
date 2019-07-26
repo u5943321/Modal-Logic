@@ -13,7 +13,7 @@
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
-\renewcommand{\baselinestretch}{0.9}
+\renewcommand{\baselinestretch}{1.4}
 
 \title{Modal Logic Mechanisation in HOL4}
 \author{Yiming Xu}
@@ -421,9 +421,9 @@ The crucial fact that we will use about the degree of formulas is the following 
 
 The proof of this lemma is by induction on the degree $n$. We prove it in the following interlude:
 
-\section{Interlude I: Finiteness of non-equivalent modal formulas in each degree}
+\subsection{Interlude I: Finiteness of non-equivalent modal formulas in each degree}
 
-\subsection{Base case}
+\subsubsection{Base case}
 For the base case, we need to prove if we only use propositional letters in $s$ where $s$ is a finite set, then up to equivalence, we can only onbtain finitely many propositional formulas. To prove this, it suffices to find out an injection from the set of equivalence class of propositional formulas that only uses propositional letters in $s$ to a finite set. We will prove the function that sends an equivalence class of formulas to its image under the function $\lambda f. \{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$, which sends a formula $f$ to the set $\{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$ of assignments of truth value on propositional letters in $s$ that makes $f$ holds, is an injection to the finite set \HOLtm{POW(POW(POW(s)))}. We can see the function we define has correct codomain: A formula $f$ is sent to a set of subsets of $s$, which is an element of \HOLtm{POW(POW(s))}, so a equivalence class has image as a set of elements in \HOLtm{POW(POW (s))}, which lies in \HOLtm{POW(POW(POW(s)))}.
 
 Let us firstly investigate what the function $\lambda f. \{\sigma \mid peval\ \sigma\ f\} \cap (POW \ s)$ does. We claim the image of each equivalence class of this function is a singleton:
@@ -465,7 +465,7 @@ Proof: If two equivalence classes represented by $x$ and $x'$ respectively has i
 
 
 
-\subsection{Step case}
+\subsubsection{Step case}
 
 The key observation for proving the step case is that any formulas which only uses propositional letters in a fixed finite set $ss$ and of degree no more than $n+1$ is obtained by boolean combination on the set $s$ formed by formulas of form \HOLtm{DIAM phi} which also only uses propositional letters in $ss$ where \HOLtm{DEG phi <= n} and propositional letters in $ss$. Saying a formula $f$ is a boolean combination of a set $s$ of formulas is to say $f$ is either itself an element in $s$, or can be obtained by combining elements in $s$ using the connectives $\lnot$ and $\lor$. We define boolean combination as an inductive relation, where \HOLtm{IBC f s} reads `$f$ is a boolean combination of elements in the set $s$':
 
@@ -891,7 +891,7 @@ A quantified variable is called a bounded variable, otherwise it is called free.
   \HOLthm[def]{folLang.FVT_def}
   \HOLthm[def]{folLang.FV_def}
 \end{holmath}
-
+%add bounded ones?
 Here \HOLtm{LIST_UNION} is a function that takes a list of sets, and give us the union of all the sets in the list:
 
 \begin{holmath}
@@ -946,27 +946,39 @@ Models for modal language can be viewed as a first order model and hence be used
   \HOLthm[def]{chap2_6.folm2mm_def}
 \end{holmath}
 
-Note that the above constructions are not inverses in general, since by viewing a first order model as a modal model, we lose all the function symbols and predicate symbols except for the unary ones, and the binary one denoted by $0$. Also the range of formulas which makes sense to first order model obtained by converting a modal model is quite limited, we can only use these model to interpret formulas with only one binary predicate symbol corresponds to the relation in the model, denoted by $0$, and no function symbol. A first order model which do not have `superfluous' symbols contains the same amount of information as a modal model. For such a first order model, converting it to a modal model and then to a first order model again get the original model back, in the sense of the resultant model satisfied exactly the same first order formulas without function symbols. The fact that we that we need the assumption \HOLtm{form_functions f = ∅} is not a real constrain, since any formulas with function symbol does not make sense to both the original model and the resultant model we get by conversion:
+Note that the above constructions are not inverses in general, since by viewing a first order model as a modal model, we lose all the function symbols and predicate symbols except for the unary ones, and the binary one denoted by $0$. Also the range of formulas which makes sense to first order model obtained by converting a modal model is quite limited, we can only use these model to interpret formulas with only one binary predicate symbol corresponds to the relation in the model, denoted by $0$, and no function symbol. A first order model which do not have `superfluous' symbols contains the same amount of information as a modal model. For such a first order model, converting it to a modal model and then to a first order model again get the original model back, in the sense of the resultant model satisfied exactly the same first order formulas without function symbols. The fact that we that we need the assumption \HOLtm{form_functions f = ∅} is not a real constrain, but merely an assumption for well-formedness, since any formulas with function symbol does not make sense to both the original model and the resultant model we get by conversion:
 
 \begin{holmath}
   \HOLthm{chap2_6.mm2folm_folm2mm_feval}
 \end{holmath}
 
+Let us build intuition about how does modal formulas corresponds to first order formulas. Observe that unlike modal formulas which atomic formulas are propositional letters standing alone, even the atomic first order formula have a variable symbols involved. Hence to translate a modal formula into a first order formula, we must get variables involved as well. This variables is used to mark the state we are looking at. And moreover, once we see a $\Diamond$ in a modal formula, we start talking about some other state which is related to the current state, so we will need another variable symbol to mark the new state of interest. Hence in mathematical language, the natural correspondence of modal and first order formulas is given by:
 
-Under this construction of the basic theory of first order logic, we can define standard translation:
+$ST_x(p)= Px$
 
+$ST_x(\bot)=\bot$
+
+$ST_x(\lnot \phi)=\lnot ST_x(\phi)$
+
+$ST_x(\phi\lor \psi) =ST_x(\phi)\lor ST_x(\psi)$
+
+$ST_x(\Diamond\phi)=\exists y(Rxy\land ST_y(\phi))$
+
+
+
+We can read $ST_x \phi$ as `the standard translation of $\phi$ at $x$'. In the following definition, the $x$, which is a variable symbol in our construction, is a natural number. Each time we see a $\Diamond$, we come with a fresh variable denotes by $x+1$:
 \begin{holmath}
   \HOLthm{chap2_4revised.ST_def}
 \end{holmath}
 
-Here \HOLtm{fP} is the abbrevation of \HOLtm{λp t. Pred p [t]}, and \HOLtm{fR} is the abbrevation of \HOLtm{λw1 w2. Pred 0 [w1; w2]}. Any formula obtained by standard translation only has one free variable $x$, which is used to mark the current state, and a standard translation can never have function symbols:
+Here \HOLtm{fP} is the abbrevation of \HOLtm{λp t. Pred p [t]}, and \HOLtm{fR} is the abbrevation of \HOLtm{λw1 w2. Pred 0 [w1; w2]}. Any formula obtained by standard translation only has one free variable $x$, and a standard translation can never have function symbols:
 
 \begin{holmath}
   \HOLthm{chap2_6.ST_FV_singleton}
   \HOLthm{chap2_6.ST_FC_EMPTY}
 \end{holmath}
 
-Two interesting features that will be useful in later chapter is that we can conjunct standard tranalations to get a standard translation. And the negation of standard translation is again a standard translation:
+We can conjunct standard tranalations to get a standard translation. And the negation of standard translation is again a standard translation:
 
 \begin{holmath}
   \HOLthm{chap2_6.ST_BIGCONJ}
@@ -975,7 +987,7 @@ Two interesting features that will be useful in later chapter is that we can con
 
 
 
-Standard translation defined like this can be regarded as a first-order reformulation of modal satisfication, since we have the precise correspondence of modal satisfication and first-order satisfication for standard translations:
+Standard translation defined like this can be regarded as a first-order reformulation of modal satisfication, since we have the precise correspondence of modal satisfication and first-order satisfication for standard translations. A modal formula is satisfied a point $w$ in a modal model iff its standrad translation at $x$ is satisfied at the same modal viewed as a first order model when $x$ is valuated to $w$:
 
 \begin{holmath}
   \HOLthm{chap2_4revised.prop_2_47_i}
@@ -1046,7 +1058,7 @@ This lemma works perfectly, so we will not get stuck at the former point and we 
 
 Since m-saturated models are nice, here is a natural question: How can we get such models. It turns out that every models can give arise to a m-saturated model, by taking its ultrafilter extension. In order to talk about ultrafilter extesnions, we need to build a theory of ultrafilers in HOL.
 
-\section{Interlude II: Ultrafilters}
+\subsection{Interlude II: Ultrafilters}
 
 As its name suggests, an ultrafilter is a special kind of filter. Given a non-empty set $W$, a set $F$ which is a subset of the power set of $W$, written as $POW(W)$ in the HOL, is called a filter if it contains $W$ itself, closed under binary intersection, and closed upward.
 
@@ -1210,675 +1222,92 @@ A countably incomplete ultrafilter has useful features, one of them is that such
 
 Proof: By definition of countably incompleteness, there exists a family $X_n$ in $U$ indexed by natural numbers such that $\bigcap_{n\in \mathbb N}X_n=\emptyset$. Define $J_n:=\bigcap_{m\le n}X_n$, so $J_{n+1}\supseteq J_n$ for all $n\in\mathbb N$, and moreover $\bigcap_{n\in \mathbb N}I_n=\emptyset$. In the HOL, the family $J_n$ is defined using a primitive recursive function, defined by \HOLtm{ PRIM_REC (X 0) (\Xn n. Xn ∩ (X (n + 1)))}. We get the desired chain $I_n$ by inserting $I$ at the begining of $J_n$.
 
+ 
+Our theory of ultrafilters built above is to enable us to talk about ultrafilter extensions. Ultrafilter extension is defined as a function that takes a model \HOLtm{M}, and give the extended model. The world set of \HOLtm{UE M} is the set of all the ultrafilters on the world set of \HOLtm{M}. And the relation of these worlds requires some explaination. For \HOLtm{X ⊆ M.frame.world}, there comes two interesting sets of worlds, one is the set of worlds that is linked to some world in $X$, and the other one is the set of worlds that are only linked to worlds in $X$. These two sets are dual to each other:
 
-
-This is a report for summarizing my learning of interactive theorem proving in the HOL. This paper consists of two parts, the first part it about the correspondence theorem on group theory, through the process of searching for methods of proving it, I get known to some basics tools, mainly the simplifiers of the HOL. The second part is about modal logic, where I think is my starting point of being exposed to more advanced and useful tools.
-
-\section{Correspondence Theorem in the HOL}
-
-The main theorem is, stated in usual-sense mathematical language (version on Artin's Algebra):
-
-For a homomorphism $\phi: G \to {\cal G}$, call its kernel $K$. Let $H$ be a subgroup of $G$ that contains $K$, and let ${\cal H}$ be a subgroup of ${\cal G}$.
-Then: \\
-(1) $\phi (H)$ is a subgroup of ${\cal G}$. \\
-(2) $\phi^{-1}({\cal H})$ is a subgroup of $G$. \\
-(3) $\phi^{-1}({\cal H})$ contains $K$. \\
-(4) ${\cal H}$ is a normal subgroup of ${\cal G}$ if and only if $\phi^{-1}({\cal H})$ is a normal subgroup of $G$. \\
-(5) $\phi (\phi^{-1}({\cal H})) = {\cal H}$. \\
-(6) $\phi^{-1}(\phi (H)) = H$. \\
-(7) $|\phi^{-1}({\cal H})| = |{\cal H}| |K|$ \\
-
-In the language of the HOL, the correspondence theorem is stated as:
-
-
-The $h < < g$ denotes the fact that \HOLtm{h} is a normal subgroup of \HOLtm{g}. And $h \le g$ denotes the fact that \HOLtm{h} is a subgroup of \HOLtm{g}. All the definitions about group theory are given as functions that take an ``object'' and returns a boolean to judge whether it satisfies its definition. For instance, \HOLtm{Group g} reads ``$g$ is a group''.
-
-The right hand side of the arrow is a conjunction, which means that we can split our main goal as smaller subgoals for each conjuncts using \texttt{rpt strip_tac} and then prove each subgoal as a lemma. Once we have proved all these lemmas, we can give the remaining work to \texttt{metis_tac}.
-
-\subsection{lemma 1: $\phi (H)$ is a subgroup of ${\cal G}$}
-
-My Goal:
-
-In the algebra library there are two versions of definition of subgroup, namely \texttt{Subgroup} and \texttt{subgroup}. Our goal only involves the version \texttt{Subgroup}, which it our $\leq$, but one of the theorems in the library which would be used to prove this goal uses the definition \texttt{subgroup}. In order to use it, we need to prove that version of definition of subgroup we use implies the other verision. That is:
-
-As this is proved, we can use the existing theorems
-
-The proof would then be strightforward: As $h \leq g1$ then \HOLtm{subgroup h g1}, then together with the fact \HOLtm{GroupHomo f g1 g2}, by the first lemma \HOLtm{GroupHomo f h k}. And also $h\leq g$ gives \HOLtm{Group h} and \HOLtm{Group g}, then by the last lemma above the goal is proved.
-
-\subsection{lemma 2: $\phi^{-1}({\cal H})$ is a subgroup of $G$}
-
-Goal:
-Note the usage of \HOLtm{preimage_group}, which is a function defined as:
-
-It is a function that take a function $f$, two ``groups'' $g_1,g_2$ of types $\alpha,\beta$ respectively, and a subset $h$ of $g_2$.
-
-The word ``groups'' has a quotation mark because it does not denote the group in mathematical sence, instead, it denotes the datatype ``group'', which consists by three pieces of informations: the underlying set, which it also called the carrier, the identity element, and the operation function defined for every pair of elements in the carrier and returns an element in the carrier.
-
-We cannot encode the information that $f$ is a homomorphism and the $g$s are groups directly in the definition of \HOLtm{preimage_group}. This is because we are only allowed to define anything on the whole universe of a type. Also the function \HOLtm{preimage_group} does not directly return a group. We only know that the output of it consists of the three pieces of information that a group needs as mentioned above, and to conclude that it is indeed a group when $g_1,g_2$ are real groups, $f$ is a homomorphism and $h$ is an actual subgroup, we need to prove that the three pieces of information defined by this sort of inputs of \HOLtm{preimage_group} satisfies the group axioms.
-
-To prove this goal, we mainly want to prove that the preimage of a subgroup of a group under a homomorphism is a group. Once we prove
-
-then the main goal then easily followes from here.
-
-\subsection{lemma 3: $K\subseteq\phi^{-1}({\cal H})$}
-
-\section{Modal logic in the HOL}
-
-My Script files on modal logic basically follow the book of Blackburn's book ``Modal Logic''.
-
-\subsection{Chapter 1}
-\subsubsection{Basic Constructions}
-
-Everything discussed in this report is with respect to the following modal language-called the basic modal language. In this language, a formulas of a type $\alpha$ are:
-
-\begin{holmath}
-\HOLthm{chap1.datatype_form}
-\end{holmath}
-
-The $\Box,\rightarrow,\land,\leftrightarrow$ and the tautology are defined as:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.BOX_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm[def]{chap1.IMP_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm[def]{chap1.AND_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm[def]{chap1.DOUBLE_IMP_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm[def]{chap1.TRUE_def}
-\end{holmath}
-
-respectively.
-
-We can define any function that sends each element in the universal set of type $\alpha$ to a $\beta$-formula, such a function $f$ induces a map from the collection of all the $\alpha$-formulas to the collections of $\beta$-formulas. It is called the substitution map induced by the function $f$, it is defined as:
-
-\begin{holmath}
-\HOLthm[def]{chap1.subst_def}
-\end{holmath}
-
-Directly from its definition, the substitution rule on a formula involved the \HOLtm{BOX} is given by:
-
-\begin{holmath}
-  \HOLthm{chap1.subst_box}
-\end{holmath}
-
-We would study formulas in basic modal language on models. A model of type $\alpha$ consists of three pieces of informations: a set of worlds, a relation defined on the set of worlds, and a evaluation map from the set of propositional letters of type $\alpha$ to the power set of the set of worlds. The first two pieces together is called a frame. It is created as a type(for further convenience, we only allow the worlds in a model to be natural numbers):
-
-\begin{holmath}
-  \HOLthm{chap1.datatype_frame}
-\end{holmath}
-
-And a model is defined as a type based on a frame, it is:
-
-\begin{holmath}
-  \HOLthm{chap1.datatype_model}
-\end{holmath}
-
-A large part of study of formulas of basic modal language is about modal satisfication. Satisfication is defined on the elements of the world set of a model, so we need to ensure that once we say ``a formula is satisfied at a world of a model'', we must ensure that the world we are talking about is actually in model. So the definition of satisfication is encoded as:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.satis_def}
-\end{holmath}
-
-Thus latter if we want to to prove a formula is satisfied at some point in the model, firstly we need the fact that the point is indeed in the world set of the model.
-
-Instead of regarding a single formula, we can also say a set of formulas of some fixed type is satisfied at a world. We say a set of formulas is satisfied at a point of a model when each formula in the set is satisfied in at this point. In the HOL, it looks like:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.satis_set_def}
-\end{holmath}
-
-Regarding a formula and its satisfiability on a given model, it is universally true if it is satisfied at every world in the model, it is satisfiable if there exists some worlds in the model where it is satisfied, and it is refutable if there exists some worlds in the model where its negation is satisfied, just as:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.stfable_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm[def]{chap1.refutable_def}
-\end{holmath}
-
-We use a bunch of definition regarding ``validness'' to describe the satisfiability of a formula over a frame. In fact, the validness of a formula can be defined on the level of a state of a frame, a frame or a class of frames. A formula $\phi$ is valid at a state $w$ in a frame if for any model over this frame, $\phi$ is satisfied at $w$. $\phi$ is valid in a frame if it is valid at every state in the frame, and is valid in a class $C$ of frames if for any frame $f$ in $C$, $\phi$ is valid in $f$. Finally, to say a formula is valid is to say that for any frame $f$, it is valid in $f$. These definitions are expressed as follows:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.valid_frame_state_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm[def]{chap1.valid_frame_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm[def]{chap1.valid_class_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm{chap1.valid_def}
-\end{holmath}
-
-For a class of frames, the ``logic'' of it is the collection of all formulas that are valid in every frames in this class:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.LOGIC_def}
-\end{holmath}
-
-For a set $S$ of $\alpha$-models and a set $\Sigma$ for $\alpha$-formulas, saying an $\alpha$-formula $\phi$ is a local semantic consequence of $\Sigma$ over $S$ is saying that for any model $M$ in $S$, and any point $w$ in $M$, if $\Sigma$ is satisfied, then $\phi$ must be satisfied. Stated in the language of HOL, it is:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.LSC_def}
-\end{holmath}
-
-
-So far what we have already defined are all about semantics, and in fact, there is a syntactic mechanism of obtaining the collection of valid formulas. This syntactic mechanism involves the usage of K-proof. In usual language, it is defined as:
-
-A K-proof is a finite sequence of formulas, each of which is an axiom, or follows from one or more earlier items in the sequence by applying a rule of proof.
-
-For the axioms, they are all propositional tautologies plus:
-
-$\Box(p\rightarrow q)\rightarrow(\Box p \rightarrow\Box q)$
-
-$\Diamond p\leftrightarrow \lnot\Box\lnot p$
-
-And the rules are:
-(1) Modens ponens: if $\phi$ and $\phi \rightarrow \psi$ both occurs as lines of some line of a K-proof, then we can append a line $\psi$ so the resulting list is also a K-proof.\\
-(2) Uniform substitution: if $\phi$ occurs as a line of a K-proof, then we can append a line $\theta$ where $\theta$ is obtained from $\phi$ by applying some substitution function.\\
-(3) Generalization: if $\phi$ occurs as a line of a K-proof, then we can append a line $\Box \phi$ to the original list and obtain a K-proof.
-
-Given the rules of the K-proof, we can know about three things: the rule itself which defines what sort of list is called a K-proof, a induction principle according to the rule which allows us to use in proving things about Kproofs by induction, and if a given list is a K-proof, what are the possible cases of its form. So we can define these three things altogether, with the application of \texttt{Hol_reln}:
-
-It gives three statements at once, namely:
-
-\begin{holmath}
-  \HOLthm{chap1.Kproof_rules}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm{chap1.Kproof_ind}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm{chap1.Kproof_cases}
-\end{holmath}
-
-The significance of the K-proof system can be seen through this fact: A basic modal formula is K-provable if and only if it is valid.
-
-The definition of normal modal logic is a direct abstraction from the definition of the K-proof system. It is defined as a set of formulas closed under modens ponens, uniform substitution and generalization, Which is expressed as:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.NML_def}
-\end{holmath}
-
-\subsubsection{Exercises}
-
-There are two exercises in chapter 1.6 which have been proved in my file.
-
-\paragraph{Exercise 1.6.2}
-
-Goal: Let $\phi^-$ be the `demodalized' version of a modal formula $\phi$, that is, $\phi^-$ is obtained from $\phi$ by erasing all the diamonds. Then if $\phi$ is K-provable, then $\phi^-$ is a propositional tautology.
-
-To solve this exercise, firstly we need to define the demodalization for a formula. Demodalizing is the operation that for diamonded formulas, removing the diamond, and extending to all the formulas, that is(quite similar to the definition of substitution map):
-
-\begin{holmath}
-  \HOLthm[def]{chap1.demodalize_def}
-\end{holmath}
-
-Secondly, we need to state clearly which kind of formula is a propositional tautology. To do this, firstly we need to define what is a propositional formula, then the definition of propositional tautology would be given by: for a formula $\phi$, $\phi$ is a propositional tautology if and only if $\phi$ is a propositional tautology, and $\phi$ `always holds'.
-
-A propositional formula is just a modal formula without the diamond, so it can be defined as:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.propform_def}
-\end{holmath}
-
-Similar as mentioned in section on the correspondence theorem. \HOLtm{propform} is a function that takes a formula and returns a truth-value, that is, it judges whether a modal formula is a propositional formula.
-
-Then we will need to describe what is `always holds' for a propositional formula. Here we describe this property as: for any assignment of truth values of propositional symbols involved in this formula, the truth value of the whole formula must be \HOLtm{T}. Here we need to define a evaluation function that can give us a truth value of a propositional formula for each assignment of the propositional symbols. it is defined as:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.peval_def}
-\end{holmath}
-
-Here $\sigma$ is an assignment of truth-values on the propositional symbols, it is a function sending each propositional symbol to its assigned truth-value.
-
-Thus as explained above, we can define propositional tautology as:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.ptaut_def}
-\end{holmath}
-
-Have these definitions constructed, now we are aim to prove that once a formula $\phi$ is K-provable, means that it occurs at the bottom line of a K-proof, then $\phi^-$ is a propostional tautology. Noting that almost everything here is defined inductively, so this goal is suitable to be prove by induction on `K-proof'. The trick is a stronger goal gives a stronger inductive hypothesis, which can be more useful. Here to make the inductive hypothesis more useful, we strongthen the goal as:
-
-\begin{holmath}
-  \HOLthm{chap1.exercise_1_6_2}
-\end{holmath}
-
-That is, for every line in a K-proof, it can be demodalized to give a propositional tautology.
-
-The induction gives subgoals looks like:
-\[
-\begin{array}{l}
-\HOLtm{ptaut (demodalize f)}\\ \hline
-0. \;\;\HOLtm{Kproof p}\\
-1. \;\;\HOLtm{∀f. MEM f p ⇒ ptaut (demodalize f)}\\
-2. \;\;\HOLtm{MEM (form1 -> form2) p}\\
-3. \;\;\HOLtm{MEM form1 p}\\
-4. \;\;\HOLtm{MEM f (p ⧺ [form2])}
-\end{array}
-\]
-
-The line above the solid line is the goal, and the lines under the line are the assumptions. To prove it, observing that by assumption 4, either \HOLtm{f} in \HOLtm{p} or \HOLtm{f = form2}. For the first case, the inductive hypothesis, which is assumption 1, applies. For the second case, by assumption 3 and the inductive hypothesis, \HOLtm{form1 -> form2} is a propositional tautology, and then we can prove
-
-\begin{holmath}
-  \HOLthm{chap1.ptaut_MP}
-\end{holmath}
-  
-from definitions ``peval'' and ``ptaut''.
-
-Then by the lemma above, the subgoal is solved. All the subgoals except the following one can be solved in a similar way.
-
-The trickest subgoal is:
-\[
-\begin{array}{l}
-\HOLtm{ptaut (demodalize f')}\\ \hline
-0. \;\;\HOLtm{Kproof p}\\
-1. \;\;\HOLtm{∀f. MEM f p ⇒ ptaut (demodalize f)}\\
-2. \;\;\HOLtm{MEM form p}\\
-3. \;\;\HOLtm{MEM f' (p ⧺ [subst f form])}
-\end{array}
-\]
-
-As before, \HOLtm{f'} is either in \HOLtm{p} or is \HOLtm{subst f form}. The former case is trivial by assumption 1. And for the later case, we aim to prove that \HOLtm{demodalize (subst f form)} is a propositional tautology, means that \HOLtm{!σ. peval σ (demodalize (subst f form)) = T}. As as \HOLtm{form} is in the list \HOLtm{p}, by the inductive hypothesis, \HOLtm{demodalize (form)} is a tautology. So once we prove that \HOLtm{!σ. ?σ'. pevel σ demodalize (subst f form) = peval σ' (demodalize form)}, as the right hand side has truth value $T$, then we are done.
-
-So we prove:
-
-\begin{holmath}
-  \HOLthm{chap1.peval_demodalize_subst_eq}
-\end{holmath}
-
-by inducting on \HOLtm{form} and using the definition of demodalization.
-
-Note that \HOLtm{demodalize f} is a propositional formula so the above lemma applies, and after proving:
-
-\begin{holmath}
-  \HOLthm{chap1.demodalize_subst}
-\end{holmath}
-
-We can conclude \HOLtm{peval σ (demodalize (subst f (demodalize form))) = peval σ (demodalize (subst f form))} $=$ \HOLtm{peval (peval σ o demodalize o f) form = T}.
-
-  
-\paragraph{Exercise 1.6.6}
-
-Goal: Given a set of formulas $\Gamma$. Suppose we form the axiom system \HOLtm{KΓ} by adding as axioms all the formulas in $\Gamma$ to K. Then the Hilbert system \HOLtm{KΓ} proves precisely the formulas contained in the normal modal logic \HOLtm{KΓ}.
-
-Firstly, we setup the Hilbert system K$\Gamma$ by defining the rule of proving things in \HOLtm{KΓ}. Almost the same as the definition of K-proof, we use \texttt{Hol_reln} to give:
-
-\begin{holmath}
-  \HOLthm{chap1.KGproof_rules}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm{chap1.KGproof_ind}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm{chap1.KGproof_cases}
-\end{holmath}
-
-Also similar to the mentioned definition of normal modal logic, we define the normal modal logic K$\Gamma$ as:
-
-\begin{holmath}
-  \HOLthm[def]{chap1.NMLG_def}
-\end{holmath}
-
-\HOLtm{NMLG Γ} is the smallest normal modal logic containing $\Gamma$. Once we mention the word ``smallest'', we know that there is a induction principle here, we can derive this principle as:
-
-\begin{holmath}
-  \HOLthm[ϕ/phi]{chap1.NMLG_ind}
-\end{holmath}
-
-This principle is used to derive a conclusion that once a formula is in the normal modal logic, the predicate $P$ holds for this formula. In one direction, we are proving that all the formulas in the normal modal logic is $K\Gamma$-provable. The goal looks like:
-
-\begin{holmath}
-  \HOLthm[ϕ/phi]{chap1.exercise_1_6_6_d2}
-\end{holmath}
-
-It matchs the conclusion of our induction principle exactly, so we can use \texttt{ho_match_mp_tac} to match it onto the induction principle above, and the remaining part of the proof would become straightforward.
-
-The other half the goal, which is saying any $K\Gamma$-provable formula is in the normal modal logic $K\Gamma$:
-
-\begin{holmath}
-  \HOLthm{chap1.exercise_1_6_6_d1}
-\end{holmath}
-
-is proved by induct on \HOLtm{KGproof}.
-
-\subsection{Chapter 2}
-
-\subsubsection{2.1 Invariance Results}
-
-Section 2.1 of Blackburn's textbook is talking about obtaining new models from old ones without affecting modal satisfication. There are basically 3 ways to do it:
-
-\paragraph{Disjoint union}
-
-To define disjoint union in the HOL, noting that the disjoint union is defined on a family of models. For further convenience, we will only allow the elements of the index set to be natural numbers, so a family of models indexed by natural numbers is just a function that assigns each natural number in the index set a model. So taking the disjoint union is taking such a function and a index set as inputs, and returns a model:
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.DU_def}
-\end{holmath}
-
-As for a model in a disjoint union, both the index of the model any world in the model are natural numbers, if $w$ is a world of a model $M_n$, then the copy of the world $w$ in the disjoint union is expressed as \HOLtm{npair n w}.So the worlds in the disjoint union are all ``npair''s. And the two worlds in the disjoint union is related iff they come from the same model, and in the model that they come from they are related. The fact that two worlds $n_1,n_2$ in the disjoint union come from the same model is encoded as the first coordinate of them, which corresponds to the index of the model they comes from, are the same, that is, \HOLtm{nfst n1 = nfst n2}. And we can see from the code above that the for a propostional letter $v$, an element $n$ in the disjoint union is in $V(v)$ if and only if in the world indexed by $nfst n$ that $n$ comes from, the point $nsnd n$ in that model that corresponds to $n$ is in the evalution set of $v$. 
-
-The special case of the union of two models $M_1,M_2$ is given by:
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.M_union_def}
-\end{holmath}
-
-That is, taking the \HOLtm{dom} to be the two-element set.
-
-We can induct on the structure of formula to prove the invarience result for disjoint unions, which says a formula is satisfies in a world in a disjoint union iff is it satisfied at the corresponding world in the model that this world comes from:
-
-\begin{holmath}
-  \HOLthm{chap2_1.prop_2_3}
-\end{holmath}
-
-\paragraph{generated submodel}
-
-For two models \HOLtm{M1,M2}, we say \HOLtm{M1} is a submodel of \HOLtm{M2} if the world set of \HOLtm{M1} is a subset of that of \HOLtm{M2}, and the relation and evaluation map of \HOLtm{M1} is given by that of \HOLtm{M2} restricted on the world set of \HOLtm{M1}.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.SUBMODEL_def}
-\end{holmath}
-
-The generated submodel is a concept defined upon submodels. Saying a submodel \HOLtm{M1} is a generating submodel of \HOLtm{M2}, we mean that for any point $v$ in \HOLtm{M1}, if the relation defined on \HOLtm{M2} relates it to a point \HOLtm{w} of \HOLtm{M2}, then the \HOLtm{w} must be in the world set of \HOLtm{M1} as well:
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.GENSUBMODEL_def}
-\end{holmath}
-
-The invarience theorem of generated submodel stated in the HOL is:
-
-\begin{holmath}
-  \HOLthm{chap2_1.prop_2_6}
-\end{holmath}
-
-It says that if $M_1$ is a generated submodel of $M_2$, then for any formula $\phi$, $\phi$ is satisfied at the world $n$ in $M_1$ if and only if $\phi$ is satisfied at $n$ in $M_2$. As from the definition of generated submodel, the world set of a generated submodel $M_1$ of $M_2$ is a subset of the world set of $M_2$, the corresponding point of $n$ in $M_2$ is just $n$ itself.
-
-\paragraph{morphisms for modalities}
-
-In this section we firstly give a bunch of definitions of morphisms between models, they are all maps between elements of world sets satisfying some extra conditions:
-
-If $f:W\to W'$ is a function from the world set of a model \HOLtm{M} to the world set of a model \HOLtm{M'} then it is a homomorphism if
-
-(i) For each propositional letter $p$ and each element $w$ from \HOLtm{M}, if $w\in V(p)$, then $f(w) \in V'(p)$.\\
-(ii) If $Rwu$ then $R'f(w)f(u)$.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.hom_def}
-\end{holmath}
-
-It is a strong homomorphism if
-
-(i) For each propositional letter $p$ and each element $w$ from \HOLtm{M}, $w\in V(p)$ iff $f(w) \in V'(p)$.\\
-(ii) If $Rwu$ then $R'f(w)f(u)$.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.strong_hom_def}
-\end{holmath}
-
-A strong homomorphism is called an embedding if it is injective.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.embedding_def}
-\end{holmath}
-
-And a strong morphism which is bijective is called an isomorphism.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.iso_def}
-\end{holmath}
-
-For descibing the concept ``equivalence of modalities'', we introduce a bunch of definitions about $\tau$-theory. The $\tau$-theory of a point in a model is the set of formulas satisfied at this point. And the $\tau$-theory of a model is the set of the the formula that is satisfied at any point in the model.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.tau_theory_def}
-\end{holmath}
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.tau_theory_model_def}
-\end{holmath}
-
-The above definitions enables us to define modal equivalence on two levels: for points or for models: Two points from two models are called modally equivalent if their $\tau$-theory of points are the same.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.modal_eq_def}
-\end{holmath}
-
-Similarly, two models are called modally equivalent if their $\tau$-theory of models are the same.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.modal_eq_model_def}
-\end{holmath}
-
-Here comes our invarience theorem for strong homomorphisms
-
-\begin{holmath}
-  \HOLthm{chap2_1.prop_2_9}
-\end{holmath}
-
-which says if we have a surjective from a model \HOLtm{M} to a model \HOLtm{M'}, then if the point $w$ in \HOLtm{M} is sent to $w'$ under $f$, then $w$ and $w'$ are modally equivalent, means that they have the same $\tau$-theory.
-
-And the invarience theorem for the isomorphisms
-
-\begin{holmath}
-  \HOLthm{chap2_1.prop_2_9_ii}
-\end{holmath}
-
-which says if two models are isomorphic, then they are modally equivalent. It is directly by the invarience theorem for strong homomorphisms.
-
-We prove the first one by firstly proving a equivalent statement without mentioning $\tau$-theory:
-
-\begin{holmath}
-  \HOLthm{chap2_1.lemma_2_9}
-\end{holmath}
-
-Then we quote this lemma and expand the definition of modal equivalence and $\tau$-theory to finish the proof.
-
-We also have the notion of bounded morphism. It is just a homomorphism plus a backward condition, (use the notations as the definition of all other morphisms)which is ``If $R'f(w)v'$, then there exists a $v$ in \HOLtm{M} such that $Rwv$ and $f(v)=v'$''.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.bounded_mor_def}
-\end{holmath}
-
-If we have a surjective bounded morphism from $M$ to $M'$, then $M'$ is called the bounded morphic image of $M$ under $f$. That is:
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.bounded_mor_image_def}
-\end{holmath}
-
-The invarience theorem for bounded morphism is:
-
-\begin{holmath}
-  \HOLthm{chap2_1.prop_2_14}
-\end{holmath}
-
-It states that if $f$ is a bounded morphism from \HOLtm{M} to \HOLtm{M'}, then for any world $w$ in \HOLtm{M}, $w$ and $f(w)$ are modally equivalent. Same as the invarience theorem for the previous constructions, it is proved by structual induction on formulas.
-
-Now we give a definition of a important class of models, the tree-like models. Here we define a tree as a type of frame, so a tree-like model is just a model defined upon a frame which is a tree.
-
-We say a frame $S$ is a tree with the root $r$ if the $r$ is a point in the frame, satisfying:
-
-(1) For any world in $S$, the root $r$ is linked to it via the transitive closure of the relation defined on $S$.\\
-(2) There is no point in $S$ that is linked to the root via the relation on $S$.\\
-(3) For any non-root point in $S$, there exists a unique point that is linked to it via the relation on $S$.
-
-\begin{holmath}
-  \HOLthm[def]{chap2_1.tree_def}
-\end{holmath}
-
-This definition is slightly different from the definition of the tree in the textbook, which does not say $(\forall r_0 \in S.world)(\lnot S.rel \ r_0 r)$, but states that a tree has no loop as $(\forall t) \lnot S^+ \ t \ t$. To unify these two versions of definitions, we need to prove a tree has no loop as the following lemma:
-
-\begin{holmath}
-  \HOLthm{chap2_1.tree_no_loop}
-\end{holmath}
-
-This is proved by using \texttt{ho_match_mp_tac} with the induction principle \texttt{RTC_STRONG_INDUCT_RIGHT1}:
-
 \begin{holmath}
-  \HOLthm{relation.RTC_STRONG_INDUCT_RIGHT1}
+  \HOLthm[def]{chap2_5.can_see_def}
+  \HOLthm[def]{chap2_5.only_see_def}
+  \HOLthm{chap2_5.can_only_dual}
+  \HOLthm{chap2_5.only_can_dual}
 \end{holmath}
 
-Quite related, we have a definition of rooted model. A rooted model is a submodel of a model generated by a single point. For a rooted model, it would definitly be a submodel for some model, and the world set of a rooted model is exactly all the worlds that a world links to via the transitive closure of the relation of the model. \HOLtm{rooted_model M x M'} reads `\HOLtm{M} is a rooted model with root $x$, and it is a submodel of \HOLtm{M'}'.
+Directly from their definitions, the worlds satisfying \HOLtm{DIAM phi} are the worlds that can see a world satisfying $\phi$. And the worlds satisfying \HOLtm{BOX phi} are the worlds that can only see worlds that satisfies $\phi$, and the set of worlds which only see $X\cap Y$ is the intersection of worlds only see $X$ and worlds only see $Y$:
 
 \begin{holmath}
-  \HOLthm[def]{chap2_1.rooted_model_def}
+  \HOLthm{chap2_5.valt_can_see}
+  \HOLthm{chap2_5.valt_only_see}
+  \HOLthm{chap2_5.only_see_INTER}
 \end{holmath}
 
-There is a significant result pointing out the importance of tree-like models and the connection between tree-like models, rooted models and bounded morphisms:
 
-It says for any rooted model \HOLtm{M}, there is a tree-like model $T$ such that \HOLtm{M} is a bounded morphic image of $T$ under some bounded morphism. So together with the invarience result for bounded morphisms, any satisfiable $\tau$-formula is satisfiable in a tree-like model.
 
-So to prove it, we need to specify such a bounded morphism and a tree-like model. For a rooted model \HOLtm{M} whose root it $x$, the corresponding tree-like model is:
+We define two ultrafilter $u,v$ to be related if any world set of \HOLtm{M} in $v$ can only see world sets in $u$. Such a definition has a reformulation: for any world set of \HOLtm{M}, if the set of worlds that it can only see is in $u$, then this set is in $v$:
 
 \begin{holmath}
-  \HOLthm[def]{chap2_1.bounded_preimage_rooted_def}
+  \HOLthm[def]{chap2_5.UE_rel_def}
+  \HOLthm{chap2_5.exercise_2_5_5}
 \end{holmath}
-
-That is, the worlds in this model are lists, encoded as natural numbers using \texttt{numlistTheory}. The definition actually says a list $(u_0,u_1,...,u_n)$ is in the world of this model iff the list is nonempty, begining with the root $x$, and recording a path in $M$ from the root $x$ to $u_n$. A list $l_1$ is related to a list $l2$ iff $l2$ is one-element longer then $l_1$, if we put $l_1$ and $l_2$ in parallel and compare their members, they are all the same until the $l_1$ is end, and the last element of $l_1$ is linked to the last element of $l_2$ via the relation in \HOLtm{M}. And the evaluation map is defined by a list $l_1\in V_{rooted}(p)$ iff the last element of $l_1\in V(p)$ where $V$ is the evaluation map of \HOLtm{M}. The model \HOLtm{M} is then the bounded morphic image of it under the bounded morphism defined by taking the last element of the list, this is the function ``nlast''.
-
-So we have two things to prove. One thing is that the model defined above is indeed a tree:
-
-
-Beyond the works about numlistTheory(Here I have omitted all the works about the \texttt{numlistTheory}, otherwise the description of this part would be even longer then the already existing article.), The trickest part is to prove the unique existence of the predecessor of a non-root element. For a non-root element, its predecessor is the list obtained by discarding the last element of the list. discarding the last element of a numlist is defined as a function \HOLtm{nfront}, and the following lemmas proves that for a list \HOLtm{t}, \HOLtm{nfront t} is indeed a predecessor of \HOLtm{t} by proving that it is both in the world of our defined model, and it is linked to \HOLtm{t} by the relation on the model.
-
-For proving that the predecessor is unique, note that an numlist is uniquely defined by the members in it. so once we conclude that if a list is a predecessor of a given list \HOLtm{t}, then each member of it is fixed, then we are done. And the information that ``given a non-root element, each member of its predecessor is fixed'' can be extracted from the third clauses of the definition of relation in \texttt{bounded_preimage_rooted_def}.
-
-Having proved the first half. The other thing is that for the rooted model $M$ with root $x$ it is indeed the bounded morphic image of the model we construct above under the bounded morphism ``nlast''.
-
-For the proof of this, rewriting with the definition of bounded morphic image gives four subgoals. Among them, a non-trivial one is the fact that if \HOLtm{n} is a list in the world set of the model we have defined, then \HOLtm{nlast n} is in the world set of $M$. To deal with it, note that \HOLtm{nlast n = nel (LENGTH (listOfN n) - 1) n}, then we can prove a lemma that for a numlist in our constructed model, every member of the list is in the world of \HOLtm{M}:
-
-to proves the desired fact.
 
-Another non-trivial part is the surjectiveness of the map \HOLtm{nlast}, this is proved as a lemma:
+The ultrafilter extension is defined as follows:
 
-by induction on the reflexive transitive closure relation. To actually apply the above lemma into our proof. We also need to prove
-
-which tells us for any element in a rooted model, it is linked to the root by the reflextive transitive closure. So we can get the anticedent of our lemma holds, which allows us to apply it.
-
-With the two above theorems proved, the main theorem can be solved easily by applying \texttt{qexists_tac} and \texttt{metis_tac} with the above two lemmas.
-
-\subsubsection{2.2 Bisimulations}
-
-This section talks about bisimulations, which is defined as a relation between elements in the world sets of two models satisfying some conditions:
-
 \begin{holmath}
-  \HOLthm[def]{chap2_2.bisim_def}
+  \HOLthm[def]{chap2_5.UE_def}
 \end{holmath}
-
-As we can read from the code, for a relation $Z$ between models $M$ and $M'$ to be a bisimulation, the worlds which are related must satisfies the same propositional letters, and the forward consition:
-
-If $wZw'$ and $Rwv$, then there exists a world $v'$ in $M'$ such that $vZv'$ and $R'w'v'$.
-
-And the backward condition:
-
-If $wZw'$ and $R'w'v'$, then there exists a world $v$ in $M$ such that $vZv'$ and $Rwv$.
-
-If two points in two models are related by a bisimulation, then we call the two points are bisimilar:
 
-We can also say that two models are bisimilar if there is a bisimulation between them:
+The ultrafilter extension also changes the type of model, namely, it change the type of world set from $\beta$ to $(\beta\to bool)\to bool$, it is indeed an extension, in the sense that \HOLtm{M} is embedded in \HOLtm{UE M} by the function sending \HOLtm{w IN M.frame.world} to the principle ultrafilter \HOLtm{principle_UF w M.frame.world} generated by $w$. In general, this embedding does not necessarily give a generated submodel, nevertheless, we have an invariance result for this embedding:
 
-In fact, there are many situations where we can obtain a bisimulation:
-
-(1) If \HOLtm{M}$\cong$\HOLtm{M'}, then \HOLtm{M} is bisimilar to \HOLtm{M'}. (The bisimulation is given by relating a world to its image under the isomorphism.)
-
 \begin{holmath}
-  \HOLthm{chap2_2.prop_2_19_i}
+  \HOLthm{chap2_5.prop_2_59_ii}
 \end{holmath}
 
-(2) For a disjoint union \HOLtm{DU (f,dom)} of models, any model \HOLtm{(f i)} where \HOLtm{i} is in the \HOLtm{dom} is bisimilar to the unioned model. (The bisimulation is given by relating a world to its copy in the disjoint union.)
+This is actually a special case of the following proposition, where $u$ is taken as \HOLtm{principle_UF w M.frame.world}. This proposition captures the idea that ultrafilters are used to describe the sense of `most of', where the sets in the ultrafilters can be regarded as `sets which are large enough'. From this aspect, the proposition says that a formula $\phi$ is satisfied in an ultrafilter $u$ iff $\phi$ is satisfied at most of worlds in \HOLtm{M}, where the sense of `most of' is measured by $u$.
 
 \begin{holmath}
-  \HOLthm{chap2_2.prop_2_19_ii}
+  \HOLthm{chap2_5.prop_2_59_i}
 \end{holmath}
 
-(3) If \HOLtm{M} is a generated submodel of \HOLtm{M'}, then \HOLtm{M} is bisimilar to \HOLtm{M'}. (The bisimulation is given by relating a world to itself.)
+Proof:
+By induction on \HOLtm{phi}. Everything except for the diamond case is by unwinding the definitions of \HOLtm{UE M} and ultrafilter. We only give the proof of the diamond case. 
 
-\begin{holmath}
-  \HOLthm{chap2_2.prop_2_19_iii}
-\end{holmath}
+From right to left: Suppose \HOLtm{satis (UE M) u (DIAM phi)}, then \HOLtm{satis (UE M) u' psi} for some \HOLtm{UE_REL M u u'}. By inductive hypothesis, \HOLtm{satis (UE M) u' phi} implies $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u'$. And then by definition of \HOLtm{UE_rel M}, this implies \HOLtm{can_see M} $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u$. But this set is exactly the set $\{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}$ by the observation in \texttt{valt_can_see}.
 
-(4) If \HOLtm{M'} is a bounded morphic image of \HOLtm{M} under the bounded morphism $f$, then \HOLtm{M} is bisimilar to \HOLtm{M'}. (The bisimulation is given by relating to a world to its image under the bounded morphism.)
+From left to right: Suppose  $\{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}\in u$, we need to find out an ultrafilter $u'$ such that \HOLtm{UE_rel M u u'} and \HOLtm{satis (UE M) u' phi}. Using \texttt{exercise_2_5_5}, \HOLtm{UE_rel M u u'} is equivalent to $s:=\{Y\mid only\_see(Y)\in u\land Y\subseteq M.frame.world\}\subseteq u'$. We prove $s\cup\{w\mid  w \in M.frame.world\land satis \ M \ w \ phi\}$ has finite intersection property. It suffices to check (1) $s$ is closed under intersection, and (2) The interesection of any element in $s$ with $\{w\mid  w \in M.frame.world\land satis \ M \ w \ phi\}$ is non-empty. 
 
-\begin{holmath}
-  \HOLthm{chap2_2.prop_2_19_iv}
-\end{holmath}
+For (1), if $a,b\in s$, then both \HOLtm{only_see M a} and \HOLtm{only_see M b} are in $u$, and hence there intersection. By \texttt{only_see_INTER}, \HOLtm{only_see M a ∩ only_see M b = only_see M (a INTER b)}, hence $a\cap b\in u$.
 
-Similar to the last section, there is also an invarience theorem for bisimulations. It says that if \HOLtm{M} and \HOLtm{M'} are models, then if two worlds $w,w'$ in the two models are linked by a bisimulation, then they are modally equivalent.
+For (2), let $Y\in s$, then \HOLtm{(only_see M Y) IN u}, as also $\{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}\in u$, by closure under intersection for an ultrafilter, $only\_see(Y)\cap \{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}\ne \emptyset$, we obtaine an element of $Y\cap \{w\mid  w \in M.frame.world\land satis \ M \ w \ phi\}$ from any element $x$ of it. As $x\in \{w | w \in M.frame.world \land satis\ M\ w\ (\Diamond \phi)\}$, there exists \HOLtm{y IN M.frame.world} such that \HOLtm{satis M y phi}, as $x\in only\_see(Y)$, we have $y\in Y$.
 
-\begin{holmath}
-  \HOLthm{chap2_2.thm_2_20}
-\end{holmath}
+The rest of the proof of finite intersection property is done by induction. Hence by \texttt{ultrafilter_theorem_corollary}, there exists an ultrafilter $u'$ such that $s\cup\{w\mid  w \in M.frame.world\land satis \ M \ w \ phi\}\subseteq u'$. This is the $u'$ we want: We have \HOLtm{UE_rel M u u'} since $\{Y\mid only\_see(Y)\in u\}=s\subseteq u'$, and $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u'$, we get \HOLtm{satis (UE M) u' phi} by inductive hypothesis.
 
-A natural question is that whether the converse of the above theorem holds. That is, if two worlds in two models are modally equivalent, whether they are bisimilar or not. In general, it does not. But the converse of the above theorem does hold for a special kind of models, called image-finite models. This kind of model is defined as the model has a special property that each point in the model is only related to a finite number of worlds, as defined below:
+The above proposition leads to a proof of m-saturatedness of ultrafilter extensions.
 
 \begin{holmath}
-  \HOLthm[def]{chap2_2.image_finite_def}
+  \HOLthm{chap2_5.prop_2_61}
 \end{holmath}
 
-The invarience theorem of this kind of model is called Hennessy-Milner Theorem:
+Proof:
+Suppose \HOLtm{Σ} is a set of formulas which is finitely satisfiable in the set of successors of a world \HOLtm{u IN (UE M).frame.world}, we need to find a world \HOLtm{u' IN (UE M).frame.world} such that \HOLtm{UE_rel M u u'} and \HOLtm{satis (UE M) u' phi} for all \HOLtm{phi IN Σ}. By \texttt{exercise_2_5_5} and \texttt{prop_2_59_i}, it amounts to find an ultrafilter $u'$ on \HOLtm{M.frame.world} such that $\{Y\mid only\_see(Y)\in u\}\subseteq u'$ and $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u'$ for all \HOLtm{phi IN Σ}.
 
-It says that for worlds in image-finite models, modal equivalence is equivalent to being linked by a bisimulation. Half of this theorem is just a special case of the invarience theorem of bisimulations, the part that requires a proof is:
+Consider the set $\Delta:= \{\{w\mid w \in M.frame.world \land \forall \phi.\phi\in s\implies satis \ M \ w\ \phi\}\mid FINITE \ s \land s\subseteq \Sigma\}\cup \{Y\mid only\_see\ M \ Y \in w\land Y\subseteq M.frame.world\}$. Similar as in the proof of \texttt{prop_2_59_i}, we check $\Delta$ has the finite intersection property. The only nontrivial thing to check is that for $a\in \{\{w\mid w \in M.frame.world \land \forall \phi.\phi\in s\implies satis \ M \ w\ \phi\}\mid FINITE \ s \land s\subseteq \Sigma\}$ and $b\in \{Y\mid only\_see\ M \ Y \in w\land Y\subseteq M.frame.world\}$, we have $a\cap b\ne\emptyset$.
 
-\begin{holmath}
-  \HOLthm{chap2_2.thm_2_24_lemma}
-\end{holmath}
+Suppose $s \subseteq\Sigma$ is finite, and $b$ is a set of worlds in \HOLtm{M} such that \HOLtm{(only_see M b) IN u}, we show $\{w\mid w \in M.frame.world \land \forall\phi.\phi\in s\implies satis \ M \ w \phi\}\cap b\ne\emptyset$. Recall \HOLtm{Σ} is finitely satisfiable in the set of successors of $u$, we have a world $u''$ such that \HOLtm{UE_rel M u u''} and \HOLtm{satis (UE M) u'' phi} for all $\phi \in s$, in other worlds, $\{w\mid w \in M.frame.world\land satis \ M \ w \ phi\}\in u''$ for all $\phi\in s$. Then $\{w\mid w \in M.frame.world \land \forall\phi.\phi\in s\implies satis \ M \ w \phi\}\cap b\ne\emptyset$ is a big intersection of sets in $u''$, and hence is in $u''$. By \texttt{exercise_2_5_5} again, \HOLtm{UE_rel M u u''} gives $\{Y\mid only\_see (Y)\in u\land Y\subseteq M.frame.world\}\subseteq u''$, so $b\in u''$ as well. As two elements in $u''$ has nonempty intersection, we are done.
 
-We will prove that for two image-finite models, if two worlds are modally equivalent, then the relation $Z$ that $wZw'$ iff $w$ and $w'$ are modally equivalent is a bisimulation.
+Hence by \texttt{ultrafilter_theorem_corollary}, there exists an ultrafilter $u'$ contains $\Delta$, it is trivial to check $u'$ is what we want.
 
-If we use \texttt{qexists_tac} to specify the bisimulation \HOLtm{λn1 n2. ∀form. satis M n1 form ⇔ satis M' n2 form} and expand the definition of bisimulation of proving it, the HOL would ask us to prove two subgoals: both the forward condition and the backward consition. But the bisimulation we use here is actually special: it is a equivalence relation which is symmetric, so the forward and backward condition makes no difference, means that it suffices to prove only one of them. To convince the HOL that we just want prove only one of them, we prove this lemma:
 
-The \HOLtm{P M N} here is the \HOLtm{image_finite M ∧ image_finite M'} in the theorem, and \HOLtm{Z M N u v} corresponds to \HOLtm{∀form. satis M' n2 form ⇔ satis M n1 form}. So once we prove this theorem, we can match it to the original statement with \texttt{ho_match_mp_tac} to give:
+Finally, as claimed at the begining of this chapter, we arrive at the characterisation of modal equivalence as bisimilarity somewhere else:
 
 \begin{holmath}
-  \HOLtm[alltt]{
- (∀M' M.
-         image_finite M' ∧ image_finite M ⇒
-         image_finite M ∧ image_finite M') ∧
-     (∀M' M n2 n1.
-         (∀form. satis M' n2 form ⇔ satis M n1 form) ⇒
-         ∀form. satis M n1 form ⇔ satis M' n2 form) ∧
-     ∀M M'.
-        image_finite M ∧ image_finite M' ⇒
-        ∀n1 n2.
-           n1 ∈ M.frame.world ∧ n2 ∈ M'.frame.world ∧
-           (∀form. satis M n1 form ⇔ satis M' n2 form) ⇒
-           (∀a. satis M n1 (VAR a) ⇔ satis M' n2 (VAR a)) ∧
-           ∀n1'.
-              n1' ∈ M.frame.world ∧ M.frame.rel n1 n1' ⇒
-              ∃n2'.
-                 n2' ∈ M'.frame.world ∧
-                 (∀form. satis M n1' form ⇔ satis M' n2' form) ∧
-                 M'.frame.rel n2 n2'}
+  \HOLthm{chap2_5.thm_2_62}
 \end{holmath}
-
-After \texttt{rpt strip_tac}, we can see many of the subgoals are trivial, and the only remaining task if prove one of the forward/backward condtion. So we can save labour on repeating the same proof.
 
-The thing remains to prove to is that if $n_1$ in \HOLtm{M},$n_2$ in \HOLtm{M'} are modally equivalent, then for all $n_1'$ in \HOLtm{M} with $Rn_1n_1'$, there exists an $n_2'\in M'$ such that $R'n_2n_2'$ and $n_1'$ and $n_2'$ are modally equivalent. It is proved by assuming that there exists a point in $n_1'$ such that $Rn_1n_1'$, and for all $n_2'$ in \HOLtm{M'} such that $R'n_2n_2'$, $n_1'$ is not modally equivalent to $n_2'$, then we will reach a contradiction by proving then $n_1$ and $n_2$ would not be modally equivalent. To conclude this, we need to find out a formula that is satisfied at $n_1$ but not $n_2$. It turns out that the formula we need is one with a diamond in the front. So it suffices to prove that there is a formula that is satisfied at $n_1'$, but is not satisfied at any the world that is related to $n_2$. It turns out that we can find a formula which is a big conjunction that satisfies this condition. But the problem is: We have not got a definition of big conjunction by hand. To tackle this problem, we choose to do not use \texttt{qexists_tac} to specify an explict formula, but to prove its existence as a lemma.
+Proof:Bisimulation implies modal equivalence by \texttt{thm_2_20}. For the reverse direction, if \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} are modal equivalence, then \HOLtm{(principle_UF w M.frame.world) IN (UE M).frame.world} is modal equivalent to \HOLtm{(principle_UF w' M'.frame.world) IN (UE M').frame.world}. As \HOLtm{UE M} and \HOLtm{UE M'} are m-saturated by \texttt{prop_2_61}, the result follows by \texttt{prop_2_54_DIST_TYPE}.
 
+\section{Invariant under bisimulations and simulations}
 
-We are given that \HOLtm{M},\HOLtm{M'} are both image finite, so the set of the worlds related to $n_2$ in \HOLtm{M'} is finite. Also the set of such worlds is non-empty, since otherwise the formula $\Box \bot$ is vacuously true at $n_2$ but is false at $n_1$. 
 
-So once this lemma is proved, we can apply it to our case where $s$ is the set of worlds that are related to $n_2$, $v$ is the $n_1'$, and then the ``psi'' in the conclusion gives the desire formula which gives the contradiction. Then by the argument above, we have proved the main theorem.
-                 
+           
 \end{document}
 
 % Local variables:
