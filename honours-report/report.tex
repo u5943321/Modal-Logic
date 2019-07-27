@@ -18,7 +18,7 @@
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
-\renewcommand{\baselinestretch}{0.9}
+\renewcommand{\baselinestretch}{1.4}
 
 \title{Modal Logic Mechanisation in HOL4}
 \author{Yiming Xu}
@@ -1294,7 +1294,7 @@ Given a first order model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, we
   \HOLConst{valuation}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{v}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n}.\;\HOLFreeVar{v}\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Dom}
 \end{holmath} 
 
-Interpretation of terms and formulas are given as \HOLinline{\HOLConst{termval}} and \texttt{feval}, where \HOLinline{\HOLConst{termval}} takes a model, an assignment of variable letters and a term, gives us an element of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Dom}}. And \texttt{feval} takes a model, an assignment of variable letters and a first order formula, gives us the truth value whether the formula we give holds on the model under the current assignment of variable letters, we only care about when the an assignment of variable letters is indeed a valuation as defined above, when $\sigma$ is a valuation and \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{fform}}, we say `$fform$ is satisfied in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} under the valuation $\sigma$'.
+Interpretation of terms and formulas are given as \HOLinline{\HOLConst{termval}} and \texttt{feval}, where \HOLinline{\HOLConst{termval}} takes a model, an assignment of variable letters and a term, gives us an element of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Dom}}. And \texttt{feval} takes a model, an assignment of variable letters and a first order formula, gives us the truth value whether the formula we give holds on the model under the current assignment of variable letters, we only care about when the an assignment of variable letters is indeed a valuation as defined above, when $\sigma$ is a valuation and \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{fform}}, we say `$fform$ is satisfied in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} under the valuation $\sigma$'. In particular, if there is only one free variable $x$ in $fform$, then \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{fform}} just means that \HOLinline{\HOLFreeVar{fform}} is satisfied at the point \HOLinline{\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{x}} in the model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}. The advantage of using the \HOLinline{\HOLFreeVar{\ensuremath{\sigma}}} is that it can simutinously cope with any number of free variables. 
 
 \begin{defn}[Term Valuation]
 Some text here.  The $\HOLinline{\HOLConst{termval}}\;:\;\HOLinline{\ensuremath{\alpha}\;\HOLTyOp{model}\;\ensuremath{\rightarrow}\;(\HOLTyOp{num}\;\ensuremath{\rightarrow}\;\ensuremath{\alpha})\;\ensuremath{\rightarrow}\;\HOLTyOp{term}\;\ensuremath{\rightarrow}\;\ensuremath{\alpha}}$.
@@ -2338,75 +2338,40 @@ Actually, the \texttt{ultraproduct_comm_feval} and \texttt{expansion_shift_feval
 \end{holmath}
 
 \begin{proof}
+Suppose $s$ is a set of formulas such that each element has no function symbol and only one free varible $x$ other then the ones in $N$ which are actually used to capture constants. Suppose in addition that for all finite $ss\subseteq s$, exists a valuation \HOLinline{\HOLFreeVar{\ensuremath{\sigma}}} such that \HOLinline{\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{n}\;\HOLSymConst{=}\;\HOLFreeVar{f}\;\HOLFreeVar{n}} for all $n\in N$, and \HOLinline{\HOLConst{feval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{FMS})\;\HOLFreeVar{phi}} for each \HOLinline{\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{s}}. If $s$ is finite, there is nothing to prove, so we assume $s$ is infinite. As we are using a countable first order language, there exists a bijection \HOLinline{\HOLFreeVar{enum}} from the natural number to the set $s$. We prove there exists a valuation \HOLinline{\HOLFreeVar{\ensuremath{\sigma}}} such that agree with $f$ on $N$ and moreover, \HOLinline{\HOLConst{feval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{FMS})\;(\HOLFreeVar{enum}\;\HOLFreeVar{n})} for all natural number $n$. Such a valuation is an assignment of variables to equivalence class, by \texttt{ultraproduct_suffices_rep} and the Los theorem, it suffices to find out a function \HOLinline{\HOLFreeVar{rv}} that assigning each natural number a representative of some equivalence class, such that it satisfies:
 
+\begin{itemize}
+  \item \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v}\;\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{rv}\;\HOLBoundVar{v}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom}}
+  \item \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n}.\\
+\;\;\;\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{N}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{g}\;\HOLTokenBar{}\;\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLConst{I}\;(\HOLConst{folmodels2Doms}\;\HOLFreeVar{FMS})\;\HOLBoundVar{g}\;(\HOLFreeVar{rv}\;\HOLBoundVar{n})\HOLTokenRightbrace{}\;\HOLSymConst{=}\;\HOLFreeVar{f}\;\HOLBoundVar{n}}
+  \item \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{k}.\\
+\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{v}.\;\HOLFreeVar{rv}\;\HOLBoundVar{v}\;\HOLBoundVar{i})\;(\HOLFreeVar{conj}\;\HOLBoundVar{k})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}}
+\end{itemize}
 
+The first item says what $rv$ assign to each natural number must be an element in the Cartesion product. And the second item says that the equivalence class assigned to free variables in $N$ has already been fixed by $f$. We devote to satisfy the third condition. 
 
+By \texttt{countbly_incomplete_chain} proved in interlude II, we have a chain \HOLinline{\HOLFreeVar{In}} where \HOLinline{\HOLFreeVar{In}\;\HOLFreeVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}} and \HOLinline{\HOLFreeVar{In}\;(\HOLFreeVar{n}\;\HOLSymConst{\ensuremath{+}}\;\HOLNumLit{1})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{In}\;\HOLFreeVar{n}} for each \HOLinline{\HOLFreeVar{n}}, and moreover, the intersection of this chain is empty. Let \HOLinline{\HOLFreeVar{conj}\;\HOLSymConst{=}\;\HOLConst{PRIM_REC}\;\HOLConst{True}\;(\HOLTokenLambda{}\HOLBoundVar{conjn}\;\HOLBoundVar{n}.\;\HOLConst{fAND}\;\HOLBoundVar{conjn}\;(\HOLFreeVar{enum}\;\HOLBoundVar{n}))}, hence \HOLinline{\HOLFreeVar{conj}\;\HOLNumLit{0}\;\HOLSymConst{=}\;\HOLConst{True}}, and \HOLinline{\HOLFreeVar{conj}\;\HOLFreeVar{n}} is the conjunction from \HOLinline{\HOLFreeVar{enum}\;\HOLNumLit{0}} to \HOLinline{\HOLFreeVar{enum}\;(\HOLFreeVar{n}\;\HOLSymConst{\ensuremath{-}}\;\HOLNumLit{1})}. Define \HOLinline{\HOLFreeVar{Jn}\;\HOLSymConst{=}\\
+\;\;(\HOLTokenLambda{}\HOLBoundVar{n}.\\
+\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{k}.\;\HOLBoundVar{k}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{N}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{k}\;\HOLSymConst{=}\;\HOLConst{CHOICE}\;(\HOLFreeVar{f}\;\HOLBoundVar{k})\;\HOLBoundVar{i})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;\HOLBoundVar{\ensuremath{\sigma}}\;(\HOLConst{fEXISTS}\;\HOLFreeVar{x}\;(\HOLFreeVar{conj}\;\HOLBoundVar{n}))\HOLTokenRightbrace{})}, then \HOLinline{\HOLFreeVar{Jn}} is also a descending chain. And moreover, the Los theorem implies that \HOLinline{\HOLFreeVar{Jn}\;\HOLFreeVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}} for any $n$. Define \HOLinline{\HOLFreeVar{Xn}\;\HOLSymConst{=}\;(\HOLTokenLambda{}\HOLBoundVar{n}.\;\HOLFreeVar{In}\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLFreeVar{Jn}\;\HOLBoundVar{n})}, then \HOLinline{\HOLFreeVar{Xn}} is a descending chain in $U$ starting with \HOLinline{\HOLConst{I}} and intersects to the empty set. For such a chain, each element \HOLinline{\HOLFreeVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}} can only belong to finitely many of \HOLinline{\HOLFreeVar{Xn}}s. Hence there exists a function \HOLinline{\HOLFreeVar{Ni}} that send an element \HOLinline{\HOLFreeVar{i}} to smallest set in the chain that \HOLinline{\HOLFreeVar{i}} belongs to. That is, for all \HOLinline{\HOLFreeVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}} \HOLinline{\HOLFreeVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{Xn}\;(\HOLFreeVar{Ni}\;\HOLFreeVar{i})} and \HOLinline{\HOLFreeVar{i}\;\HOLSymConst{\HOLTokenNotIn{}}\;\HOLFreeVar{Xn}\;\HOLFreeVar{a}} for any \HOLinline{\HOLFreeVar{a}\;\HOLSymConst{\HOLTokenGt{}}\;\HOLFreeVar{Ni}\;\HOLFreeVar{i}}.
 
+The \HOLinline{\HOLFreeVar{rv}} we are looking for can be taken as:
+\HOLinline{\HOLTokenLambda{}\HOLBoundVar{v}\;\HOLBoundVar{i}.\\
+\;\;\;\;\HOLKeyword{if}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{N}\;\HOLKeyword{then}\;\HOLConst{CHOICE}\;(\HOLFreeVar{f}\;\HOLBoundVar{v})\;\HOLBoundVar{i}\\
+\;\;\;\;\HOLKeyword{else}\\
+\;\;\;\;\;\;\HOLConst{CHOICE}\\
+\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{a}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\HOLBoundVar{a}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\\
+\;\;\;\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{n}.\;\HOLKeyword{if}\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{N}\;\HOLKeyword{then}\;\HOLConst{CHOICE}\;(\HOLFreeVar{f}\;\HOLBoundVar{n})\;\HOLBoundVar{i}\;\HOLKeyword{else}\;\HOLBoundVar{a})\\
+\;\;\;\;\;\;\;\;\;\;\;(\HOLFreeVar{conj}\;(\HOLFreeVar{Ni}\;\HOLBoundVar{i}))\HOLTokenRightbrace{}}
+The first two conditions are immediate to check. It remains to show \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{In}\;\HOLNumLit{0}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{v}.\;\HOLFreeVar{\ensuremath{\sigma}r}\;\HOLBoundVar{v}\;\HOLBoundVar{i})\;(\HOLFreeVar{conj}\;\HOLFreeVar{k})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\\
+\HOLFreeVar{U}} for any $k$. As \HOLinline{\HOLFreeVar{Xn}\;\HOLFreeVar{k}} is in $U$, it suffices to check this is a supset of \HOLinline{\HOLFreeVar{Xn}\;\HOLFreeVar{k}}. For any \HOLinline{\HOLFreeVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{Xn}\;\HOLFreeVar{k}}, by definition of the function \HOLinline{\HOLFreeVar{Ni}}, we have \HOLinline{\HOLFreeVar{k}\;\HOLSymConst{\HOLTokenLeq{}}\;\HOLFreeVar{Ni}\;\HOLFreeVar{i}}. As \HOLinline{\HOLFreeVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{Xn}\;(\HOLFreeVar{Ni}\;\HOLFreeVar{i})}, in particular, \HOLinline{\HOLFreeVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{Jn}\;(\HOLFreeVar{Ni}\;\HOLFreeVar{i})}. Hence \HOLinline{\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLFreeVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{v}.\;\HOLFreeVar{\ensuremath{\sigma}r}\;\HOLBoundVar{v}\;\HOLFreeVar{i})\;(\HOLFreeVar{conj}\;(\HOLFreeVar{Ni}\;\HOLFreeVar{i}))}. As \HOLinline{\HOLFreeVar{conj}\;\HOLFreeVar{m}} implies \HOLinline{\HOLFreeVar{conj}\;\HOLFreeVar{n}} for \HOLinline{\HOLFreeVar{n}\;\HOLSymConst{\HOLTokenLeq{}}\;\HOLFreeVar{m}}, we are done.
 
-
-  %Suppose for a set $s$ of formulas, each element of it has only one free variable $x$ except the ones that are representing constants, and for each subset $ss\subseteq s$, we have a valuation that realises this subset in the ultraproduct model, with the `constants' delivered to the correct places, we will prove the whole set $s$ is realised in the ultraproduct model by a valuation which sends the `constants' to the right places. As the value of the constants are fixed, it amounts to find somewhere to send the only `real' free variable $x$ to. If $s$ is finite then there is nothing to prove, so we assume $s$ is infinite in the following discussion.
-
-%Recall we have restricted ourself to countably first order language, then as proved in ??? the infinite set $s$ of first order formulas are countable. Hence we obtain a bijection \HOLinline{\HOLFreeVar{enum}} from the universe of natural numbers to our set $s$. Define \HOLinline{\HOLFreeVar{conj}} to be the primitive recursive function \HOLinline{\HOLConst{PRIM_REC}\;\HOLConst{True}\;(\HOLTokenLambda{}\HOLBoundVar{conjn}\;\HOLBoundVar{n}.\;\HOLConst{fAND}\;\HOLBoundVar{conjn}\;(\HOLFreeVar{enum}\;\HOLBoundVar{n}))}, then \HOLinline{\HOLFreeVar{conj}\;\HOLFreeVar{n}} will be the formula $enum(0)\land\cdots\land enum(n)$. Then it suffices to prove the existence of a point that realise any of these conjunctions. By \texttt{ultraproduct_suffices_rep} and the Los theorem, it amounts to find out an a function to represent this equivalence class, we need some setups to find out the function. 
-
-%Consider the family of sets:
-%
-Type inference failure: unable to infer a type for the application of
-
-(% :(α model -> (num -> α) -> form -> bool) -> β -> (γ -> δ) -> form -> bool)
-
-at line 1579, character 16
-
-to
-
-∀(σ :α -> β).
-    (∀(k :α).
-         k ∈ (N :α -> bool) ⇒
-         σ k = CHOICE ((f :α -> (bool -> β) -> bool) k) (i :bool)) ⇒
-    (% :
-       (γ model -> (num -> γ) -> form -> bool) ->
-       δ -> (α -> β) -> form -> bool)
-      (feval :γ model -> (num -> γ) -> form -> bool ) ((FMS :bool -> δ) i) σ
-      (fEXISTS (x :num) ((conj :ε -> form) (n :ε)))
-
-between line 1579, character 19 and line 1580, character 58
-
-which has type
-
-:bool
-
-unification failure message: Attempt to unify different type operators: min$fun and min$bool
-
-%such $J_n$'s forms a desending chain. As by assumption, each finite subset of $s$ is realisable, each such $J$ is realisable, so all of them are in $U$ by Los theorem. By \texttt{countably_incomplete_chain}, we get another descending chain $I_n$'s of sets $U$ with $\bigcap_{n\in\mathbb N} I_n=\emptyset$. Define $X_n:= I_n\cap J_n$, then $X_n$ is a descending chain in $U$ where $\bigcap_{n\in\mathbb N}X_n=\emptyset$. Hence for any $i\in I$, it exists a number $N(i)$ such that $i\in X_{N(i)}$ and for any $a>N(i)$, $i\notin X_a$. The equivalence class we will send $x$ to is represented by the function 
-%
-Type inference failure: unable to infer a type for the application of
-
-feval ((FMS :β -> α model) (i :β)) (% :num -> α)
-
-between line 1580, character 47 and line 1581, character 8
-
-which has type
-
-:form -> bool
-
-to
-
-λ(n :α).
-    if n ∈ (N :α -> bool) then
-      CHOICE ((f :α -> (γ -> (num -> β) -> β) -> bool) n) (i :γ)
-        (% :num -> β)
-    else (a :β)
-
-roughly between line 1581, character 32 and line 1582, character 37
-
-which has type
-
-:α -> β
-
-unification failure message: Attempt to unify different type operators: folLang$form and min$fun
-, call it $ff$. By chosing such an $ff$, we have \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{k}.\\
-\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{In}\;\HOLNumLit{0}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{v}.\;\HOLFreeVar{rv}\;\HOLBoundVar{v}\;\HOLBoundVar{i})\;(\HOLFreeVar{conj}\;\HOLBoundVar{k})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}}
-
-%!!!mention Godel numbering ?
 \end{proof}
 
 We can step on the two stairs we built above to get \texttt{lemma_2_73}, using the capatibility lemma, we migrant the above lemma to ultraproduct of modal models:
@@ -2474,6 +2439,11 @@ we can deduce \texttt{lemma_2_73} trivially from here.
 The last step towards the main theorem is used to pass from infinite set to finite set.
 \subsubsection{Interlude IV: Compactness theorem}
 
+
+haven't written it yet...
+talk about 1. JH's work on compactness, skip the proof, and talk a bit about its corollary, and how to use the corollary as `suffices to prove is implies by a set of formulas'. Prove modal compactness since we are doing modal logic. And prove modal version of the useful corollary.
+
+
 With all these set-ups, we give a fully justified answer to the question in the begining of the section. 
 
 %explain why only prove it for the same type.
@@ -2491,6 +2461,37 @@ With all these set-ups, we give a fully justified answer to the question in the 
 \end{holmath}
 
 \begin{proof}
+ Suppose $a$ is a first order formula invariant for bisimulation with only one free variable $x$. Consider the modal consequence of $a$, which is the set of standard translations implied by $a$ on well-formed first order models, defined in the HOL as \HOLinline{\HOLFreeVar{MOC}\;\HOLSymConst{=}\\
+\;\;\HOLTokenLeftbrace{}\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLBoundVar{phi}\;\HOLTokenBar{}\\
+\;\;\;\;\;\HOLBoundVar{phi}\;\HOLTokenBar{}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n}.\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Pred}\;\HOLBoundVar{n}\;[]\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{F})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a}\;\HOLBoundVar{b}\;\HOLBoundVar{n}.\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Pred}\;\HOLBoundVar{n}\;[\HOLBoundVar{a};\;\HOLBoundVar{b}]\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{n}\;\HOLSymConst{=}\;\HOLNumLit{0})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{a}\;\HOLBoundVar{b}\;\HOLBoundVar{c}\;\HOLBoundVar{d}\;\HOLBoundVar{n}.\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Pred}\;\HOLBoundVar{n}\;(\HOLBoundVar{a}\HOLSymConst{::}\HOLBoundVar{b}\HOLSymConst{::}\HOLBoundVar{c}\HOLSymConst{::}\HOLBoundVar{d})\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{F})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n\sb{\mathrm{0}}}\;\HOLBoundVar{l\sb{\mathrm{0}}}.\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Fun}\;\HOLBoundVar{n\sb{\mathrm{0}}}\;\HOLBoundVar{l\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}.\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{a}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;\HOLBoundVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{\ensuremath{\sigma}}\;(\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLBoundVar{phi})\HOLTokenRightbrace{}}
+According to the discussion about compactness theorem proved as in interlude IV, it suffices to prove \HOLinline{\HOLFreeVar{a}} is implies by \HOLinline{\HOLFreeVar{MOC}}. Now, fix a model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} and suppose \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{f}} for any \HOLinline{\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{MOC}}, we prove \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{a}}. 
+
+Consider of the set \HOLinline{\HOLFreeVar{Tx}} of formulas \HOLinline{\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLFreeVar{phi}} such that \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLFreeVar{phi})}. We prove there is a well-formed model \HOLinline{\HOLFreeVar{N}} with an evaluation \HOLinline{\HOLFreeVar{\ensuremath{\sigma}n}} such that for all \HOLinline{\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{Tx}\;\HOLSymConst{\HOLTokenUnion{}}\;\HOLTokenLeftbrace{}\HOLFreeVar{a}\HOLTokenRightbrace{}}, we have \HOLinline{\HOLConst{feval}\;\HOLFreeVar{N}\;\HOLFreeVar{\ensuremath{\sigma}n}\;\HOLFreeVar{f}}. 
+Suppose, in order to get a contradiction, that such a model does not exists, then for any well-formed model, once all the formulas in \HOLinline{\HOLFreeVar{Tx}} are satisfied, then \HOLinline{\HOLFreeVar{a}} is not satisfied. Then by compactness, there exists a finite subset of \HOLinline{\HOLFreeVar{Tx}} implies $\lnot a$. Taking its contrapositive, then \HOLinline{\HOLFreeVar{a}} implies the negation of the big conjunction\HOLinline{\HOLFreeVar{psi}} of finitely many elements in \HOLinline{\HOLFreeVar{Tx}}. By \texttt{ST_BIGCONJ} and \HOLinline{\HOLFreeVar{ST\HOLTokenUnderscore{}fNOT}}, a negated big conjunction of standard translations is again a standard translation. Hence \HOLinline{\HOLConst{fNOT}\;\HOLFreeVar{psi}} is in \HOLinline{\HOLFreeVar{MOC}}. Recall we have assumed \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{f}} for any \HOLinline{\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{MOC}}, so \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLConst{fNOT}\;\HOLFreeVar{psi})}, but also \HOLinline{\HOLConst{feval}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{psi}} by definition of \HOLinline{\HOLFreeVar{Tx}}, we have a contradiction. 
+
+Hence we obtain a model $N$ and a valuation \HOLinline{\HOLFreeVar{\ensuremath{\sigma}n}} with desired property. Now let \HOLinline{\HOLFreeVar{w}} denote \HOLinline{\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{x}} and \HOLinline{\HOLFreeVar{v}} denote \HOLinline{\HOLFreeVar{\ensuremath{\sigma}n}\;\HOLFreeVar{x}}, we claim that if we regard both \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} and \HOLinline{\HOLFreeVar{N}} as modal models, then \HOLinline{\HOLFreeVar{w}} and \HOLinline{\HOLFreeVar{v}} are modal equivalent. To prove this, suppose \HOLinline{\HOLConst{satis}\;(\HOLFreeVar{fol2mm}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{w}\;\HOLFreeVar{phi}}, then \HOLinline{\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLFreeVar{phi}} is in \HOLinline{\HOLFreeVar{Tx}} by definition of \HOLinline{\HOLFreeVar{Tx}}, hence \HOLinline{\HOLConst{feval}\;\HOLFreeVar{N}\;\HOLFreeVar{\ensuremath{\sigma}n}\;(\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLFreeVar{phi})}. By \texttt{mm2folm_folm2mm_feval}, this is equivalent to \HOLinline{\HOLConst{feval}\;(\HOLConst{mm2folm}\;(\HOLConst{folm2mm}\;\HOLFreeVar{N}))\;\HOLFreeVar{\ensuremath{\sigma}n}\;(\HOLConst{ST}\;\HOLFreeVar{x}\;\HOLFreeVar{phi})}, and if follows from \texttt{prop_2_47_i} that \HOLinline{\HOLConst{satis}\;(\HOLConst{folm2mm}\;\HOLFreeVar{N})\;\HOLFreeVar{v}\;\HOLFreeVar{phi}}. This proves \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\HOLConst{satis}\;(\HOLConst{folm2mm}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLFreeVar{w}\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{satis}\;(\HOLConst{folm2mm}\;\HOLFreeVar{N})\;\HOLFreeVar{v}\;\HOLBoundVar{phi}}. The other direction is by a symmetry argument. 
+
+If modal equivalence implies bisimularity, then we are done: Suppose modal equivalence implies bisimularity, then as \HOLinline{\HOLFreeVar{w}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLConst{folm2mm}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}).\HOLFieldName{frame}.\HOLFieldName{world}} and \HOLinline{\HOLFreeVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLConst{folm2mm}\;\HOLFreeVar{N}).\HOLFieldName{frame}.\HOLFieldName{world}} are modal equivalent, there exists a bisimulation between them. And as \HOLinline{\HOLFreeVar{a}} is invariant for bisimulation and is satisfied at \HOLinline{\HOLFreeVar{v}}, then it is also satisfied at \HOLinline{\HOLFreeVar{w}}. 
+
+But actually it is not always the case. Hence we apply our strategy of taking a detour through some m-saturated model where modal equivalence and bisimularity coincides. Consider the ultraproduct modal models:
+\HOLinline{\HOLFreeVar{Mst}\;\HOLSymConst{=}\;\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLConst{I}\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLConst{folm2mm}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})}
+,
+\HOLinline{\HOLFreeVar{Nst}\;\HOLSymConst{=}\;\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLConst{I}\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLConst{folm2mm}\;\HOLFreeVar{N})} for a countably incomplete ultrafilter $U$ on $I$, we proved in interlude II that such ultrafilters exists. 
+Embed the worlds $w,v$ into these models by \HOLinline{\HOLFreeVar{wst}\;\HOLSymConst{=}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{fw}\;\HOLTokenBar{}\;\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLConst{I}\;(\HOLConst{models2worlds}\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLConst{folm2mm}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}))\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLFreeVar{w})\;\HOLBoundVar{fw}\HOLTokenRightbrace{}},
+\HOLinline{\HOLFreeVar{vst}\;\HOLSymConst{=}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{fv}\;\HOLTokenBar{}\;\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLConst{I}\;(\HOLConst{models2worlds}\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLConst{folm2mm}\;\HOLFreeVar{N}))\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLFreeVar{v})\;\HOLBoundVar{fv}\HOLTokenRightbrace{}} respectively. We claim \HOLinline{\HOLConst{bisim_world}\;\HOLFreeVar{Mst}\;\HOLFreeVar{Nst}\;\HOLFreeVar{wst}\;\HOLFreeVar{vst}}. As we can check: by \texttt{lemma_2_73} and \texttt{lemma_2_65}, \HOLinline{\HOLFreeVar{Mst}} and \HOLinline{\HOLFreeVar{Nst}} are m-saturated, hence bisimularity and modal equivalence coincides. Hence we just need to prove that \HOLinline{\HOLFreeVar{wst}} and \HOLinline{\HOLFreeVar{vst}} are modal equivalent. By \texttt{ultraproduct_mm2folm_folm2mm_comm_feval}, $w$ and $wst$ satisfied the same well-formed formulas, and same for $v$ and $vst$. As standard translations are well formed first order formulas, modal equivalence between \HOLinline{\HOLFreeVar{w}} and \HOLinline{\HOLFreeVar{v}} proved before implies modal equivalence between \HOLinline{\HOLFreeVar{wst}} and \HOLinline{\HOLFreeVar{vst}}. We obtain a modal equivalence and hence a bisimulation between \HOLinline{\HOLFreeVar{wst}} and \HOLinline{\HOLFreeVar{vst}}.
+
+As \HOLinline{\HOLFreeVar{a}} is satisfied as \HOLinline{\HOLFreeVar{v}}, it is satisfied at \HOLinline{\HOLFreeVar{vst}} by \texttt{ultraproduct_mm2folm_folm2mm_comm_feval}, as \HOLinline{\HOLFreeVar{a}} is invariant for bisimulation, \HOLinline{\HOLFreeVar{a}} is satisfied at \HOLinline{\HOLFreeVar{wst}} as well. By \texttt{ultraproduct_mm2folm_folm2mm_comm_feval} again, it shows \HOLinline{\HOLFreeVar{a}} is satisfied at \HOLinline{\HOLFreeVar{w}}. This complete the proof.
 
 
 \end{proof}

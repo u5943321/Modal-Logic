@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  27 JUL 2019 18:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  27 JUL 2019 22:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -253,19 +253,19 @@ LaTeX Font Info:    Try loading font information for U+euf on input line 96.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
-) [2]
+) [2] [3]
 Overfull \hbox (38.35548pt too wide) in paragraph at lines 175--176
 \OT1/cmr/m/n/10 The key con-cept we are in-ter-ested in this chap-ter is called
  `modal equiv-a-lent', by `two worlds $\OML/cmm/m/it/10 w \OMS/cmsy/m/n/10 2 \O
 ML/cmm/m/it/10 M:frame:world; w[] \OMS/cmsy/m/n/10 2
  []
 
-[3] [4] [5] [6] [7]
+[4] [5] [6] [7] [8] [9] [10] [11]
 Overfull \hbox (28.23677pt too wide) detected at line 471
 []
  []
 
-[8] [9] [10]
+[12] [13] [14] [15]
 Overfull \hbox (3.32793pt too wide) in paragraph at lines 647--648
 []\OT1/cmr/m/n/10 Recall we proved the con-di-tion for a propo-si-tional for-mu
 la to hold as the lemma \OT1/cmtt/m/n/10 peval_-satis_-strengthen\OT1/cmr/m/n/1
@@ -281,12 +281,12 @@ tt/m/n/10 peval_-satis_-strengthen\OT1/cmr/m/n/10 , we have $[] ((\OML/cmm/m/it
 n/10 2
  []
 
-[11]
+[16] [17]
 Overfull \hbox (124.06111pt too wide) detected at line 759
 []
  []
 
-[12]
+[18]
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 776.
 
  (/usr/local/texlive/2019/texmf-dist/tex/latex/base/omscmr.fd
@@ -294,7 +294,8 @@ File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 776.
- [13]
+ [19]
+[20]
 Overfull \hbox (8.5677pt too wide) in paragraph at lines 875--876
 []\OT1/cmr/m/n/10 Given an $\OML/cmm/m/it/10 f \OMS/cmsy/m/n/10 2 \OML/cmm/m/it
 /10 fs$\OT1/cmr/m/n/10 , the de-sired $\OML/cmm/m/it/10 p$ \OT1/cmr/m/n/10 is g
@@ -305,7 +306,7 @@ OML/cmm/m/it/10 f \OMS/cmsy/m/n/10 ^ \OML/cmm/m/it/10 c \OMS/cmsy/m/n/10 j \OML
 cmr/m/n/10 )\OMS/cmsy/m/n/10 g$\OT1/cmr/m/n/10 .
  []
 
-[14] [15]
+[21] [22]
 Overfull \hbox (81.95738pt too wide) in paragraph at lines 985--986
 []\OT1/cmr/m/n/10 A dis-junc-tion of $[]$ for-mula is cap-tured by sets of lit-
 eral sets. For in-stance, the set $\OMS/cmsy/m/n/10 ff\OT1/cmr/m/n/10 (\OML/cmm
@@ -316,7 +317,7 @@ it/10 f[]; T\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 g\OML/cmm/m/it/10 ; \OMS/cmsy/m/n
 
  []
 
-
+[23]
 Overfull \hbox (3.77626pt too wide) in paragraph at lines 1009--1011
 []\OT1/cmr/m/n/10 Proof: For the im-pli-ca-tion from left to right, sup-pose bo
 th $[] \U/euf/m/n/10 M \OT1/cmr/m/it/10 w []$ \OT1/cmr/m/n/10 and $[] \U/euf/m/
@@ -325,47 +326,46 @@ n/10 M \OT1/cmr/m/it/10 w$$\OMS/cmsy/m/n/10 f\OML/cmm/m/it/10 c \OMS/cmsy/m/n/1
 r/m/n/10 ,
  []
 
-[16] [17] [18] [19] [20]
+[24] [25] [26] [27] [28] [29] [30] [31]
 Overfull \hbox (229.61916pt too wide) detected at line 1279
 []
  []
 
-[21]
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <10> not available
 (Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 1300
 .
 
-[22] [23] [24] [25] [26]
+[32] [33] [34] [35] [36] [37] [38] [39]
 Overfull \hbox (12.48987pt too wide) detected at line 1620
 []
  []
 
-[27] [28]
+[40] [41] [42]
 Overfull \hbox (45.84813pt too wide) detected at line 1739
 []
  []
 
-
+[43]
 Overfull \hbox (0.61987pt too wide) in paragraph at lines 1774--1775
 []\OT1/cmr/m/n/10 This is ac-tu-ally a spe-cial case of the fol-low-ing propo-s
 i-tion, where $\OML/cmm/m/it/10 u$ \OT1/cmr/m/n/10 is taken as $[] \OT1/cmr/m/i
 t/10 w \U/euf/m/n/10 M\OML/cmm/m/it/10 :[]:[]$\OT1/cmr/m/n/10 .
  []
 
-[29]
+[44] [45]
 Overfull \hbox (9.31306pt too wide) in paragraph at lines 1821--1822
 []\OT1/cmr/m/n/10 Proof:Bisimulation im-plies modal equiv-a-lence by \OT1/cmtt/
 m/n/10 thm_-2_-20\OT1/cmr/m/n/10 . For the re-verse di-rec-tion, if $\OT1/cmr/m
 /it/10 w  \OMS/cmsy/m/n/10 2 [] \U/euf/m/n/10 M\OML/cmm/m/it/10 :[]:[]$
  []
 
-[30] [31] [32]
+[46] [47] [48]
 Overfull \hbox (33.36655pt too wide) detected at line 1939
 []
  []
 
-[33] [34]
+[49] [50] [51]
 Overfull \hbox (7.22615pt too wide) in paragraph at lines 2045--2046
 \OT1/cmr/m/n/10 a-lence class rep-re-sented by the func-tion that send-ing $\OM
 L/cmm/m/it/10 i \OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 I$ \OT1/cmr/m/n/10 to $([] 
@@ -374,7 +374,7 @@ L/cmm/m/it/10 i \OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 I$ \OT1/cmr/m/n/10 to $([]
 n/10 ) [])$.
  []
 
-[35]
+[52] [53]
 Overfull \hbox (66.52954pt too wide) in paragraph at lines 2121--2141
 [] \OT1/cmr/m/n/10 ([] \OT1/cmr/m/it/10 U [] []\OT1/cmr/m/n/10 ) \OML/cmm/m/it/
 10 ^^[ \OT1/cmr/m/it/10 a$ \OT1/cmr/m/n/10 is the equiv-a-lence class rep-re-se
@@ -385,53 +385,53 @@ r/m/it/10 n\OML/cmm/m/it/10 : [] \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^[ \OT1/cmr
 0 a$\OT1/cmr/m/n/10 .
  []
 
-[36] [37] [38] [39]
-Overfull \hbox (1.65788pt too wide) in paragraph at lines 2343--2344
-\OT1/cmr/m/n/10 our set $\OML/cmm/m/it/10 s$\OT1/cmr/m/n/10 . De-fine $[]$ to b
-e the prim-i-tive re-cur-sive func-tion $[] [] (\OML/cmm/m/it/10 ^^U [][] \OT1/
-cmr/m/it/10 n\OML/cmm/m/it/10 : [] [] \OT1/cmr/m/n/10 ([] \OT1/cmr/m/it/10 n\OT
-1/cmr/m/n/10 ))$,
+[54] [55] [56] [57] [58] [59] [60] [61] [62] [63] [64]
+Overfull \hbox (17.9115pt too wide) in paragraph at lines 2485--2493
+[] [][] [][] [] \OT1/cmr/m/it/10 U [] \OT1/cmr/m/n/10 ([] (\OML/cmm/m/it/10 ^^U
+ []\OT1/cmr/m/it/10 i\OML/cmm/m/it/10 : [] \OT1/cmr/m/it/10 N\OT1/cmr/m/n/10 ))
+ (\OML/cmm/m/it/10 ^^U []\OT1/cmr/m/it/10 i\OML/cmm/m/it/10 : \OT1/cmr/m/it/10 
+v\OT1/cmr/m/n/10 ) [] [] []$ re-spec-tively. We claim $[] [] [] [] []$.
  []
 
-[40] [41] [42] [43] [44] (./report.aux) ) 
+[65] [66] [67] [68] (./report.aux) ) 
 Here is how much of TeX's memory you used:
  2519 strings out of 492616
  32802 string characters out of 6129481
- 122353 words of memory out of 5000000
+ 117353 words of memory out of 5000000
  6405 multiletter control sequences out of 15000+600000
  17756 words of font info for 70 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  34i,15n,32p,2979b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2019/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2019/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019/texmf-dist/font
-s/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2019/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmitt10.pfb></usr/local/texlive/2019/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2019/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmr5.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmss10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmss8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmss9.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmssi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmsy10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmsy7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmti10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmti7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmtt10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/eule
-r/eufm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/sy
-mbols/msam10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfont
-s/symbols/msbm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/ams
-fonts/symbols/msbm7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/
-stmaryrd/stmary10.pfb>
-Output written on report.pdf (44 pages, 450436 bytes).
+</usr/local/texlive/2019/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2019/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmitt10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmr10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmr12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr17.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmr5.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmss10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmss8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmss9.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmssi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmsy10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmsy7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+ti10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmt
+i7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt1
+0.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/euler/euf
+m10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/symbols
+/msam10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/sym
+bols/msbm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts
+/symbols/msbm7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/stmar
+yrd/stmary10.pfb>
+Output written on report.pdf (68 pages, 470506 bytes).
 PDF statistics:
- 248 PDF objects out of 1000 (max. 8388607)
- 175 compressed objects within 2 object streams
+ 325 PDF objects out of 1000 (max. 8388607)
+ 227 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

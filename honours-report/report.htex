@@ -18,7 +18,7 @@
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
-\renewcommand{\baselinestretch}{0.9}
+\renewcommand{\baselinestretch}{1.4}
 
 \title{Modal Logic Mechanisation in HOL4}
 \author{Yiming Xu}
@@ -930,7 +930,7 @@ Given a first order model \HOLtm{M}, we can interpret formulas or terms by assig
   \HOLthm[def]{folModels.valuation_def}
 \end{holmath} 
 
-Interpretation of terms and formulas are given as \HOLtm{termval} and \texttt{feval}, where \HOLtm{termval} takes a model, an assignment of variable letters and a term, gives us an element of \HOLtm{M.Dom}. And \texttt{feval} takes a model, an assignment of variable letters and a first order formula, gives us the truth value whether the formula we give holds on the model under the current assignment of variable letters, we only care about when the an assignment of variable letters is indeed a valuation as defined above, when $\sigma$ is a valuation and \HOLtm{feval M σ fform}, we say `$fform$ is satisfied in \HOLtm{M} under the valuation $\sigma$'.
+Interpretation of terms and formulas are given as \HOLtm{termval} and \texttt{feval}, where \HOLtm{termval} takes a model, an assignment of variable letters and a term, gives us an element of \HOLtm{M.Dom}. And \texttt{feval} takes a model, an assignment of variable letters and a first order formula, gives us the truth value whether the formula we give holds on the model under the current assignment of variable letters, we only care about when the an assignment of variable letters is indeed a valuation as defined above, when $\sigma$ is a valuation and \HOLtm{feval M σ fform}, we say `$fform$ is satisfied in \HOLtm{M} under the valuation $\sigma$'. In particular, if there is only one free variable $x$ in $fform$, then \HOLtm{feval M σ fform} just means that \HOLtm{fform} is satisfied at the point \HOLtm{σ x} in the model \HOLtm{M}. The advantage of using the \HOLtm{σ} is that it can simutinously cope with any number of free variables. 
 
 \begin{defn}[Term Valuation]
 Some text here.  The $\HOLtm{termval}\;:\;\HOLty[of]{termval}$.
@@ -1630,28 +1630,35 @@ Actually, the \texttt{ultraproduct_comm_feval} and \texttt{expansion_shift_feval
 \end{holmath}
 
 \begin{proof}
+Suppose $s$ is a set of formulas such that each element has no function symbol and only one free varible $x$ other then the ones in $N$ which are actually used to capture constants. Suppose in addition that for all finite $ss\subseteq s$, exists a valuation \HOLtm{σ} such that \HOLtm{σ n = f n} for all $n\in N$, and \HOLtm{feval (ultraproduct_folmodel U I FMS) phi} for each \HOLtm{phi IN s}. If $s$ is finite, there is nothing to prove, so we assume $s$ is infinite. As we are using a countable first order language, there exists a bijection \HOLtm{enum} from the natural number to the set $s$. We prove there exists a valuation \HOLtm{σ} such that agree with $f$ on $N$ and moreover, \HOLtm{feval (ultraproduct_folmodel U I FMS) (enum n)} for all natural number $n$. Such a valuation is an assignment of variables to equivalence class, by \texttt{ultraproduct_suffices_rep} and the Los theorem, it suffices to find out a function \HOLtm{rv} that assigning each natural number a representative of some equivalence class, such that it satisfies:
 
+\begin{itemize}
+  \item \HOLtm{∀v i. i ∈ I ⇒ rv v i ∈ (FMS i).Dom }
+  \item \HOLtm{(∀n. n ∈ N ⇒ {g | Uequiv U I (folmodels2Doms FMS) g (rv n)\} = f n)}
+  \item \HOLtm{∀k:num. 
+             {i | i ∈ I ∧ feval (FMS i) (λv. rv v i) (conj k)\} ∈ U}
+\end{itemize}
 
+The first item says what $rv$ assign to each natural number must be an element in the Cartesion product. And the second item says that the equivalence class assigned to free variables in $N$ has already been fixed by $f$. We devote to satisfy the third condition. 
 
+By \texttt{countbly_incomplete_chain} proved in interlude II, we have a chain \HOLtm{In} where \HOLtm{In n ∈ U} and \HOLtm{In (n + 1) ⊆ In n} for each \HOLtm{n}, and moreover, the intersection of this chain is empty. Let \HOLtm{conj = PRIM_REC (True) (\conjn n. fAND conjn (enum n))}, hence \HOLtm{conj 0 = True}, and \HOLtm{conj n} is the conjunction from \HOLtm{enum 0} to \HOLtm{enum (n - 1)}. Define \HOLtm{Jn = \n. {i | i IN I /\ 
+                 (!σ.
+                    (!k. k IN N ==> σ k = CHOICE (f k) i) ==>
+                      feval (FMS i) σ (Exists x (conj n)) 
+                 )\}}, then \HOLtm{Jn} is also a descending chain. And moreover, the Los theorem implies that \HOLtm{(Jn n) IN U} for any $n$. Define \HOLtm{Xn = \n. (In n) ∩ (Jn n)}, then \HOLtm{Xn} is a descending chain in $U$ starting with \HOLtm{I} and intersects to the empty set. For such a chain, each element \HOLtm{i IN I} can only belong to finitely many of \HOLtm{Xn}s. Hence there exists a function \HOLtm{Ni} that send an element \HOLtm{i} to smallest set in the chain that \HOLtm{i} belongs to. That is, for all \HOLtm{i ∈ I} \HOLtm{i ∈ Xn (Ni i)} and \HOLtm{i ∉ Xn a} for any \HOLtm{a > Ni i}.
 
+The \HOLtm{rv} we are looking for can be taken as:
+\HOLtm{(\v i. if (v IN N) 
+        then (CHOICE (f v) i)
+       else 
+       (CHOICE 
+               {a | a IN (FMS i).Dom /\
+                    feval (FMS i) 
+                          (\n. if n IN N then ((CHOICE (f n)) i) 
+                               else a)
+                    (conj (Ni i))\}))}
+The first two conditions are immediate to check. It remains to show \HOLtm{{i | i ∈ In 0 ∧ feval (FMS i) (λv. σr v i) (conj k)\} ∈ U} for any $k$. As \HOLtm{Xn k} is in $U$, it suffices to check this is a supset of \HOLtm{Xn k}. For any \HOLtm{i IN (Xn k)}, by definition of the function \HOLtm{Ni}, we have \HOLtm{k <= Ni i}. As \HOLtm{i IN (Xn (Ni i))}, in particular, \HOLtm{i IN (Jn (Ni i))}. Hence \HOLtm{feval (FMS i) (λv. σr v i) (conj (Ni i))}. As \HOLtm{conj m} implies \HOLtm{conj n} for \HOLtm{n <= m}, we are done.
 
-
-  %Suppose for a set $s$ of formulas, each element of it has only one free variable $x$ except the ones that are representing constants, and for each subset $ss\subseteq s$, we have a valuation that realises this subset in the ultraproduct model, with the `constants' delivered to the correct places, we will prove the whole set $s$ is realised in the ultraproduct model by a valuation which sends the `constants' to the right places. As the value of the constants are fixed, it amounts to find somewhere to send the only `real' free variable $x$ to. If $s$ is finite then there is nothing to prove, so we assume $s$ is infinite in the following discussion.
-
-%Recall we have restricted ourself to countably first order language, then as proved in ??? the infinite set $s$ of first order formulas are countable. Hence we obtain a bijection \HOLtm{enum} from the universe of natural numbers to our set $s$. Define \HOLtm{conj} to be the primitive recursive function \HOLtm{PRIM_REC (True) (\conjn n. fAND conjn (enum n))}, then \HOLtm{conj n} will be the formula $enum(0)\land\cdots\land enum(n)$. Then it suffices to prove the existence of a point that realise any of these conjunctions. By \texttt{ultraproduct_suffices_rep} and the Los theorem, it amounts to find out an a function to represent this equivalence class, we need some setups to find out the function. 
-
-%Consider the family of sets:
-%\HOLtm{Jn = \n. {i | i IN I /\ 
-                % (!σ.  (!k. k IN N ==> σ k = CHOICE (f k) i) ==>
-                %      feval (FMS i) σ (Exists x (conj n)) 
-                 )\}}
-%such $J_n$'s forms a desending chain. As by assumption, each finite subset of $s$ is realisable, each such $J$ is realisable, so all of them are in $U$ by Los theorem. By \texttt{countably_incomplete_chain}, we get another descending chain $I_n$'s of sets $U$ with $\bigcap_{n\in\mathbb N} I_n=\emptyset$. Define $X_n:= I_n\cap J_n$, then $X_n$ is a descending chain in $U$ where $\bigcap_{n\in\mathbb N}X_n=\emptyset$. Hence for any $i\in I$, it exists a number $N(i)$ such that $i\in X_{N(i)}$ and for any $a>N(i)$, $i\notin X_a$. The equivalence class we will send $x$ to is represented by the function 
-%\HOLtm{\i. CHOICE   {a | a IN (FMS i).Dom /\  feval (FMS i) 
-        %                  (\n. if n IN N then ((CHOICE (f n)) i)
-         %                      else a)
-         %           (conj (Ni i))\}}, call it $ff$. By chosing such an $ff$, we have \HOLtm{∀k:num. {i | i ∈ (In 0) ∧ feval (FMS i) (λv. rv v i) (conj k)\} ∈ U}
-
-%!!!mention Godel numbering ?
 \end{proof}
 
 We can step on the two stairs we built above to get \texttt{lemma_2_73}, using the capatibility lemma, we migrant the above lemma to ultraproduct of modal models:
@@ -1673,6 +1680,11 @@ we can deduce \texttt{lemma_2_73} trivially from here.
 The last step towards the main theorem is used to pass from infinite set to finite set.
 \subsubsection{Interlude IV: Compactness theorem}
 
+
+haven't written it yet...
+talk about 1. JH's work on compactness, skip the proof, and talk a bit about its corollary, and how to use the corollary as `suffices to prove is implies by a set of formulas'. Prove modal compactness since we are doing modal logic. And prove modal version of the useful corollary.
+
+
 With all these set-ups, we give a fully justified answer to the question in the begining of the section. 
 
 %explain why only prove it for the same type.
@@ -1681,6 +1693,31 @@ With all these set-ups, we give a fully justified answer to the question in the 
 \end{holmath}
 
 \begin{proof}
+ Suppose $a$ is a first order formula invariant for bisimulation with only one free variable $x$. Consider the modal consequence of $a$, which is the set of standard translations implied by $a$ on well-formed first order models, defined in the HOL as \HOLtm{MOC = {ST x phi | phi |
+          (!M σ. 
+            ((∀n. M.Pred n [] ⇔ F) /\
+              (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
+              (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
+              (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)) ==>
+            IMAGE σ (univ(:num)) ⊆ M.Dom ==>
+                            (feval M σ a ==> feval M σ (ST x phi)))\}}
+According to the discussion about compactness theorem proved as in interlude IV, it suffices to prove \HOLtm{a} is implies by \HOLtm{MOC}. Now, fix a model \HOLtm{M} and suppose \HOLtm{feval M σ f} for any \HOLtm{f IN MOC}, we prove \HOLtm{feval M σ a}. 
+
+Consider of the set \HOLtm{Tx} of formulas \HOLtm{ST x phi} such that \HOLtm{feval M σ (ST x phi)}. We prove there is a well-formed model \HOLtm{N} with an evaluation \HOLtm{σn} such that for all \HOLtm{f IN (Tx ∪ {a\})}, we have \HOLtm{feval N σn f}. 
+Suppose, in order to get a contradiction, that such a model does not exists, then for any well-formed model, once all the formulas in \HOLtm{Tx} are satisfied, then \HOLtm{a} is not satisfied. Then by compactness, there exists a finite subset of \HOLtm{Tx} implies $\lnot a$. Taking its contrapositive, then \HOLtm{a} implies the negation of the big conjunction\HOLtm{psi} of finitely many elements in \HOLtm{Tx}. By \texttt{ST_BIGCONJ} and \HOLtm{ST_fNOT}, a negated big conjunction of standard translations is again a standard translation. Hence \HOLtm{fNOT psi} is in \HOLtm{MOC}. Recall we have assumed \HOLtm{feval M σ f} for any \HOLtm{f IN MOC}, so \HOLtm{feval M σ (fNOT psi)}, but also \HOLtm{feval M σ psi} by definition of \HOLtm{Tx}, we have a contradiction. 
+
+Hence we obtain a model $N$ and a valuation \HOLtm{σn} with desired property. Now let \HOLtm{w} denote \HOLtm{σ x} and \HOLtm{v} denote \HOLtm{σn x}, we claim that if we regard both \HOLtm{M} and \HOLtm{N} as modal models, then \HOLtm{w} and \HOLtm{v} are modal equivalent. To prove this, suppose \HOLtm{satis (fol2mm M) w phi}, then \HOLtm{ST x phi} is in \HOLtm{Tx} by definition of \HOLtm{Tx}, hence \HOLtm{feval N σn (ST x phi)}. By \texttt{mm2folm_folm2mm_feval}, this is equivalent to \HOLtm{feval (mm2folm (folm2mm N)) σn (ST x phi)}, and if follows from \texttt{prop_2_47_i} that \HOLtm{satis (folm2mm N) v phi}. This proves \HOLtm{!phi. satis (folm2mm M) w phi <=> satis (folm2mm N) v phi}. The other direction is by a symmetry argument. 
+
+If modal equivalence implies bisimularity, then we are done: Suppose modal equivalence implies bisimularity, then as \HOLtm{w IN (folm2mm M).frame.world} and \HOLtm{v IN (folm2mm N).frame.world} are modal equivalent, there exists a bisimulation between them. And as \HOLtm{a} is invariant for bisimulation and is satisfied at \HOLtm{v}, then it is also satisfied at \HOLtm{w}. 
+
+But actually it is not always the case. Hence we apply our strategy of taking a detour through some m-saturated model where modal equivalence and bisimularity coincides. Consider the ultraproduct modal models:
+\HOLtm{Mst = (ultraproduct_model U I (λi. folm2mm M))}
+,
+\HOLtm{Nst = (ultraproduct_model U I (λi. folm2mm N))} for a countably incomplete ultrafilter $U$ on $I$, we proved in interlude II that such ultrafilters exists. 
+Embed the worlds $w,v$ into these models by \HOLtm{wst = {fw | Uequiv U I (models2worlds (λi. folm2mm M)) (λi. w) fw\}},
+\HOLtm{vst = {fv | Uequiv U I (models2worlds (λi. folm2mm N)) (λi. v) fv\}} respectively. We claim \HOLtm{bisim_world Mst Nst wst vst}. As we can check: by \texttt{lemma_2_73} and \texttt{lemma_2_65}, \HOLtm{Mst} and \HOLtm{Nst} are m-saturated, hence bisimularity and modal equivalence coincides. Hence we just need to prove that \HOLtm{wst} and \HOLtm{vst} are modal equivalent. By \texttt{ultraproduct_mm2folm_folm2mm_comm_feval}, $w$ and $wst$ satisfied the same well-formed formulas, and same for $v$ and $vst$. As standard translations are well formed first order formulas, modal equivalence between \HOLtm{w} and \HOLtm{v} proved before implies modal equivalence between \HOLtm{wst} and \HOLtm{vst}. We obtain a modal equivalence and hence a bisimulation between \HOLtm{wst} and \HOLtm{vst}.
+
+As \HOLtm{a} is satisfied as \HOLtm{v}, it is satisfied at \HOLtm{vst} by \texttt{ultraproduct_mm2folm_folm2mm_comm_feval}, as \HOLtm{a} is invariant for bisimulation, \HOLtm{a} is satisfied at \HOLtm{wst} as well. By \texttt{ultraproduct_mm2folm_folm2mm_comm_feval} again, it shows \HOLtm{a} is satisfied at \HOLtm{w}. This complete the proof.
 
 
 \end{proof}
