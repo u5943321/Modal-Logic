@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1564144099 "report.tex" "report.pdf" "report" 1564144100
+["pdflatex"] 1564217879 "report.tex" "report.pdf" "report" 1564217879
   "/usr/local/texlive/2019/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2019/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2019/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -95,9 +95,9 @@
   "/usr/local/texlive/2019/texmf.cnf" 1557341546 577 d150fef99ac436ad1156e86b0892f6ef ""
   "holtexbasic.sty" 1560747194 5528 b4524ff28c3ba0f64de89cb57bf6cfdd ""
   "proof.sty" 1564119798 9084 2ecbed6a61abd4cab961152c15beb953 ""
-  "report.aux" 1564144100 2872 ce671a1fa8ac94611abdef6044c1bfe6 "pdflatex"
-  "report.tex" 1564144099 318248 b3cb933adceae584ff66987e8f3d2e81 ""
+  "report.aux" 1564217879 2872 d10ceb2b7144398ccc21b9229b3321be "pdflatex"
+  "report.tex" 1564217878 393958 0c72304ab6fe47ce8f922a6a7c337f4b ""
   (generated)
-  "report.pdf"
   "report.aux"
+  "report.pdf"
   "report.log"

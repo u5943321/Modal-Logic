@@ -2,7 +2,7 @@ structure ppLib =
 struct
 
 local open HolKernel Parse boolLib set_relationTheory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_5Theory chap2_6Theory chap2_7Theory folLangTheory folModelsTheory
-           IBCDNFrevisedTheory ultrafilterTheory lemma2_73Theory
+           IBCDNFrevisedTheory ultrafilterTheory ultraproductTheory lemma2_73Theory
 in
 
 val _ = temp_remove_termtok { tok = "=", term_name ="="}

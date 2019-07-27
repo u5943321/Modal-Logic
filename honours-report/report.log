@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  26 JUL 2019 22:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  27 JUL 2019 18:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -360,7 +360,40 @@ m/n/10 thm_-2_-20\OT1/cmr/m/n/10 . For the re-verse di-rec-tion, if $\OT1/cmr/m
 /it/10 w  \OMS/cmsy/m/n/10 2 [] \U/euf/m/n/10 M\OML/cmm/m/it/10 :[]:[]$
  []
 
-[30] [31] [32] [33] [34] [35] (./report.aux) ) 
+[30] [31] [32]
+Overfull \hbox (33.36655pt too wide) detected at line 1939
+[]
+ []
+
+[33] [34]
+Overfull \hbox (7.22615pt too wide) in paragraph at lines 2045--2046
+\OT1/cmr/m/n/10 a-lence class rep-re-sented by the func-tion that send-ing $\OM
+L/cmm/m/it/10 i \OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 I$ \OT1/cmr/m/n/10 to $([] 
+\OT1/cmr/m/it/10 i\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 :[] \OT1/cmr/m/it/10 n \OT1
+/cmr/m/n/10 ([] (\OML/cmm/m/it/10 ^^U [][]: [] [] \OT1/cmr/m/it/10 i\OT1/cmr/m/
+n/10 ) [])$.
+ []
+
+[35]
+Overfull \hbox (66.52954pt too wide) in paragraph at lines 2121--2141
+[] \OT1/cmr/m/n/10 ([] \OT1/cmr/m/it/10 U [] []\OT1/cmr/m/n/10 ) \OML/cmm/m/it/
+10 ^^[ \OT1/cmr/m/it/10 a$ \OT1/cmr/m/n/10 is the equiv-a-lence class rep-re-se
+nts by $\OML/cmm/m/it/10 ^^U []\OT1/cmr/m/it/10 i\OML/cmm/m/it/10 : [] \OT1/cmr
+/m/n/10 ([] \OT1/cmr/m/it/10 i\OT1/cmr/m/n/10 ) (\OML/cmm/m/it/10 ^^U []\OT1/cm
+r/m/it/10 n\OML/cmm/m/it/10 : [] \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^[ \OT1/cmr
+/m/it/10 n\OT1/cmr/m/n/10 ) \OT1/cmr/m/it/10 i\OT1/cmr/m/n/10 ) \OT1/cmr/m/it/1
+0 a$\OT1/cmr/m/n/10 .
+ []
+
+[36] [37] [38] [39]
+Overfull \hbox (1.65788pt too wide) in paragraph at lines 2343--2344
+\OT1/cmr/m/n/10 our set $\OML/cmm/m/it/10 s$\OT1/cmr/m/n/10 . De-fine $[]$ to b
+e the prim-i-tive re-cur-sive func-tion $[] [] (\OML/cmm/m/it/10 ^^U [][] \OT1/
+cmr/m/it/10 n\OML/cmm/m/it/10 : [] [] \OT1/cmr/m/n/10 ([] \OT1/cmr/m/it/10 n\OT
+1/cmr/m/n/10 ))$,
+ []
+
+[40] [41] [42] [43] [44] (./report.aux) ) 
 Here is how much of TeX's memory you used:
  2519 strings out of 492616
  32802 string characters out of 6129481
@@ -369,36 +402,36 @@ Here is how much of TeX's memory you used:
  17756 words of font info for 70 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  34i,15n,32p,2979b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2019/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2019/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2019/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmitt10.pfb></usr/local/texlive/2019/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2019/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2019/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2019/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2019/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2019/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmss10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmss8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmss9.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmssi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmsy10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmsy7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmti10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmti7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmtt10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts
-/euler/eufm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfon
-ts/symbols/msam10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/am
-sfonts/symbols/msbm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/publi
-c/amsfonts/symbols/msbm7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/pu
-blic/stmaryrd/stmary10.pfb>
-Output written on report.pdf (35 pages, 415047 bytes).
+</usr/local/texlive/2019/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2019/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019/texmf-dist/font
+s/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2019/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmitt10.pfb></usr/local/texlive/2019/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2019/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmr5.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmss10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmss8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmss9.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmssi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmsy7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmti10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmti7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmtt10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/eule
+r/eufm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/sy
+mbols/msam10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfont
+s/symbols/msbm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/ams
+fonts/symbols/msbm7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/
+stmaryrd/stmary10.pfb>
+Output written on report.pdf (44 pages, 450436 bytes).
 PDF statistics:
- 217 PDF objects out of 1000 (max. 8388607)
- 153 compressed objects within 2 object streams
+ 248 PDF objects out of 1000 (max. 8388607)
+ 175 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

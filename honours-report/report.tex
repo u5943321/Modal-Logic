@@ -1920,8 +1920,556 @@ Define \HOLinline{\HOLFreeVar{\ensuremath{\Sigma}\sp{\prime}}\;\HOLSymConst{=}\;
 This proves \HOLinline{\HOLConst{consistent}\;\HOLFreeVar{MA}\;\HOLFreeVar{\ensuremath{\Sigma}\sp{\prime}}}. Since \HOLinline{\HOLConst{mm2folm}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is countably saturated, \HOLinline{\HOLFreeVar{\ensuremath{\Sigma}\sp{\prime}}} itself is realised in some \HOLinline{\HOLFreeVar{b}} in \HOLinline{\HOLFreeVar{MA}}. The fact that \HOLinline{\HOLConst{fR}\;(\HOLConst{Fn}\;\HOLNumLit{0}\;[])\;(\HOLConst{fV}\;\HOLFreeVar{x})} is realised at $b$ implies $b$ is a successor of $a$ in \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}, and \HOLinline{\HOLConst{IMAGE}\;(\HOLConst{ST}\;\HOLFreeVar{x})\;\HOLFreeVar{\ensuremath{\Sigma}}} is realised at \HOLinline{\HOLFreeVar{b}} implies that \HOLinline{\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLFreeVar{b}\;\HOLFreeVar{phi}} for any \HOLinline{\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\Sigma}}} by \texttt{prop_2_47_i}.
 \end{proof}
 
-There remains two steps from our main characterisation result. The first step is to actually get countably saturated models to use.
+There remains two steps from our main characterisation result, which are discussed in the following two interludes.
 \subsubsection{Interlude III: Countably saturated models via ultraproducts}
+
+The procceding discussion about countably saturated models left us an important question: How do we get some countably saturated models? The fundamental construction underlying the theory of countably saturated models is that of ultraproduct. We firstly construct ultraproduct about sets, then about models. 
+
+Suppose $I\ne\emptyset$ and $U$ is an ultrafilter on $I$. And for each $i\in I$, $A_i$ is a non-empty set. The Cartestian product is the set of functions with domain $I$ such that for all $i\in I$, $f(i)\in A_i$.
+\begin{holmath}
+  \HOLConst{Cart_prod}\;\HOLFreeVar{I}\;\HOLFreeVar{A}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{f}\;\HOLTokenBar{}\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{f}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{A}\;\HOLBoundVar{i}\HOLTokenRightbrace{}
+\end{holmath}
+
+For two functions $f,g$ in the Cartesian product, we say $f$ and $g$ are $U$-equivalent if $f$ and $g$ agrees on some set in $U$. This defined an equivalent relation on the Cartestian product of the $A_i$'s:
+\begin{holmath}
+  \HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{A}\;\HOLFreeVar{f}\;\HOLFreeVar{g}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{A}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenNotEqual{}}\;\HOLSymConst{\HOLTokenEmpty{}})\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{Cart_prod}\;\HOLFreeVar{I}\;\HOLFreeVar{A}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\HOLFreeVar{g}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{Cart_prod}\;\HOLFreeVar{I}\;\HOLFreeVar{A}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{f}\;\HOLBoundVar{i}\;\HOLSymConst{=}\;\HOLFreeVar{g}\;\HOLBoundVar{i}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{A}\;\HOLConst{equiv_on}\;\HOLConst{Cart_prod}\;\HOLFreeVar{I}\;\HOLFreeVar{A}
+\end{holmath}
+
+The ultraproduct of $A_i$ modulo $U$ is the set od equivalence classes partitioned by the relation \HOLinline{\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{A}}:
+
+\begin{holmath}
+  \HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{A}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{partition}\;(\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{A})\;(\HOLConst{Cart_prod}\;\HOLFreeVar{I}\;\HOLFreeVar{A})
+\end{holmath}
+
+In the case where $A_i = A$ for all $i\in I$, the ultraproduct is called ultrapower of $W$ modulo $U$.
+
+We deal with ultraproduct of modal models first. Given a family \HOLinline{\HOLFreeVar{MS}} of modal models indexed by $I$ and an ultrafilter $U$ on $I$, the ultraproduct model of \HOLinline{\HOLFreeVar{MS}} modulo $U$ is the model described as follows:
+
+\begin{itemize}
+  \item The world set is the ultraproduct of world sets of \HOLinline{\HOLFreeVar{Mi}}s modulo $U$.
+  \item For two equivalence classes $f_U,g_U$ of functions in the ultraproduct, they are related iff there exists $f\in f_U,g\in g_U$ such that \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLTokenBar{}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{i})\;(\HOLFreeVar{g}\;\HOLBoundVar{i})\HOLTokenRightbrace{}} is in $U$.
+  \item For a propositional letter $p$ and an equivalence class $f_U$, we have $p$ is satisfied at $f_U$ iff there exists $g\in f_U$ such that \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{f}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{valt}\;\HOLFreeVar{p}\HOLTokenRightbrace{}} is in $U$.
+\end{itemize} 
+
+The HOL definition looks like this:
+
+\begin{holmath}
+  \HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;\HOLTokenLeftrec{}\HOLFieldName{frame}\;:=\\
+\;\;\;\;\HOLTokenLeftrec{}\HOLFieldName{world}\;:=\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{models2worlds}\;\HOLFreeVar{MS});\\
+\;\;\;\;\;\;\HOLFieldName{rel}\;:=\\
+\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{fu}\;\HOLBoundVar{gu}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{f}\;\HOLBoundVar{g}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{fu}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{g}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{gu}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLBoundVar{f}\;\HOLBoundVar{i})\;(\HOLBoundVar{g}\;\HOLBoundVar{i})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U})\HOLTokenRightrec{};\\
+\;\;\HOLFieldName{valt}\;:=\\
+\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{p}\;\HOLBoundVar{fu}.\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{f}.\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{fu}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{f}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{valt}\;\HOLBoundVar{p}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U})\HOLTokenRightrec{}
+\end{holmath}
+
+Note that since the choice of representatives does not make any difference since \HOLinline{\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{A}} is an equivalence relation, we get an equivalent definition of ultraproduct models if we replace all the existential quantifers with universal quantifiers.
+
+where the function \HOLinline{\HOLConst{models2worlds}} is used here to extract the underlying sets of models.
+
+\begin{holmath}
+  \HOLConst{models2worlds}\;\HOLFreeVar{MS}\;\HOLSymConst{\HOLTokenDefEquality{}}\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world})
+\end{holmath}
+
+Our central result about ultraproduct on modal models is a `modal verion' of the Los theorem. The standard version of Los theorem will be discussed in a moment.
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}\;\HOLBoundVar{fc}.\\
+\;\;\;\;\;\;\;\;\;\HOLBoundVar{fc}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;\HOLFreeVar{Ms}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLConst{satis}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;\HOLFreeVar{Ms})\;\HOLBoundVar{fc}\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{f}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{fc}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;(\HOLBoundVar{f}\;\HOLBoundVar{i})\;\HOLBoundVar{phi}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U})
+\end{holmath}
+\begin{proof}
+  Given an ultrafilter $U$ over $J$ and a family \HOLinline{\HOLFreeVar{Ms}} of models. We proceed by induction on \HOLinline{\HOLFreeVar{phi}}, the base case for \HOLinline{\HOLFreeVar{phi}\;\HOLSymConst{=}\;\HOLConst{VAR}\;\HOLFreeVar{p}} is directly by definition, and the case for \HOLinline{\HOLFreeVar{phi}\;\HOLSymConst{=}\;\HOLSymConst{\ensuremath{\bot}}} is by the fact that the empty set is not in the ultrafilter. The boolean cases are by basic property of ultrafilters. We only spell out the proof for diamond case. Suppose for any equivalence \HOLinline{\HOLFreeVar{fc}} in the ultraproduct, we have 
+\HOLinline{\HOLConst{satis}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;\HOLFreeVar{Ms})\;\HOLFreeVar{fc}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{f}.\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{fc}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;(\HOLBoundVar{f}\;\HOLBoundVar{i})\;\HOLFreeVar{phi}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}}
+
+Given a world in \HOLinline{\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;\HOLFreeVar{Ms}}, we prove \HOLinline{\HOLConst{satis}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;\HOLFreeVar{Ms})\;\HOLFreeVar{fc}\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{phi})\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{f}.\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{fc}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;(\HOLBoundVar{f}\;\HOLBoundVar{i})\;(\HOLSymConst{\ensuremath{\Diamond}}\;\HOLFreeVar{phi})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}}
+
+Left to right: The assumption says that there is an equivalence class that is related to \HOLinline{\HOLFreeVar{fc}} and satisfied \HOLinline{\HOLFreeVar{phi}}. Suppose the equivalence class $gc$ is represented by a function $g$, and $fc$ is represented by the function $f$. We check the $f$ can be taken as our $f$ as above. By defination of satisfication, our task is to check the set \HOLinline{\HOLFreeVar{A}\;\HOLSymConst{=}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{f}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{v}.\\
+\;\;\;\;\;\;\;\;\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{i})\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;\HOLBoundVar{v}\;\HOLFreeVar{phi}\HOLTokenRightbrace{}} is in $U$. 
+
+By inductive hypothesis, the fact that \HOLinline{\HOLFreeVar{phi}} is satisfied at $gc$ implies the existence of an element in $x$ \HOLinline{\HOLFreeVar{gc}} such that \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;(\HOLFreeVar{x}\;\HOLBoundVar{i})\;\HOLFreeVar{phi}\HOLTokenRightbrace{}} is in $U$, but as \HOLinline{\HOLConst{Uequiv}} is an equivalence relation, this implies \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;(\HOLFreeVar{g}\;\HOLBoundVar{i})\;\HOLFreeVar{phi}\HOLTokenRightbrace{}} is in $U$. As we can check: Since $x$ and $g$ lives in the same equivalence class, \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{g}\;\HOLBoundVar{i}\;\HOLSymConst{=}\;\HOLFreeVar{x}\;\HOLBoundVar{i}\HOLTokenRightbrace{}} is in $U$. As ultrafilters are closed under finite intersection, \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{g}\;\HOLBoundVar{i}\;\HOLSymConst{=}\;\HOLFreeVar{x}\;\HOLBoundVar{i}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenInter{}}\\
+\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;(\HOLFreeVar{x}\;\HOLBoundVar{i})\;\HOLFreeVar{phi}\HOLTokenRightbrace{}} is in $U$, this is a subset of  \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;(\HOLFreeVar{g}\;\HOLBoundVar{i})\;\HOLFreeVar{phi}\HOLTokenRightbrace{}}, hence by upward closure, the result follows. As $fc$ and $gc$ is related, by a same procedure of checking independence of representatives, the set \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{i})\;(\HOLFreeVar{g}\;\HOLBoundVar{i})\HOLTokenRightbrace{}} is in $U$. Hence the intersection \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{i})\;(\HOLFreeVar{g}\;\HOLBoundVar{i})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenInter{}}\\
+\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;(\HOLFreeVar{g}\;\HOLBoundVar{i})\;\HOLFreeVar{phi}\HOLTokenRightbrace{}} is in $U$. As our $A$ is a supset of this set, $A$ is in $U$ as well.
+
+Right to left: Suppose there is an $f\in fc$ such that \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLFreeVar{f}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{v}.\\
+\;\;\;\;\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{i})\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;\HOLBoundVar{v}\;\HOLFreeVar{phi}\HOLTokenRightbrace{}} is in $U$, we need to find an equivalence class which is related to $fc$ and satisfies $\phi$, which by definition of relation in ultraproduct model, amounts to find a representative of such an equivalence class. The representative is given by :
+\HOLinline{\HOLTokenLambda{}\HOLBoundVar{i}.\\
+\;\;\;\;\HOLKeyword{if}\\
+\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{v}.\\
+\;\;\;\;\;\;\;\;\;\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{i})\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;\HOLBoundVar{v}\;\HOLFreeVar{phi}\\
+\;\;\;\;\HOLKeyword{then}\\
+\;\;\;\;\;\;\HOLConst{CHOICE}\\
+\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{v}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{rel}\;(\HOLFreeVar{f}\;\HOLBoundVar{i})\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{satis}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i})\;\HOLBoundVar{v}\;\HOLFreeVar{phi}\HOLTokenRightbrace{}\\
+\;\;\;\;\HOLKeyword{else}\;\HOLConst{CHOICE}\;(\HOLFreeVar{Ms}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}}
+
+checking this is the correct representative is tedious, but just routine, using representative independence and the property of \HOLinline{\HOLConst{CHOICE}} function. 
+
+\end{proof}
+
+In the case that we are taking the ultraproduct of a constant family of models with \HOLinline{\HOLFreeVar{MS}\;\HOLFreeVar{i}\;\HOLSymConst{=}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}} for all $i\in I$, we get an ultrapower of \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}}. Specialing \texttt{Los_modal_thm} to the case of ultrapowers yields the following proposition.
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{Ms}\;\HOLBoundVar{i}\;\HOLSymConst{=}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}})\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}\;\HOLBoundVar{w}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{satis}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;\HOLFreeVar{Ms})\\
+\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{fw}\;\HOLTokenBar{}\;\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLFreeVar{J}\;(\HOLConst{models2worlds}\;\HOLFreeVar{Ms})\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLBoundVar{w})\;\HOLBoundVar{fw}\HOLTokenRightbrace{}\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\HOLConst{satis}\;\HOLFreeVar{\ensuremath{\mathfrak{M}}}\;\HOLBoundVar{w}\;\HOLBoundVar{phi}
+\end{holmath}
+
+The construction of ultraproduct of first order models is similar to the construction for modal models. Restricting our scope only to first order models with `well-formed' conditions in the sense of it contains the same information as a modal model does not save much work, so we will just construct it for any first order models. This requires us to deal with function symbols and predicate symbols with any arity. 
+
+
+\begin{itemize}
+\item A function with its symbol denoted by natural number $n$ will send a list of equivalence class to the equivalence class represented by the function that sending $i\in I$ to \HOLinline{(\HOLFreeVar{FMS}\;\HOLFreeVar{i}).\HOLFieldName{Fun}\;\HOLFreeVar{n}\;(\HOLConst{MAP}\;(\HOLTokenLambda{}\HOLBoundVar{fc}.\;\HOLConst{CHOICE}\;\HOLBoundVar{fc}\;\HOLFreeVar{i})\;\HOLFreeVar{fs})}. That is, to see where does $i\in I$ goes to, evaluate each representative in the list $fs$ at $i$, collect them into a list, and use this list as the input of the function denoted by $n$ in the model \HOLinline{\HOLFreeVar{FMS}\;\HOLFreeVar{i}}.
+
+\item A predicate with its symbol denoted by $p$ will hold for a list $zs$ of equivalence classes iff when we pick representatives in each member of $zs$ and evaluate these representatives at $i$, the predicate $p$ holds in \HOLinline{\HOLFreeVar{FMS}\;\HOLFreeVar{i}} when we evaluate it with the list \HOLinline{\HOLConst{MAP}\;(\HOLTokenLambda{}\HOLBoundVar{fc}.\;\HOLConst{CHOICE}\;\HOLBoundVar{fc}\;\HOLFreeVar{i})\;\HOLFreeVar{zs}} of the outputs. 
+\end{itemize}
+
+To avoid having quantifiers everywhere, we fix the representative for each equivalence class $fc$ to be \HOLinline{\HOLConst{CHOICE}\;\HOLFreeVar{fc}}.
+
+
+The definition looks like this:
+
+\begin{holmath}
+  \HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{FMS}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;\HOLTokenLeftrec{}\HOLFieldName{Dom}\;:=\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLFreeVar{FMS});\\
+\;\;\HOLFieldName{Fun}\;:=\\
+\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{n}\;\HOLBoundVar{fs}.\\
+\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{y}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{y}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{y}\;\HOLBoundVar{i}\;\HOLSymConst{=}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Fun}\;\HOLBoundVar{n}\;(\HOLConst{MAP}\;(\HOLTokenLambda{}\HOLBoundVar{fc}.\;\HOLConst{CHOICE}\;\HOLBoundVar{fc}\;\HOLBoundVar{i})\;\HOLBoundVar{fs})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}\HOLTokenRightbrace{});\\
+\;\;\HOLFieldName{Pred}\;:=\\
+\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{p}\;\HOLBoundVar{zs}.\\
+\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Pred}\;\HOLBoundVar{p}\;(\HOLConst{MAP}\;(\HOLTokenLambda{}\HOLBoundVar{fc}.\;\HOLConst{CHOICE}\;\HOLBoundVar{fc}\;\HOLBoundVar{i})\;\HOLBoundVar{zs})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\\
+\;\;\;\;\;\;\;\;\;\HOLFreeVar{U})\HOLTokenRightrec{}
+\end{holmath}
+
+We now prove this construction has nice semantical behaviour. 
+
+For an ultraproduct model of the family \HOLinline{\HOLFreeVar{FMS}} of first order models, an evaluation $\sigma$ assigns each variable symbol an equivalence class in the ultraproduct of the world sets of the family. A term $t$ will be sent to the equivalence class represented by the function obtained as follows. For $i\in I$, the function that assigns a variable symbol $n$ to the representative of \HOLinline{\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{n}} evaluated at $i$ will be an assignment of variable symbols to elements in \HOLinline{\HOLFreeVar{FMS}\;\HOLFreeVar{i}}, and $i$ is sent to the element in \HOLinline{(\HOLFreeVar{FMS}\;\HOLFreeVar{i}).\HOLFieldName{Dom}} we will get by evaluating $t$ in \HOLinline{\HOLFreeVar{FMS}\;\HOLFreeVar{i}} using this assignment of variable symbols.
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{FMS}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLBoundVar{FMS})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLBoundVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Fun}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLBoundVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{termval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLBoundVar{FMS})\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{t}\;\HOLSymConst{=}\\
+\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{f}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLBoundVar{FMS})\;\HOLBoundVar{f}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLConst{termval}\;(\HOLBoundVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{n}.\;\HOLConst{CHOICE}\;(\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{n})\;\HOLBoundVar{i})\;\HOLFreeVar{t})\HOLTokenRightbrace{}
+\end{holmath}
+\begin{proof}
+ By complete induction on \texttt{term_size t}.
+\end{proof}
+The nice semantical behaviour of ultraproduct is evident from the Los theorem:
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{FMS}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLBoundVar{FMS})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLBoundVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Fun}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLBoundVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLConst{feval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLBoundVar{FMS})\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLBoundVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\;\HOLFreeVar{phi}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{U})
+\end{holmath}
+
+\begin{proof}
+ By induction on \HOLinline{\HOLFreeVar{phi}}. The base case for \HOLinline{\HOLConst{fFALSE}} comes from the fact that the empty set is not in an ultrafilter. And the atomic case reduces to check representative independence by unwinding the definitions. We should prove
+\HOLinline{\HOLFreeVar{S\sb{\mathrm{1}}}\;\HOLSymConst{=}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Pred}\;\HOLFreeVar{n}\\
+\;\;\;\;\;\;\;(\HOLConst{MAP}\\
+\;\;\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{x}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{CHOICE}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{termval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{FMS})\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{i})\;\HOLFreeVar{l})\HOLTokenRightbrace{}} is in U iff
+\HOLinline{\HOLFreeVar{S\sb{\mathrm{2}}}\;\HOLSymConst{=}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Pred}\;\HOLFreeVar{n}\\
+\;\;\;\;\;\;\;(\HOLConst{MAP}\;(\HOLConst{termval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i}))\;\HOLFreeVar{l})\HOLTokenRightbrace{}} is in U.
+
+Let \HOLinline{\HOLFreeVar{I\sb{\mathrm{0}}}\;\HOLSymConst{=}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\HOLConst{MAP}\\
+\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{x}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{CHOICE}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{termval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{FMS})\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\\
+\;\;\;\;\;\;\;\HOLFreeVar{l}\;\HOLSymConst{=}\\
+\;\;\;\;\;\;\;\HOLConst{MAP}\;(\HOLConst{termval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i}))\;\HOLFreeVar{l}\HOLTokenRightbrace{}}, then 
+\HOLinline{\HOLFreeVar{I\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLFreeVar{S\sb{\mathrm{1}}}\;\HOLSymConst{=}\;\HOLFreeVar{I\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLFreeVar{S\sb{\mathrm{2}}}}. If \HOLinline{\HOLFreeVar{I\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}}, suppose in addition that \HOLinline{\HOLFreeVar{S\sb{\mathrm{1}}}} is in $U$, then \HOLinline{\HOLFreeVar{S\sb{\mathrm{2}}}} is a supset of the set \HOLinline{\HOLFreeVar{I\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenInter{}}\;\HOLFreeVar{S\sb{\mathrm{2}}}}, which is in $U$, and vice versa. So it suffices to prove \HOLinline{\HOLFreeVar{I\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}}.
+Obviously, if the two maps we are interested in agree on each member of \HOLinline{\HOLFreeVar{l}}, then the resultant list we get will be equal. That gives \HOLinline{\HOLFreeVar{A}\;\HOLSymConst{=}\\
+\;\;\HOLConst{BIGINTER}\\
+\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\HOLConst{CHOICE}\;(\HOLConst{termval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{FMS})\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{a})\;\HOLBoundVar{i}\;\HOLSymConst{=}\\
+\;\;\;\;\;\;\;\;\;\;\HOLConst{termval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\;\HOLBoundVar{a}\HOLTokenRightbrace{}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\HOLConst{MEM}\;\HOLBoundVar{a}\;\HOLFreeVar{l}\HOLTokenRightbrace{}} is a subset of \HOLinline{\HOLFreeVar{I\sb{\mathrm{0}}}}, reduces our task to prove \HOLinline{\HOLFreeVar{A}} is in $U$. But by \texttt{thm_A_19_i}, for each member $a$ of $l$, \HOLinline{\HOLConst{termval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{FMS})\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{a}} is the equivalence class represents by \HOLinline{\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLConst{termval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{n}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{n})\;\HOLBoundVar{i})\;\HOLFreeVar{a}}. Hence \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\HOLConst{CHOICE}\;(\HOLConst{termval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLConst{I}\;\HOLFreeVar{FMS})\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{a})\;\HOLBoundVar{i}\;\HOLSymConst{=}\\
+\;\;\;\HOLConst{termval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\;\HOLFreeVar{a}\HOLTokenRightbrace{}} is in $U$ for each $a$. So $A$ is in $U$ as a finite intersection of sets in $U$.
+
+The implication case is trivial from inductive hypothesis. Finally, we prove the case for universal quantifier. 
+From left to right, suppose \HOLinline{\HOLFreeVar{phi}} is satisfied at any equivalence class in the ultraproduct model for \HOLinline{\HOLFreeVar{FMS}}. We need \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\;(\HOLConst{FALL}\;\HOLFreeVar{n}\;\HOLFreeVar{phi})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}}. Suppose not, then as $U$ is an ultrafilter, \HOLinline{\HOLFreeVar{B}\;\HOLSymConst{=}\\
+\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\;\;\;\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\;(\HOLConst{fEXISTS}\;\HOLFreeVar{n}\;(\HOLConst{fNOT}\;\HOLFreeVar{phi}))\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\\
+\HOLFreeVar{U}}. Use choice, define the function $f$ to send $i\in I$ to a chosen point in \HOLinline{(\HOLFreeVar{FMS}\;\HOLFreeVar{i}).\HOLFieldName{Dom}} where \HOLinline{\HOLFreeVar{phi}} is not satisfied. Such a function in HOL looks like:
+\HOLinline{\HOLFreeVar{f}\;\HOLSymConst{=}\\
+\;\;(\HOLTokenLambda{}\HOLBoundVar{i}.\\
+\;\;\;\;\;\;\;\;\;\HOLKeyword{if}\\
+\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{a}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{a}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenNeg{}}\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\ensuremath{\llparenthesis}\HOLFreeVar{n}\;\ensuremath{\mapsto}\;\HOLBoundVar{a}\ensuremath{\rrparenthesis}\;\HOLFreeVar{phi}\\
+\;\;\;\;\;\;\;\;\;\HOLKeyword{then}\\
+\;\;\;\;\;\;\;\;\;\;\;\HOLConst{CHOICE}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{a}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{a}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenNeg{}}\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\ensuremath{\llparenthesis}\HOLFreeVar{n}\;\ensuremath{\mapsto}\;\HOLBoundVar{a}\ensuremath{\rrparenthesis}\;\HOLFreeVar{phi}\HOLTokenRightbrace{}\\
+\;\;\;\;\;\;\;\;\;\HOLKeyword{else}\;\HOLConst{CHOICE}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom})}.
+Then \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLSymConst{\HOLTokenNeg{}}\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\ensuremath{\llparenthesis}\HOLFreeVar{n}\;\ensuremath{\mapsto}\;\HOLFreeVar{f}\;\HOLBoundVar{i}\ensuremath{\rrparenthesis}\;\HOLFreeVar{phi}\HOLTokenRightbrace{}\;\HOLSymConst{=}\\
+\;\;\HOLFreeVar{B}}, and hence  is in U. Then by the inductive hypothesis, we can show the equivalence class represented by $f$ does not satisfy \HOLinline{\HOLFreeVar{phi}}, contradiction. 
+
+From right to left. It is straightforward to check \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\;(\HOLConst{FALL}\;\HOLFreeVar{n}\;\HOLFreeVar{phi})\HOLTokenRightbrace{}} is a subset of \HOLinline{\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\\
+\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\ensuremath{\llparenthesis}\HOLFreeVar{n}\;\ensuremath{\mapsto}\;\HOLFreeVar{a}\ensuremath{\rrparenthesis}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\;\HOLFreeVar{phi}\HOLTokenRightbrace{}}, for any equivalence class $a$. So the former one is in $U$ implies the later one is in $U$. 
+
+\end{proof}
+
+The way we stated the Los theorem will looks not such satisfactory, since it seems to restrict us for the choice of representatives, but it is not. We can be very free with our choice of representatives, as indicated in the following result:
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{IMAGE}\;\HOLFreeVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLFreeVar{FMS})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}\;\HOLBoundVar{rv}.\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v}.\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{FV}\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{rv}\;\HOLBoundVar{v}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{v})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{x}.\;\HOLConst{CHOICE}\;(\HOLFreeVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\;\HOLBoundVar{i})\;\HOLBoundVar{phi}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\\
+\;\;\;\;\;\;\;\;\;\;\HOLFreeVar{U}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{v}.\;\HOLBoundVar{rv}\;\HOLBoundVar{v}\;\HOLBoundVar{i})\;\HOLBoundVar{phi}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U})
+\end{holmath}
+
+If the world of models in \HOLinline{\HOLFreeVar{FMS}} are of type $\beta$, then \HOLinline{\HOLFreeVar{rv}} here is of type $num\to\beta$. The $\sigma$ here is an assignment of variable symbols to worlds of the ultraproduct model, which are equivalence classes. And \HOLinline{\HOLFreeVar{rv}} here assigns each variable symbol $v$ an element \HOLinline{\HOLFreeVar{rv}\;\HOLFreeVar{v}} in the equivalence class assigned to $v$ by $\sigma$.%better explanation?
+For its proof, it actually amounts to check representative independency, which is of the same flavor of the second base case in the proof of Los theorem.
+
+The independence of representative provide us convenience of actually putting our Los theorem into usage. Since then if we want to find an assignments of elements in a ultraproduct model satisfying a first order formula $\phi$, instead of assigning equivalence classes directly, it suffices to use the \HOLinline{\HOLFreeVar{rv}} below  to assign each $v$ a suitable representative functions in the Cartesian product :
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Fun}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{rv}.\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{v}\;\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{rv}\;\HOLBoundVar{v}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{v}.\;\HOLBoundVar{rv}\;\HOLBoundVar{v}\;\HOLBoundVar{i})\;\HOLBoundVar{phi}\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{FMS})\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{v}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{g}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLFreeVar{FMS})\;\HOLBoundVar{g}\;(\HOLBoundVar{rv}\;\HOLBoundVar{v})\HOLTokenRightbrace{})\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}
+\end{holmath}
+
+
+With the help of \texttt{ultraproduct_rep_independence_lemma}, we can prove a classical corollary of Los theorem, which says any first order model \HOLinline{\HOLFreeVar{\ensuremath{\mathfrak{M}}}} is embedded in any of its ultraproduct model by sending a world to the equivalence class represented by the constant function on that world:
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{FMS}\;\HOLBoundVar{i}\;\HOLSymConst{=}\;\HOLFreeVar{FM})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLFreeVar{FM}.\HOLFieldName{Fun}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{FM}.\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{FM}.\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;\HOLFreeVar{FM}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{FMS})\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{x}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{g}\;\HOLTokenBar{}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{Uequiv}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLFreeVar{FMS})\;\HOLBoundVar{g}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{x})\HOLTokenRightbrace{})\;\HOLBoundVar{phi}
+\end{holmath}
+
+All the construction we done above serves to paving a way to getting a countably saturated model:
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenNotEqual{}}\;\HOLSymConst{\HOLTokenEmpty{}})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{countably_incomplete}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{countably_saturated}\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS}))
+\end{holmath}
+
+With all the setups about ultraproduct models, we may feel confident that this will be a consequence of Los theorem. But if we take a closer look of it, we will find out the Los theorem cannot be directly applied here. The definition of countably saturated asks us to prove the realisation of a set of first order formulas in an expanded first order model, and the first order model itself is from turning a modal model into a first order model. The obstrucles here will become clear when we compare what we want to prove to the statement of Los theorem: The Los theorem tells us the result for an ultraproduct of first order models, and says nothing about expansion. But we are proving a statement for an expanded model obtained from viewing an ultraproduct of modal models as a first order model. However, as we shell see now, it cannot stop us from applying the Los theorem.%quote the goal?
+
+The first issue is to remove the expansion on the outmost layer of expansion. The key observation is that we have an alternative approach to capture the idea of `constants'. Constant are nothing more than forcing some symbols to be sent to some point in a model under any valuation, hence rather then use nullary function symbols, we fixed a set of variable letters, each corresponds to a function symbol, and only consider the valuations that sends these variable letters to fixed certain points. With this idea, we can remove all the constants in a formula, and hence swap from an expanded model back to the unexpanded model. For our aim for proving \texttt{lemma_2_73}, we only care about the case that we only have finitely many function symbols. To get rid of $n$-function symbols, we need to come up with $n$ fresh variable symbols to be sent to certain places. The easiest way to ensure that the variable symbols we use for constants do not clash with the variable symbols we use for usual aim is to force those $n$-variable symbols to be represented by $0,\cdots, n$, and then add $n$ to all the variable symbols which originally appear in a formula. The construction of discarding constants in a formula can be done by a function:
+
+\begin{holmath}
+  \HOLConst{shift_term}\;\HOLFreeVar{n}\;(\HOLConst{fV}\;\HOLFreeVar{m})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{fV}\;(\HOLFreeVar{m}\;\HOLSymConst{\ensuremath{+}}\;\HOLFreeVar{n})\\
+\HOLConst{shift_term}\;\HOLFreeVar{n}\;(\HOLConst{Fn}\;\HOLFreeVar{m}\;\HOLFreeVar{l})\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;\HOLKeyword{if}\;\HOLFreeVar{l}\;\HOLSymConst{=}\;[]\;\HOLKeyword{then}\;\HOLConst{fV}\;\HOLFreeVar{m}\;\HOLKeyword{else}\;\HOLConst{Fn}\;\HOLFreeVar{m}\;(\HOLConst{MAP}\;(\HOLTokenLambda{}\HOLBoundVar{a}.\;\HOLConst{shift_term}\;\HOLFreeVar{n}\;\HOLBoundVar{a})\;\HOLFreeVar{l})
+  \HOLConst{shift_form}\;\HOLFreeVar{n}\;\HOLConst{fFALSE}\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{fFALSE}\\
+\HOLConst{shift_form}\;\HOLFreeVar{n}\;(\HOLConst{Pred}\;\HOLFreeVar{m}\;\HOLFreeVar{l})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{Pred}\;\HOLFreeVar{m}\;(\HOLConst{MAP}\;(\HOLConst{shift_term}\;\HOLFreeVar{n})\;\HOLFreeVar{l})\\
+\HOLConst{shift_form}\;\HOLFreeVar{n}\;(\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLFreeVar{f\sb{\mathrm{2}}})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{shift_form}\;\HOLFreeVar{n}\;\HOLFreeVar{f\sb{\mathrm{1}}}\;\HOLSymConst{\ensuremath{\rightarrow}}\;\HOLConst{shift_form}\;\HOLFreeVar{n}\;\HOLFreeVar{f\sb{\mathrm{2}}}\\
+\HOLConst{shift_form}\;\HOLFreeVar{n}\;(\HOLConst{FALL}\;\HOLFreeVar{x}\;\HOLFreeVar{f})\;\HOLSymConst{\HOLTokenDefEquality{}}\;\HOLConst{FALL}\;(\HOLFreeVar{x}\;\HOLSymConst{\ensuremath{+}}\;\HOLFreeVar{n})\;(\HOLConst{shift_form}\;\HOLFreeVar{n}\;\HOLFreeVar{f})
+\end{holmath}
+
+Here we will need to prove the termination for the function \texttt{shift_term}. The termination relation is given by \HOLinline{\HOLConst{measure}\;(\HOLConst{term_size}\;\HOLSymConst{\HOLTokenCompose}\;\HOLConst{SND})}. %need to talk about termination?
+
+We get the syntactical result we want: All the function symbols are removed by applying the shifting construction, and the set of free variables is also under control.
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{c}.\\
+\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{c}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{form_functions}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\HOLConst{FST}\;\HOLBoundVar{c}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{count}\;(\HOLConst{CARD}\;\HOLFreeVar{A})\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{SND}\;\HOLBoundVar{c}\;\HOLSymConst{=}\;\HOLNumLit{0})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{form_functions}\;(\HOLConst{shift_form}\;(\HOLConst{CARD}\;\HOLFreeVar{A})\;\HOLFreeVar{phi})\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{FV}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLFreeVar{s}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{c}.\\
+\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{c}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{form_functions}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\HOLConst{FST}\;\HOLBoundVar{c}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{count}\;(\HOLConst{CARD}\;\HOLFreeVar{A})\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{SND}\;\HOLBoundVar{c}\;\HOLSymConst{=}\;\HOLNumLit{0})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{FV}\;(\HOLConst{shift_form}\;(\HOLConst{CARD}\;\HOLFreeVar{A})\;\HOLFreeVar{phi})\;\HOLConst{DIFF}\;\HOLConst{count}\;(\HOLConst{CARD}\;\HOLFreeVar{A})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{x}\;\HOLSymConst{\ensuremath{+}}\;\HOLConst{CARD}\;\HOLFreeVar{A}\;\HOLTokenBar{}\;\HOLBoundVar{x}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{s}\HOLTokenRightbrace{}
+\end{holmath}
+
+Now if we want to use an arbitary valuation to evaluate a shifted formula, something will go wrong, because $0,\cdots,n-1$ are now designed to be sent to fixed place $f \ 0,\cdots,f \ n$, it does not make sense to assign it to anywhere else. Hence to talk about valuations, the first thing is to make sure that they sends the variables which acturally denotes constants to the right place, therefore, we need to shift them accordingly:
+
+\begin{holmath}
+  \HOLConst{shift_valuation}\;\HOLFreeVar{n}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;(\HOLTokenLambda{}\HOLBoundVar{m}.\;\HOLKeyword{if}\;\HOLBoundVar{m}\;\HOLSymConst{\HOLTokenLt{}}\;\HOLFreeVar{n}\;\HOLKeyword{then}\;\HOLFreeVar{f}\;\HOLBoundVar{m}\;\HOLKeyword{else}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLBoundVar{m}\;\HOLSymConst{\ensuremath{-}}\;\HOLFreeVar{n}))
+\end{holmath}
+
+Recall our aim is to get rid of constants and hence avoid talking about expansion of models, the following proposition proves our construction does a good job:
+
+\begin{holmath}
+  \HOLConst{shift_valuation}\;\HOLFreeVar{n}\;\HOLFreeVar{\ensuremath{\sigma}}\;\HOLFreeVar{f}\;\HOLSymConst{\HOLTokenDefEquality{}}\\
+\;\;(\HOLTokenLambda{}\HOLBoundVar{m}.\;\HOLKeyword{if}\;\HOLBoundVar{m}\;\HOLSymConst{\HOLTokenLt{}}\;\HOLFreeVar{n}\;\HOLKeyword{then}\;\HOLFreeVar{f}\;\HOLBoundVar{m}\;\HOLKeyword{else}\;\HOLFreeVar{\ensuremath{\sigma}}\;(\HOLBoundVar{m}\;\HOLSymConst{\ensuremath{-}}\;\HOLFreeVar{n}))
+\end{holmath}
+
+The shifting construction get us out of the expansion, leaving us in a model obtained by coverting a ultraproduct modal model to a first model. How can we apply Los theorem to it? We do have a modal version of Los theorem, but we are not restricted to talking about standard translations, so \texttt{Los_modal_thm} is unhelpful. The correct way to apply first order version Los theorem on modal ultraproduct model is actually prove the ultraproduct construction on modal and first order models are capatible, in the sense that they are equivalent when we talk about formulas which makes sense to both of them. The capitability results are also witnesses of our success on construction of ultraproduct models. %recall function symbols does not make sense to modal models, so once modal models get involved, we cannot talk about constants anymore except in the case that we expand the model?
+
+Firstly, if we start with a family of modal models and take their ultraproduct in modal sense, then turn the resultant model into a first order model, then this model satisfies the same well-formed formula as the model we get by firstly turning the family of modal models into a family of first order models, then apply the ultraproduct construction in first order sense.
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{form_functions}\;\HOLFreeVar{phi}\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{models2worlds}\;\HOLFreeVar{MS})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLConst{feval}\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS}))\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLConst{mm2folm}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i})))\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{phi})
+\end{holmath}
+
+Moreover, for a family of well-formed first order models, if we take their ultraproducts of them in first order sense, it satisfies the same well-formed formulas as the model we get by firstly regard this family as a family of modal models, take their ultraproduct in modal sense, and then turn the resultant ultraproduct modal model into a first order model.
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{ultrafilter}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{form_functions}\;\HOLFreeVar{phi}\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}\;\HOLBoundVar{n}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;((\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{Pred}\;\HOLBoundVar{n}\;[]\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{F}))\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}\;\HOLBoundVar{a}\;\HOLBoundVar{b}\;\HOLBoundVar{n}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{Pred}\;\HOLBoundVar{n}\;[\HOLBoundVar{a};\;\HOLBoundVar{b}]\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{n}\;\HOLSymConst{=}\;\HOLNumLit{0})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}\;\HOLBoundVar{a}\;\HOLBoundVar{b}\;\HOLBoundVar{c}\;\HOLBoundVar{d}\;\HOLBoundVar{n}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;((\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{Pred}\;\HOLBoundVar{n}\;(\HOLBoundVar{a}\HOLSymConst{::}\HOLBoundVar{b}\HOLSymConst{::}\HOLBoundVar{c}\HOLSymConst{::}\HOLBoundVar{d})\;\HOLSymConst{\HOLTokenEquiv{}}\;\HOLConst{F}))\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n\sb{\mathrm{0}}}\;\HOLBoundVar{l\sb{\mathrm{0}}}\;\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{Fun}\;\HOLBoundVar{n\sb{\mathrm{0}}}\;\HOLBoundVar{l\sb{\mathrm{0}}}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLFreeVar{MS})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLConst{feval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS})\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{phi}\;\HOLSymConst{\HOLTokenEquiv{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{mm2folm}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLTokenLambda{}\HOLBoundVar{i}.\;\HOLConst{folm2mm}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}))))\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLFreeVar{phi})
+\end{holmath}
+
+
+Actually, the \texttt{ultraproduct_comm_feval} and \texttt{expansion_shift_feval} reduces our task into prove:
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{countably_incomplete}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{f}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{f}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{folmodels2Doms}\;\HOLFreeVar{FMS})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Fun}\;\HOLBoundVar{ff}\;\HOLBoundVar{ll}\;\HOLSymConst{\HOLTokenIn{}}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i}).\HOLFieldName{Dom})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{s}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{form_functions}\;\HOLBoundVar{phi}\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{FV}\;\HOLBoundVar{phi}\;\HOLConst{DIFF}\;\HOLFreeVar{N}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLTokenLeftbrace{}\HOLFreeVar{x}\HOLTokenRightbrace{})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{ss}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{FINITE}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{FMS}).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n}.\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{N}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{n}\;\HOLSymConst{=}\;\HOLBoundVar{f}\;\HOLBoundVar{n})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{FMS})\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{phi})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{FMS}).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n}.\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{N}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{n}\;\HOLSymConst{=}\;\HOLBoundVar{f}\;\HOLBoundVar{n})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;(\HOLConst{ultraproduct_folmodel}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{FMS})\;\HOLBoundVar{\ensuremath{\sigma}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}
+\end{holmath}
+
+\begin{proof}
+
+
+
+
+
+
+  %Suppose for a set $s$ of formulas, each element of it has only one free variable $x$ except the ones that are representing constants, and for each subset $ss\subseteq s$, we have a valuation that realises this subset in the ultraproduct model, with the `constants' delivered to the correct places, we will prove the whole set $s$ is realised in the ultraproduct model by a valuation which sends the `constants' to the right places. As the value of the constants are fixed, it amounts to find somewhere to send the only `real' free variable $x$ to. If $s$ is finite then there is nothing to prove, so we assume $s$ is infinite in the following discussion.
+
+%Recall we have restricted ourself to countably first order language, then as proved in ??? the infinite set $s$ of first order formulas are countable. Hence we obtain a bijection \HOLinline{\HOLFreeVar{enum}} from the universe of natural numbers to our set $s$. Define \HOLinline{\HOLFreeVar{conj}} to be the primitive recursive function \HOLinline{\HOLConst{PRIM_REC}\;\HOLConst{True}\;(\HOLTokenLambda{}\HOLBoundVar{conjn}\;\HOLBoundVar{n}.\;\HOLConst{fAND}\;\HOLBoundVar{conjn}\;(\HOLFreeVar{enum}\;\HOLBoundVar{n}))}, then \HOLinline{\HOLFreeVar{conj}\;\HOLFreeVar{n}} will be the formula $enum(0)\land\cdots\land enum(n)$. Then it suffices to prove the existence of a point that realise any of these conjunctions. By \texttt{ultraproduct_suffices_rep} and the Los theorem, it amounts to find out an a function to represent this equivalence class, we need some setups to find out the function. 
+
+%Consider the family of sets:
+%
+Type inference failure: unable to infer a type for the application of
+
+(% :(α model -> (num -> α) -> form -> bool) -> β -> (γ -> δ) -> form -> bool)
+
+at line 1579, character 16
+
+to
+
+∀(σ :α -> β).
+    (∀(k :α).
+         k ∈ (N :α -> bool) ⇒
+         σ k = CHOICE ((f :α -> (bool -> β) -> bool) k) (i :bool)) ⇒
+    (% :
+       (γ model -> (num -> γ) -> form -> bool) ->
+       δ -> (α -> β) -> form -> bool)
+      (feval :γ model -> (num -> γ) -> form -> bool ) ((FMS :bool -> δ) i) σ
+      (fEXISTS (x :num) ((conj :ε -> form) (n :ε)))
+
+between line 1579, character 19 and line 1580, character 58
+
+which has type
+
+:bool
+
+unification failure message: Attempt to unify different type operators: min$fun and min$bool
+
+%such $J_n$'s forms a desending chain. As by assumption, each finite subset of $s$ is realisable, each such $J$ is realisable, so all of them are in $U$ by Los theorem. By \texttt{countably_incomplete_chain}, we get another descending chain $I_n$'s of sets $U$ with $\bigcap_{n\in\mathbb N} I_n=\emptyset$. Define $X_n:= I_n\cap J_n$, then $X_n$ is a descending chain in $U$ where $\bigcap_{n\in\mathbb N}X_n=\emptyset$. Hence for any $i\in I$, it exists a number $N(i)$ such that $i\in X_{N(i)}$ and for any $a>N(i)$, $i\notin X_a$. The equivalence class we will send $x$ to is represented by the function 
+%
+Type inference failure: unable to infer a type for the application of
+
+feval ((FMS :β -> α model) (i :β)) (% :num -> α)
+
+between line 1580, character 47 and line 1581, character 8
+
+which has type
+
+:form -> bool
+
+to
+
+λ(n :α).
+    if n ∈ (N :α -> bool) then
+      CHOICE ((f :α -> (γ -> (num -> β) -> β) -> bool) n) (i :γ)
+        (% :num -> β)
+    else (a :β)
+
+roughly between line 1581, character 32 and line 1582, character 37
+
+which has type
+
+:α -> β
+
+unification failure message: Attempt to unify different type operators: folLang$form and min$fun
+, call it $ff$. By chosing such an $ff$, we have \HOLinline{\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{k}.\\
+\;\;\;\;\HOLTokenLeftbrace{}\HOLBoundVar{i}\;\HOLTokenBar{}\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{In}\;\HOLNumLit{0}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{feval}\;(\HOLFreeVar{FMS}\;\HOLBoundVar{i})\;(\HOLTokenLambda{}\HOLBoundVar{v}.\;\HOLFreeVar{rv}\;\HOLBoundVar{v}\;\HOLBoundVar{i})\;(\HOLFreeVar{conj}\;\HOLBoundVar{k})\HOLTokenRightbrace{}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{U}}
+
+%!!!mention Godel numbering ?
+\end{proof}
+
+We can step on the two stairs we built above to get \texttt{lemma_2_73}, using the capatibility lemma, we migrant the above lemma to ultraproduct of modal models:
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{countably_incomplete}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenNotEqual{}}\;\HOLSymConst{\HOLTokenEmpty{}})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLConst{IMAGE}\;\HOLFreeVar{f}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{models2worlds}\;\HOLFreeVar{MS})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{s}.\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{form_functions}\;\HOLBoundVar{phi}\;\HOLSymConst{=}\;\HOLSymConst{\HOLTokenEmpty{}}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{FV}\;\HOLBoundVar{phi}\;\HOLConst{DIFF}\;\HOLFreeVar{N}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLTokenLeftbrace{}\HOLFreeVar{x}\HOLTokenRightbrace{})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{ss}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{FINITE}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS})).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n}.\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{N}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{n}\;\HOLSymConst{=}\;\HOLFreeVar{f}\;\HOLBoundVar{n})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS}))\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{phi})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS})).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{n}.\;\HOLBoundVar{n}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{N}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{n}\;\HOLSymConst{=}\;\HOLFreeVar{f}\;\HOLBoundVar{n})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{feval}\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS}))\;\HOLBoundVar{\ensuremath{\sigma}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}
+\end{holmath}
+
+And use the shifting, we then migrant to expanded models:
+
+\begin{holmath}
+  \ensuremath{\HOLTokenTurnstile}\HOLConst{countably_incomplete}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{i}.\;\HOLBoundVar{i}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLFreeVar{I}\;\HOLSymConst{\HOLTokenImp{}}\;(\HOLFreeVar{MS}\;\HOLBoundVar{i}).\HOLFieldName{frame}.\HOLFieldName{world}\;\HOLSymConst{\HOLTokenNotEqual{}}\;\HOLSymConst{\HOLTokenEmpty{}})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{A}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{f}.\\
+\;\;\;\;\;\;\;\;\;\HOLConst{expansion}\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS}))\;\HOLBoundVar{A}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{f}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{f}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLConst{ultraproduct}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;(\HOLConst{models2worlds}\;\HOLFreeVar{MS})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{s}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{c}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLBoundVar{c}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{form_functions}\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{FST}\;\HOLBoundVar{c}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLConst{count}\;(\HOLConst{CARD}\;\HOLBoundVar{A})\;\HOLSymConst{\HOLTokenConj{}}\;\HOLConst{SND}\;\HOLBoundVar{c}\;\HOLSymConst{=}\;\HOLNumLit{0})\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{FV}\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLTokenLeftbrace{}\HOLFreeVar{x}\HOLTokenRightbrace{})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{ss}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{FINITE}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenConj{}}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenSubset{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS})).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{ss}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{feval}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{phi})\;\HOLSymConst{\HOLTokenImp{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenExists{}}\HOLBoundVar{\ensuremath{\sigma}}.\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLConst{IMAGE}\;\HOLBoundVar{\ensuremath{\sigma}}\;\ensuremath{\cal{U}}(:\HOLTyOp{num})\;\HOLSymConst{\HOLTokenSubset{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;(\HOLConst{mm2folm}\;(\HOLConst{ultraproduct_model}\;\HOLFreeVar{U}\;\HOLFreeVar{I}\;\HOLFreeVar{MS})).\HOLFieldName{Dom}\;\HOLSymConst{\HOLTokenConj{}}\\
+\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\HOLSymConst{\HOLTokenForall{}}\HOLBoundVar{phi}.\;\HOLBoundVar{phi}\;\HOLSymConst{\HOLTokenIn{}}\;\HOLBoundVar{s}\;\HOLSymConst{\HOLTokenImp{}}\;\HOLConst{feval}\;\HOLBoundVar{\ensuremath{\mathfrak{M}'}}\;\HOLBoundVar{\ensuremath{\sigma}}\;\HOLBoundVar{phi}
+\end{holmath}
+
+
+we can deduce \texttt{lemma_2_73} trivially from here.
+
 
 The last step towards the main theorem is used to pass from infinite set to finite set.
 \subsubsection{Interlude IV: Compactness theorem}

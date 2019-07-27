@@ -1386,8 +1386,289 @@ Define \HOLtm{Σ' = {fR (Fn 0 []) (fV x)\} UNION (IMAGE (ST x) Σ)} and \HOLtm{M
 This proves \HOLtm{consistent MA Σ'}. Since \HOLtm{(mm2folm M)} is countably saturated, \HOLtm{Σ'} itself is realised in some \HOLtm{b} in \HOLtm{MA}. The fact that \HOLtm{fR (Fn 0 []) (fV x)} is realised at $b$ implies $b$ is a successor of $a$ in \HOLtm{M}, and \HOLtm{(IMAGE (ST x) Σ)} is realised at \HOLtm{b} implies that \HOLtm{satis M b phi} for any \HOLtm{phi IN Σ} by \texttt{prop_2_47_i}.
 \end{proof}
 
-There remains two steps from our main characterisation result. The first step is to actually get countably saturated models to use.
+There remains two steps from our main characterisation result, which are discussed in the following two interludes.
 \subsubsection{Interlude III: Countably saturated models via ultraproducts}
+
+The procceding discussion about countably saturated models left us an important question: How do we get some countably saturated models? The fundamental construction underlying the theory of countably saturated models is that of ultraproduct. We firstly construct ultraproduct about sets, then about models. 
+
+Suppose $I\ne\emptyset$ and $U$ is an ultrafilter on $I$. And for each $i\in I$, $A_i$ is a non-empty set. The Cartestian product is the set of functions with domain $I$ such that for all $i\in I$, $f(i)\in A_i$.
+\begin{holmath}
+  \HOLthm[def]{ultraproduct.Cart_prod_def}
+\end{holmath}
+
+For two functions $f,g$ in the Cartesian product, we say $f$ and $g$ are $U$-equivalent if $f$ and $g$ agrees on some set in $U$. This defined an equivalent relation on the Cartestian product of the $A_i$'s:
+\begin{holmath}
+  \HOLthm[def]{ultraproduct.Uequiv_def}
+  \HOLthm{ultraproduct.prop_A_16}
+\end{holmath}
+
+The ultraproduct of $A_i$ modulo $U$ is the set od equivalence classes partitioned by the relation \HOLtm{Uequiv U I A}:
+
+\begin{holmath}
+  \HOLthm[def]{ultraproduct.ultraproduct_def}
+\end{holmath}
+
+In the case where $A_i = A$ for all $i\in I$, the ultraproduct is called ultrapower of $W$ modulo $U$.
+
+We deal with ultraproduct of modal models first. Given a family \HOLtm{MS} of modal models indexed by $I$ and an ultrafilter $U$ on $I$, the ultraproduct model of \HOLtm{MS} modulo $U$ is the model described as follows:
+
+\begin{itemize}
+  \item The world set is the ultraproduct of world sets of \HOLtm{Mi}s modulo $U$.
+  \item For two equivalence classes $f_U,g_U$ of functions in the ultraproduct, they are related iff there exists $f\in f_U,g\in g_U$ such that \HOLtm{{i IN I | (MS i).frame.rel (f i) (g i)\}} is in $U$.
+  \item For a propositional letter $p$ and an equivalence class $f_U$, we have $p$ is satisfied at $f_U$ iff there exists $g\in f_U$ such that \HOLtm{{i | i IN I /\ (f i) IN (MS i).valt p\}} is in $U$.
+\end{itemize} 
+
+The HOL definition looks like this:
+
+\begin{holmath}
+  \HOLthm[def]{ultraproduct.ultraproduct_model_def}
+\end{holmath}
+
+Note that since the choice of representatives does not make any difference since \HOLtm{Uequiv U I A} is an equivalence relation, we get an equivalent definition of ultraproduct models if we replace all the existential quantifers with universal quantifiers.
+
+where the function \HOLtm{models2worlds} is used here to extract the underlying sets of models.
+
+\begin{holmath}
+  \HOLthm[def]{ultraproduct.models2worlds_def}
+\end{holmath}
+
+Our central result about ultraproduct on modal models is a `modal verion' of the Los theorem. The standard version of Los theorem will be discussed in a moment.
+
+\begin{holmath}
+  \HOLthm{ultraproduct.Los_modal_thm}
+\end{holmath}
+\begin{proof}
+  Given an ultrafilter $U$ over $J$ and a family \HOLtm{Ms} of models. We proceed by induction on \HOLtm{phi}, the base case for \HOLtm{phi = VAR p} is directly by definition, and the case for \HOLtm{phi = FALSE} is by the fact that the empty set is not in the ultrafilter. The boolean cases are by basic property of ultrafilters. We only spell out the proof for diamond case. Suppose for any equivalence \HOLtm{fc} in the ultraproduct, we have 
+\HOLtm{(satis (ultraproduct_model U J Ms) fc phi ⇔
+             ∃f. f ∈ fc ∧ {i | i ∈ J ∧ satis (Ms i) (f i) phi\} ∈ U)}
+
+Given a world in \HOLtm{(ultraproduct_model U J Ms)}, we prove \HOLtm{satis (ultraproduct_model U J Ms) fc (◇ phi) ⇔
+        ∃f. f ∈ fc ∧ {i | i ∈ J ∧ satis (Ms i) (f i) (◇ phi)\} ∈ U}
+
+Left to right: The assumption says that there is an equivalence class that is related to \HOLtm{fc} and satisfied \HOLtm{phi}. Suppose the equivalence class $gc$ is represented by a function $g$, and $fc$ is represented by the function $f$. We check the $f$ can be taken as our $f$ as above. By defination of satisfication, our task is to check the set \HOLtm{A={i |
+         i ∈ J ∧ f i ∈ (Ms i).frame.world ∧
+         ∃v.
+             (Ms i).frame.rel (f i) v ∧ v ∈ (Ms i).frame.world ∧
+             satis (Ms i) v phi\}} is in $U$. 
+
+By inductive hypothesis, the fact that \HOLtm{phi} is satisfied at $gc$ implies the existence of an element in $x$ \HOLtm{gc} such that \HOLtm{ {i | i IN J /\ satis (Ms i) (x i) phi\}} is in $U$, but as \HOLtm{Uequiv} is an equivalence relation, this implies \HOLtm{ {i | i IN J /\ satis (Ms i) (g i) phi\}} is in $U$. As we can check: Since $x$ and $g$ lives in the same equivalence class, \HOLtm{{i | i IN J /\ g i = x i\}} is in $U$. As ultrafilters are closed under finite intersection, \HOLtm{{i | i IN J /\ g i = x i\} ∩ {i | i IN J /\ satis (Ms i) (x i) phi\}} is in $U$, this is a subset of  \HOLtm{ {i | i IN J /\ satis (Ms i) (g i) phi\}}, hence by upward closure, the result follows. As $fc$ and $gc$ is related, by a same procedure of checking independence of representatives, the set \HOLtm{{i | i IN J /\ (Ms i).frame.rel (f i) (g i)\}} is in $U$. Hence the intersection \HOLtm{{i | i IN J /\ (Ms i).frame.rel (f i) (g i)\} ∩ {i | i IN J /\ satis (Ms i) (g i) phi\}} is in $U$. As our $A$ is a supset of this set, $A$ is in $U$ as well.
+
+Right to left: Suppose there is an $f\in fc$ such that \HOLtm{{i |
+         i ∈ J ∧ f i ∈ (Ms i).frame.world ∧
+         ∃v.
+             (Ms i).frame.rel (f i) v ∧ v ∈ (Ms i).frame.world ∧
+             satis (Ms i) v phi\}} is in $U$, we need to find an equivalence class which is related to $fc$ and satisfies $\phi$, which by definition of relation in ultraproduct model, amounts to find a representative of such an equivalence class. The representative is given by :
+\HOLtm{\i. if (?v.
+          (Ms i).frame.rel (f i) v /\ v IN (Ms i).frame.world /\
+          satis (Ms i) v phi) then CHOICE {v | (Ms i).frame.rel (f i) v /\ v IN (Ms i).frame.world /\ satis (Ms i) v phi\}
+	  else CHOICE (Ms i).frame.world}
+
+checking this is the correct representative is tedious, but just routine, using representative independence and the property of \HOLtm{CHOICE} function. 
+
+\end{proof}
+
+In the case that we are taking the ultraproduct of a constant family of models with \HOLtm{MS i = M} for all $i\in I$, we get an ultrapower of \HOLtm{M}. Specialing \texttt{Los_modal_thm} to the case of ultrapowers yields the following proposition.
+
+\begin{holmath}
+  \HOLthm{ultraproduct.prop_2_71}
+\end{holmath}
+
+The construction of ultraproduct of first order models is similar to the construction for modal models. Restricting our scope only to first order models with `well-formed' conditions in the sense of it contains the same information as a modal model does not save much work, so we will just construct it for any first order models. This requires us to deal with function symbols and predicate symbols with any arity. 
+
+
+\begin{itemize}
+\item A function with its symbol denoted by natural number $n$ will send a list of equivalence class to the equivalence class represented by the function that sending $i\in I$ to \HOLtm{(FMS i).Fun n (MAP (λfc. CHOICE fc i) fs)}. That is, to see where does $i\in I$ goes to, evaluate each representative in the list $fs$ at $i$, collect them into a list, and use this list as the input of the function denoted by $n$ in the model \HOLtm{FMS i}.
+
+\item A predicate with its symbol denoted by $p$ will hold for a list $zs$ of equivalence classes iff when we pick representatives in each member of $zs$ and evaluate these representatives at $i$, the predicate $p$ holds in \HOLtm{FMS i} when we evaluate it with the list \HOLtm{(MAP (λfc. CHOICE fc i) zs)} of the outputs. 
+\end{itemize}
+
+To avoid having quantifiers everywhere, we fix the representative for each equivalence class $fc$ to be \HOLtm{CHOICE fc}.
+
+
+The definition looks like this:
+
+\begin{holmath}
+  \HOLthm[def]{ultraproduct.ultraproduct_folmodel_def}
+\end{holmath}
+
+We now prove this construction has nice semantical behaviour. 
+
+For an ultraproduct model of the family \HOLtm{FMS} of first order models, an evaluation $\sigma$ assigns each variable symbol an equivalence class in the ultraproduct of the world sets of the family. A term $t$ will be sent to the equivalence class represented by the function obtained as follows. For $i\in I$, the function that assigns a variable symbol $n$ to the representative of \HOLtm{σ n} evaluated at $i$ will be an assignment of variable symbols to elements in \HOLtm{FMS i}, and $i$ is sent to the element in \HOLtm{(FMS i).Dom} we will get by evaluating $t$ in \HOLtm{FMS i} using this assignment of variable symbols.
+
+\begin{holmath}
+  \HOLthm{ultraproduct.thm_A_19_i}
+\end{holmath}
+\begin{proof}
+ By complete induction on \texttt{term_size t}.
+\end{proof}
+The nice semantical behaviour of ultraproduct is evident from the Los theorem:
+
+\begin{holmath}
+  \HOLthm{ultraproduct.thm_A_19_ii}
+\end{holmath}
+
+\begin{proof}
+ By induction on \HOLtm{phi}. The base case for \HOLtm{fFALSE} comes from the fact that the empty set is not in an ultrafilter. And the atomic case reduces to check representative independence by unwinding the definitions. We should prove
+\HOLtm{S1 = {i |
+            i ∈ I ∧
+            (FMS i).Pred n
+              (MAP
+                 (λx. CHOICE (termval (ultraproduct_folmodel U I FMS) σ x) i)
+                 l)\}} is in U iff
+\HOLtm{S2 = {i |
+            i ∈ I ∧
+            (FMS i).Pred n (MAP (termval (FMS i) (λx. CHOICE (σ x) i)) l)\}} is in U.
+
+Let \HOLtm{I0 = {i | i IN I /\
+                 (MAP 
+                   (λx. CHOICE 
+                     (termval (ultraproduct_folmodel U I FMS) σ x) i) l) = 
+                 (MAP (termval (FMS i) (λx. CHOICE (σ x) i)) l)\}}, then 
+\HOLtm{I0 ∩ S1 = I0 ∩ S2}. If \HOLtm{I0 IN U}, suppose in addition that \HOLtm{S1} is in $U$, then \HOLtm{S2} is a supset of the set \HOLtm{I0 ∩ S2}, which is in $U$, and vice versa. So it suffices to prove \HOLtm{I0 IN U}.
+Obviously, if the two maps we are interested in agree on each member of \HOLtm{l}, then the resultant list we get will be equal. That gives \HOLtm{A= BIGINTER 
+      {
+       {i | i ∈ I ∧ 
+            CHOICE 
+              (termval (ultraproduct_folmodel U I FMS) σ a) i
+            = (termval (FMS i) (λx. CHOICE (σ x) i) a)\}
+       | MEM a l\}} is a subset of \HOLtm{I0}, reduces our task to prove \HOLtm{A} is in $U$. But by \texttt{thm_A_19_i}, for each member $a$ of $l$, \HOLtm{(termval (ultraproduct_folmodel U I FMS) σ a)} is the equivalence class represents by \HOLtm{(λi. termval (FMS i) (λn. CHOICE (σ n) i) a)}. Hence \HOLtm{{i | i ∈ I ∧  CHOICE (termval (ultraproduct_folmodel U I FMS) σ a) i
+            = (termval (FMS i) (λx. CHOICE (σ x) i) a)\}} is in $U$ for each $a$. So $A$ is in $U$ as a finite intersection of sets in $U$.
+
+The implication case is trivial from inductive hypothesis. Finally, we prove the case for universal quantifier. 
+From left to right, suppose \HOLtm{phi} is satisfied at any equivalence class in the ultraproduct model for \HOLtm{FMS}. We need \HOLtm{{i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) (FALL n phi)\} ∈
+                 U}. Suppose not, then as $U$ is an ultrafilter, \HOLtm{B={i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) (fEXISTS n (fNOT phi))\} IN U}. Use choice, define the function $f$ to send $i\in I$ to a chosen point in \HOLtm{(FMS i).Dom} where \HOLtm{phi} is not satisfied. Such a function in HOL looks like:
+\HOLtm{f = \i. if 
+                  (∃a. a ∈ (FMS i).Dom ∧
+                       ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi) then 
+                  (CHOICE {a | a ∈ (FMS i).Dom ∧ 
+                               ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi\})
+                 else (CHOICE (FMS i).Dom)}.
+Then \HOLtm{{i | i IN I /\ 
+            ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ f i⦈ phi\} = B }, and hence  is in U. Then by the inductive hypothesis, we can show the equivalence class represented by $f$ does not satisfy \HOLtm{phi}, contradiction. 
+
+From right to left. It is straightforward to check \HOLtm{{i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) (FALL n phi)\}} is a subset of \HOLtm{{i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ⦇n ↦ a⦈ x) i) phi\}}, for any equivalence class $a$. So the former one is in $U$ implies the later one is in $U$. 
+
+\end{proof}
+
+The way we stated the Los theorem will looks not such satisfactory, since it seems to restrict us for the choice of representatives, but it is not. We can be very free with our choice of representatives, as indicated in the following result:
+
+\begin{holmath}
+  \HOLthm{ultraproduct.ultraproduct_rep_independence_lemma}
+\end{holmath}
+
+If the world of models in \HOLtm{FMS} are of type $\beta$, then \HOLtm{rv} here is of type $num\to\beta$. The $\sigma$ here is an assignment of variable symbols to worlds of the ultraproduct model, which are equivalence classes. And \HOLtm{rv} here assigns each variable symbol $v$ an element \HOLtm{rv v} in the equivalence class assigned to $v$ by $\sigma$.%better explanation?
+For its proof, it actually amounts to check representative independency, which is of the same flavor of the second base case in the proof of Los theorem.
+
+The independence of representative provide us convenience of actually putting our Los theorem into usage. Since then if we want to find an assignments of elements in a ultraproduct model satisfying a first order formula $\phi$, instead of assigning equivalence classes directly, it suffices to use the \HOLtm{rv} below  to assign each $v$ a suitable representative functions in the Cartesian product :
+
+\begin{holmath}
+  \HOLthm{ultraproduct.ultraproduct_suffices_rep}
+\end{holmath}
+
+
+With the help of \texttt{ultraproduct_rep_independence_lemma}, we can prove a classical corollary of Los theorem, which says any first order model \HOLtm{M} is embedded in any of its ultraproduct model by sending a world to the equivalence class represented by the constant function on that world:
+
+\begin{holmath}
+  \HOLthm{ultraproduct.corollary_A_21}
+\end{holmath}
+
+All the construction we done above serves to paving a way to getting a countably saturated model:
+
+\begin{holmath}
+  \HOLthm{lemma2_73.lemma_2_73}
+\end{holmath}
+
+With all the setups about ultraproduct models, we may feel confident that this will be a consequence of Los theorem. But if we take a closer look of it, we will find out the Los theorem cannot be directly applied here. The definition of countably saturated asks us to prove the realisation of a set of first order formulas in an expanded first order model, and the first order model itself is from turning a modal model into a first order model. The obstrucles here will become clear when we compare what we want to prove to the statement of Los theorem: The Los theorem tells us the result for an ultraproduct of first order models, and says nothing about expansion. But we are proving a statement for an expanded model obtained from viewing an ultraproduct of modal models as a first order model. However, as we shell see now, it cannot stop us from applying the Los theorem.%quote the goal?
+
+The first issue is to remove the expansion on the outmost layer of expansion. The key observation is that we have an alternative approach to capture the idea of `constants'. Constant are nothing more than forcing some symbols to be sent to some point in a model under any valuation, hence rather then use nullary function symbols, we fixed a set of variable letters, each corresponds to a function symbol, and only consider the valuations that sends these variable letters to fixed certain points. With this idea, we can remove all the constants in a formula, and hence swap from an expanded model back to the unexpanded model. For our aim for proving \texttt{lemma_2_73}, we only care about the case that we only have finitely many function symbols. To get rid of $n$-function symbols, we need to come up with $n$ fresh variable symbols to be sent to certain places. The easiest way to ensure that the variable symbols we use for constants do not clash with the variable symbols we use for usual aim is to force those $n$-variable symbols to be represented by $0,\cdots, n$, and then add $n$ to all the variable symbols which originally appear in a formula. The construction of discarding constants in a formula can be done by a function:
+
+\begin{holmath}
+  \HOLthm[def]{lemma2_73.shift_term_def}
+  \HOLthm[def]{lemma2_73.shift_form_def}
+\end{holmath}
+
+Here we will need to prove the termination for the function \texttt{shift_term}. The termination relation is given by \HOLtm{measure (term_size o SND)}. %need to talk about termination?
+
+We get the syntactical result we want: All the function symbols are removed by applying the shifting construction, and the set of free variables is also under control.
+
+\begin{holmath}
+  \HOLthm{lemma2_73.shift_form_functions_EMPTY}
+  \HOLthm{lemma2_73.shift_FV}
+\end{holmath}
+
+Now if we want to use an arbitary valuation to evaluate a shifted formula, something will go wrong, because $0,\cdots,n-1$ are now designed to be sent to fixed place $f \ 0,\cdots,f \ n$, it does not make sense to assign it to anywhere else. Hence to talk about valuations, the first thing is to make sure that they sends the variables which acturally denotes constants to the right place, therefore, we need to shift them accordingly:
+
+\begin{holmath}
+  \HOLthm[def]{lemma2_73.shift_valuation_def}
+\end{holmath}
+
+Recall our aim is to get rid of constants and hence avoid talking about expansion of models, the following proposition proves our construction does a good job:
+
+\begin{holmath}
+  \HOLthm[def]{lemma2_73.shift_valuation_def}
+\end{holmath}
+
+The shifting construction get us out of the expansion, leaving us in a model obtained by coverting a ultraproduct modal model to a first model. How can we apply Los theorem to it? We do have a modal version of Los theorem, but we are not restricted to talking about standard translations, so \texttt{Los_modal_thm} is unhelpful. The correct way to apply first order version Los theorem on modal ultraproduct model is actually prove the ultraproduct construction on modal and first order models are capatible, in the sense that they are equivalent when we talk about formulas which makes sense to both of them. The capitability results are also witnesses of our success on construction of ultraproduct models. %recall function symbols does not make sense to modal models, so once modal models get involved, we cannot talk about constants anymore except in the case that we expand the model?
+
+Firstly, if we start with a family of modal models and take their ultraproduct in modal sense, then turn the resultant model into a first order model, then this model satisfies the same well-formed formula as the model we get by firstly turning the family of modal models into a family of first order models, then apply the ultraproduct construction in first order sense.
+
+\begin{holmath}
+  \HOLthm{lemma2_73.ultraproduct_comm_feval}
+\end{holmath}
+
+Moreover, for a family of well-formed first order models, if we take their ultraproducts of them in first order sense, it satisfies the same well-formed formulas as the model we get by firstly regard this family as a family of modal models, take their ultraproduct in modal sense, and then turn the resultant ultraproduct modal model into a first order model.
+
+\begin{holmath}
+  \HOLthm{chap2_6.ultraproduct_comm_feval'}
+\end{holmath}
+
+
+Actually, the \texttt{ultraproduct_comm_feval} and \texttt{expansion_shift_feval} reduces our task into prove:
+
+\begin{holmath}
+  \HOLthm{lemma2_73.ultraproduct_sat}
+\end{holmath}
+
+\begin{proof}
+
+
+
+
+
+
+  %Suppose for a set $s$ of formulas, each element of it has only one free variable $x$ except the ones that are representing constants, and for each subset $ss\subseteq s$, we have a valuation that realises this subset in the ultraproduct model, with the `constants' delivered to the correct places, we will prove the whole set $s$ is realised in the ultraproduct model by a valuation which sends the `constants' to the right places. As the value of the constants are fixed, it amounts to find somewhere to send the only `real' free variable $x$ to. If $s$ is finite then there is nothing to prove, so we assume $s$ is infinite in the following discussion.
+
+%Recall we have restricted ourself to countably first order language, then as proved in ??? the infinite set $s$ of first order formulas are countable. Hence we obtain a bijection \HOLtm{enum} from the universe of natural numbers to our set $s$. Define \HOLtm{conj} to be the primitive recursive function \HOLtm{PRIM_REC (True) (\conjn n. fAND conjn (enum n))}, then \HOLtm{conj n} will be the formula $enum(0)\land\cdots\land enum(n)$. Then it suffices to prove the existence of a point that realise any of these conjunctions. By \texttt{ultraproduct_suffices_rep} and the Los theorem, it amounts to find out an a function to represent this equivalence class, we need some setups to find out the function. 
+
+%Consider the family of sets:
+%\HOLtm{Jn = \n. {i | i IN I /\ 
+                % (!σ.  (!k. k IN N ==> σ k = CHOICE (f k) i) ==>
+                %      feval (FMS i) σ (Exists x (conj n)) 
+                 )\}}
+%such $J_n$'s forms a desending chain. As by assumption, each finite subset of $s$ is realisable, each such $J$ is realisable, so all of them are in $U$ by Los theorem. By \texttt{countably_incomplete_chain}, we get another descending chain $I_n$'s of sets $U$ with $\bigcap_{n\in\mathbb N} I_n=\emptyset$. Define $X_n:= I_n\cap J_n$, then $X_n$ is a descending chain in $U$ where $\bigcap_{n\in\mathbb N}X_n=\emptyset$. Hence for any $i\in I$, it exists a number $N(i)$ such that $i\in X_{N(i)}$ and for any $a>N(i)$, $i\notin X_a$. The equivalence class we will send $x$ to is represented by the function 
+%\HOLtm{\i. CHOICE   {a | a IN (FMS i).Dom /\  feval (FMS i) 
+        %                  (\n. if n IN N then ((CHOICE (f n)) i)
+         %                      else a)
+         %           (conj (Ni i))\}}, call it $ff$. By chosing such an $ff$, we have \HOLtm{∀k:num. {i | i ∈ (In 0) ∧ feval (FMS i) (λv. rv v i) (conj k)\} ∈ U}
+
+%!!!mention Godel numbering ?
+\end{proof}
+
+We can step on the two stairs we built above to get \texttt{lemma_2_73}, using the capatibility lemma, we migrant the above lemma to ultraproduct of modal models:
+
+\begin{holmath}
+  \HOLthm{lemma2_73.ultraproduct_sat'}
+\end{holmath}
+
+And use the shifting, we then migrant to expanded models:
+
+\begin{holmath}
+  \HOLthm{lemma2_73.ultraproduct_sat''}
+\end{holmath}
+
+
+we can deduce \texttt{lemma_2_73} trivially from here.
+
 
 The last step towards the main theorem is used to pass from infinite set to finite set.
 \subsubsection{Interlude IV: Compactness theorem}
