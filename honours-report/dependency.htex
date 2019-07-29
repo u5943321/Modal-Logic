@@ -1,0 +1,294 @@
+% \begin{figure}[htbp] % here, top, bottom, page
+\newcommand{\holtm}[1]{#1}
+\newcommand{\holthm}[1]{#1}
+
+\begin{tikzpicture}[>=stealth,auto, node distance=2cm]
+\tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=3em]
+\tikzstyle{virtual} = [coordinate]
+\tikzstyle{note} =[draw, rectangle, text width=6em,
+                   inner sep=5pt, minimum height=1em, minimum width=1em]
+\tikzstyle{element}=[circle, draw,, minimum size=12pt, inner sep=0pt]
+    % Top Level
+    \node [virtual] (ch1) at (4,18) {}; % maximum height = 18
+    \node [note, text width=10em,  left=0.2 of ch1] (ch1al)
+          {\HOLConst{Formal definition}: \holtm{aks n}};
+    \node [note, text width=13em, right=0.2 of ch1] (ch1ar)
+          {\HOLConst{Formal implementation}: \holtm{aksM n}};
+    % First Level
+    \node [virtual] (ch2) at (0,16) {};
+    \node [virtual] (ch4) at (4.8,16) {};
+    \node [virtual] (ch6) at (10,16) {};
+
+    \node [virtual, below=0.3 of ch2]  (ch2a)    {};
+    \node [note, text width=4em, left=0.1 of ch2a] (ch2al)  {\HOLConst{Monoids}};
+    \node [note, text width=3em, right=0.1 of ch2a] (ch2ar) {\HOLConst{Groups}};
+    \node [virtual, below=1.0 of ch2a] (ch2b)  {};
+    \node [note, text width=3em, left=0.1 of ch2b] (ch2bl)  {\HOLConst{Rings}};
+    \node [note, text width=3em, right=0.1 of ch2b] (ch2br) {\HOLConst{Fields}};
+    \node [note, below=0.9 of ch2b] (ch2c) {\HOLConst{Polynomials}};
+    \node [note, below=0.5 of ch2c] (ch2d) {\HOLConst{Quotient Rings}};
+    \node [note, below=0.5 of ch2d] (ch2e) {\HOLConst{Number Theory}};
+
+    \node [note, below=0 of ch4]  (ch4a)  {\HOLConst{Finite Fields}};
+    \node [virtual, below=0.8 of ch4a] (ch4b)  {};
+    \node [note, text width=4em, left=0.1 of ch4b] (ch4bl)  {\HOLConst{Subfields}};
+    \node [note, right=0.1 of ch4b] (ch4br) {\HOLConst{Vector Spaces}};
+    \node [virtual, below=0.9 of ch4b] (ch4c)  {};
+    \node [note, text width=4em, left=0.1 of ch4c] (ch4cl)  {\HOLConst{Irreducibles}};
+    \node [note, right=0.1 of ch4c] (ch4cr) {\HOLConst{Minimal Poly.}};
+    \node [virtual, below=1.0 of ch4c] (ch4d)  {};
+    \node [note, text width=4em, left=0.1 of ch4d] (ch4dl)  {\HOLConst{Existence}};
+    \node [note, right=0.1 of ch4d] (ch4dr) {\HOLConst{Uniqueness}};
+	\node [note, text width=8em, below=0.9 of ch4d] (ch4e)  {\HOLConst{Cyclotomic Factors}};
+
+    \node [note, below=0 of ch6]  (ch6a) {\HOLConst{Machine} \HOLConst{Model}};
+    \node [note, below=1 of ch6a] (ch6b) {\HOLConst{Recurrence} \HOLConst{Loops}};
+    \node [note, below=1 of ch6b] (ch6c) {\HOLConst{Example:} \holtm{ulogM n}};
+
+    % Second Level
+    \node [virtual] (ch3) at (0,8.5) {};
+    \node [virtual] (ch5) at (4.8,8.5) {};
+    \node [virtual] (ch7) at (9.5,8.5) {};
+
+    \node [note, below=0 of ch3]  (ch3a)   {\holtm{power_free n}};
+    \node [note, below=0.5 of ch3a] (ch3b) {\holtm{aks_param n}};
+    \node [note, text width=10em, below=0.5 of ch3b] (ch3c) {\holtm{poly_intro_range (ZN n) k n s}};
+%    \node [note, text width=8em, below=0.5 of ch3c] (ch3d)  {\holtm{prime n ==> aks n}};
+    \node [note, text width=8em, below=0.5 of ch3c] (ch3d)  {\holthm{AKSclean.aks_thm_1}};
+    \node [note, text width=10em, below=0.5 of ch3d] (ch3e) {\holtm{poly_intro_range (ZN p) k n s}};
+%    \node [note, text width=8em, below=0.5 of ch3e] (ch3f)  {\holtm{aks n ==> prime n}};
+    \node [note, text width=8em, below=0.5 of ch3e] (ch3f)  {\holthm{AKSclean.aks_thm_2}};
+    \node [note, text width=0, draw=none, left=0 of ch3e] (ch3x) {}; % dummy for chapter round
+
+    \node [note, text width=5em, below=0 of ch5]  (ch5a)
+           {\HOLConst{Introspective Relation:} \text{\ \; \holtm{n intro (X + |c|)}}};
+    \node [virtual, below=1 of ch5a] (ch5b)  {};
+    \node [note, text width=2em, left=0.1 of ch5b] (ch5bl)  {\holtm{NS}};
+    \node [note, text width=2em, right=0.1 of ch5b] (ch5br) {\holtm{PS}};
+    \node [virtual, below=1.5 of ch5b] (ch5c)  {};
+    \node [note, text width=2em, left=0.1 of ch5c] (ch5cl)  {\holtm{MS}};
+    \node [note, text width=2em, right=0.1 of ch5c] (ch5cr) {\holtm[polyh/h]{Q h}};
+    \node [note, text width=2em, below=1 of ch5c] (ch5d)    {\HOLConst{Proof}};
+    \node [note, text width=0, draw=none, right=0.3 of ch5d] (ch5x) {}; % dummy for chapter round
+    
+    \node [note, below=0 of ch7]  (ch7a)  {\holtm{power_freeM n}};
+    \node [note, below=1 of ch7a] (ch7b)  {\holtm{paramM n}};
+    \node [note, text width=9em, below=1 of ch7b] (ch7c)  {\holtm{poly_intro_rangeM n k s}};
+    \node [note, text width=7em, below=1 of ch7c] (ch7d)  {\holtm{aksM n}: \HOLConst{analysis}};
+    \node [note, text width=0, draw=none, left=0 of ch7c] (ch7x) {}; % dummy for chapter round
+
+    % Final Level
+    \node [virtual] (ch8) at (4,0) {};
+%    \node [note, text width=8em, left=0.3 of ch8] (ch8a) {\holtm{aks n = prime n}};
+%    \node [note, text width=12em, right=0.3 of ch8] (ch8b)
+%          {\holtm{valueOf (aksM n) <=> aks n} \holtm{stepsOf o aksM IN big_O (\n. ulog n ** 21)}};
+    \node [note, text width=10em, left=0.3 of ch8] (ch8a) {\holthm{AKSclean.aks_thm}};
+    \node [note, text width=15em, right=0.3 of ch8] (ch8b)
+          {\begin{HOLarray}\holthm{AKSclean.aksM_value_alt}\\
+           \holthm{countAKS.aksM_steps_big_O}\end{HOLarray}};
+
+   % Round up Chapters
+    \node[draw, thick, green!60!black, rounded corners,
+          label={\HOLConst{Ch~\ref{cha:introduction}: Introduction}},
+          inner xsep=1em, inner ysep=1em, fit=(ch1al) (ch1ar)] {};
+    \node[draw, thick, green!60!black, rounded corners,
+          label={\HOLConst{Ch~\ref{cha:basic-algebra}: Basic Algebra}},
+          inner xsep=1em, inner ysep=1em, fit=(ch2al) (ch2ar) (ch2e)] {};
+    \node[draw, thick, green!60!black, rounded corners,
+          label={\HOLConst{Ch~\ref{cha:aks-algorithm}: AKS Algorithm}},
+          inner xsep=1em, inner ysep=1em, fit=(ch3a) (ch3c) (ch3f) (ch3x)] {};
+    \node[draw, thick, green!60!black, rounded corners,
+          label={\HOLConst{Ch~\ref{cha:advanced-algebra}: Advanced Algebra}},
+          inner xsep=1em, inner ysep=1em, fit=(ch4a) (ch4dl) (ch4dr) (ch4e)] {};
+    \node[draw, thick, green!60!black, rounded corners,
+          label={\HOLConst{Ch~\ref{cha:aks-main-theorem}: AKS Main Theorem}},
+          inner xsep=1em, inner ysep=1em, fit=(ch5a) (ch5d) (ch5x)] {};
+    \node[draw, thick, green!60!black, rounded corners,
+          label={\HOLConst{Ch~\ref{cha:complexity-models}: Complexity Models}},
+          inner xsep=1em, inner ysep=1em, fit=(ch6a) (ch6c)] {};
+    \node[draw, thick, green!60!black, rounded corners,
+          label={\HOLConst{Ch~\ref{cha:aks-complexity}: AKS Complexity}},
+          inner xsep=1em, inner ysep=1em, fit=(ch7a) (ch7c) (ch7d) (ch7x)] {};
+    \node[draw, thick, green!60!black, rounded corners,
+          label={\HOLConst{Ch~\ref{cha:conclusion}: Conclusion}},
+          inner xsep=1em, inner ysep=1em, fit=(ch8a) (ch8b)] {};
+
+   % Connections
+    % (aks n) -> (aksM n)  
+    \draw [->,purple] (ch1al) -- (ch1ar);
+    % (aks n) -> Ch 3
+    \node[virtual,below=0.6 of ch1al.south] (x1) {};
+    \node[virtual,left=4.3 of x1] (x2) {};
+    \node[virtual,below=7.5 of x2] (x3) {};
+    \node[virtual,right=1.3 of x3] (x4) {};
+    \node[virtual,below=0.2 of x4] (x5) {};
+    \draw [->,purple,rounded corners] (ch1al.south) -- (x1) |- (x2) |- (x3) |- (x4) |- (x5);
+    % (aksM n) -> Ch 7
+    \node[virtual,below=0.6 of ch1ar.south] (x1) {};
+    \node[virtual,right=5 of x1] (x2) {};
+    \node[virtual,below=7.5 of x2] (x3) {};
+    \node[virtual,left=1 of x3] (x4) {};
+    \node[virtual,below=0.2 of x4] (x5) {};
+    \draw [->,purple,rounded corners] (ch1ar.south) -- (x1) |- (x2) |- (x3) |- (x4) |- (x5);
+    % (Proof) -> (aks n ==> prime n)
+    \node[virtual,below=0.2 of ch5d.south] (x1) {};
+    \draw [->,purple,rounded corners] (ch5d.south) -- (x1) |- (ch3f.east);
+    % (prime n => aks n) -> (prime n = aks n)
+    % (aks n => prime n) -> (prime n = aks n)
+    \node[virtual,left=0.6 of ch3d.west] (x1) {};
+    \node[virtual,above=0.8 of ch8a.north] (x2) {};
+    \draw [->,purple,rounded corners] (ch3d.west) -- (x1) |- (ch8a.west);
+    \draw [->,purple,rounded corners] (ch3f.south) |- (x2) -- (ch8a.north);
+    % (power_freeM n) + (paramM n) + (introM ...) -> (aksM n: analysis)
+    \node[virtual,right=0.75 of ch7a.east] (x1) {};
+    \node[virtual,right=0.75 of ch7b.east] (x2) {};
+    \node[virtual,right=0.2 of ch7c.east] (x3) {};
+    \draw [->,purple,rounded corners] (ch7a.east) -- (x1) |- (ch7d.east);
+    \draw [->,purple,rounded corners] (ch7b.east) -- (x2);
+    \draw [->,purple,rounded corners] (ch7c.east) -- (x3);
+    % (aksM n : analysis) -> (results)
+    \node[virtual, above=0.5 of ch8b.north] (x1) {};
+    \draw [->,purple,rounded corners] (ch7d.south) |- (x1) -- (ch8b.north);
+    % (aks_param n) -> k -> (intro_range .. k)
+    \node[virtual, right=0.5 of ch3b.east] (x1) {};
+    \node[virtual, below=0.8 of x1] (x2) {};
+    \node[virtual, right=0.4 of ch3b.east] (x3) {};
+    \node[note,draw=none, text width=1em, above=0 of x3] () {$k$};
+    \draw [->,purple,rounded corners] (ch3b.east) -- (x1) |- (x2);  
+    % (Numbers) -> p + (intro ZN) -> (intro Zp)
+    \node[virtual, below=0.2 of ch2e.300] (x1) {};
+    \node[virtual, right=2.5 of x1] (x2) {};
+    \node[virtual, right=0.6 of ch3c.east] (x3) {};
+    \node[virtual, right=2.8 of x1] (x4) {};
+    \node[note,draw=none, text width=1em, below=0 of x4] () {$p$};
+    \draw [->,purple,rounded corners] (ch2e.300) -- (x1) |- (x2) |- (ch3e.east);
+    \draw [->,purple,rounded corners] (ch3c.east) -- (x3);
+    % (Numbers) -> (prime n => aks n) + FLT
+    \node[virtual, below=0.3 of ch2e.250] (x1) {};
+    \node[virtual, right=2.4 of x1] (x2) {};
+    \node[virtual, above=0.3 of ch3d.north] (x3) {};
+    \node[virtual, right=2.0 of x1] (x4) {};
+    \node[note,draw=none, text width=1em, below=0 of x4] () {\scriptsize{\textsf{FLT}}};
+    \draw [->,purple,rounded corners] (ch2e.250) -- (x1) |- (x2) |- (x3) |- (ch3d.north);
+    % (Numbers) -> (aks_param n): existence of k
+    \node[virtual, below=0.9 of ch2e.220] (x1) {};
+    \node[virtual, right=2.3 of x1] (x2) {};
+    \node[virtual, above=0.3 of ch3b.north] (x3) {};
+    \node[virtual, right=0 of x1] (x4) {};
+    \node[note, draw=none, text width=9em, above=0 of x4] () {\HOLConst{LCM bound}};
+    \draw [->,purple,rounded corners] (ch2e.220) -- (x1) |- (x2) |- (x3) |- (ch3b.north);
+    % (aks_param n) -> k -> (Mk)
+    \node[virtual, right=1.5 of ch3b.east] (x1) {};
+    \draw [->,purple,rounded corners] (ch3b.east) -- (x1) |- (ch5cl.west);
+    % (Cyclo) -> h -> (Qh)
+    \node[virtual, below=0.8 of ch4e.south] (x1) {};
+    \node[virtual, right=1.85 of x1] (x2) {};
+    \node[virtual, right=2.1 of x1] (x3) {};
+    \node[note,draw=none, text width=1em, below=0 of x3] () {\holtm{polyh}};
+    \draw [->,purple,rounded corners] (ch4e.south) -- (x1) |- (x2) |- (ch5cr.east);
+    % (fields) -> (finite fields) + (subfields)
+    \node[virtual, right=0.6 of ch2br.east] (x1) {};
+    \node[virtual, left=1.2 of ch4bl.west] (x2) {};
+    \draw [->,purple,rounded corners] (ch2br.east) -- (x1) |- (ch4a.west);
+    \draw [->,purple,rounded corners] (x2) -- (ch4bl.west);
+    % (Poly) -> (Irreducibles)
+    \node[virtual, right=0.8 of ch2c.east] (x1) {};
+    \draw [->,purple,rounded corners] (ch2c.east) -- (x1) |- (ch4cl.west);
+    % (Quotient) -> (Existence)
+    \node[virtual, right=0.8 of ch2d.east] (x1) {};
+    \draw [->,purple,rounded corners] (ch2d.east) -- (x1) |- (ch4dl.west);
+    % (power_free n) -> (power_freeM n)
+    \node[element,left=1.0 of ch3a.west] (x1) {1};
+    \node[element,left=0.8 of ch7a.west] (x2) {1};
+    \draw [->,purple] (ch3a.west) -- (x1);
+    \draw [->,purple] (x2) -- (ch7a.west);
+    % (aks_param n) -> (paramM n)
+    \node[element,left=1.0 of ch3b.west] (x1) {2};
+    \node[element,left=0.8 of ch7b.west] (x2) {2};
+    \draw [->,purple] (ch3b.west) -- (x1);
+    \draw [->,purple] (x2) -- (ch7b.west);
+    % (intro_range n ...) -> (intro_rangeM n ...)
+    \node[element,left=0.2 of ch3c.west] (x1) {3};
+    \node[element,left=0.2 of ch7c.west] (x2) {3};
+    \draw [->,purple] (ch3c.west) -- (x1);
+    \draw [->,purple] (x2) -- (ch7c.west);
+    % (Model) + (Recurrence) -> (Example)
+    \node[virtual, left=0.2 of ch6a.west] (x1) {};
+    \node[virtual, left=0.2 of ch6b.west] (x2) {};
+    \draw [->,purple] (ch6b.west) -- (x2);
+    \draw [->,purple,rounded corners] (ch6a.west) -- (x1) |- (ch6c.west);
+    % (Model) + (Recurrence) + (Example) -> Ch7
+    \node[virtual, right=0.55 of ch6a.east] (x1) {};
+    \node[virtual, right=0.55 of ch6b.east] (x2) {};
+    \node[virtual, right=0.55 of ch6c.east] (x3) {};
+    \draw [->,purple] (ch6a.east) -- (x1);
+    \draw [->,purple] (ch6b.east) -- (x2);
+    \draw [->,purple] (ch6c.east) -- (x3);
+    % (Monoid) -> (Ring)
+    \node[virtual, right=0.2 of ch2al.south] (x1) {};
+    \draw [->,purple] (x1) -- (ch2bl.north);
+    % (Group) -> (Field)
+    \draw [->,purple] (ch2ar.south) -- (ch2br.north);
+    % (Group) -> (Number)
+    \node[virtual, below=0.15 of ch2ar.250] (x1) {};
+    \node[virtual, left=2.8 of x1] (x2) {};
+    \draw [->,purple,rounded corners] (ch2ar.250) -- (x1) |- (x2) |- (ch2e.west);
+    % (Exist) + (Unique) -> (Cyclo)
+    \node[virtual, above=0.4 of ch4e.north] (x1) {};
+    \draw [->,purple,rounded corners] (ch4dl.south) |- (x1) -- (ch4e.north);
+    \draw [->,purple,rounded corners] (ch4dr.south) |- (x1) -- (ch4e.north);
+    % (Minimal) -> (Cyclo)
+    \node[virtual, right=0.2 of ch4cr.east] (x1) {};
+    \draw [->,purple,rounded corners] (ch4cr.east) -- (x1) |- (ch4e.east);
+    % (aks n => prime n) -> (intro Zp) 
+    \draw [->,purple] (ch3f.north) -- (ch3e.south);
+    % (intro Zp) -> (Introspective)
+    \node[virtual, below=0.2 of ch3e.300] (x1) {};
+    \node[virtual, right=2.9 of x1] (x2) {};
+    \draw [->,purple,rounded corners] (ch3e.300) -- (x1) |- (x2) |- (ch5a.west);
+    % (Introspective) -> (N) + (P)
+    \node[virtual, above=0.3 of ch5bl.north] (x1) {};
+    \node[virtual, above=0.3 of ch5br.north] (x2) {};
+    \draw [->,purple,rounded corners] (ch5a.south) |- (x1) -- (ch5bl.north);
+    \draw [->,purple,rounded corners] (ch5a.south) |- (x2) -- (ch5br.north);
+    % (N) -> (Mk), (P) -> (Qh)  
+    \node[virtual, below=0.9 of ch5bl.south] (x1) {};
+    \node[virtual, below=0.9 of ch5br.south] (x2) {};
+    \draw [->,purple,rounded corners] (ch5bl.south) |- (x1);
+    \draw [->,purple,rounded corners] (ch5br.south) |- (x2);
+    % (Mk) + (Qh) -> (Proof)
+    \node[virtual, above=0.4 of ch5d.north] (x1) {};
+    \draw [->,purple,rounded corners] (ch5cl.south) |- (x1) -- (ch5d.north);
+    \draw [->,purple,rounded corners] (ch5cr.south) |- (x1) -- (ch5d.north);
+    % (Ring) + (Field) -> (Poly)
+    \node[virtual, above=0.4 of ch2c.north] (x1) {};
+    \draw [->,purple,rounded corners] (ch2bl.south) |- (x1) -- (ch2c.north);
+    \draw [->,purple,rounded corners] (ch2br.south) |- (x1) -- (ch2c.north);
+    % (Monoid) -> (Group)
+    \draw [->,purple,rounded corners] (ch2al.east) -- (ch2ar.west);
+    % (Ring) -> (Field)
+    \draw [->,purple,rounded corners] (ch2bl.east) -- (ch2br.west);
+    % (Poly) -> (Quotient)
+    \draw [->,purple,rounded corners] (ch2c.south) |- (ch2d.north);
+    % (FField) -> (Subfield)
+    \node[virtual, above=0.2 of ch4bl.north] (x1) {};
+    \draw [->,purple,rounded corners] (ch4a.south) |- (x1) |- (ch4bl.north);
+    % (Vspace) -> (Subfield)
+    \draw [->,purple,rounded corners] (ch4br.west) -- (ch4bl.east);
+    % (Vspace) -> (Minimal)
+    \draw [->,purple,rounded corners] (ch4br.south) -- (ch4cr.north);
+    % (Irreducible) -> (Minimal)
+    \draw [->,purple,rounded corners] (ch4cl.east) -- (ch4cr.west);
+    % (Subfield) -> (Irreducible)
+    \draw [->,purple,rounded corners] (ch4bl.south) -- (ch4cl.north);
+    % (Irreducibles) -> (Exist)
+    \draw [->,purple,rounded corners] (ch4cl.south) -- (ch4dl.north);
+    % (Minimal) -> (Unique)
+    \draw [->,purple,rounded corners] (ch4cr.south) -- (ch4dr.north);
+    % PHP -> (Proof)
+    \node[element, draw=none, right=0.4 of ch5d.east] (x1) {\scriptsize{\textsf{PHP}}};
+    \draw [->,purple] (x1) -- (ch5d.east);
+\end{tikzpicture}
+% \caption{Dependency Diagram}
+% \label{fig:dependency-diagram}
+% \end{figure}

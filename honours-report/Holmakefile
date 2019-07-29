@@ -2,7 +2,7 @@ INCLUDES = ..
 
 TEXDIR = $(HOLDIR)/src/TeX
 
-report.pdf: report.tex
+report.pdf: report.tex dependency.tex
 	latexmk -pdf report
 
 
@@ -18,3 +18,5 @@ holtexbasic.sty: $(TEXDIR)/holtexbasic.sty
 report.tex: report.htex munge.exe holtexbasic.sty overrides
 	./munge.exe -m\; overrides < $< > $@
 
+dependency.tex: dependency.htex munge.exe holtexbasic.sty overrides
+	./munge.exe -m\; overrides < $< > $@
