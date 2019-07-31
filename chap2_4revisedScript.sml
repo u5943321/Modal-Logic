@@ -8,8 +8,8 @@ open set_relationTheory;
 open finite_mapTheory;
 open chap1Theory;
 
-open folModelsTheory
-open folLangTheory
+open folModelsTheory;
+open folLangTheory;
 
 
 val _ = ParseExtras.tight_equality()
@@ -232,8 +232,8 @@ val prop_2_47_i_alt = store_thm(
 
 val ST_alt_two_var = store_thm(
   "ST_alt_two_var",
-  ``!phi. FV (ST_alt 0 phi) SUBSET {0;1} /\ FV (ST_alt 1 phi) SUBSET {0;1}``,
-  Induct_on `phi` >> rw[] >> fs[ST_alt_def,FV_def,SUBSET_DEF,FVT_def,fDISJ_def,fNOT_def,fAND_def] >> rw[] >> metis_tac[]);
+  ``!phi. (FV (ST_alt 0 phi) ∪ BV (ST_alt 0 phi)) SUBSET {0;1} /\ (FV (ST_alt 1 phi) ∪ BV (ST_alt 1 phi)) SUBSET {0;1}``,
+  Induct_on `phi` >> rw[] >> fs[ST_alt_def,FV_def,SUBSET_DEF,FVT_def,fDISJ_def,fNOT_def,fAND_def,BV_def,Exists_def] >> rw[] >> metis_tac[]);
 
 
 
@@ -260,12 +260,16 @@ val ST_ST_alt_fequiv = store_thm(
 
 
   
-val prop_2_49_i = store_thm(
-  "prop_2_49_i",
-  ``!phi. ?fphi. (FV fphi) SUBSET {0;1} /\
-                 fequiv μ (ST 0 phi) fphi``,
-  rw[] >> qexists_tac `(ST_alt 0 phi)` >>
-  metis_tac[ST_alt_two_var,ST_ST_alt_fequiv]);
+Theorem prop_2_49_i:
+ !phi. ?fphi. ((FV fphi) ∪ (BV fphi)) SUBSET {0;1} /\
+                 fequiv μ (ST 0 phi) fphi
+Proof
+  rw[] >> qexists_tac `(ST_alt 0 phi)` >> strip_tac 
+  >- (`(FV (ST_alt 0 phi) ∪ BV (ST_alt 0 phi)) SUBSET {0;1}` 
+       by metis_tac[ST_alt_two_var] >>
+     fs[SUBSET_DEF,UNION_DEF]) >>
+  metis_tac[ST_ST_alt_fequiv]
+QED
 
 val _ = export_theory();
 	          

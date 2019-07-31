@@ -390,7 +390,18 @@ rw[filtration_def] >- fs[FLT_def]
 >- fs[FLT_def]);
 
 
+Theorem Rs_preserves_SYMM:
+!M Σ. CUS Σ ==> 
+      (!a b. 
+         (a IN M.frame.world /\ b IN M.frame.world /\ M.frame.rel a b) ==>
+              M.frame.rel b a) ==>
+      (!fa fb. fa IN (FLT M Σ).frame.world /\ fb IN (FLT M Σ).frame.world /\
+               (FLT M Σ).frame.rel fa fb ==> (FLT M Σ).frame.rel fb fa)
 
+Proof
+ rw[] >> fs[FLT_def,PULL_EXISTS] >>
+ map_every qexists_tac [`w2`,`w1`,`v'`,`w'`] >> rw[]
+QED
 
 
 val subforms_phi_CUS = store_thm(
@@ -1022,7 +1033,7 @@ Induct_on `n`
 
 val prop_2_29 = store_thm(
 "prop_2_29",
-``INFINITE univ(:'b) /\ FINITE univ (:'a) ==> !n. FINITE (partition (equiv0 (μ:'b itself)) {f:'a form | DEG f <= n})``,
+``INFINITE univ(:'b) /\ FINITE univ (:'a) ==> !n. FINITE (partition (equiv0 (μ:'b itself)) {f:'a chap1$form | DEG f <= n})``,
 rw[] >> drule prop_2_29_strengthen >> rw[]);
 
 
@@ -2373,5 +2384,16 @@ rpt conj_tac (* 3 *)
         `satis M3' c phi'` by metis_tac[equiv0_def])))));
       
    
+Theorem peval_satis_strengthen':
+!f M w. propform f /\ (prop_letters f ⊆ s) /\
+        w IN M.frame.world ==>
+        (satis M w f <=> peval ((\a. w IN M.valt a ) ∩ s) f)
+Proof
+rw[] >> drule peval_satis_strengthen >> strip_tac >> first_x_assum irule (* 2 *)
+>- (rw[] >> metis_tac[prop_letters_subforms,SUBSET_DEF]) >>
+rw[]
+QED
+
+
 
 val _ = export_theory();

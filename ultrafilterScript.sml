@@ -730,6 +730,56 @@ QED
 
 
 
+Theorem generated_filter_elements:
+!E W. E ⊆ POW W /\ W <> {} ==> 
+generated_filter E W =  {X | X SUBSET W /\
+                            (X = W \/ (?S. S SUBSET E /\ FINITE S /\ S <> {} /\ (BIGINTER S) SUBSET X))}
+Proof
+rw[Once EXTENSION,EQ_IMP_THM] (* 4 *) >>
+rw[Once EXTENSION,EQ_IMP_THM] (* 4 *)
+>- (drule generated_FT_FT >> rw[] >> fs[GSYM MEMBER_NOT_EMPTY,PULL_EXISTS] >> 
+    first_x_assum drule >> rw[] >> 
+    `generated_filter E W' ⊆ (POW W')` by fs[filter_def] >> fs[POW_DEF,SUBSET_DEF] >>
+    metis_tac[])
+>- (`!x'. x' IN (generated_filter E W')
+         ==> x' IN 
+                  {X | X SUBSET W' /\ 
+                       (X = W' \/ 
+                       (?S. 
+                          S SUBSET E /\ FINITE S /\ S <> {} /\ (BIGINTER S) SUBSET X))}`
+     suffices_by fs[] >>
+   ho_match_mp_tac generated_filter_ind >> rw[] (* 13 *)
+   >- (rw[Once SUBSET_DEF] (* 2 *)
+       >- (fs[POW_DEF,SUBSET_DEF] >> metis_tac[]) >>
+       Cases_on `x'' = W'` >> fs[] >> qexists_tac `{x''}` >> fs[])
+   >- metis_tac[MEMBER_NOT_EMPTY]
+   >- rw[SUBSET_DEF,POW_DEF]
+   >- fs[SUBSET_DEF]
+   >- fs[SUBSET_DEF]
+   >- fs[SUBSET_DEF]
+   >- metis_tac[SUBSET_TRANS]
+   >- fs[SUBSET_DEF]
+   >- metis_tac[SUBSET_TRANS]
+   >- fs[SUBSET_DEF]
+   >- (Cases_on `X ∩ Y = W'` >> fs[] >> qexists_tac `S' ∪ S''` >> rw[] (* 2 *)
+       >> fs[INTER_DEF,SUBSET_DEF])
+   >- metis_tac[SUBSET_ANTISYM]
+   >- (Cases_on `Z = W'` >> fs[] >> qexists_tac `S'` >> metis_tac[SUBSET_TRANS]))
+>- (rw[generated_filter_def] >> fs[filter_def]) >> 
+rw[generated_filter_def] >> 
+`(BIGINTER S') IN P` 
+  suffices_by (fs[filter_def] >> metis_tac[]) >>
+irule BIGINTER_IN_filter >> metis_tac[SUBSET_TRANS]
+QED
+
+
+Theorem generated_filter_minimal:
+!E W. E ⊆ POW W /\ W <> {} ==>
+      !F0. (filter F0 W /\ E ⊆ F0) ==> generated_filter E W ⊆ F0
+Proof
+rw[generated_filter_def,SUBSET_DEF,BIGINTER]
+QED
+
 
 
 val _ = export_theory();

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  29 JUL 2019 22:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  31 JUL 2019 19:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -720,29 +720,37 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
  [2]
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <10> not available
-(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 88.
+(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 91.
 
 [3]
 LaTeX Font Info:    Try loading font information for U+euf on input line 153.
  (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 ) [4]
-[5] [6] [7] [8] [9] [10] [11] [12]
-Overfull \hbox (18.0563pt too wide) in paragraph at lines 494--495
+[5] [6] [7] [8] [9] [10] [11]
+Overfull \hbox (18.0563pt too wide) in paragraph at lines 462--463
 []\OT1/cmr/m/n/10 It is straight-for-ward to check the map $[]$ that sends a li
 st in $\OT1/cmr/m/it/10 l  \OMS/cmsy/m/n/10 2 [] \OT1/cmr/m/n/10 ([] [] \OT1/cm
 r/m/it/10 w\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 :[]:[]$
  []
 
-[13] [14] [15] [16] [17] [18] [19] [20] [21]
-Overfull \hbox (3.32793pt too wide) in paragraph at lines 839--840
+[12] [13] [14] [15] [16] [17] [18] [19] [20]
+Overfull \hbox (3.32793pt too wide) in paragraph at lines 843--844
 []\OT1/cmr/m/n/10 Recall we proved the con-di-tion for a propo-si-tional for-mu
 la to hold as the lemma \OT1/cmtt/m/n/10 peval_-satis_-strengthen\OT1/cmr/m/n/1
 0 ,
  []
 
-[22] [23] [24] [25] [26] [27] [28] [29] [30]
-Overfull \hbox (83.55118pt too wide) in paragraph at lines 1246--1247
+[21] [22]
+Overfull \hbox (174.60185pt too wide) in paragraph at lines 938--939
+\OT1/cmr/m/n/10 on, so both these two for-mu-las are dis-junc-tion nor-mal form
+ on $\OML/cmm/m/it/10 fs$\OT1/cmr/m/n/10 , but we can-not say $[] ([] ([] [] ([
+] (\OMS/cmsy/m/n/10 :[][]\OT1/cmr/m/n/10 ) [])) ([] [] ([] (\OMS/cmsy/m/n/10 :[
+][]\OT1/cmr/m/n/10 ) []))) \OT1/cmr/m/it/10 A$
+ []
+
+[23] [24] [25] [26] [27] [28]
+Overfull \hbox (83.55118pt too wide) in paragraph at lines 1220--1221
 []\OT1/cmr/m/n/10 A dis-junc-tion of $[]$ for-mula is cap-tured by sets of lit-
 eral sets. For in-stance, the set $\OMS/cmsy/m/n/10 ff\OT1/cmr/m/n/10 (\OML/cmm
 /m/it/10 f[]; \OMS/cmsy/m/n/10 >\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 ; \OT1/cmr/m/
@@ -752,46 +760,42 @@ OMS/cmsy/m/n/10 ?\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 (\OML/cmm/
 m/it/10 f[]; \OMS/cmsy/m/n/10 >\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 gg$
  []
 
-
-Overfull \hbox (27.47913pt too wide) in paragraph at lines 1273--1274
+[29]
+Overfull \hbox (27.47913pt too wide) in paragraph at lines 1246--1247
 []\OT1/cmr/m/n/10 For the im-pli-ca-tion from left to right, sup-pose both $[] 
 \U/euf/m/n/10 M \OT1/cmr/m/it/10 w []$ \OT1/cmr/m/n/10 and $[] \U/euf/m/n/10 M 
 \OT1/cmr/m/it/10 w \OT1/cmr/m/n/10 ([] []\OT1/cmr/m/it/10 c [][] [] c [] [] [] 
 [] []\OT1/cmr/m/n/10 )$,
  []
 
-[31] [32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45]
-[46] [47]
-Overfull \hbox (12.48987pt too wide) detected at line 1917
+[30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44]
+Overfull \hbox (18.60094pt too wide) detected at line 1798
 []
  []
 
-[48] [49] [50]
-Overfull \hbox (45.84813pt too wide) detected at line 2036
+[45]
+Overfull \hbox (1.00247pt too wide) detected at line 1857
 []
  []
 
-[51]
-Overfull \hbox (0.61987pt too wide) in paragraph at lines 2071--2072
+[46] [47] [48] [49] [50]
+Overfull \hbox (0.61987pt too wide) in paragraph at lines 2113--2114
 []\OT1/cmr/m/n/10 This is ac-tu-ally a spe-cial case of the fol-low-ing propo-s
 i-tion, where $\OML/cmm/m/it/10 u$ \OT1/cmr/m/n/10 is taken as $[] \OT1/cmr/m/i
 t/10 w \U/euf/m/n/10 M\OML/cmm/m/it/10 :[]:[]$\OT1/cmr/m/n/10 .
  []
 
-[52] [53]
-Overfull \hbox (9.31306pt too wide) in paragraph at lines 2118--2119
-[]\OT1/cmr/m/n/10 Proof:Bisimulation im-plies modal equiv-a-lence by \OT1/cmtt/
-m/n/10 thm_-2_-20\OT1/cmr/m/n/10 . For the re-verse di-rec-tion, if $\OT1/cmr/m
-/it/10 w  \OMS/cmsy/m/n/10 2 [] \U/euf/m/n/10 M\OML/cmm/m/it/10 :[]:[]$
+[51]
+Overfull \hbox (10.8508pt too wide) in paragraph at lines 2131--2132
+\OT1/cmtt/m/n/10 theorem_-corollary\OT1/cmr/m/n/10 , there ex-ists an ul-tra-fi
+l-ter $\OML/cmm/m/it/10 u[]$ \OT1/cmr/m/n/10 such that $\OT1/cmr/m/it/10 s  \OM
+S/cmsy/m/n/10 [ []  [] []\OT1/cmr/m/it/10 w [][] w  \OMS/cmsy/m/n/10 2 [] \U/eu
+f/m/n/10 M\OML/cmm/m/it/10 :[]:[]  \OMS/cmsy/m/n/10 ^ [] [] \U/euf/m/n/10 M \OT
+1/cmr/m/it/10 w [] [] []  \OMS/cmsy/m/n/10 ^^R
  []
 
-[54] [55] [56]
-Overfull \hbox (33.36655pt too wide) detected at line 2236
-[]
- []
-
-[57] [58] [59]
-Overfull \hbox (7.22615pt too wide) in paragraph at lines 2342--2343
+[52] [53] [54] [55] [56] [57] [58]
+Overfull \hbox (7.22615pt too wide) in paragraph at lines 2377--2378
 \OT1/cmr/m/n/10 a-lence class rep-re-sented by the func-tion that send-ing $\OM
 L/cmm/m/it/10 i \OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 I$ \OT1/cmr/m/n/10 to $([] 
 \OT1/cmr/m/it/10 i\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 :[] \OT1/cmr/m/it/10 n \OT1
@@ -799,8 +803,49 @@ L/cmm/m/it/10 i \OMS/cmsy/m/n/10 2 \OML/cmm/m/it/10 I$ \OT1/cmr/m/n/10 to $([]
 n/10 ) [])$.
  []
 
-[60] [61]
-Overfull \hbox (66.52954pt too wide) in paragraph at lines 2418--2438
+[59]
+Overfull \hbox (37.1904pt too wide) in paragraph at lines 2429--2432
+\OT1/cmr/m/n/10 should prove $[]$=$[]$$\OT1/cmr/m/it/10 i$\OT1/cmtt/m/n/10 |$\O
+T1/cmr/m/it/10 i$$\OMS/cmsy/m/n/10 2$\OT1/cmss/m/n/9 I$\OMS/cmsy/m/n/10 ^$\OT1/
+cmr/m/n/10 ($[]$$\OT1/cmr/m/it/10 i$\OT1/cmr/m/n/10 ).\OT1/cmss/m/n/10 Pred$\OT
+1/cmr/m/it/10 n$\OT1/cmr/m/n/10 (\OT1/cmss/m/n/9 MAP\OT1/cmr/m/n/10 ($\OML/cmm/
+m/it/10 ^^U $$\OT1/cmr/m/it/10 x$\OT1/cmr/m/n/10 .\OT1/cmss/m/n/9 CHOICE\OT1/cm
+r/m/n/10 (\OT1/cmss/m/n/9 termval\OT1/cmr/m/n/10 (\OT1/cmss/m/n/9 ultraproduct[
+]-folmodel$\OT1/cmr/m/it/10 U$\OT1/cmss/m/n/9 I$[]$\OT1/cmr/m/n/10 )$\OML/cmm/m
+/it/10 ^^[$$\OT1/cmr/m/it/10 x$\OT1/cmr/m/n/10 )$\OT1/cmr/m/it/10 i$\OT1/cmr/m/
+n/10 )$\OT1/cmr/m/it/10 l$\OT1/cmr/m/n/10 )$[]$
+ []
+
+[60]
+Overfull \hbox (42.92096pt too wide) in paragraph at lines 2433--2444
+\OT1/cmss/m/n/9 MAP\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 ^^U $$\OT1/cmr/m/it/10 x$
+\OT1/cmr/m/n/10 .\OT1/cmss/m/n/9 CHOICE\OT1/cmr/m/n/10 (\OT1/cmss/m/n/9 termval
+\OT1/cmr/m/n/10 (\OT1/cmss/m/n/9 ultraproduct[]-folmodel$\OT1/cmr/m/it/10 U$\OT
+1/cmss/m/n/9 I$[]$\OT1/cmr/m/n/10 )$\OML/cmm/m/it/10 ^^[$$\OT1/cmr/m/it/10 x$\O
+T1/cmr/m/n/10 )$\OT1/cmr/m/it/10 i$\OT1/cmr/m/n/10 )$\OT1/cmr/m/it/10 l$\OT1/cm
+r/m/n/10 =\OT1/cmss/m/n/9 MAP\OT1/cmr/m/n/10 (\OT1/cmss/m/n/9 termval\OT1/cmr/m
+/n/10 ($[]$$\OT1/cmr/m/it/10 i$\OT1/cmr/m/n/10 )($\OML/cmm/m/it/10 ^^U $$\OT1/c
+mr/m/it/10 x$\OT1/cmr/m/n/10 .\OT1/cmss/m/n/9 CHOICE\OT1/cmr/m/n/10 ($\OML/cmm/
+m/it/10 ^^[$$\OT1/cmr/m/it/10 x$\OT1/cmr/m/n/10 )$\OT1/cmr/m/it/10 i$\OT1/cmr/m
+/n/10 ))$\OT1/cmr/m/it/10 l$$[]$\OT1/cmr/m/n/10 ,
+ []
+
+
+Overfull \hbox (22.16023pt too wide) in paragraph at lines 2433--2444
+[]$$[]$$\OT1/cmr/m/it/10 i$\OT1/cmtt/m/n/10 |$\OT1/cmr/m/it/10 i$$\OMS/cmsy/m/n
+/10 2$\OT1/cmss/m/n/9 I$\OMS/cmsy/m/n/10 ^$\OT1/cmss/m/n/9 CHOICE\OT1/cmr/m/n/1
+0 (\OT1/cmss/m/n/9 termval\OT1/cmr/m/n/10 (\OT1/cmss/m/n/9 ultraproduct[]-folmo
+del$\OT1/cmr/m/it/10 U$\OT1/cmss/m/n/9 I$[]$\OT1/cmr/m/n/10 )$\OML/cmm/m/it/10 
+^^[$$\OT1/cmr/m/it/10 a$\OT1/cmr/m/n/10 )$\OT1/cmr/m/it/10 i$\OT1/cmr/m/n/10 =\
+OT1/cmss/m/n/9 termval\OT1/cmr/m/n/10 ($[]$$\OT1/cmr/m/it/10 i$\OT1/cmr/m/n/10 
+)($\OML/cmm/m/it/10 ^^U $$\OT1/cmr/m/it/10 x$\OT1/cmr/m/n/10 .\OT1/cmss/m/n/9 C
+HOICE\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 ^^[$$\OT1/cmr/m/it/10 x$\OT1/cmr/m/n/10
+ )$\OT1/cmr/m/it/10 i$\OT1/cmr/m/n/10 )$\OT1/cmr/m/it/10 a$$[]$\OT1/cmtt/m/n/10
+ | 
+ []
+
+
+Overfull \hbox (66.52954pt too wide) in paragraph at lines 2433--2444
 [] \OT1/cmr/m/n/10 ([] \OT1/cmr/m/it/10 U [] []\OT1/cmr/m/n/10 ) \OML/cmm/m/it/
 10 ^^[ \OT1/cmr/m/it/10 a$ \OT1/cmr/m/n/10 is the equiv-a-lence class rep-re-se
 nts by $\OML/cmm/m/it/10 ^^U []\OT1/cmr/m/it/10 i\OML/cmm/m/it/10 : [] \OT1/cmr
@@ -810,15 +855,54 @@ r/m/it/10 n\OML/cmm/m/it/10 : [] \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^[ \OT1/cmr
 0 a$\OT1/cmr/m/n/10 .
  []
 
-[62] [63] [64] [65] [66] [67] [68] [69] [70] [71] [72] [73]
-Overfull \hbox (17.9115pt too wide) in paragraph at lines 2839--2847
-[] [][] [][] [] \OT1/cmr/m/it/10 U [] \OT1/cmr/m/n/10 ([] (\OML/cmm/m/it/10 ^^U
- []\OT1/cmr/m/it/10 i\OML/cmm/m/it/10 : [] \OT1/cmr/m/it/10 N\OT1/cmr/m/n/10 ))
- (\OML/cmm/m/it/10 ^^U []\OT1/cmr/m/it/10 i\OML/cmm/m/it/10 : \OT1/cmr/m/it/10 
-v\OT1/cmr/m/n/10 ) [] [] []$ re-spec-tively. We claim $[] [] [] [] []$.
+
+Overfull \hbox (29.58675pt too wide) in paragraph at lines 2454--2455
+[]\OT1/cmr/m/n/10 From right to left. It is straight-for-ward to check $[] []\O
+T1/cmr/m/it/10 i [][] i  \OMS/cmsy/m/n/10 2 [] []  ^ [] [] \OT1/cmr/m/n/10 ([] 
+\OT1/cmr/m/it/10 i\OT1/cmr/m/n/10 ) (\OML/cmm/m/it/10 ^^U []\OT1/cmr/m/it/10 x\
+OML/cmm/m/it/10 : [] \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^[ \OT1/cmr/m/it/10 x\O
+T1/cmr/m/n/10 ) \OT1/cmr/m/it/10 i\OT1/cmr/m/n/10 ) ([] \OT1/cmr/m/it/10 n []\O
+T1/cmr/m/n/10 ) [] []$
  []
 
-[74] [75] [76] (./dependency.tex
+[61] [62] [63] [64] [65] [66]
+Overfull \hbox (28.89801pt too wide) in paragraph at lines 2632--2639
+\OT1/cmr/m/n/10 two con-di-tions are im-me-di-ate to check. It re-mains to show
+ $[] []\OT1/cmr/m/it/10 i [][] i  \OMS/cmsy/m/n/10 2 [] [] \OT1/cmr/m/n/10 0  \
+OMS/cmsy/m/n/10 ^ [] [] \OT1/cmr/m/n/10 ([] \OT1/cmr/m/it/10 i\OT1/cmr/m/n/10 )
+ (\OML/cmm/m/it/10 ^^U []\OT1/cmr/m/it/10 v\OML/cmm/m/it/10 : [] \OT1/cmr/m/it/
+10 v i\OT1/cmr/m/n/10 ) ([] \OT1/cmr/m/it/10 k\OT1/cmr/m/n/10 ) [] []  \OMS/cms
+y/m/n/10 2
+ []
+
+[67] [68]
+Overfull \hbox (85.42406pt too wide) in paragraph at lines 2708--2709
+\OT1/cmr/m/n/10 In-ter-lude II. Then by \OT1/cmtt/m/n/10 lemma_-2_-73\OT1/cmr/m
+/n/10 , the mod-els $[] ([] \OT1/cmr/m/it/10 U [] \OT1/cmr/m/n/10 (\OML/cmm/m/i
+t/10 ^^U []\OT1/cmr/m/it/10 i\OML/cmm/m/it/10 : \U/euf/m/n/10 M\OT1/cmr/m/n/10 
+))$, $[] ([] \OT1/cmr/m/it/10 U [] \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^U []\OT1
+/cmr/m/it/10 i\OML/cmm/m/it/10 : \OT1/cmr/m/it/10 N\OT1/cmr/m/n/10 ))$
+ []
+
+[69] [70] [71]
+Overfull \hbox (24.3107pt too wide) in paragraph at lines 2818--2822
+[] \OT1/cmr/m/it/10 U [] \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^U []\OT1/cmr/m/it/
+10 i\OML/cmm/m/it/10 : [] \OT1/cmr/m/it/10 N\OT1/cmr/m/n/10 )$ by $[]  =  [] []
+[] [][] [] \OT1/cmr/m/it/10 U [] \OT1/cmr/m/n/10 ([] (\OML/cmm/m/it/10 ^^U []\O
+T1/cmr/m/it/10 i\OML/cmm/m/it/10 : [] \U/euf/m/n/10 M\OT1/cmr/m/n/10 )) (\OML/c
+mm/m/it/10 ^^U []\OT1/cmr/m/it/10 i\OML/cmm/m/it/10 : \OT1/cmr/m/it/10 w\OT1/cm
+r/m/n/10 ) [] [] []$,
+ []
+
+[72] [73]
+Overfull \hbox (11.34462pt too wide) in paragraph at lines 2920--2922
+\OT1/cmtt/m/n/10 compactness_-corollary \OT1/cmr/m/n/10 proved by the last in-t
+er-lude, if we can prove for any model $\U/euf/m/n/10 M$ \OT1/cmr/m/n/10 and $\
+OT1/cmr/m/it/10 w  \OMS/cmsy/m/n/10 2 [] \U/euf/m/n/10 M\OML/cmm/m/it/10 :[]:[]
+$\OT1/cmr/m/n/10 ,
+ []
+
+[74] [75] (./dependency.tex
 Overfull \hbox (3.53151pt too wide) in paragraph at lines 37--37
 [][]\OT1/cmss/m/n/9 Irreducibles  
  []
@@ -839,35 +923,35 @@ Overfull \hbox (2.05191pt too wide) in paragraph at lines 71--71
  []
 
 
-LaTeX Warning: Reference `cha:introduction' on page 77 undefined on input line 
+LaTeX Warning: Reference `cha:introduction' on page 76 undefined on input line 
 93.
 
 
-LaTeX Warning: Reference `cha:basic-algebra' on page 77 undefined on input line
+LaTeX Warning: Reference `cha:basic-algebra' on page 76 undefined on input line
  96.
 
 
-LaTeX Warning: Reference `cha:aks-algorithm' on page 77 undefined on input line
+LaTeX Warning: Reference `cha:aks-algorithm' on page 76 undefined on input line
  99.
 
 
-LaTeX Warning: Reference `cha:advanced-algebra' on page 77 undefined on input l
+LaTeX Warning: Reference `cha:advanced-algebra' on page 76 undefined on input l
 ine 102.
 
 
-LaTeX Warning: Reference `cha:aks-main-theorem' on page 77 undefined on input l
+LaTeX Warning: Reference `cha:aks-main-theorem' on page 76 undefined on input l
 ine 105.
 
 
-LaTeX Warning: Reference `cha:complexity-models' on page 77 undefined on input 
+LaTeX Warning: Reference `cha:complexity-models' on page 76 undefined on input 
 line 108.
 
 
-LaTeX Warning: Reference `cha:aks-complexity' on page 77 undefined on input lin
+LaTeX Warning: Reference `cha:aks-complexity' on page 76 undefined on input lin
 e 111.
 
 
-LaTeX Warning: Reference `cha:conclusion' on page 77 undefined on input line 11
+LaTeX Warning: Reference `cha:conclusion' on page 76 undefined on input line 11
 4.
 
 
@@ -880,7 +964,7 @@ Overfull \hbox (14.44452pt too wide) in paragraph at lines 187--187
 [][]\OT1/cmr/m/n/10 polyh  
  []
 
-) [77] [78] (./report.aux)
+) [76] [77] (./report.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -888,11 +972,11 @@ LaTeX Warning: There were undefined references.
 Here is how much of TeX's memory you used:
  16519 strings out of 492616
  337707 string characters out of 6129481
- 454096 words of memory out of 5000000
+ 455546 words of memory out of 5000000
  20079 multiletter control sequences out of 15000+600000
  18870 words of font info for 75 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,15n,71p,3256b,936s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,15n,71p,3375b,936s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></
@@ -920,10 +1004,10 @@ xmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/201
 9/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive
 /2019/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb></usr/local/texl
 ive/2019/texmf-dist/fonts/type1/public/stmaryrd/stmary10.pfb>
-Output written on report.pdf (78 pages, 520949 bytes).
+Output written on report.pdf (77 pages, 533997 bytes).
 PDF statistics:
- 368 PDF objects out of 1000 (max. 8388607)
- 258 compressed objects within 3 object streams
+ 365 PDF objects out of 1000 (max. 8388607)
+ 256 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

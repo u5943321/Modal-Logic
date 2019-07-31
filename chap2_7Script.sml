@@ -8,7 +8,10 @@ open set_relationTheory;
 open chap2_1Theory;
 open chap2_2Theory;
 open chap2_4revisedTheory;
-open chap2_5Theory
+open chap2_5Theory;
+open chap2_6Theory;
+open ultraproductTheory;
+open lemma2_73Theory;
 open equiv_on_partitionTheory;
 open IBCDNFrevisedTheory;
 open prim_recTheory;
@@ -17,6 +20,8 @@ open finite_mapTheory;
 open combinTheory;
 open ultrafilterTheory;
 
+open folLangTheory;
+open folModelsTheory;
 
 val _ = ParseExtras.tight_equality()
 
@@ -62,13 +67,92 @@ val thm_2_78_half1 = store_thm(
   fs[preserved_under_sim_def] >> rw[] >> fs[equiv0_def] >> `satis M w phi0` by metis_tac[] >> metis_tac[]);
 
 
+Theorem FINITE_SUBSET_IMAGE_lemma :
+!s f ss. FINITE ss /\ ss ⊆ IMAGE f s ==>
+         ?s0. FINITE s0 /\ s0 ⊆ s /\ ss = IMAGE f s0
+Proof
+rw[] >> qabbrev_tac `A = IMAGE CHOICE {{a | f a = e /\ a IN s}| e IN ss}` >>
+qexists_tac `A` >>
+`!e. e IN ss ==> {a | f a = e /\ a IN s} <> {}`
+   by (rw[] >> fs[IMAGE_DEF,SUBSET_DEF,GSYM MEMBER_NOT_EMPTY] >> metis_tac[]) >>
+`A ⊆ s`
+  by (rw[Abbr`A`,SUBSET_DEF] >> 
+      `CHOICE {a | f a = e ∧ a ∈ s} ∈ {a | f a = e ∧ a ∈ s}` suffices_by fs[] >>
+      metis_tac[CHOICE_DEF]) >>
+rw[IMAGE_DEF,EQ_IMP_THM,EXTENSION] (* 2 *)
+>- (rw[Abbr`A`] >> irule IMAGE_FINITE >> 
+   `?ff. {{a | f a = e ∧ a ∈ s} | e ∈ ss} = IMAGE ff ss`
+     suffices_by metis_tac[IMAGE_FINITE] >>
+   qexists_tac `\e. {a | f a = e ∧ a ∈ s}` >> rw[IMAGE_DEF,Once EXTENSION])
+>- (qexists_tac `CHOICE {a | f a = x ∧ a ∈ s}` >> rw[Abbr`A`] (* 2 *)
+   >- (`(CHOICE {a | f a = x ∧ a ∈ s}) IN {a | f a = x ∧ a ∈ s}` suffices_by fs[] >>
+       metis_tac[CHOICE_DEF]) 
+   >- (fs[PULL_EXISTS] >> qexists_tac `x` >> rw[]))
+>- (fs[Abbr`A`] >> `f (CHOICE {a | f a = e ∧ a ∈ s}) = e` suffices_by metis_tac[] >>
+    `(CHOICE {a | f a = e ∧ a ∈ s}) IN {a | f a = e ∧ a ∈ s}` suffices_by fs[] >>
+    metis_tac[CHOICE_DEF])    
+QED 
+
+
+Theorem prop_2_47_i':
+ !M w:'b phi σ x. (IMAGE σ univ(:num)) SUBSET M.Dom
+                       ==> (satis (folm2mm M) (σ x) phi <=> feval M σ (ST x phi))
+Proof
+Induct_on `phi` (* 3 *) >> rw[satis_def,feval_def]
+>- (rw[folm2mm_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+>- (rw[folm2mm_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+>- (rw[EQ_IMP_THM] (* 3 *)
+   >- (qexists_tac `v` >> rw[] (* 3 *)
+       >- fs[folm2mm_def]
+       >- fs[folm2mm_def,APPLY_UPDATE_THM] 
+       >- (`IMAGE σ⦇x + 1 ↦ v⦈ 𝕌(:num) ⊆ M.Dom` 
+            by (irule IMAGE_UPDATE >> fs[folm2mm_def]) >>
+           first_x_assum drule >> rw[] >> 
+           first_x_assum (qspec_then `x + 1` assume_tac) >>
+           fs[APPLY_UPDATE_THM]))
+   >- (fs[IMAGE_DEF,SUBSET_DEF,folm2mm_def] >> metis_tac[])
+   >- (qexists_tac `a` >> fs[APPLY_UPDATE_THM] >> rw[] (* 3 *)
+      >- (fs[folm2mm_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
+      >- rw[folm2mm_def]
+      >- (`IMAGE σ⦇x + 1 ↦ a⦈ 𝕌(:num) ⊆ M.Dom` 
+            by (irule IMAGE_UPDATE >> fs[folm2mm_def]) >>
+         first_x_assum drule >> rw[] >> first_x_assum (qspec_then `x + 1` assume_tac) >>
+         fs[APPLY_UPDATE_THM])))
+QED
+
 Theorem modal_compactness_thm:
-!s. 
+!s:num chap1$form -> bool. 
   (!ss. FINITE ss /\ ss ⊆ s ==> 
       ?M w:α. w IN M.frame.world /\ (!f. f IN ss ==> satis M w f)) ==>
   ?M w:α. w IN M.frame.world /\ (!f. f IN s ==> satis M w f)
 Proof
-cheat
+rw[] >> 
+qabbrev_tac `A = {ST x f | f IN s}` >> 
+`!ss. (FINITE ss /\ ss ⊆ A) ==> 
+     ?M:α model σ. valuation M σ /\
+                   (!ff. ff IN ss ==> feval M σ ff)`
+  by (rw[] >> 
+      drule (FINITE_SUBSET_IMAGE_lemma |> INST_TYPE [alpha |-> ``:num chap1$form``])>> 
+      strip_tac >>
+      first_x_assum (qspecl_then [`s`, `ST x`] assume_tac) >> 
+      `A = IMAGE (ST x) s` 
+        by rw[Abbr`A`,IMAGE_DEF,Once EXTENSION] >>
+      fs[] >> first_x_assum drule >> strip_tac >> first_x_assum drule >>
+      strip_tac >> first_x_assum drule >> strip_tac >>
+      map_every qexists_tac [`mm2folm M`,`\a.w`] >> rw[] (* 2 *)
+      >- rw[valuation_def,mm2folm_def]
+      >- (first_x_assum drule >> strip_tac >> 
+         `IMAGE (λa. w) 𝕌(:num) ⊆ M.frame.world` by fs[IMAGE_DEF,SUBSET_DEF] >>
+         drule prop_2_47_i >> strip_tac >> fs[fsatis_def] >> metis_tac[])) >>
+`?M:α model σ. valuation M σ ∧ ∀f. f ∈ A ⇒ feval M σ f` 
+  by cheat(*compactness cheated*)>>
+map_every qexists_tac [`folm2mm M`,`σ x`] >> rw[] (* 2 *)
+>- fs[folm2mm_def,valuation_def]
+>- (first_x_assum (qspec_then `ST x f` assume_tac) >> 
+   `(ST x f) IN A` by (fs[Abbr`A`] >> metis_tac[]) >>
+   first_x_assum drule >> strip_tac >> 
+   `IMAGE σ 𝕌(:num) ⊆ M.Dom` suffices_by metis_tac[prop_2_47_i'] >>
+   fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
 QED
 
 Theorem modal_compactness_corollary:
@@ -154,6 +238,7 @@ qexists_tac `AND e ff` >> rw[] (* 2 *)
 >- metis_tac[PE_rules] >>
 rw[satis_AND] >> metis_tac[]
 QED
+
 
 
 Theorem exercise_2_7_1:

@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1564403290 "report.tex" "report.pdf" "report" 1564403291
+["pdflatex"] 1564565071 "report.tex" "report.pdf" "report" 1564565072
   "/usr/local/texlive/2019/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2019/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2019/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -196,12 +196,12 @@
   "/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1557342064 3277517 23507ed665b4dd9046f0f2a94bbef2be ""
   "/usr/local/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt" 1560747111 4259636 ca20ceb4115696a84017ee1b29122ce6 ""
   "/usr/local/texlive/2019/texmf.cnf" 1557341546 577 d150fef99ac436ad1156e86b0892f6ef ""
-  "dependency.tex" 1564373378 16195 d47ba4d5fc205e94bec9026bd5cf7e0d ""
+  "dependency.tex" 1564536169 16175 1a75946bb00edfc5aff6c7c93e79bcc4 ""
   "holtexbasic.sty" 1560747194 5528 b4524ff28c3ba0f64de89cb57bf6cfdd ""
   "proof.sty" 1564119798 9084 2ecbed6a61abd4cab961152c15beb953 ""
-  "report.aux" 1564403291 3417 26b7425d6b05e5c09c22d4aa90c5f343 "pdflatex"
-  "report.tex" 1564403290 441105 462334fd9a2c9fb5c6b2ce5ea125d31b ""
+  "report.aux" 1564565072 3940 aea8cd2c3e840b835f071c826737dcfd "pdflatex"
+  "report.tex" 1564565071 473660 00be6fcc92723ff959c98dffb70e8831 ""
   (generated)
-  "report.pdf"
   "report.aux"
+  "report.pdf"
   "report.log"

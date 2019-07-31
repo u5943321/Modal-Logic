@@ -16,7 +16,10 @@ holtexbasic.sty: $(TEXDIR)/holtexbasic.sty
 	$(CP) $< $@
 
 report.tex: report.htex munge.exe holtexbasic.sty overrides
-	./munge.exe -m\; overrides < $< > $@
+	./munge.exe -w80 -m\; overrides < $< > $@
 
 dependency.tex: dependency.htex munge.exe holtexbasic.sty overrides
+	./munge.exe -m\; overrides < $< > $@
+
+dp.tex: dp.htex munge.exe holtexbasic.sty overrides
 	./munge.exe -m\; overrides < $< > $@

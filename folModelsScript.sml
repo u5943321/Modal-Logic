@@ -265,5 +265,16 @@ Proof
   cheat
 QED
 
+Theorem compactness_corollary:
+!s phi. (!M σ:num -> α. 
+             valuation M σ ==> 
+               (!f. f IN s ==> feval M σ f) ==> feval M σ phi) ==>
+        (!ss. FINITE ss /\ ss ⊆ s /\
+         (!M σ:num -> α. 
+             valuation M σ ==> 
+               (!f. f IN s ==> feval M σ f) ==> feval M σ phi)) 
+Proof
+cheat
+QED
 
-val _ = export_theory();
+ val _ = export_theory();
