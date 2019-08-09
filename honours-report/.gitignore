@@ -1,6 +1,9 @@
 *.log
 *.pdf
 *.fls
+*.out
 report.tex
+report.pdf
 report.fdb_latexmk
 *.aux
+munge.exe
