@@ -111,7 +111,7 @@ QED
 
 
 val ST_form_functions_EMPTY = store_thm(
-  "ST_FC_EMPTY",
+  "ST_form_functions_EMPTY",
   ``!f x. form_functions (ST x f) = {}``,
   Induct_on `f` >> 
  rw[ST_def,form_functions_def,fNOT_def,fAND_def,fDISJ_def,Exists_def]);  
@@ -375,7 +375,19 @@ rw[satisfiable_in_def] (* 2 *)
 	  by (rw[IMAGE_DEF,SUBSET_DEF] >> Cases_on `x'' = x` (* 2 *) >> rw[] >>
 	      fs[APPLY_UPDATE_THM,Abbr`MA`,mm2folm_def]) >>
 	`fsatis (mm2folm M) ((x =+ w') (λn. w')) (ST x form)`
-	     by cheat (*trivial *) >>
+	     by (rw[fsatis_def] (* 2 *)
+                 >- (rw[mm2folm_def,valuation_def] >> 
+                    fs[SUBSET_DEF,IMAGE_DEF] >>
+                    metis_tac[]) >>
+                 `feval MA (λn. w')⦇x ↦ w'⦈ (ST x form) <=> 
+                 feval (mm2folm M) (λn. w')⦇x ↦ w'⦈ (ST x form)`
+                 suffices_by metis_tac[fsatis_def] >>
+                 irule holds_functions >> rw[] (* 3 *)
+                 >- rw[Abbr`MA`]
+                 >- (`form_functions (ST x form) = {}` 
+                      suffices_by metis_tac[MEMBER_NOT_EMPTY] >>
+                     metis_tac[L1tau_def,ST_L1tau])
+                 >- rw[Abbr`MA`])
 	`(x =+ w') (λn. w') x = w'` by fs[APPLY_UPDATE_THM] >>
 	metis_tac[prop_2_47_i])));
 
@@ -450,7 +462,7 @@ QED
 
 val invar4bisim_def = Define`
   invar4bisim x (t1: μ itself) (t2: ν itself) phi <=> 
-     (FV phi ⊆ {x} /\ 
+     (FV phi ⊆ {x} /\ (* form_functions a = {} *)
      !(M:(num,μ) chap1$model) (N:(num,ν) chap1$model) v w.
         bisim_world M N (w:μ) (v:ν) ==> 
            (!(σm: num -> μ) (σn: num -> ν). fsatis (mm2folm M) σm(|x |-> w|) phi <=> 
@@ -842,7 +854,6 @@ rw[feval_def,EQ_IMP_THM]
 metis_tac[]
 QED
 
-
 Theorem ultraproduct_mm2folm_folm2mm_comm_feval:
 !M σ a I U. 
    (FV a ⊆ {x} /\ form_functions a = ∅ /\
@@ -901,165 +912,397 @@ irule holds_valuation >> rw[] >>
 rw[EXTENSION,EQ_IMP_THM] >> metis_tac[Uequiv_SYM]
 QED
 
+val wffm = Define`
+wffm M <=> ((∀n. M.Pred n [] ⇔ F) /\
+              (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
+              (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
+              (∀n0 l0. M.Fun n0 l0 ∈ M.Dom))`
+
+val L1tau_def = Define`
+L1tau phi <=> form_functions phi = {} /\ 
+              form_predicates phi ⊆ (0,2) INSERT {(p,1)| p IN (univ (:num))}`
+
+
+Theorem mm2folm_folm2mm_Pred0:
+!M wl. 
+    (LENGTH wl = 2 /\ 
+        (!w. MEM w wl ==> w IN M.Dom)) ==>
+      (mm2folm (folm2mm M)).Pred 0 wl = M.Pred 0 wl
+Proof
+rw[FUN_EQ_THM,mm2folm_def,folm2mm_def] >> 
+`?w1 w2. wl = [w1;w2]` 
+  by (Cases_on `wl` >> fs[LENGTH] >> Cases_on `t` >> fs[LENGTH]) >>
+fs[]
+QED
+
+Theorem mm2folm_folm2mm_Predn:
+!M w n. w IN M.Dom ==>
+  (mm2folm (folm2mm M)).Pred n [w] = M.Pred n [w]
+Proof
+rw[FUN_EQ_THM,mm2folm_def,folm2mm_def]
+QED
+
+Theorem mm2folm_folm2mm_term_functions:
+!M v a. term_functions a = {} ==> 
+      termval (mm2folm (folm2mm M)) v a = termval M v a
+Proof
+rw[term_functions_def,termval_def,mm2folm_def,folm2mm_def] >>
+Cases_on `a` >> fs[term_functions_def]
+QED
+
+Theorem valuation_termval_functions:
+!M t v. (term_functions t = {} /\ valuation M v) ==>
+      (termval M v t) IN M.Dom
+Proof
+rw[] >> Cases_on `t` >> fs[valuation_def,termval_def]
+QED 
+
+Theorem L1tau_fIMP:
+!f1 f2. L1tau (f1 -> f2) <=> (L1tau f1 /\ L1tau f2)
+Proof
+rw[L1tau_def] >> rw[EQ_IMP_THM]
+QED
+
+Theorem L1tau_FALL:
+!f n. L1tau (FALL n f) <=> L1tau f
+Proof
+rw[L1tau_def] >> rw[EQ_IMP_THM]
+QED
+
+Theorem L1tau_mm2folm_folm2mm_comm_feval:
+∀f. L1tau f ==>
+    !M v. valuation M v ==>
+          (feval (mm2folm (folm2mm M)) v f ⇔ feval M v f)
+Proof
+Induct_on `f` (* 4 *)
+>- rw[feval_def]
+>- (rw[feval_def] >> fs[L1tau_def] (* 2 *)
+    >- (`?a b. l = [a;b]`
+        by (Cases_on `l` >> fs[LENGTH] >> Cases_on `t` >> fs[]) >>
+       fs[] >> rw[mm2folm_folm2mm_term_functions] >>
+       `(termval M v a) IN M.Dom /\ (termval M v b) IN M.Dom`
+         by metis_tac[valuation_termval_functions] >>
+       irule mm2folm_folm2mm_Pred0 >> fs[] >> metis_tac[])
+    >- (`?a. l = [a]` by (Cases_on `l` >> fs[LENGTH]) >>
+       fs[] >> rw[mm2folm_folm2mm_term_functions] >>
+       irule mm2folm_folm2mm_Predn >>
+       metis_tac[valuation_termval_functions])
+   )
+>- fs[feval_def,L1tau_fIMP]
+>- (rw[feval_def,L1tau_FALL] >> first_x_assum drule >> rw[] >>
+   `(mm2folm (folm2mm M)).Dom = M.Dom` by fs[mm2folm_def,folm2mm_def] >>
+   fs[])
+QED
+
+Theorem ST_L1tau:
+!phi x. L1tau (ST x phi)
+Proof
+Induct_on `phi` (* 5 *) >>
+fs[L1tau_def,fDISJ_def,fNOT_def,fAND_def]
+QED
+
+
+Theorem L1tau_ultraproduct_mm2folm_folm2mm_comm_feval:
+∀M σ a I U.
+            L1tau a ∧ FV a ⊆ {x} ∧ ultrafilter U I ∧ valuation M σ ⇒
+            (feval M σ a ⇔
+             feval (mm2folm (ultraproduct_model U I (λi. folm2mm M)))
+               (λx.
+                    {fw |
+                     Uequiv U I (models2worlds (λi. folm2mm M)) (λi. σ x) fw})
+               a)
+Proof
+rw[] >> 
+`feval M σ a <=> feval (mm2folm (folm2mm M)) σ a` 
+     by metis_tac[L1tau_mm2folm_folm2mm_comm_feval] >>
+qabbrev_tac `N = (mm2folm (folm2mm M))` >>
+`feval N σ a <=> 
+ feval (mm2folm (ultraproduct_model U I' (λi. folm2mm N)))
+          (λx.
+               {fw | Uequiv U I' (models2worlds (λi. folm2mm N)) (λi. σ x) fw})
+          a`
+   by 
+    (irule ultraproduct_mm2folm_folm2mm_comm_feval >> rw[] (* 7 *)
+     >- fs[Abbr`N`,mm2folm_def,folm2mm_def]
+     >- fs[Abbr`N`,mm2folm_def,folm2mm_def]
+     >- (fs[Abbr`N`,mm2folm_def,folm2mm_def,valuation_def] >>
+         `M.Dom <> {}` suffices_by metis_tac[CHOICE_DEF] >>
+         metis_tac[MEMBER_NOT_EMPTY])
+     >- fs[Abbr`N`,mm2folm_def,folm2mm_def]
+     >- fs[L1tau_def]
+     >- (fs[valuation_def,IMAGE_DEF,SUBSET_DEF,Abbr`N`,mm2folm_def,folm2mm_def]
+         >> metis_tac[])
+     >- metis_tac[]) >>
+`feval (mm2folm (ultraproduct_model U I' (λi. folm2mm N)))
+          (λx.
+               {fw | Uequiv U I' (models2worlds (λi. folm2mm N)) (λi. σ x) fw})
+          a <=>
+ feval (mm2folm (ultraproduct_model U I' (λi. folm2mm M)))
+          (λx.
+               {fw | Uequiv U I' (models2worlds (λi. folm2mm M)) (λi. σ x) fw})
+          a` suffices_by metis_tac[] >>
+rw[Abbr`N`] >>
+qabbrev_tac `MS = \i. (mm2folm (folm2mm M))` >> 
+`feval
+        (ultraproduct_folmodel U I' MS)
+           (λx.
+               {fw |
+                Uequiv U I'
+                  (models2worlds (λi. folm2mm (mm2folm (folm2mm M))))
+                  (λi. σ x) fw}) a <=> 
+ feval
+          (mm2folm
+             (ultraproduct_model U I' (λi. folm2mm (MS i))))
+          (λx.
+               {fw |
+                Uequiv U I'
+                  (models2worlds (λi. folm2mm (mm2folm (folm2mm M))))
+                  (λi. σ x) fw}) a`
+  by
+    (irule ultraproduct_comm_feval' >> rw[] (* 6 *)
+     >- fs[Abbr`MS`,mm2folm_def,folm2mm_def]
+     >- fs[Abbr`MS`,mm2folm_def,folm2mm_def]
+     >- fs[Abbr`MS`,mm2folm_def,folm2mm_def]
+     >- (fs[Abbr`MS`,mm2folm_def,folm2mm_def] >>
+        `M.Dom <> {}` suffices_by metis_tac[CHOICE_DEF] >>
+        fs[valuation_def] >> metis_tac[MEMBER_NOT_EMPTY])
+     >- fs[L1tau_def]
+     >- (rw[IMAGE_DEF,SUBSET_DEF,ultraproduct_def,folmodels2Doms_def,
+            partition_def,Cart_prod_def] >> 
+         qexists_tac `(λi. σ x'')` >> rw[] (* 2 *)
+         >- fs[Abbr`MS`,mm2folm_def,folm2mm_def,valuation_def] 
+         >- (`(models2worlds (λi. folm2mm (mm2folm (folm2mm M)))) = 
+              (λi. (MS i).Dom)`
+              by
+               (rw[models2worlds_def,Abbr`MS`,folm2mm_def,mm2folm_def]) >>
+             fs[] >>
+             rw[EQ_IMP_THM,EXTENSION,Uequiv_def] >>
+             fs[Cart_prod_def]))) >>
+qabbrev_tac `MS' = \i. (folm2mm M)` >>
+`feval (mm2folm (ultraproduct_model U I' MS'))
+          (λx.
+               {fw |
+                Uequiv U I'
+                  (models2worlds (λi. folm2mm (mm2folm (folm2mm M))))
+                  (λi. σ x) fw}) a <=>
+   feval (ultraproduct_folmodel U I' (λi. mm2folm (MS' i)))
+          (λx.
+               {fw |
+                Uequiv U I'
+                  (models2worlds (λi. folm2mm (mm2folm (folm2mm M))))
+                  (λi. σ x) fw}) a`
+    by
+     (irule ultraproduct_comm_feval >> 
+      `(models2worlds (λi. folm2mm (mm2folm (folm2mm M)))) = 
+              (λi. (MS i).Dom)`
+        by (rw[models2worlds_def,Abbr`MS`,folm2mm_def,mm2folm_def]) >>
+      fs[] >>
+      rw[EQ_IMP_THM,EXTENSION,Uequiv_def] >>
+      fs[Cart_prod_def] (* 2 *)
+      >- fs[L1tau_def,MEMBER_NOT_EMPTY] >>
+      rw[IMAGE_DEF,SUBSET_DEF,ultraproduct_def,Cart_prod_def,partition_def] >>
+      qexists_tac `\i. σ x''` >> rw[] (* 2 *)
+      >- fs[models2worlds_def,valuation_def,Abbr`MS'`,folm2mm_def] >>
+      rw[EXTENSION,EQ_IMP_THM] (* 6 *)
+      >- fs[models2worlds_def,Abbr`MS'`,folm2mm_def,Abbr`MS`,mm2folm_def]
+      >- (rw[Uequiv_def] (* 3 *)
+         >- (fs[Abbr`MS'`,folm2mm_def,
+             models2worlds_def,valuation_def,GSYM MEMBER_NOT_EMPTY] >>
+             metis_tac[])
+         >>(rw[Cart_prod_def,models2worlds_def,Abbr`MS'`,folm2mm_def] >>
+             fs[Abbr`MS`,folm2mm_def,mm2folm_def] >> metis_tac[]))
+      >- (`(MS i).Dom = M.Dom` by fs[Abbr`MS`,folm2mm_def,mm2folm_def] >>
+          `models2worlds MS' i = M.Dom` 
+           by fs[Abbr`MS'`,folm2mm_def,models2worlds_def] >>
+          metis_tac[])
+      >- (`(MS i).Dom = M.Dom` by fs[Abbr`MS`,folm2mm_def,mm2folm_def] >>
+          fs[valuation_def])
+      >- (`(MS i).Dom = M.Dom` by fs[Abbr`MS`,folm2mm_def,mm2folm_def] >>
+          `models2worlds MS' i = M.Dom` 
+           by fs[Abbr`MS'`,folm2mm_def,models2worlds_def] >>
+          metis_tac[])
+      >- fs[Uequiv_def]) >>
+fs[Abbr`MS`,Abbr`MS'`] >> 
+`feval M σ a <=> feval (mm2folm (ultraproduct_model U I' (λi. folm2mm M)))
+          (λx.
+               {fw |
+                Uequiv U I'
+                  (models2worlds (λi. folm2mm (mm2folm (folm2mm M))))
+                  (λi. σ x) fw}) a` by metis_tac[] >> 
+`(models2worlds (λi. folm2mm (mm2folm (folm2mm M)))) = 
+ (models2worlds (λi. folm2mm M))` 
+   suffices_by (rw[] >> fs[]) >>
+fs[models2worlds_def,folm2mm_def,mm2folm_def]
+QED
+
+
+
 
 
 
 Theorem thm_2_68_half1:
-!a x. FV a ⊆ {x} /\ form_functions a = {} ==> 
+!a x. INFINITE univ (:α) /\ FV a ⊆ {x} /\ L1tau a ==> 
       invar4bisim x 
       (t1: ((num -> α) -> bool) itself) 
       (t2: ((num -> α) -> bool) itself) a ==> 
-       ?phi. 
-          (!M:'a model σ. 
-             ((∀n. M.Pred n [] ⇔ F) /\
-              (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
-              (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
-              (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)) ==> 
-             IMAGE σ (univ(:num)) ⊆ M.Dom ==>
-             (feval M σ (ST x phi) <=> feval M σ a))
-          
+      ?phi. 
+          !M (v:num -> α). valuation M v ==> 
+                           (feval M v a <=> feval M v (ST x phi))
 Proof
-(*
 rw[] >>
 qabbrev_tac 
-  `MOC = {ST x phi | phi |
-          (!M σ. 
-            ((∀n. M.Pred n [] ⇔ F) /\
-              (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
-              (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
-              (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)) ==>
-            IMAGE σ (univ(:num)) ⊆ M.Dom ==>
-                            (feval M σ a ==> feval M σ (ST x phi)))}` >>
-`!M:'a model σ. 
-  ((∀n. M.Pred n [] ⇔ F) /\
-   (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
-   (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
-   (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)) ==> 
-  (IMAGE σ (univ(:num)) ⊆ M.Dom /\
-       (!f. f IN MOC ==> feval M σ f)) ==> feval M σ a` 
-  suffices_by 
-   (rw[] >>
-    `?ss. 
-      FINITE ss /\ ss ⊆ MOC /\ 
-      (∀M σ.
-        ((∀n. M.Pred n [] ⇔ F) /\
-         (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
-         (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
-         (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)) ==>
-        (IMAGE σ 𝕌(:num) ⊆ M.Dom ∧ (∀f. f ∈ ss ⇒ feval M σ f)) ⇒
-            feval M σ a)`
-      by cheat (*compactness cheat*) >>
-    drule ST_BIGCONJ >> rw[] >>
-    first_x_assum (qspec_then `x` assume_tac) >> 
-    `(∀f. f ∈ ss ⇒ ∃phi. f = ST x phi)`
-      by 
-       (rw[] >> fs[Abbr`MOC`,SUBSET_DEF] >> metis_tac[]) >>
-    first_x_assum drule >> rw[] >>
-    qexists_tac `psi` >> rw[fsatis_def,valuation_def] >>
-    rw[EQ_IMP_THM] (* 2 *)
-    >- (`IMAGE σ 𝕌(:num) ⊆ M.Dom` 
-         by (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
-        metis_tac[])
-    >- (`IMAGE σ 𝕌(:num) ⊆ M.Dom` 
-         by (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
-        `(∀f. f ∈ ss ⇒ feval M σ f)` suffices_by metis_tac[] >>
-        rw[] >> fs[Abbr`MOC`,SUBSET_DEF] >> metis_tac[])
-   ) >>
-(*suffices tac end*)
-rw[] >>
-qabbrev_tac `Tx = {ST x phi |phi| feval M σ (ST x phi)}` >>
-`?N:'a model σn. 
-    (∀n. N.Pred n [] ⇔ F) /\
-    (∀a b n. N.Pred n [a; b] ⇒ n = 0) /\
-    (∀a b c d n. N.Pred n (a::b::c::d) ⇔ F) /\
-    (∀n0 l0. N.Fun n0 l0 ∈ N.Dom) /\
-    IMAGE σn 𝕌(:num) ⊆ N.Dom /\
-    (!f. (f IN Tx \/ f = a) ==> feval N σn f)` 
-  by 
-   (SPOSE_NOT_THEN ASSUME_TAC >> fs[] >>
-    `∀N σn.
-            (∀n. ¬N.Pred n []) ⇒
-            (∀a b n. N.Pred n [a; b] ⇒ n = 0) ⇒
-            (∀a b c d n. ¬N.Pred n (a::b::c::d)) ⇒
-            (∀n0 l0. N.Fun n0 l0 ∈ N.Dom) ⇒
-            IMAGE σn 𝕌(:num) ⊆ N.Dom ⇒
-       (!f. f IN Tx ==> feval N σn f) ==>  ¬feval N σn a`
-     by metis_tac[] >>
-    `?ss. 
-      FINITE ss /\ ss ⊆ Tx /\ 
-      (∀M σ.
-        ((∀n. M.Pred n [] ⇔ F) /\
-         (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
-         (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
-         (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)) ==>
-        (IMAGE σ 𝕌(:num) ⊆ M.Dom ∧ (∀f. f ∈ ss ⇒ feval M σ f)) ⇒
-            ¬feval M σ a)`
-      by cheat
-     (*compactness cheat*) >>
-    `∀M σ.
-            (∀n. M.Pred n [] ⇔ F) ∧ (∀a b n. M.Pred n [a; b] ⇒ n = 0) ∧
-            (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) ∧
-            (∀n0 l0. M.Fun n0 l0 ∈ M.Dom) ⇒
-            IMAGE σ 𝕌(:num) ⊆ M.Dom ∧ feval M σ a ⇒
-            ¬(∀f. f ∈ ss ⇒ feval M σ f)` by metis_tac[] >>
-    `∀f. f ∈ ss ⇒ ∃phi. f = ST x phi` 
-      by (fs[Abbr`Tx`,SUBSET_DEF] >> metis_tac[]) >> rw[] >>
-    drule ST_BIGCONJ >> strip_tac >> 
-    first_x_assum (qspec_then `x` assume_tac) >> 
-    first_x_assum drule >> strip_tac >> 
-    `ST x (NOT psi) IN MOC`
+  `MOC = {ST x phi | phi | entails (:α) {a} (ST x phi)}` >>
+`entails (:α) MOC a`
+  suffices_by
+   (strip_tac >> drule (folCanonTheory.finite_entailment |> GEN_ALL) >> 
+    simp[EQ_IMP_THM,FORALL_AND_THM] >> rw[] >> 
+    first_x_assum (drule_then (qx_choose_then `X` strip_assume_tac)) >> 
+    drule ST_BIGCONJ >> rw[] >> 
+    `∀f. f ∈ X ⇒ ∃phi. f = ST x phi`
       by
-       (rw[Abbr`MOC`] >> qexists_tac `NOT psi` >> rw[ST_fNOT] >> metis_tac[]) >>
-    `(!M σ. 
-         (∀n. M.Pred n [] ⇔ F) ∧ (∀a b n. M.Pred n [a; b] ⇒ n = 0) ∧
-         (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) ∧
-         (∀n0 l0. M.Fun n0 l0 ∈ M.Dom) ⇒
-         IMAGE σ 𝕌(:num) ⊆ M.Dom ==>
-                   (feval M σ (fNOT cf) <=> (¬∀f. f ∈ ss ⇒ feval M σ f)))`
-      by rw[feval_def,fNOT_def] >>
-    `feval M σ (ST x (¬psi))` by metis_tac[] >>
-    `∀f. f ∈ ss ⇒ feval M σ f` suffices_by metis_tac[ST_fNOT] >>
-    rw[] >> fs[Abbr`Tx`,SUBSET_DEF] >> metis_tac[]
-   ) >>
+       (rw[] >> fs[SUBSET_DEF,Abbr`MOC`] >> metis_tac[]) >>
+    first_x_assum drule >> strip_tac >> qexists_tac `psi` >>
+    rw[EQ_IMP_THM] (* 2 *)
+    >- (`!ff. ff IN MOC ==> feval M v ff`
+         by 
+          (rw[Abbr`MOC`] >> fs[entails_def] >> 
+           first_x_assum irule >> rw[] (* 3 *)
+           >- (simp[GSYM MEMBER_NOT_EMPTY] >>
+               fs[valuation_def] >> metis_tac[])
+           >- (simp[interpretation_def,language_def] >> rw[] >> 
+               `functions {ST x phi; a} = {}`
+                by
+                 (rw[functions_def] >> 
+                  `{form_functions f | f = ST x phi ∨ f = a} = {∅}` 
+                    suffices_by metis_tac[] >>
+                  rw[Once EXTENSION] >> 
+                  `form_functions (ST x phi) = {} /\ form_functions a = {}`
+                    by
+                     metis_tac[L1tau_def,ST_form_functions_EMPTY] >> 
+                  metis_tac[]) >>
+               metis_tac[MEMBER_NOT_EMPTY])
+           >- rw[hold_def]) >>
+        `IMAGE v 𝕌(:num) ⊆ M.Dom` 
+         by
+          (fs[IMAGE_DEF,SUBSET_DEF,valuation_def] >> metis_tac[]) >>
+        `∀f. f ∈ X ⇒ feval M v f` suffices_by metis_tac[] >>
+        fs[SUBSET_DEF])
+    >- (`IMAGE v 𝕌(:num) ⊆ M.Dom` 
+          by (fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
+        fs[entails_def] >> first_x_assum irule >> rw[] (* 3 *)
+        >- (simp[GSYM MEMBER_NOT_EMPTY] >>
+            fs[valuation_def] >> metis_tac[])
+        >- (simp[interpretation_def,language_def] >> rw[] >> 
+            `functions (a INSERT X) = {}`
+                by
+                 (rw[functions_def] >> 
+                  `{form_functions f | f = a ∨ f ∈ X} = {∅}` 
+                    suffices_by metis_tac[] >>
+                  rw[Once EXTENSION] >> 
+                  `(!f. f IN X ==> form_functions f = {}) /\ 
+                   form_functions a = {}`
+                    by
+                     (rw[] (* 2 *)
+                      >- (`f' IN MOC` by fs[SUBSET_DEF] >>
+                          fs[Abbr`MOC`] >> metis_tac[ST_form_functions_EMPTY])
+                      >- metis_tac[L1tau_def]) >>
+                   metis_tac[MEMBER_NOT_EMPTY]) >>
+            metis_tac[MEMBER_NOT_EMPTY])
+        >- metis_tac[hold_def])
+   ) >> 
+rw[entails_def] >> 
+qabbrev_tac `Tx = {ST x phi |phi| feval M v (ST x phi)}` >>
+`?N σn. valuation N σn /\ (!f. (f IN Tx \/ f = a) ==> feval N σn f)`
+  by
+   (SPOSE_NOT_THEN ASSUME_TAC >> 
+    `entails (:α) Tx (fNOT a)`
+      by (rw[entails_def,hold_def] >> metis_tac[]) >>
+    drule (folCanonTheory.finite_entailment |> GEN_ALL) >> 
+    strip_tac >> first_x_assum (qspecl_then [`fNOT a`,`Tx`] assume_tac) >> 
+    fs[] >> 
+    drule ST_BIGCONJ >> strip_tac >>
+    first_x_assum (qspec_then `x` assume_tac) >>
+    `∀f. f ∈ Γ₀ ⇒ ∃phi. f = ST x phi`
+      by
+       (rw[] >> fs[Abbr`Tx`,SUBSET_DEF] >> metis_tac[]) >>
+    first_x_assum drule >> strip_tac >> rw[] >>
+    `entails (:α) {a} (ST x ¬psi)`
+      by
+       (rw[entails_def] >> strip_tac >> 
+        `IMAGE v' 𝕌(:num) ⊆ M'.Dom`
+          by (fs[valuation_def,SUBSET_DEF,IMAGE_DEF] >> metis_tac[]) >>
+        `∀f. f ∈ Γ₀ ⇒ feval M' v' f` by metis_tac[] >>
+        fs[entails_def] >> fs[hold_def] >>
+        `¬feval M' v' a` suffices_by metis_tac[] >>
+        `valuation M' v' ∧ interpretation (language (fNOT a INSERT Γ₀)) M' ∧
+         M'.Dom ≠ ∅ ∧ (∀p. p ∈ Γ₀ ⇒ feval M' v' p) ⇒
+         ¬feval M' v' a` by metis_tac[] >>
+        `valuation M' v' ∧ interpretation (language (fNOT a INSERT Γ₀)) M' ∧
+         M'.Dom ≠ ∅ ∧ (∀p. p ∈ Γ₀ ⇒ feval M' v' p)` suffices_by metis_tac[] >>
+        rpt strip_tac (* 3 *)
+        >- (simp[GSYM MEMBER_NOT_EMPTY] >>
+            fs[valuation_def] >> metis_tac[])
+        >- (simp[interpretation_def,language_def] >> rw[] >> 
+            `functions (fNOT a INSERT Γ₀) = {}`
+                by
+                 (rw[functions_def] >> 
+                  `{form_functions f | f = fNOT a ∨ f ∈ Γ₀} = {∅}` 
+                    suffices_by metis_tac[] >>
+                  rw[Once EXTENSION] >> 
+                  `(!f. f IN Γ₀ ==> form_functions f = {}) /\ 
+                   form_functions (fNOT a) = {}`
+                    by
+                     (rw[] (* 2 *)
+                      >- metis_tac[ST_form_functions_EMPTY]
+                      >- (simp[form_functions_def,fNOT_def] >> fs[L1tau_def]))>>
+                  metis_tac[MEMBER_NOT_EMPTY]) >> 
+            metis_tac[MEMBER_NOT_EMPTY])
+        >- metis_tac[hold_def]) >>
+    `(ST x (¬psi)) IN MOC`
+      by
+       (rw[Abbr`MOC`] >> qexists_tac `¬psi` >> rw[ST_fNOT]) >>
+    fs[hold_def] >> 
+    `feval M v (fNOT (ST x psi))` by fs[] >>
+    fs[feval_def] >> 
+    `IMAGE v 𝕌(:num) ⊆ M.Dom`
+      by (fs[IMAGE_DEF,SUBSET_DEF,valuation_def] >> metis_tac[]) >>
+    `?f. f ∈ Γ₀ /\ ¬feval M v f` by metis_tac[] >>
+    fs[Abbr`Tx`,SUBSET_DEF] >> metis_tac[]
+   ) >> 
 (*existence of N*)
 `feval N σn a` by fs[] >>
-qabbrev_tac `w = σ x` >> 
-qabbrev_tac `v = σn x` >> 
-`!phi. satis (folm2mm M) w phi <=> satis (folm2mm N) v phi` 
+qabbrev_tac `w0 = v x` >> 
+qabbrev_tac `v0 = σn x` >> 
+`!phi. satis (folm2mm M) w0 phi <=> satis (folm2mm N) v0 phi` 
   by 
-   (rw[EQ_IMP_THM] (* 2 *)
+   (`IMAGE v 𝕌(:num) ⊆ (folm2mm M).frame.world /\
+     IMAGE σn 𝕌(:num) ⊆ (folm2mm N).frame.world`
+      by (fs[valuation_def,IMAGE_DEF,SUBSET_DEF,folm2mm_def] >> metis_tac[]) >>
+    rw[EQ_IMP_THM] (* 2 *)
     >- (`ST x phi IN Tx`
           by
-           (`IMAGE σ 𝕌(:num) ⊆ (folm2mm M).frame.world`
-              by rw[folm2mm_def] >>
-            `fsatis (mm2folm (folm2mm M)) σ (ST x phi)`
+           (`fsatis (mm2folm (folm2mm M)) v (ST x phi)`
               by metis_tac[Abbr`w`,prop_2_47_i] >>
             rw[Abbr`Tx`] >> 
-            `feval M σ (ST x phi)` suffices_by metis_tac[] >>
+            `feval M v (ST x phi)` suffices_by metis_tac[] >>
             `form_functions (ST x phi) = {}` 
               by metis_tac[ST_form_functions_EMPTY] >>
             fs[fsatis_def] >> 
-            `∀f.
-             form_functions f = ∅ ⇒
-              ∀σ.
-                IMAGE σ 𝕌(:num) ⊆ M.Dom ⇒
-                (∀n. M.Pred n [] ⇔ F) ⇒
-                (∀a b n. M.Pred n [a; b] ⇒ n = 0) ⇒
-                (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) ⇒
-                (feval (mm2folm (folm2mm M)) σ f ⇔ feval M σ f)`
-              suffices_by 
-               (rw[] >> `IMAGE σ 𝕌(:num) ⊆ M.Dom` by fs[folm2mm_def] >>
-                metis_tac[ST_form_functions_EMPTY,folm2mm_def,fsatis_def]) >>
-            metis_tac[mm2folm_folm2mm_feval]
+            `feval (mm2folm (folm2mm M)) v (ST x phi) <=>
+             feval M v (ST x phi)` suffices_by metis_tac[] >>
+            irule L1tau_mm2folm_folm2mm_comm_feval >> rw[] >>
+            metis_tac[ST_L1tau]
            ) >>
         `feval N σn (ST x phi)` by metis_tac[] >>
-        `IMAGE σn 𝕌(:num) ⊆ (folm2mm N).frame.world`
-          by fs[folm2mm_def] >>
         `feval (mm2folm (folm2mm N)) σn (ST x phi)`
           by 
-           metis_tac[mm2folm_folm2mm_feval,
-                     folm2mm_def,ST_form_functions_EMPTY] >>
-        rw[Abbr`v`] >>
+           (`feval (mm2folm (folm2mm N)) σn (ST x phi) <=> 
+             feval N σn (ST x phi)`
+              by 
+               (irule L1tau_mm2folm_folm2mm_comm_feval >>
+                metis_tac[ST_L1tau]) >>
+            metis_tac[]) >> 
+        rw[Abbr`v0`] >>
         `fsatis (mm2folm (folm2mm N)) σn (ST x phi)` 
            suffices_by metis_tac[prop_2_47_i] >>
         rw[fsatis_def,valuation_def] >> fs[mm2folm_def,IMAGE_DEF,SUBSET_DEF] >>
@@ -1067,70 +1310,60 @@ qabbrev_tac `v = σn x` >>
     >- (SPOSE_NOT_THEN ASSUME_TAC >>
         `ST x (NOT phi) IN Tx`
           by
-           (`IMAGE σ 𝕌(:num) ⊆ (folm2mm M).frame.world`
-              by rw[folm2mm_def] >>
-            `satis (folm2mm M) w (NOT phi)` 
+           (`satis (folm2mm M) w0 (NOT phi)` 
               by 
-               (rw[satis_def,Abbr`w`] >> 
+               (rw[satis_def,Abbr`w0`] >> 
                 fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
-            `fsatis (mm2folm (folm2mm M)) σ (ST x (NOT phi))`
+            `fsatis (mm2folm (folm2mm M)) v (ST x (NOT phi))`
               by 
-               (drule prop_2_47_i >> rw[] >> 
-                first_x_assum (qspecl_then [`phi`,`x`] assume_tac) >>
-                fs[Abbr`w`] >> 
-                `valuation (mm2folm (folm2mm M)) σ`
-                  by
-                   (rw[valuation_def,mm2folm_def] >>
-                    fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
-                rw[fsatis_def] >>
-                metis_tac[fsatis_def]) >>
+               (`fsatis (mm2folm (folm2mm M)) v (ST x (¬phi))`
+                  suffices_by metis_tac[ST_fNOT] >>
+                `satis (folm2mm M) (v x) (¬phi) <=> 
+                 fsatis (mm2folm (folm2mm M)) v (ST x (¬phi))`
+                  suffices_by metis_tac[Abbr`w0`] >>
+                irule prop_2_47_i >> rw[]
+               ) >>
             rw[Abbr`Tx`] >> 
             qexists_tac `NOT phi` >> rw[ST_fNOT] >>
             `form_functions (ST x phi) = {}` 
               by metis_tac[ST_form_functions_EMPTY] >>
             fs[fsatis_def] >> 
-            `∀f.
-             form_functions f = ∅ ⇒
-              ∀σ.
-                IMAGE σ 𝕌(:num) ⊆ M.Dom ⇒
-                (∀n. M.Pred n [] ⇔ F) ⇒
-                (∀a b n. M.Pred n [a; b] ⇒ n = 0) ⇒
-                (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) ⇒
-                (feval (mm2folm (folm2mm M)) σ f ⇔ feval M σ f)`
-              suffices_by 
-               (rw[] >> `IMAGE σ 𝕌(:num) ⊆ M.Dom` by fs[folm2mm_def] >>
-                metis_tac[ST_form_functions_EMPTY,folm2mm_def,fsatis_def]) >>
-            metis_tac[mm2folm_folm2mm_feval]
+            `feval (mm2folm (folm2mm M)) v (ST x phi) <=> 
+             feval M v (ST x phi)` suffices_by metis_tac[] >>
+            irule L1tau_mm2folm_folm2mm_comm_feval >>
+            metis_tac[ST_L1tau]
            ) >>
         `feval N σn (ST x (NOT phi))` by metis_tac[] >>
-        `IMAGE σn 𝕌(:num) ⊆ (folm2mm N).frame.world`
-          by fs[folm2mm_def] >>
-        `feval (mm2folm (folm2mm N)) σn (ST x (NOT phi))`
+        `feval (mm2folm (folm2mm N)) σn (ST x (NOT phi)) <=>
+         feval N σn (ST x (¬phi))`
           by 
-           metis_tac[mm2folm_folm2mm_feval,
-                     folm2mm_def,ST_form_functions_EMPTY] >>
-        rw[Abbr`v`] >>
+           (irule L1tau_mm2folm_folm2mm_comm_feval >> metis_tac[ST_L1tau]) >>
+        `feval (mm2folm (folm2mm N)) σn (ST x (NOT phi))`
+          by metis_tac[] >>
+        fs[Abbr`v0`] >>
         `¬fsatis (mm2folm (folm2mm N)) σn (ST x phi)` 
            suffices_by metis_tac[prop_2_47_i] >>
         rw[fsatis_def,valuation_def] >> fs[mm2folm_def,IMAGE_DEF,SUBSET_DEF] >>
-        metis_tac[]) >>
+        metis_tac[])
    ) >>
 (*apply 2.74*)
-`v IN (folm2mm N).frame.world /\ w IN (folm2mm M).frame.world`
-  by (fs[folm2mm_def,IMAGE_DEF,SUBSET_DEF,Abbr`w`,Abbr`v`] >> metis_tac[]) >>
+`v0 IN (folm2mm N).frame.world /\ w0 IN (folm2mm M).frame.world`
+  by (fs[folm2mm_def,valuation_def,Abbr`w0`,Abbr`v0`] >> metis_tac[]) >>
 drule (thm_2_74_half2 |> INST_TYPE [beta |-> ``:'a``]) >>
 strip_tac >>
-first_x_assum (qspecl_then [`folm2mm N`,`v`] assume_tac) >> 
+first_x_assum (qspecl_then [`folm2mm N`,`v0`] assume_tac) >> 
 first_x_assum drule >> rw[] >>
 fs[invar4bisim_def] >>
 qabbrev_tac `Mst = (ultraproduct_model U I' (λi. folm2mm M))` >>
 qabbrev_tac `Nst = (ultraproduct_model U I' (λi. folm2mm N))` >>
-qabbrev_tac `wst = {fw | Uequiv U I' (models2worlds (λi. folm2mm M)) (λi. w) fw}` >>
-qabbrev_tac `vst = {fv | Uequiv U I' (models2worlds (λi. folm2mm N)) (λi. v) fv}` >>
+qabbrev_tac 
+  `wst = {fw | Uequiv U I' (models2worlds (λi. folm2mm M)) (λi. w0) fw}` >>
+qabbrev_tac 
+  `vst = {fv | Uequiv U I' (models2worlds (λi. folm2mm N)) (λi. v0) fv}` >>
 first_x_assum (qspecl_then [`Mst`,`Nst`,`vst`,`wst`] assume_tac) >> rfs[] >>
 drule (corollary_A_21 |> INST_TYPE [alpha |-> ``:num``,beta |-> ``:'a``]) >> 
 rw[] >> 
-`(feval M σ a <=> fsatis (mm2folm Mst) (\x. wst) a) /\ 
+`(feval M v a <=> fsatis (mm2folm Mst) (\x. wst) a) /\ 
 fsatis (mm2folm Nst) (\x. vst) a` 
   suffices_by 
    (rw[] >> 
@@ -1138,36 +1371,30 @@ fsatis (mm2folm Nst) (\x. vst) a`
       (qspecl_then [`(λx. wst)`,`(λx. vst)`] assume_tac) >>
     `(λx. wst)⦇x ↦ wst⦈ = (λx. wst) /\
      (λx. vst)⦇x ↦ vst⦈ = (λx. vst)` by fs[FUN_EQ_THM,APPLY_UPDATE_THM] >>
-    rw[] >> cheat
-    (*cheated! do not understand why metis does not solve it*)
-    (*metis_tac[] *)) >>
-`(feval M σ a ⇔ fsatis (mm2folm Mst) (λx. wst) a) /\
+    rw[] >> fs[]  
+   ) >>
+`(feval M v a ⇔ fsatis (mm2folm Mst) (λx. wst) a) /\
  (feval N σn a <=> fsatis (mm2folm Nst) (λx. vst) a)`
-suffices_by metis_tac[] >> 
+suffices_by metis_tac[] >>
 `!M σ a (I:num -> bool) U. 
-   (FV a ⊆ {x} /\ form_functions a = ∅ /\
-    ultrafilter U I /\
-    (∀n. ¬M.Pred n []) /\
-    (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
-    (∀a b c d n. ¬M.Pred n (a::b::c::d)) /\
-    (∀ff ll. M.Fun ff ll ∈ M.Dom) /\
-    IMAGE σ (univ(:num)) ⊆ M.Dom) ==>
-    (feval M σ a <=>
+  L1tau a /\ FV a ⊆ {x} /\ ultrafilter U I /\ valuation M σ ==> 
+  (feval M σ a <=>
      feval (mm2folm (ultraproduct_model U I (λi. folm2mm M))) 
        (λx. {fw | Uequiv U I (models2worlds (λi. folm2mm M)) (λi. σ x) fw}) a)`
   suffices_by
    (rpt strip_tac (* 2 *)
-    >- (first_x_assum (qspecl_then [`M`,`σ`,`a`,`I'`,`U`] assume_tac) >> 
+    >- (first_x_assum (qspecl_then [`M`,`v`,`a`,`I'`,`U`] assume_tac) >> 
+        (*`L1tau a` by cheat >> (*cheated!! revise goal statement*)*)
         first_x_assum drule_all >> strip_tac >> 
-        fs[Abbr`Mst`,Abbr`wst`,Abbr`w`] >> rw[] >>
+        fs[Abbr`Mst`,Abbr`wst`,Abbr`w0`] >> rw[] >>
         fs[fsatis_def] >> 
         `valuation (mm2folm (ultraproduct_model U I' (λi. folm2mm M)))
           (λx':num.
-            {fw | Uequiv U I' (models2worlds (λi. folm2mm M)) (λi. σ x) fw})` 
+            {fw | Uequiv U I' (models2worlds (λi. folm2mm M)) (λi. v x) fw})` 
           by
            (rw[valuation_def,mm2folm_def,ultraproduct_model_def] >> 
             rw[ultraproduct_def,models2worlds_def,folm2mm_def,partition_def] >>
-            qexists_tac `\i. σ x` >> rw[Cart_prod_def,EXTENSION,EQ_IMP_THM] (*2*)           >- fs[folm2mm_def] >>
+            qexists_tac `\i. v x` >> rw[Cart_prod_def,EXTENSION,EQ_IMP_THM] (*2*)           >- fs[folm2mm_def,valuation_def] >> 
             fs[Uequiv_def,Cart_prod_def]
             ) >>
         fs[] >>
@@ -1176,7 +1403,7 @@ suffices_by metis_tac[] >>
         rw[])
     >- (first_x_assum (qspecl_then [`N`,`σn`,`a`,`I'`,`U`] assume_tac) >> 
         first_x_assum drule_all >> strip_tac >> 
-        fs[Abbr`Nst`,Abbr`vst`,Abbr`v`] >> rw[] >>
+        fs[Abbr`Nst`,Abbr`vst`,Abbr`v0`] >> rw[] >>
         fs[fsatis_def] >> 
         `valuation (mm2folm (ultraproduct_model U I' (λi. folm2mm N)))
           (λx':num.
@@ -1192,7 +1419,7 @@ suffices_by metis_tac[] >>
         `x' = x` by fs[SUBSET_DEF] >>
         rw[])
    ) >>
-metis_tac[ultraproduct_mm2folm_folm2mm_comm_feval]*) cheat
+metis_tac[L1tau_ultraproduct_mm2folm_folm2mm_comm_feval]
 QED
 
 

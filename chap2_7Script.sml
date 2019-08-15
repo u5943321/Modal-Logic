@@ -22,6 +22,7 @@ open ultrafilterTheory;
 
 open folLangTheory;
 open folModelsTheory;
+open folCanonTheory;
 
 val _ = ParseExtras.tight_equality()
 
@@ -120,7 +121,59 @@ Induct_on `phi` (* 3 *) >> rw[satis_def,feval_def]
          fs[APPLY_UPDATE_THM])))
 QED
 
+Theorem compactness_thm_L1tau:
+INFINITE (univ (:α)) ==> 
+!A. 
+  ((!f. f IN A ==> L1tau f) /\
+   (!ss. (FINITE ss /\ ss ⊆ A) ==> 
+     ?M:α model σ:num -> α. valuation M σ /\ 
+                   (!ff. ff IN ss ==> feval M σ ff))) ==>
+ (?M:α model σ:num -> α. valuation M σ /\ 
+                   (!f. f IN A ==> feval M σ f))
+Proof
+rw[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
+Cases_on `FINITE A` (* 2 *)
+>- (first_x_assum drule >> rw[SUBSET_DEF] >> metis_tac[]) >>
+`?ss. FINITE ss ∧ ss ⊆ A /\
+      (!M σ. valuation M σ ==> ?ff. ff ∈ ss /\ ¬feval M σ ff)` 
+suffices_by metis_tac[] >>
+`?f. f IN A` by metis_tac[INFINITE_INHAB] >> 
+`entails (:α) (A DELETE f) (fNOT f)`
+  by
+   (rw[entails_def] >> SPOSE_NOT_THEN ASSUME_TAC >>
+    `!f. f IN A ==> feval M v f` suffices_by metis_tac[] >>
+    rw[] >> Cases_on `f = f'` (* 2 *)
+    >- fs[] >> fs[DELETE_DEF,hold_def]) >>
+`?A0. FINITE A0 /\ A0 ⊆ (A DELETE f) /\ entails (:α) A0 (fNOT f)`
+  by metis_tac[finite_entailment] >>
+qexists_tac `f INSERT A0` >> rw[] (* 2 *)
+>- fs[SUBSET_DEF] >>
+fs[entails_def] >> first_x_assum drule >> strip_tac >> 
+Cases_on `feval M σ f`
+>- (`?ff. ff IN A0 /\ ¬feval M σ ff` suffices_by metis_tac[] >>
+   SPOSE_NOT_THEN ASSUME_TAC >> 
+   `¬feval M σ f` suffices_by metis_tac[] >>
+   `interpretation (language (fNOT f INSERT A0)) M ∧ M.Dom ≠ ∅ ∧
+    hold M σ A0` suffices_by metis_tac[] >> rw[] (* 3 *)
+   >- (simp[interpretation_def,language_def] >>
+      `functions (fNOT f INSERT A0) = {}` 
+        suffices_by metis_tac[MEMBER_NOT_EMPTY] >>
+      rw[functions_def] >> 
+      `{form_functions f' | f' = fNOT f ∨ f' ∈ A0} = {∅}` 
+       suffices_by metis_tac[] >>
+      rw[Once EXTENSION] >>
+      `(!f. f IN A0 ==> form_functions f = {}) /\ form_functions (fNOT f) = {}`
+       suffices_by metis_tac[] >> rw[] (* 2 *)
+      >- fs[SUBSET_DEF,L1tau_def] >>
+      fs[form_functions_def,fNOT_def,L1tau_def])
+   >- (rw[GSYM MEMBER_NOT_EMPTY] >> metis_tac[valuation_def])
+   >- rw[hold_def])
+>- metis_tac[]
+QED
+
+
 Theorem modal_compactness_thm:
+INFINITE (univ (:α)) ==> 
 !s:num chap1$form -> bool. 
   (!ss. FINITE ss /\ ss ⊆ s ==> 
       ?M w:α. w IN M.frame.world /\ (!f. f IN ss ==> satis M w f)) ==>
@@ -145,7 +198,42 @@ qabbrev_tac `A = {ST x f | f IN s}` >>
          `IMAGE (λa. w) 𝕌(:num) ⊆ M.frame.world` by fs[IMAGE_DEF,SUBSET_DEF] >>
          drule prop_2_47_i >> strip_tac >> fs[fsatis_def] >> metis_tac[])) >>
 `?M:α model σ. valuation M σ ∧ ∀f. f ∈ A ⇒ feval M σ f` 
-  by cheat(*compactness cheated*)>>
+  by (irule compactness_thm_L1tau >> rw[] >> fs[Abbr`A`] >>
+      metis_tac[ST_L1tau]) >> 
+
+
+(*
+`!s. ffinsat (:α) s ⇒ satisfiable (:α) s`
+       by metis_tac[COMPACTNESS_satisfiable] >>
+      fs[ffinsat_def,satisfiable_def,satisfies_def] >>
+      first_x_assum (qspec_then `A` assume_tac) >>
+      `∃M:α model.
+            M.Dom ≠ ∅ ∧ interpretation (language A) M ∧
+            ∀v p. valuation M v ∧ p ∈ A ⇒ feval M v p`
+        suffices_by 
+         (strip_tac >> qexists_tac `M` >> rw[] >> 
+          fs[GSYM MEMBER_NOT_EMPTY] >>
+          qexists_tac `\n.x'` >> rw[]  (* 2 *)
+          >- rw[valuation_def] >>
+          `valuation M (λn:num. x')` by rw[valuation_def] >>
+          first_x_assum irule >> rw[] >> fs[]) >>
+      first_x_assum irule >> rw[] >>
+      first_x_assum drule >> strip_tac >> first_x_assum drule >> strip_tac >>
+      qexists_tac `M` >> rw[] (* 3 *)
+      >- (fs[valuation_def] >> metis_tac[MEMBER_NOT_EMPTY])
+      >- (rw[interpretation_def,language_def] >> 
+         `functions t = {}` suffices_by metis_tac[MEMBER_NOT_EMPTY] >>
+         fs[SUBSET_DEF,Abbr`A`] >> rw[functions_def] >>
+         Cases_on `t = {}` (* 2 *)
+         >- fs[] >>
+         `{form_functions f | f ∈ t} = {∅}` suffices_by metis_tac[] >>
+         rw[Once EXTENSION] >>
+         fs[GSYM MEMBER_NOT_EMPTY] >>
+         `!f. f IN t ==> form_functions f = {}` suffices_by metis_tac[] >>
+         rw[] >> metis_tac[ST_form_functions_EMPTY])
+      >- metis_tac[])
+
+ cheat(*compactness cheated*)>>*)
 map_every qexists_tac [`folm2mm M`,`σ x`] >> rw[] (* 2 *)
 >- fs[folm2mm_def,valuation_def]
 >- (first_x_assum (qspec_then `ST x f` assume_tac) >> 
@@ -156,6 +244,7 @@ map_every qexists_tac [`folm2mm M`,`σ x`] >> rw[] (* 2 *)
 QED
 
 Theorem modal_compactness_corollary:
+INFINITE (univ (:α)) ==> 
 !s a. 
   (!M w:α. w IN M.frame.world ==>
       (!f:num chap1$form. f IN s ==> satis M w f) ==> satis M w a) ==>
@@ -180,7 +269,7 @@ rw[] >> SPOSE_NOT_THEN ASSUME_TAC >>
     `ss ⊆ s` by (fs[SUBSET_DEF,UNION_DEF] >> metis_tac[]) >>
     metis_tac[]
    ) >>
-drule modal_compactness_thm >> strip_tac >>
+drule_all modal_compactness_thm >> strip_tac >>
 `satis M w ¬a` by fs[] >>
 `!f. f IN s ==> satis M w f` by fs[UNION_DEF] >>
 metis_tac[satis_def]
@@ -277,6 +366,7 @@ QED
 
 
 Theorem thm_2_78_half2:
+INFINITE (univ (:β)) ==>
  !phi:num chap1$form (ν:((β -> bool) -> bool) itself) (μ:β itself). preserved_under_sim ν ν phi ==> 
      (?phi0. equiv0 μ phi phi0 /\ PE phi0)
 Proof 
@@ -288,7 +378,7 @@ qabbrev_tac `PEC = {psi | PE psi /\
       (!f. f IN PEC ==> satis M w f) ==> satis M w phi`
   suffices_by
    (rw[] >> 
-    drule (modal_compactness_corollary |> INST_TYPE [alpha |-> ``:'b``]) >> 
+    drule_all (modal_compactness_corollary |> INST_TYPE [alpha |-> ``:'b``]) >> 
     rw[] >> drule PE_BIGCONJ >> rw[] >>
     `!f. f IN ss ==> PE f` by fs[SUBSET_DEF,Abbr`PEC`] >>
     first_x_assum drule_all >> rw[] >> qexists_tac `ff` >>
@@ -335,7 +425,7 @@ qabbrev_tac `Γ = {NOT psi | PE psi /\ satis M w (NOT psi)}` >>
     fs[Abbr`ss0`,SUBSET_DEF,Abbr`Γ`] >> 
     `∃psi. f' = ¬psi ∧ PE psi ∧ satis M w (¬psi)` by metis_tac[] >> fs[]  
    ) >>
-drule modal_compactness_thm >> rw[] >>
+drule_all modal_compactness_thm >> rw[] >>
 rename [`∀f. f ∈ Γ ∨ f = phi ⇒ satis N v f`] >>
 `!psi. PE psi ==> (satis N v psi ==> satis M w psi)`
   by

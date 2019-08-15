@@ -20,6 +20,21 @@ open ultrafilterTheory;
 val _ = ParseExtras.tight_equality()
 val _ = new_theory "lemma2_73";
 
+
+Theorem countable_INFINITE_form_set:
+!s: folLang$form -> bool. 
+   INFINITE s ==> 
+    ?enum. BIJ enum (univ(:num)) s
+Proof
+rw[] >>
+`countable s`
+  suffices_by
+   (fs[COUNTABLE_ALT_BIJ] >> fs[] >> metis_tac[]) >>
+irule subset_countable >> 
+qexists_tac `univ (:form)` >> rw[SUBSET_DEF]
+QED
+
+
 Definition FCT_def[simp]:
   (FCT (V v) = {}) /\
   (FCT (Fn s ts) = if ts = [] then {s} else (LIST_UNION (MAP FCT ts)))
@@ -618,9 +633,11 @@ Theorem ultraproduct_sat_case1:
             (!n. n IN N ==> σ n = f n)  /\ 
             (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
 Proof
-rw[] >> drule countably_incomplete_chain >> rw[] >>
+rw[] >> Cases_on `FINITE s` (* 2 *)
+>- (first_x_assum irule >> rw[SUBSET_DEF]) >>
+drule countably_incomplete_chain >> rw[] >>
 fs[countably_incomplete_def] >> drule thm_A_19_ii >> rw[] >> 
-`?enum. BIJ enum (univ(:num)) s` by cheat >>
+`?enum. BIJ enum (univ(:num)) s` by metis_tac[countable_INFINITE_form_set] >> 
 (* cheated! need Godel numbering*) 
 (*first suffices start, change the goal into feval each formula*)
 qabbrev_tac `upfm = (ultraproduct_folmodel U (In 0) FMS)` >>

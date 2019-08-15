@@ -1,5 +1,5 @@
 open HolKernel Parse boolLib bossLib;
-open listTheory;
+open nlistTheory listTheory;
 open pred_setTheory;
 
 val _ = new_theory "chap1";

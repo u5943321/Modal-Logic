@@ -8,7 +8,7 @@ report.pdf: report.tex
 	latexmk -pdf report
 
 
-munge.exe: ../chap2Theory.uo $(CORRES) foo.ML ppLib.uo
+munge.exe: ../chap2Theory.uo $(CORRES) foo.ML ppLib.uo prettyPrintingTheory.uo
 	$(HOLDIR)/bin/buildheap.exe ../chap2Theory.uo ppLib.uo $(CORRES)  $(TEXDIR)/mungeTools \
           $(TEXDIR)/munger.lex.sml $(TEXDIR)/holindex $(TEXDIR)/mkmunger.sml \
           $(TEXDIR)/poly-mkmunger.ML foo.ML

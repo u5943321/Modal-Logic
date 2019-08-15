@@ -1,7 +1,7 @@
 structure ppLib =
 struct
 
-local open HolKernel Parse boolLib
+local open HolKernel Parse boolLib prettyPrintingTheory
 in
 
 val _ = temp_remove_termtok { tok = "=", term_name ="="}
