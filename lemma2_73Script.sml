@@ -31,7 +31,7 @@ rw[] >>
   suffices_by
    (fs[COUNTABLE_ALT_BIJ] >> fs[] >> metis_tac[]) >>
 irule subset_countable >> 
-qexists_tac `univ (:form)` >> rw[SUBSET_DEF]
+qexists_tac `univ (:folLang$form)` >> rw[SUBSET_DEF]
 QED
 
 

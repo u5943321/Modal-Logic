@@ -126,9 +126,9 @@ INFINITE (univ (:α)) ==>
 !A. 
   ((!f. f IN A ==> L1tau f) /\
    (!ss. (FINITE ss /\ ss ⊆ A) ==> 
-     ?M:α model σ:num -> α. valuation M σ /\ 
+     ?M:α folModels$model σ:num -> α. valuation M σ /\ 
                    (!ff. ff IN ss ==> feval M σ ff))) ==>
- (?M:α model σ:num -> α. valuation M σ /\ 
+ (?M:α folModels$model σ:num -> α. valuation M σ /\ 
                    (!f. f IN A ==> feval M σ f))
 Proof
 rw[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
@@ -182,7 +182,7 @@ Proof
 rw[] >> 
 qabbrev_tac `A = {ST x f | f IN s}` >> 
 `!ss. (FINITE ss /\ ss ⊆ A) ==> 
-     ?M:α model σ. valuation M σ /\
+     ?M:α folModels$model σ. valuation M σ /\
                    (!ff. ff IN ss ==> feval M σ ff)`
   by (rw[] >> 
       drule (FINITE_SUBSET_IMAGE_lemma |> INST_TYPE [alpha |-> ``:num chap1$form``])>> 
@@ -197,7 +197,7 @@ qabbrev_tac `A = {ST x f | f IN s}` >>
       >- (first_x_assum drule >> strip_tac >> 
          `IMAGE (λa. w) 𝕌(:num) ⊆ M.frame.world` by fs[IMAGE_DEF,SUBSET_DEF] >>
          drule prop_2_47_i >> strip_tac >> fs[fsatis_def] >> metis_tac[])) >>
-`?M:α model σ. valuation M σ ∧ ∀f. f ∈ A ⇒ feval M σ f` 
+`?M:α folModels$model σ. valuation M σ ∧ ∀f. f ∈ A ⇒ feval M σ f` 
   by (irule compactness_thm_L1tau >> rw[] >> fs[Abbr`A`] >>
       metis_tac[ST_L1tau]) >> 
 

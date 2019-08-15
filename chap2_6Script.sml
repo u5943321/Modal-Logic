@@ -25,6 +25,16 @@ open pairTheory;
 val _ = ParseExtras.tight_equality()
 val _ = new_theory "chap2_6";
   
+val L1tau_def = Define`
+L1tau phi <=> form_functions phi = {} /\ 
+              form_predicates phi ⊆ (0,2) INSERT {(p,1)| p IN (univ (:num))}`
+
+Theorem ST_L1tau:
+!phi x. L1tau (ST x phi)
+Proof
+Induct_on `phi` (* 5 *) >>
+fs[L1tau_def,fDISJ_def,fNOT_def,fAND_def]
+QED
 
 val folm2mm_def = Define`
 folm2mm FM = <| frame := <| world := FM.Dom ;
@@ -387,7 +397,7 @@ rw[satisfiable_in_def] (* 2 *)
                  >- (`form_functions (ST x form) = {}` 
                       suffices_by metis_tac[MEMBER_NOT_EMPTY] >>
                      metis_tac[L1tau_def,ST_L1tau])
-                 >- rw[Abbr`MA`])
+                 >- rw[Abbr`MA`]) >> 
 	`(x =+ w') (λn. w') x = w'` by fs[APPLY_UPDATE_THM] >>
 	metis_tac[prop_2_47_i])));
 
@@ -918,10 +928,6 @@ wffm M <=> ((∀n. M.Pred n [] ⇔ F) /\
               (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
               (∀n0 l0. M.Fun n0 l0 ∈ M.Dom))`
 
-val L1tau_def = Define`
-L1tau phi <=> form_functions phi = {} /\ 
-              form_predicates phi ⊆ (0,2) INSERT {(p,1)| p IN (univ (:num))}`
-
 
 Theorem mm2folm_folm2mm_Pred0:
 !M wl. 
@@ -992,13 +998,6 @@ Induct_on `f` (* 4 *)
 >- (rw[feval_def,L1tau_FALL] >> first_x_assum drule >> rw[] >>
    `(mm2folm (folm2mm M)).Dom = M.Dom` by fs[mm2folm_def,folm2mm_def] >>
    fs[])
-QED
-
-Theorem ST_L1tau:
-!phi x. L1tau (ST x phi)
-Proof
-Induct_on `phi` (* 5 *) >>
-fs[L1tau_def,fDISJ_def,fNOT_def,fAND_def]
 QED
 
 
