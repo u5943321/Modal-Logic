@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{hyperref}
+\usepackage[top=1in, bottom=1in, left=.75in, right=1in]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy} \lhead{Proposal} \chead{PhD research proposal} \rhead{Yiming Xu u5943321}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{enumerate}
+\usepackage{amsthm}
+\usepackage{polynom}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\usepackage{cleveref}
+\usepackage{hyperref}
+\usepackage{tikz-cd}
+\usetikzlibrary{matrix, calc, arrows}
+\usepackage{stmaryrd}
+\usepackage[all]{xy}
+
+
+\newenvironment{solution}
+{\begin{proof}[Solution]}
+	{\end{proof}}
+\renewcommand{\thesubsection}{\thesection(\alph{subsection})}
+\def\quotient#1#2{\raise1ex\hbox{$#1$}\Big/\lower1ex\hbox{$#2$}}
+\setlength{\parskip}{1ex}
+\setlength\parindent{0pt}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{remark}{Remark}[section]
+
+
+
+\newcommand{\toby}[1]{\stackrel{#1}{\longrightarrow}}
+
+\title{PhD research proposal}
+\date{July, 2019}
+\author{Yiming Xu}
+
+\begin{document}
+\maketitle
+We will work in the area known as mechanised mathematics, aiming to bring computer-assisted rigour to mathematical proof. In particular, we will mechanise a significant result in the intersection of model theory and set theory. Model theory is the general study of the mathematical objects that satisfy sets of first order logic formulas (themselves called ``theories''). The result we propose to capture is $\mathfrak p= \mathfrak t$, where $\mathfrak p$ is the pseudo-intersection number and $\mathfrak t$ is the tower number. Here, the precise definitions of these two cardinals are given as:
+
+\begin{itemize}
+    \item A set  $A$ is \emph{almost contained} in another set $B$ if all but finitely members of $A$ are members of $B$. 
+    \item A set $\mathcal T$ of sets where `almost contain' is a linear order on $\mathcal T$ is called a \emph{tower}.
+    \item For a family $\{A_i\}_{i\in I}$ of sets, if $B$ is a set which is almost contained in every $A_i$, then $B$ is called a \emph{pseudo-intersection} of $\{A_i\}_{i\in I}$.
+    \item For a family $\{A_i\}_{i\in I}$ of sets, if for every finite $\{A_n\}_{n\in\mathbb N}\subseteq \{A_i\}_{i\in I}$, we have $\bigcap \{A_n\}_{n\in\mathbb N}$ is infinite, then the family $\{A_i\}_{i\in I}$ is called has that \emph{finite intersection property}.
+    \item $\mathfrak p$ is the cardinality of the smallest family which has the finite intersection property but which does not have a pseudo-intersection.
+    \item $\mathfrak t$ is the cardinality of the smallest family which is a tower an does not have a pseudo-intersection.
+\end{itemize}
+
+
+Whether or not $\mathfrak p = \mathfrak t$ is the oldest problem on cardinal invariants of the continuum, which remained unsolved for more than 50 years, and has just been solved by Malliaris and Shelah in 2013.
+
+With their proof, \textit{``the authors uncovered a novel connection between a model theoretic complexity hierarchy, the Keisler-order, and the theory of cardinal characteristics''}~\cite{Soukup2019}. In particular, they connect two rather isolated fields of mathematical logic: set theory and model theory. This result is thus a starting point of putting these two areas together, and by further exploring this connection, the community has great chance to prove more and more interesting results.
+
+As this proof is so important, we want to make sure that it does not contain any subtle mistakes or hidden assumptions. Also, we want to make sure that we have understood it in every detail, and to record all those details in a machine. We propose to carry out this mechanisation in simple type theory, as implemented in the HOL4 proof assistant.
+
+% The theorem prover HOL4 has some limitations. For instance, we cannot quantify over types, so we cannot simutinously refer to all type universe. But the HOL4 has obvious advantages as well, as is easier to use than many other theorem provers.
+
+We wish to mechanise the proof of $\mathfrak p=\mathfrak t$ in HOL4:
+
+\begin{itemize}
+
+\item To ensure that the proof is absolutely correct and so we really know $\mathfrak p=\mathfrak t$. 
+
+\item The proof is complicated and enlightening, and many people be may interested in following it. But the paper itself does not give enough detail for a learner. If we mechanise it in HOL4, then if someone wants to learn it, they can easily run our proof interactively to see every detail clearly.
+
+\item There has been very little work on mechanised model theory to date. The process of mechanising the proof of $\mathfrak p=\mathfrak t$  will require the construction of a library of model theory. A library capable of supporting the proof of $\mathfrak p=\mathfrak t$  will also be a valuable resource for others in this area. It is well known that model theory can also be applied to obtain significant results in other fields, including but not limited to set theory, algebra and analysis. This means the model theory library we will develop will be useful not only for mechanisation of more model theory, but will also have a good chance to be helpful for mechanising results in other domains. 
+
+\item In addition to the headline $\mathfrak p=\mathfrak t$ result, other theorems proved along the way will include important results about Keisler's order, some classification theory (dividing lines between levels of stability), some known relationships between other infinite cardinals and some more set theory (including forcing). 
+
+\item The simple type theory implemented in HOL4 has some limitations. For instance, it does not support dependent type theory, so we cannot quantify over types and hence we are not allowed to simultaneously refer to all type universes. By doing this project, we can demonstrate that HOL4's limited ability to do set theory will still be capable of mechanising the proof.
+
+
+\end{itemize}
+\section{Procedure}
+Our main result $\mathfrak p=\mathfrak t$ is based on model theory, so we need to establish some model theory foundations before beginning our main proof. The first step will be to mechanise part of the standard textbook \emph{Model Theory} by Chang and Keisler~\cite{ChangKeisler1990}. In particular, we will need to reach section 7.1 about stability theory. A significantly important result we will mechanise is the proof of Morley's theorem, which says if a theory has exactly one model (up to isomorphism) in one uncountable cardinal, then it has exactly one model in every uncountable cardinal.
+
+With the basics in the book mechanised, the next step is Keisler's order. Keisler's order is an order on countable theories which ranks classes of theories by complexity. In order to do this, we will need to enrich our existing theories on ultrafilters and ultraproducts, as well as some special definitions given by Keisler (OK filters, good filters, etc), which will lead to the following two central results:
+\begin{itemize}
+    \item Keisler's order has maximal and minimal classes.
+    \item $\mathit{SOP_2}$ implies maximal theories in Keisler's order.
+\end{itemize}
+
+At this point, we can start with the main proof. We will follow the original proof by Malliaris and Shelah~\cite{MalliarisShelah2016}.
+
+
+% The main material [1] will be a refinement of the original proof by M. Malliaris, S. Shelah [2]. Since [1] will use many result from [2], we will get part of the original proof mechanised as well. 
+
+\bibliography{everything}
+\bibliographystyle{plain}
+
+
+
+\end{document}
