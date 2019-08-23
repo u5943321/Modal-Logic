@@ -4,6 +4,8 @@
 *.out
 report.tex
 report.pdf
-report.fdb_latexmk
+*.fdb_latexmk
+*.bbl
+*.blg
 *.aux
 munge.exe
