@@ -44,11 +44,23 @@
 %explain choice we made along the way.
 %inductive relation bars // tell reader use standard notation in CS
 %something like Coqdoc Link the word to particular theorem and definition.
+
+\section{Introduction revised}
+\subsection{What is modal logic?}
+From its name, modal logic is the logic of `modes'. People have the concept of `modes' before have the concept of `modal logic'. Before the subject is organised, when people meet various kinds of modals in various kind of logic, they used to use complicated axioms to handle the behaviour of modals. After then, people realised that some modals have common features, and organised the subject called `modal logic'.
+\subsection{What is HOL4?}
+\subsection{Why are we formalising modal logic in HOL4?}
+
+As introduced above, modal logic itself is very interesting and useful. But the theory of modal models have not been formalised and the theorems are not machine-checked before. To really ensure that we have understand this subject, in this project, we formalised it in detail. We want to ensure the precision of the statement of theorems in this subject, and correct possible minor errors in the proof. In particular, sometimes we will also find out some hidden assumptions. 
+
 \section{Introduction}
+
+
+
 
 \holref{My Theorem}{chap2_2}{103}
 
-There is four questions to anwser in order to make sense of our title:
+There are four questions to anwser in order to make sense of our title:
 
 \subsection{What is modal logic?}
 In our formalisation, we restrict our scope into propositional modal logic. Propositional modal logic is a type of formal logic extending propositional logic by adding modalities that express the mode of truth value, and we also restrict to the simplest modalites `possibly', and `necessarily', which is written as `$\Box$' and `$\Diamond$'. Given a propositional symbol `p', `$\Diamond p$' reads `it is possible that $p$', and `$\Box p$' reads `it is necessarily $p$'.
@@ -103,7 +115,7 @@ In our formalisation, we only consider the most standard modal language, called 
 \end{holmath}
 \end{defn}
 
-When we say an `$\alpha$ form', we mean a formula in the basic modal language defined on a set $\Phi$ with elements of type $\alpha$, we will just call such a set $\alpha$-set, an $\alpha$-set is of type $\alpha \to bool$. For the non-primitive connectives: the conjunction `$\land$', the implication $\to$, and the truth `$\top$', they are defined in a standard way:
+When we say an `$\alpha$ form', we mean a formula in the basic modal language defined on a set $\Phi$ with elements of type $\alpha$. By `defined on a set $\Phi$', we mean $\Phi$ is the set of propositional symbols which are allowed to use. For the non-primitive connectives: the conjunction `$\land$', the implication $\to$, and the truth `$\top$', they are defined in a standard way:
 
 \begin{defn}[Non-primitive connectives]
 \begin{holmath}
@@ -112,15 +124,9 @@ When we say an `$\alpha$ form', we mean a formula in the basic modal language de
   \HOLthm[def]{chap1.TRUE_def}
 \end{holmath}
 \end{defn}
-As an analogue of the duality between the universal quantifier and the existential quantifier, in the sense that $\exists$ is defined to be $\lnot\forall\lnot$, we have a modal operator that is dual to the diamond, that is the box $\Box \phi:= \lnot\Diamond \lnot \phi$. 
+As an analogue of the duality between the universal quantifier and the existential quantifier, in the sense that $\exists$ is defined to be $\lnot\forall\lnot$ in classical logic, we have a modal operator that is dual to the diamond, that is the box $\Box \phi:= \lnot\Diamond \lnot \phi$. 
 
-\begin{defn}[Box]
-\begin{holmath}
-  \HOLthm[def]{chap1.BOX_def}
-\end{holmath}
-\end{defn}
-
-A modal formula cannot contain any extra ingredient rather then a diamond compared to a propositional formula, so a modal formula without diamond is a propositional formula:
+Any modal formula without diamond is a propositional formula:
 
 \begin{defn}[Propositional formulas]
 \begin{holmath}
@@ -128,7 +134,7 @@ A modal formula cannot contain any extra ingredient rather then a diamond compar
 \end{holmath}
 \end{defn}
 
-Knowing how does the modal formulas we are interested in look like, now we want to know the meaning of them. If the modal language is defined using propositional symbols in an $\alpha$-set $\Phi$. For a propositional formula, it is no more than a combination of propositional formulas using $\lor$ and $\lnot$, so its truth value depends entirely on the truth value of the propositional letters in $\Phi$. It follows that we can define the function that evaluate a propositional formula as takes an assignment of truth values of propositional symbols and a modal formula, and gives us the truth value of the formula under the current assignment. In the HOL, to define a function from an $\alpha$-set, where $\alpha$ is any type, we are not allowed to only assign values to the elements of the set, instead, we must define the function on for all the terms that has type $\alpha$. Hence our evaluating function \HOLtm{peval} takes a function $\alpha\to bool$ and an $\alpha$-form:
+Having defined the syntax of formulas, we can now define their \emph{semantics}. However, we will start by defining the semantics of propositional formulas. For a propositional formula, it is no more than a combination of propositional formulas using $\lor$ and $\lnot$, so its truth value depends entirely on the truth value of the propositional letters in $\Phi$. It follows that we can define the function that evaluates a propositional formula as taking an assignment of truth values of propositional symbols and a modal formula, and gives us the truth value of the formula under the current assignment. In HOL4, to define a function from an $\alpha$-set, where $\alpha$ is any type, we are not allowed to only assign values to the elements of the set, instead, we must define the function on for all the terms that has type $\alpha$. Hence our evaluating function \HOLtm{peval} takes a function $\alpha\to bool$ and an $\alpha$-form:
 
 \begin{defn}[Propositional evaluation]
 \begin{holmath}
@@ -136,17 +142,18 @@ Knowing how does the modal formulas we are interested in look like, now we want 
 \end{holmath}
 \end{defn}
 
-For a modal formula that involves diamonds, an assignment of truth value is not enough, since we will need a relational structure to talk about the \HOLtm{DIAM}. Such a relational structure is called a frame. As pointed out in the introduction, a relational structure consists of a set and a binary relation defined on elements in the set. A relational structure together with an assignment of truth value of propositional letters at each point of the set gives us a model of modal logic.  We will call a frame with underlying set is a $\beta$-set a $\beta$-frame, and a model with $\beta$-frame which is used to interpret $\alpha$-formulas an $(\alpha,\beta)$-model.
+For a modal formula that involves diamonds, an assignment of truth value is not enough, and so we will use a relational structure to talk about the \HOLtm{DIAM}. Such a relational structure is called a \emph{frame}. A relational structure consists of a set and a binary relation defined on elements in the set. A relational structure together with an assignment of truth value of propositional letters at each point of the set gives us a model of modal logic.  We will call a frame with underlying set is a $\beta$-set a $\beta$-frame, and a model with $\beta$-frame which is used to interpret $\alpha$-formulas an $(\alpha,\beta)$-model.
 
 \begin{defn}[Modal model as a type]
 \begin{holmath}
+  \HOLthm{chap1.datatype_frame}\\
   \HOLthm{chap1.datatype_model}
 \end{holmath}
 \end{defn}
 
 When we say an $(\alpha,\beta)$-model, we mean a model for $\alpha$-forms with a $\beta$-set as its underlying set.
 
-Now we can interpret modal formulas in the basic modal language on a model by defining satisfication.
+Now we can interpret modal formulas in the basic modal language on a model by defining satisfaction.
 \begin{defn}[Satisfication]
 \begin{holmath}
   \HOLthm[def]{chap1.satis_def}
@@ -2292,7 +2299,7 @@ The last step towards the main theorem is used to pass from infinite set to fini
 The compactness theorem is formlised in (reference), the statement in HOL is:
 \begin{thm}[Compactness of first order logic]
 \begin{holmath}
-  \HOLthm{folModels.compactness}
+  %\HOL thm{folModels.compactness}
 \end{holmath}
 \end{thm}
 
@@ -2300,7 +2307,7 @@ The compactness theorem is formlised in (reference), the statement in HOL is:
 The compactness theorem has a useful corollary:
 \begin{coro}[\texttt{compactness_corollary}]
 \begin{holmath}
-  \HOLthm{folModels.compactness_corollary}
+  %\HOL thm{folModels.compactness_corollary}
 \end{holmath}
 \end{coro}
 
