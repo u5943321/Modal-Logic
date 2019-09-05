@@ -276,7 +276,7 @@ cheat
 QED
 (*Theorem foo = SIMP_RULE bool_ss [PULL_FORALL, PULL_EXISTS] old_th*)
 
-Overload "Mw" =  “λM. M.frame.world”
+val _ = overload_on("Mw", “λM. M.frame.world”);
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Suffix 2100, pp_elements = [TOK "(Mw)"],
