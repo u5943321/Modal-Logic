@@ -57,7 +57,7 @@ val equiv0_NOT_NOT = store_thm(
 
 (* just AND/absorb/contra *)
 val equiv0_demorgan = store_thm(
-  "equiv0_demorgan", 
+  "equiv0_demorgan",
   ``!p q r μ. equiv0 μ (AND p (DISJ q r)) (DISJ (AND p q) (AND p r))``,
   rw[equiv0_def,AND_def,satis_def] >> metis_tac[]);
 
@@ -225,7 +225,7 @@ val FINITE_CONJ_OF = store_thm(
 ``!s. FINITE s ==> FINITE {f | CONJ_OF f s}``,
   ho_match_mp_tac FINITE_COMPLETE_INDUCTION >> rw[] >>
   ONCE_REWRITE_TAC [CONJ_OF_cases] >> dsimp[] >>
-  Cases_on `s = {}` >> simp[GSPEC_OR] >> rw[] 
+  Cases_on `s = {}` >> simp[GSPEC_OR] >> rw[]
   >- (Cases_on `?f. s = {f}` >> fs[])
   >- (Cases_on `?f. s = {f}` >> fs[])
   >- (qmatch_abbrev_tac `FINITE bigset` >>
@@ -351,7 +351,7 @@ Cases_on `l`
    qexists_tac `FST h` >> rw[]
    >- (Cases_on `h` >> Cases_on `r` >> rw[negf_def])
    >- (`((FST h INSERT FST h' INSERT set (MAP FST t)) DELETE FST h) = (FST h' INSERT set (MAP FST t))` by (fs[INSERT_DEF,DELETE_DEF,EXTENSION] >> metis_tac[]) >> metis_tac[])));
-   
+
 
 
 val lit_list_to_form_APPEND= store_thm(
@@ -488,11 +488,11 @@ simp[EXTENSION,MEM_MAP,EXISTS_PROD,lneg_thm] >> rw[] >>
 rename [`MEM (l,b) l1 <> _`] >>
 Cases_on `MEM (l,b) l1`
 >- (qexists_tac `l` >> qexists_tac `b` >>
-   `?p. MEM (l, p) l2` by metis_tac[] >> 
+   `?p. MEM (l, p) l2` by metis_tac[] >>
    Cases_on `b = p` >> fs[] >> `p = ¬b` by metis_tac[] >> fs[])
 >- (fs[] >>
    qexists_tac `l` >> qexists_tac `¬b` >>
-   `?p. MEM (l, p) l1` by metis_tac[] >> 
+   `?p. MEM (l, p) l1` by metis_tac[] >>
    Cases_on `b = p` >> fs[] >> `p = ¬b` by metis_tac[] >> fs[]));
 
 val EQ_MAP_FST_equiv0_cases = store_thm(
@@ -522,7 +522,7 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Suffix 2100,
                   pp_elements = [TOK "//e"],
                   term_name = "part_equiv0"}
-val _ = overload_on ("part_equiv0", ``partition (equiv0 μ)``)   
+val _ = overload_on ("part_equiv0", ``partition (equiv0 μ)``)
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   paren_style = OnlyIfNecessary,
@@ -642,8 +642,8 @@ val list_to_DISJ_OF0 = store_thm(
 "list_to_DISJ_OF0",
 ``!l fs. l <> [] /\ (set l) SUBSET fs /\ ALL_DISTINCT l ==> DISJ_OF0 (lit_list_to_form2 l) fs``,
 rw[] >> metis_tac[list_to_DISJ_OF0_lemma,DISJ_OF0_SUBSET]);
-   
-   
+
+
 
 
 
@@ -678,8 +678,8 @@ val equiv0_DISJ_double_subst = store_thm(
 "equiv0_DISJ_double_subst",
 ``!a b c d. equiv0 μ a b /\ equiv0 μ c d ==> equiv0 μ (DISJ a c) (DISJ b d)``,
 rw[equiv0_def,satis_def] >> metis_tac[satis_in_world]);
-  
-   
+
+
 
 val equiv0_TRUE_absorb = store_thm(
 "equiv0_TRUE_absorb",
@@ -717,7 +717,7 @@ Induct_on `DISJ_OF0` >> rw[]
             metis_tac[DISJ_OF0_cases])
          >- (`equiv0 μ (DISJ f1 f) (DISJ f1 (DISJ t p))` by metis_tac[equiv0_DISJ_subst] >>
             fs[equiv0_def,satis_def] >> metis_tac[])))));
-             
+
 val DNF_OF_DISJ_equiv0_case4 = store_thm(
 "DNF_OF_DISJ_equiv0_case4",
 ``!p1 fs.  DISJ_OF0 p1 fs ==> (!p2. DISJ_OF0 p2 fs ==> ?f. DISJ_OF0 f fs /\ equiv0 μ f (DISJ p1 p2))``,
@@ -761,7 +761,7 @@ Induct_on `DISJ_OF0` >> rw[]
          `equiv0 μ (DISJ (DISJ f1 p1) (DISJ f1 p)) (DISJ f1 (DISJ p1 p))` by (rw[equiv0_def,satis_def] >> metis_tac[satis_in_world]) >>
             `equiv0 μ (DISJ f1 (DISJ p1 p)) (DISJ f1 f)` by metis_tac[equiv0_SYM,equiv0_DISJ_subst] >>
             metis_tac[equiv0_SYM,equiv0_TRANS])))));
-         
+
 val DNF_OF_DISJ_equiv0 = store_thm(
 "DNF_OF_DISJ_equiv0",
 ``!p1 p2 fs. DNF_OF p1 fs /\ DNF_OF p2 fs ==> ?f. DNF_OF f fs /\ equiv0 μ f (DISJ p1 p2)``,
@@ -852,7 +852,7 @@ Cases_on `fs = {}`
 >- (`e INSERT fs = {e}` by fs[] >> rw[] >>
    qexists_tac `DISJ e (¬e)` >> rw[]
    >- (rw[DNF_OF_def,DISJ_OF_def] >> rw[Once DISJ_OF0_cases] >>
-      `CONJ_OF e {e} ∧ DISJ_OF0 (¬e) ({c | CONJ_OF c {e}} DELETE e)` 
+      `CONJ_OF e {e} ∧ DISJ_OF0 (¬e) ({c | CONJ_OF c {e}} DELETE e)`
          suffices_by metis_tac[] >> rw[]
       >- rw[Once CONJ_OF_cases]
       >- (`CONJ_OF (¬e) {e}` by fs[Once CONJ_OF_cases] >>
@@ -861,37 +861,37 @@ Cases_on `fs = {}`
          metis_tac[DISJ_OF0_cases]))
    >- (rw[equiv0_def,satis_def,TRUE_def] >> metis_tac[satis_in_world])) >>
 `∃f. DNF_OF f fs ∧ equiv0 μ f TRUE` by metis_tac[] >>
-drule DNF_list_lemma >> rw[] >> 
-`(MAP (λa. AND e a) ld) <> []` 
+drule DNF_list_lemma >> rw[] >>
+`(MAP (λa. AND e a) ld) <> []`
    by (SPOSE_NOT_THEN ASSUME_TAC >> rw[] >> `ld = []` by fs[] >>
-       rw[] >> fs[lit_list_to_form2_def] >> fs[TRUE_def] >> 
+       rw[] >> fs[lit_list_to_form2_def] >> fs[TRUE_def] >>
        metis_tac[NOT_equiv0_OPPO,equiv0_SYM]) >>
-`equiv0 μ 
-   (DISJ (HD (MAP (λa. AND e a) ld)) 
-         (lit_list_to_form2 
+`equiv0 μ
+   (DISJ (HD (MAP (λa. AND e a) ld))
+         (lit_list_to_form2
             (TL ((MAP (λa. AND e a) ld) ++ (MAP (λa. AND (¬e) a) ld)))))
-   (DISJ (lit_list_to_form2 (MAP (λa. AND e a) ld)) 
-         (lit_list_to_form2 (MAP (λa. AND (¬e) a) ld)))` 
+   (DISJ (lit_list_to_form2 (MAP (λa. AND e a) ld))
+         (lit_list_to_form2 (MAP (λa. AND (¬e) a) ld)))`
   by metis_tac[DISJ_list_extract] >>
 qexists_tac `DISJ (HD (MAP (λa. AND e a) ld))
                   (lit_list_to_form2
-                     (TL (MAP (λa. AND e a) ld ⧺ MAP (λa. AND (¬e) a) ld)))` >> 
+                     (TL (MAP (λa. AND e a) ld ⧺ MAP (λa. AND (¬e) a) ld)))` >>
 rw[]
 >- (rw[DNF_OF_def,DISJ_OF_def] >> rw[Once DISJ_OF0_cases] >>
     `CONJ_OF (HD (MAP (λa. AND e a) ld)) (e INSERT fs) ∧
      DISJ_OF0
        (lit_list_to_form2
          (TL (MAP (λa. AND e a) ld ⧺ MAP (λa. AND (¬e) a) ld)))
-       ({c | CONJ_OF c (e INSERT fs)} DELETE HD (MAP (λa. AND e a) ld))` 
+       ({c | CONJ_OF c (e INSERT fs)} DELETE HD (MAP (λa. AND e a) ld))`
     suffices_by metis_tac[] >> rw[]
-    >- (`HD (MAP (λa. AND e a) ld) = AND e (HD ld)` by (`ld <> []` by fs[] >> 
+    >- (`HD (MAP (λa. AND e a) ld) = AND e (HD ld)` by (`ld <> []` by fs[] >>
         Cases_on `ld` >> rw[]) >>
         `ld <> []` by fs[] >> Cases_on `ld` >> rw[] >> fs[] >>
         `∃lc.
            h = lit_list_to_form lc ∧ set (MAP FST lc) = fs ∧
            ALL_DISTINCT (MAP FST lc)` by metis_tac[] >> rw[] >>
-        `lc <> []` by fs[] >> 
-        `AND e (lit_list_to_form lc) = lit_list_to_form ((e, T) :: lc)` 
+        `lc <> []` by fs[] >>
+        `AND e (lit_list_to_form lc) = lit_list_to_form ((e, T) :: lc)`
            by (Cases_on `lc` >> rw[]) >> rw[] >>
         irule list_to_CONJ_OF >> fs[])
     >- (`ld <> []` by fs[] >> Cases_on `ld` >> rw[] >> irule list_to_DISJ_OF0 >>
@@ -901,7 +901,7 @@ rw[]
             >- (SPOSE_NOT_THEN ASSUME_TAC >> fs[MEM_MAP])
             >- (irule ALL_DISTINCT_MAP_INJ >> rw[])
             >- (fs[MEM_MAP] >> metis_tac[])
-            >- (fs[MEM_MAP] >> SPOSE_NOT_THEN ASSUME_TAC >> `equiv0 μ e (¬e)` by metis_tac[equiv0_REFL] >> 
+            >- (fs[MEM_MAP] >> SPOSE_NOT_THEN ASSUME_TAC >> `equiv0 μ e (¬e)` by metis_tac[equiv0_REFL] >>
             metis_tac[NOT_equiv0_OPPO]))
          >- fs[]
          >- (rw[SUBSET_DEF]
@@ -934,10 +934,10 @@ rw[]
                `∃lc.
                a = lit_list_to_form lc ∧ set (MAP FST lc) = fs ∧
                ALL_DISTINCT (MAP FST lc)` by metis_tac[] >>
-               `lc <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> `set (MAP FST lc) = {}` by fs[] >> fs[]) >> 
+               `lc <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> `set (MAP FST lc) = {}` by fs[] >> fs[]) >>
                `AND (¬e) (lit_list_to_form lc) = lit_list_to_form ((e, F) :: lc)` by
                (Cases_on `lc` >> rw[]) >> rw[] >> irule list_to_CONJ_OF >> fs[])
-            >- (fs[MEM_MAP] >> `¬e ≠ e` suffices_by metis_tac[] >> 
+            >- (fs[MEM_MAP] >> `¬e ≠ e` suffices_by metis_tac[] >>
                SPOSE_NOT_THEN ASSUME_TAC >>
                `equiv0 μ (¬e) e` by metis_tac[equiv0_REFL] >> metis_tac[NOT_equiv0_OPPO]))))
    >- (`ld <> []` by fs[] >> Cases_on `ld` >> rw[] >>
@@ -978,7 +978,7 @@ DNF_OF (lit_list_to_form2 ld) fs``,
 rw[DNF_OF_def,DISJ_OF_def] >>
 `DISJ_OF0 (lit_list_to_form2 ld) {c | CONJ_OF c fs}` suffices_by metis_tac[] >>
 irule list_to_DISJ_OF0 >> rw[] >>
-rw[SUBSET_DEF] >> 
+rw[SUBSET_DEF] >>
 `∃lc. lc ≠ [] ∧ x = lit_list_to_form lc ∧ set (MAP FST lc) = fs ∧ ALL_DISTINCT (MAP FST lc)` by metis_tac[] >> rw[] >> irule list_to_CONJ_OF >> rw[]);
 
 
@@ -1044,7 +1044,7 @@ Induct_on `l1` >> simp[] >> rw[]
    fs[] >>
    `equiv0 μ (lit_list_to_form2 (h::l1) -> lit_list_to_form2 l2)
    (AND (IMP (lit_list_to_form2 [h]) (lit_list_to_form2 l2)) (IMP (lit_list_to_form2 l1) (lit_list_to_form2 l2)))` by metis_tac[lit_list_to_form_IMP_CONS2] >> fs[] >> metis_tac[equiv0_TRANS,equiv0_SYM,equiv0_CONJ_TRUE]));
-   
+
 
 
 
@@ -1184,8 +1184,8 @@ Induct_on `CONJ_OF` >> rw[] (** 2 **)
                `equiv0 μ (AND (¬t) (AND (¬f0) p)) (AND (¬f0) (AND (¬t) p))` by (rw[equiv0_def,satis_def,AND_def] >> metis_tac[satis_in_world]) >>
                metis_tac[equiv0_SYM,equiv0_TRANS]))))
    >- (qexists_tac `f` >> rw[])));
-   
-               
+
+
 val equiv0_contra_IMP_everything = store_thm(
 "equiv0_contra_IMP_everything",
 ``!f. equiv0 μ (IMP FALSE f) TRUE``,
@@ -1203,10 +1203,10 @@ Induct_on `l` >> rw[]
    >- (fs[SNOC_APPEND] >> `l' <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
       Cases_on `l'` >> rw[])));
 
-val MEM_equiv0_DISJ_IMP = store_thm(
-"MEM_equiv0_DISJ_IMP",
-``!l b h. MEM b l /\ equiv0 μ h b ==> equiv0 μ (h -> lit_list_to_form2 l) TRUE``,
-rw[] >> drule DISJ_list_HD_MEM >> rw[] >>
+Theorem MEM_equiv0_DISJ_IMP:
+  !l b h. MEM b l /\ equiv0 μ h b ==> equiv0 μ (h -> lit_list_to_form2 l) TRUE
+Proof
+rw[] >> FREEZE_THEN drule DISJ_list_HD_MEM >> rw[] >>
 `equiv0 μ (h -> lit_list_to_form2 l') TRUE` suffices_by metis_tac[equiv0_IMP_subst,equiv0_SYM,equiv0_TRANS] >>
 Cases_on `l'` >> rw[] (** 2 **)
 >- (`l <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> metis_tac[MEM]) >>
@@ -1214,8 +1214,9 @@ Cases_on `l'` >> rw[] (** 2 **)
 >- (fs[] >>
    `equiv0 μ (lit_list_to_form2 (h'::t)) (DISJ h' (lit_list_to_form2 t))` by metis_tac[lit_list_to_form2_CONS] >>
    `equiv0 μ (h' -> lit_list_to_form2 (h'::t)) TRUE` suffices_by metis_tac[equiv0_IMP_subst2,equiv0_SYM,equiv0_TRANS] >>
-   `equiv0 μ (h' -> (DISJ h' (lit_list_to_form2 t))) TRUE` suffices_by metis_tac[equiv0_IMP_subst,equiv0_SYM,equiv0_TRANS] >> metis_tac[equiv0_DISJ_IMP]));
-   
+   `equiv0 μ (h' -> (DISJ h' (lit_list_to_form2 t))) TRUE` suffices_by metis_tac[equiv0_IMP_subst,equiv0_SYM,equiv0_TRANS] >> metis_tac[equiv0_DISJ_IMP])
+QED
+
 
 
 val list_DISJ_equiv0_IMP_lemma = store_thm(
@@ -1275,7 +1276,7 @@ Induct_on `FINITE s` >> rw[] >> Cases_on `s = {}` >> rw[]
    CONJ_OF a ((e INSERT s) DELETE f0)` suffices_by metis_tac[] >> qexists_tac `e` >> rw[] >>
    `((e INSERT s) DELETE e) = s` by (rw[EXTENSION] >> metis_tac[]) >>
    metis_tac[]));
-   
+
 
 
 
@@ -1290,7 +1291,7 @@ rw[]
 >- (`{AND f c | CONJ_OF c s} = IMAGE (λc. (AND f c)) {c | CONJ_OF c s}` by simp[EXTENSION] >>
    `{c | CONJ_OF c s} <> {}` suffices_by fs[] >>
    metis_tac[CONJ_OF_NONEMPTY]));
- 
+
 
 val EACH_MEM_IMP_list = store_thm(
 "EACH_MEM_IMP_list",
@@ -1301,8 +1302,8 @@ Induct_on `l` >> rw[]
    `!a. MEM a (h'::t) ⇒ equiv0 μ (a -> f) TRUE` by metis_tac[] >>
    `equiv0 μ (lit_list_to_form2 (h'::t) -> f) TRUE` by metis_tac[] >>
    `equiv0 μ (h -> f) TRUE` by metis_tac[] >> metis_tac[equiv0_IMP_DISJ_TRUE]));
-   
- 
+
+
 
 
 
@@ -1358,7 +1359,7 @@ Cases_on `fs = {}` >> rw[]
       `FINITE ({AND e a | CONJ_OF a fs} ∪ {AND (¬e) a | CONJ_OF a fs})` by fs[] >>
       fs[SET_TO_LIST_INV]) >>
       (** subgoal setup above proved **)
-   (** split the list into DISJ **) 
+   (** split the list into DISJ **)
    `equiv0 μ (lit_list_to_form2
                 (SET_TO_LIST {AND e a | CONJ_OF a fs} ⧺
                  SET_TO_LIST {AND (¬e) a | CONJ_OF a fs}))
@@ -1388,7 +1389,7 @@ Cases_on `fs = {}` >> rw[]
    (** end of first list **)
    (** second list **)
    `equiv0 μ (lit_list_to_form2 (SET_TO_LIST {AND (¬e) a | CONJ_OF a fs}))
-   (AND (¬e) TRUE)` by 
+   (AND (¬e) TRUE)` by
        (** compare list with same member **)
        (`equiv0 μ (lit_list_to_form2 (SET_TO_LIST {AND (¬e) a | CONJ_OF a fs}))
        (lit_list_to_form2 (MAP (λa. AND (¬e) a) (SET_TO_LIST {c | CONJ_OF c fs})))` by
@@ -1418,7 +1419,7 @@ Cases_on `fs = {}` >> rw[]
 
 
 Theorem IBC_DNF_EXISTS_case4:
-  !fs. FINITE fs /\ fs <> {} ==> 
+  !fs. FINITE fs /\ fs <> {} ==>
        !f. f IN fs ==> ?p. DNF_OF p fs /\ equiv0 μ f p
 Proof
 rw[] >> Cases_on `fs = {f}`
@@ -1458,7 +1459,7 @@ rw[] >> Cases_on `fs = {f}`
        `equiv0 μ (AND f TRUE) f` by metis_tac[equiv0_TRUE_absorb] >>
        metis_tac[equiv0_SYM,equiv0_TRANS])
 QED
-  
+
 
 (* stuff regarding the negation case *)
 
@@ -1473,7 +1474,7 @@ dsatis M w cs <=> ?c. c IN cs /\ csatis M w c`;
 
 val is_lset_def = Define`
 is_lset (c :'a # bool -> bool) fs <=> FINITE fs /\ FINITE c /\ CARD c = CARD fs /\ IMAGE FST c = fs`;
-      
+
 val CONJ_OF_lset = store_thm(
 "CONJ_OF_lset",
 ``!c fs. CONJ_OF c fs ==> ?ls. is_lset ls fs /\
@@ -1499,7 +1500,7 @@ Induct_on `CONJ_OF` >> rw[]
       simp[] >> strip_tac >> fs[])
    >- fs[is_lset_def]
    >- (simp[DISJ_IMP_THM,FORALL_AND_THM] >> rw[lsatis_def] >> simp[GSYM csatis_def])));
-   
+
 val DISJ_OF0_cset = store_thm(
 "DISJ_OF0_cset",
 ``!d fs. DISJ_OF0 d fs ==> !fs0. fs SUBSET {c | CONJ_OF c fs0} ==>
@@ -1632,8 +1633,8 @@ val NEQ_lsets_FALSE = store_thm(
 	fs[csatis_def] >>
 	`lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
 	metis_tac[lsatis_def,satis_def])));
-     
-   
+
+
 val equiv0_negation_satis = store_thm(
     "equiv0_negation_satis",
     ``!f1 f2. equiv0 (μ:'b itself) f1 ¬f2 <=>
@@ -1650,12 +1651,12 @@ val dsatis_ALL_POSSIBLE_VALUE = store_thm(
     >- (`∀M w. w ∈ M.frame.world ⇒ dsatis M w {c | is_lset c fs}` by metis_tac[] >>
        `dsatis M w {c | is_lset c fs}` by metis_tac[] >>
        fs[dsatis_def] >> Cases_on `satis M w e`
-       >- (qexists_tac `(e,T) INSERT c` >> rw[] 
+       >- (qexists_tac `(e,T) INSERT c` >> rw[]
           >- (fs[is_lset_def] >> `(e,T) NOTIN c` suffices_by fs[] >> SPOSE_NOT_THEN ASSUME_TAC >>
 	     `FST (e,T) = e` by fs[FST] >>
 	     `e IN fs` by metis_tac[IMAGE_IN])
           >- (fs[csatis_def] >> metis_tac[lsatis_def]))
-       >- (qexists_tac `(e,F) INSERT c` >> rw[] 
+       >- (qexists_tac `(e,F) INSERT c` >> rw[]
           >- (fs[is_lset_def] >> `(e,F) NOTIN c` suffices_by fs[] >> SPOSE_NOT_THEN ASSUME_TAC >>
 	     `FST (e,F) = e` by fs[FST] >>
 	     `e IN fs` by metis_tac[IMAGE_IN])
@@ -1668,7 +1669,7 @@ val dsatis_ALL_POSSIBLE_VALUE = store_thm(
         >- (qexists_tac `{(e,F)}` >> rw[]
 	   >- fs[is_lset_def]
 	   >- (fs[csatis_def] >> metis_tac[lsatis_def]))));
-        
+
 val dsatis_is_lset_complement = store_thm(
     "dsatis_is_lset_complement",
     ``!cs fs. FINITE fs /\ fs <> {} /\
@@ -1687,13 +1688,13 @@ val dsatis_is_lset_complement = store_thm(
       fs[dsatis_def] >>
       metis_tac[]));
 
-		   
-		     
+
+
 val satis_model_world_EXISTS = store_thm(
     "satis_model_world_EXISTS",
     ``!f. ¬(equiv0 (μ:'b itself) f FALSE) ==> ?M w:'b. satis M w f``,
     rw[equiv0_def] >> SPOSE_NOT_THEN ASSUME_TAC >> rw[] >> metis_tac[satis_def]);
-    
+
 
 val is_lset_DNF_OF_EXISTS = store_thm(
   "is_lset_DNF_OF_EXISTS",
@@ -1724,7 +1725,7 @@ val is_lset_DNF_OF_EXISTS = store_thm(
 	    metis_tac[])
 	 >- (rw[DNF_OF_def,DISJ_OF_def] >>
 	    fs[Once DISJ_OF0_cases]))
-      >- (Cases_on `equiv0 μ f' FALSE` 
+      >- (Cases_on `equiv0 μ f' FALSE`
         >- (qexists_tac `f` >> rw[] >> fs[dsatis_def] >> eq_tac >> rw[]
 	    >- metis_tac[]
 	    >- (`satis M w f'` by metis_tac[] >>
@@ -1757,7 +1758,7 @@ val is_lset_DNF_OF_EXISTS = store_thm(
 	       `csatis M w (c UNION e)` by (fs[csatis_def] >> metis_tac[]) >>
 	       `is_lset c fs` by metis_tac[] >>
 	       `c <> e` by (SPOSE_NOT_THEN ASSUME_TAC >> metis_tac[]) >> metis_tac[NEQ_lsets_FALSE])))));
-	    
+
 val EQ_equiv0_def = store_thm(
     "EQ_equiv0_def",
     ``!f g. equiv0 (μ:'b itself) f g <=> !M w:'b. w IN M.frame.world ==> (satis M w f <=> satis M w g)``,
@@ -1782,8 +1783,8 @@ val IBC_DNF_EXISTS_case3 = store_thm(
   ``!p fs. DNF_OF p fs /\ FINITE fs /\ fs <> {} ==>
            ?f. DNF_OF f fs /\ equiv0 μ (¬p) f``,
   rw[] >>
-  drule DNF_OF_cset >> strip_tac >> 
-  Cases_on `cs = {c | is_lset c fs}` 
+  drule DNF_OF_cset >> strip_tac >>
+  Cases_on `cs = {c | is_lset c fs}`
   >- (qexists_tac `FALSE` >> rw[DNF_OF_def,DISJ_OF_def] >>
   `!M w. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w FALSE)` suffices_by metis_tac[EQ_equiv0_def] >> rw[] >>
   `dsatis M w {c | is_lset c fs}` by metis_tac[dsatis_ALL_POSSIBLE_VALUE] >>
