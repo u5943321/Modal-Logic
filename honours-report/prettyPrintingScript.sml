@@ -1,6 +1,6 @@
 open HolKernel Parse boolLib bossLib;
 
-open chap1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_6Theory chap2_7Theory lemma2_73Theory IBCDNFrevisedTheory 
+open chap1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_6Theory chap2_7Theory lemma2_73Theory IBCDNFrevisedTheory
 
 val _ = new_theory "prettyPrinting";
 
@@ -121,7 +121,7 @@ QED
 Theorem ppexpansion_shift_feval:
   !M A M' f σ phi. (expansion (mm2folm M) A M' f /\ valuation (mm2folm M) σ /\
                     (∀c. c ∈ FC phi ⇒ c < CARD A)) ==>
-                    (feval M' σ phi <=> 
+                    (feval M' σ phi <=>
                     feval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi))
 Proof
 cheat
@@ -131,8 +131,8 @@ Theorem ppthm_A_19_i:
 !t U I. ultrafilter U I ==>
           !σ FMS. (valuation (ultraproduct_folmodel U I FMS) σ /\
                    (!i. i IN I ==> wffm (FMS i))) ==>
-          termval (ultraproduct_folmodel U I FMS) σ t = 
-          {f | Uequiv U I (folmodels2Doms FMS) f 
+          termval (ultraproduct_folmodel U I FMS) σ t =
+          {f | Uequiv U I (folmodels2Doms FMS) f
                (\i. termval (FMS i) (\n. CHOICE (σ n) i) t)}
 Proof
 cheat
@@ -150,14 +150,14 @@ cheat
 QED
 
 Theorem ppultraproduct_suffices_rep:
-!U I FMS. 
+!U I FMS.
   (ultrafilter U I /\
    (∀i. i IN I ==> wffm (FMS i)) /\
    (!rv i. valuation (FMS i) (\v. rv v i))) ==>
-   !phi. 
+   !phi.
      {i | i IN I /\ feval (FMS i) (\v. rv v i) phi} IN U ==>
      feval (ultraproduct_folmodel U I FMS)
-           (\v. {g | Uequiv U I (folmodels2Doms FMS) g (rv v)}) phi 
+           (\v. {g | Uequiv U I (folmodels2Doms FMS) g (rv v)}) phi
 Proof
 cheat
 QED
@@ -185,7 +185,7 @@ cheat
 QED
 
 Theorem ppultraproduct_comm_feval':
-!phi U I MS σ. 
+!phi U I MS σ.
   (ultrafilter U I /\
    L1tau phi /\
    (!i. i IN I ==> wffm (MS i)) /\
@@ -197,47 +197,47 @@ cheat
 QED
 
 Theorem ppultraproduct_mm2folm_folm2mm_comm_feval:
-!M σ a I U. 
+!M σ a I U.
    (FV a ⊆ {x} /\ L1tau a /\
     ultrafilter U I /\
     wffm M /\
     valuation M σ) ==>
     (feval M σ a <=>
-     feval (mm2folm (ultraproduct_model U I (λi. folm2mm M))) 
+     feval (mm2folm (ultraproduct_model U I (λi. folm2mm M)))
        (λx. {fw | Uequiv U I (models2worlds (λi. folm2mm M)) (λi. σ x) fw}) a)
 Proof
 cheat
 QED
 
 Theorem ppultraproduct_sat:
-!U I FMS x f. 
+!U I FMS x f.
    (countably_incomplete U I /\
-    valuation (ultraproduct_folmodel U I FMS) f /\ 
-    (∀i. i ∈ I ⇒ wffm (FMS i))) ==> 
-  !s. (!phi. phi IN s ==> L1tau phi /\ (FV phi) DIFF N ⊆ {x}) ==> 
-       (!ss. FINITE ss /\ ss ⊆ s ==> 
-          ?σ. (valuation (ultraproduct_folmodel U I FMS) σ) /\ 
+    valuation (ultraproduct_folmodel U I FMS) f /\
+    (∀i. i ∈ I ⇒ wffm (FMS i))) ==>
+  !s. (!phi. phi IN s ==> L1tau phi /\ (FV phi) DIFF N ⊆ {x}) ==>
+       (!ss. FINITE ss /\ ss ⊆ s ==>
+          ?σ. (valuation (ultraproduct_folmodel U I FMS) σ) /\
               (!n. n IN N ==> σ n = f n) /\
               (!phi. phi IN ss ==> feval (ultraproduct_folmodel U I FMS) σ phi)) ==>
-       (?σ. valuation (ultraproduct_folmodel U I FMS) σ /\ 
-            (!n. n IN N ==> σ n = f n)  /\ 
+       (?σ. valuation (ultraproduct_folmodel U I FMS) σ /\
+            (!n. n IN N ==> σ n = f n)  /\
             (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
 Proof
 cheat
 QED
 
 Theorem ppultraproduct_sat':
-!U I MS x N f. 
+!U I MS x N f.
      (countably_incomplete U I /\
-      (!i. i IN I ==> (MS i).frame.world <> {}) /\ 
+      (!i. i IN I ==> (MS i).frame.world <> {}) /\
       (valuation (mm2folm (ultraproduct_model U I MS)) f)) ==>
-  !s. (!phi. phi IN s ==> form_functions phi = {} /\ (FV phi) DIFF N ⊆ {x}) ==> 
-       (!ss. FINITE ss /\ ss ⊆ s ==> 
-          ?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\ 
+  !s. (!phi. phi IN s ==> form_functions phi = {} /\ (FV phi) DIFF N ⊆ {x}) ==>
+       (!ss. FINITE ss /\ ss ⊆ s ==>
+          ?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\
               (!n. n IN N ==> σ n = f n) /\
               (!phi. phi IN ss ==> feval (mm2folm (ultraproduct_model U I MS)) σ phi)) ==>
-      (?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\ 
-           (!n. n IN N ==> σ n = f n)  /\ 
+      (?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\
+           (!n. n IN N ==> σ n = f n)  /\
            (!phi. phi IN s ==> feval (mm2folm (ultraproduct_model U I MS)) σ phi))
 Proof
 cheat
@@ -245,17 +245,17 @@ QED
 
 
 Theorem ppultraproduct_sat'':
-!U I MS x A M' f. 
+!U I MS x A M' f.
       (countably_incomplete U I /\
-       (∀i. i ∈ I ⇒ (MS i).frame.world ≠ ∅) /\ 
+       (∀i. i ∈ I ⇒ (MS i).frame.world ≠ ∅) /\
        expansion (mm2folm (ultraproduct_model U I MS)) A M' f /\
        (valuation (mm2folm (ultraproduct_model U I MS)) f)) ==>
   !s. (!phi. phi IN s ==>  (∀c. c ∈ form_functions phi ⇒ FST c ∈ count (CARD A) ∧ SND c = 0)
-           /\ FV phi ⊆ {x}) ==> 
-       (!ss. FINITE ss /\ ss ⊆ s ==> 
+           /\ FV phi ⊆ {x}) ==>
+       (!ss. FINITE ss /\ ss ⊆ s ==>
           ?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\
               (!phi. phi IN ss ==> feval M' σ phi)) ==>
-      (?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\ 
+      (?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\
            (!phi. phi IN s ==> feval M' σ phi))
 Proof
 cheat
@@ -263,11 +263,11 @@ QED
 
 Theorem ppthm_2_68_half1:
 !a x. (FV a ⊆ {x} /\ L1tau a /\
-      invar4bisim x 
-      (t1: ((num -> α) -> bool) itself) 
-      (t2: ((num -> α) -> bool) itself) a) ==> 
-       ?phi. 
-          (!M:'a model σ. 
+      invar4bisim x
+      (t1: ((num -> α) -> bool) itself)
+      (t2: ((num -> α) -> bool) itself) a) ==>
+       ?phi.
+          (!M:'a model σ.
              (wffm M /\
              valuation M σ) ==>
              (feval M σ (ST x phi) <=> feval M σ a))
@@ -276,6 +276,12 @@ cheat
 QED
 (*Theorem foo = SIMP_RULE bool_ss [PULL_FORALL, PULL_EXISTS] old_th*)
 
+Overload "Mw" =  “λM. M.frame.world”
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Suffix 2100, pp_elements = [TOK "(Mw)"],
+                  term_name = "Mw", paren_style = OnlyIfNecessary}
+
+
 
 val _ = export_theory();
-
