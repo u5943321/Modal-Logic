@@ -181,6 +181,38 @@ Proof
 cheat
 QED
 
+Theorem ppwffm_def:
+ ∀M.
+         wffm M ⇔
+         ∀n0 l0. M.Fun n0 l0 ∈ M.Dom
+Proof
+cheat
+QED
+
+
+Theorem ppM_sat_def:
+∀M.
+            M_sat M ⇔
+            ∀w Σ.
+                (w ∈ M.frame.world /\
+                fin_satisfiable_in Σ
+                  {v | v ∈ M.frame.world ∧ M.frame.rel w v} M) ⇒
+                satisfiable_in Σ {v | v ∈ M.frame.world ∧ M.frame.rel w v} M
+Proof
+cheat
+QED
+
+Theorem ppprop_2_54_DIST_TYPE:
+∀M M' w w'.
+            (M_sat M ∧ M_sat M' ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world /\
+            modal_eq M M' w w') ⇒
+            bisim_world M M' w w''
+Proof
+cheat
+QED
+
+
+
 Theorem ppprop_2_3:
 !i w f. i IN dom ==> (satis (f i) w phi <=> satis (DU (f, dom)) (i,w) phi)
 Proof
@@ -269,6 +301,14 @@ Theorem ppDNF_OF_cset:
              ∀M w.
                  w ∈ M.frame.world ⇒
                  (satis M w d ⇔ dsatis M w cs)
+Proof
+cheat
+QED
+
+Theorem ppthm_2_34:
+∀M1 w1 phi.
+         satis M1 w1 phi ⇒
+         ∃M v. FINITE M.frame.world ∧ v ∈ M.frame.world ∧ satis M v phi
 Proof
 cheat
 QED
