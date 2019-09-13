@@ -1,6 +1,6 @@
 open HolKernel Parse boolLib bossLib;
 
-open chap1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_6Theory chap2_7Theory lemma2_73Theory IBCDNFrevisedTheory
+open chap1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_5Theory chap2_6Theory chap2_7Theory lemma2_73Theory IBCDNFrevisedTheory pred_setTheory
 
 val _ = new_theory "prettyPrinting";
 
@@ -211,7 +211,59 @@ Proof
 cheat
 QED
 
+Theorem ppcan_see_UNION:
+can_see M (X ∪ Y) = (can_see M X) ∪ (can_see M Y)
+Proof
+rw[can_see_def,EXTENSION,EQ_IMP_THM] (* 6 *)
+>> metis_tac[]
+QED
 
+Theorem ppexercise_2_5_5:
+∀M u v.
+       UE_rel M u v ⇔ (ultrafilter u M.frame.world ∧ ultrafilter v M.frame.world /\ {Y | only_see M Y ∈ u ∧ Y ⊆ M.frame.world} ⊆ v)
+Proof
+cheat
+QED
+
+Theorem ppinvar4bisim_def:
+∀x phi.
+            invar4bisim x (:μ) (:ν) phi ⇔
+            (FV phi ⊆ {x} ∧ L1tau phi) /\
+            (∀M N w:μ v:ν.
+                bisim_world M N w v ⇒
+                ∀σm σn.
+                    fsatis (mm2folm M) σm⦇x ↦ w⦈ phi ⇔
+                    fsatis (mm2folm N) σn⦇x ↦ v⦈ phi)
+Proof
+cheat
+QED
+
+Theorem ppn_saturated_def:
+∀M n.
+            n_saturated M n ⇔
+            ∀A M' G x f.
+                FINITE A ∧ CARD A ≤ n ∧ A ⊆ M.Dom ∧
+                expansion M A M' f ∧
+                (∀phi.
+                     phi ∈ G ⇒
+                     ∀c.
+                         c ∈ form_functions phi ⇒
+                         FST c ∈ count (CARD A) ∧ SND c = 0) ∧ ftype x G ∧
+                consistent M' G ⇒
+                frealizes M' x G
+Proof
+cheat
+QED
+
+Theorem ppthm_2_65_corollary:
+∀M M' w w'.
+         countably_saturated (mm2folm M) ∧ countably_saturated (mm2folm M') ∧
+         w ∈ M.frame.world ∧ w' ∈ M'.frame.world ⇒
+         (modal_eq M M' w w' <=>
+         bisim_world M M' w w')
+Proof
+cheat
+QED
 
 Theorem ppprop_2_3:
 !i w f. i IN dom ==> (satis (f i) w phi <=> satis (DU (f, dom)) (i,w) phi)
