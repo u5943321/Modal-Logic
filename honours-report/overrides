@@ -23,3 +23,7 @@ SET_TO_LIST 4 \ensuremath{\HOLConst{toList}}
 lit_list_to_form2 5 ll2f2
 lit_list_to_form 5 ll2f
 (Mw) 1 \ensuremath{\sp{w}}
+(forces1) 1 ,
+(forces2) 1 \ensuremath{\Vdash}
+(nforces1) 1 ,
+(nforces2) 1 \ensuremath{\not\Vdash}

@@ -282,6 +282,24 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Suffix 2100, pp_elements = [TOK "(Mw)"],
                   term_name = "Mw", paren_style = OnlyIfNecessary}
 
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix(NONASSOC, 450),
+                  pp_elements = [HardSpace 1,
+                                 TOK "(forces1)", HardSpace 1, TM,
+                                 HardSpace 1,
+                                 TOK "(forces2)", BreakSpace (1,2)],
+                  term_name = "satis", paren_style = OnlyIfNecessary}
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix(NONASSOC, 450),
+                  pp_elements = [HardSpace 1,
+                                 TOK "(nforces1)", HardSpace 1, TM,
+                                 HardSpace 1,
+                                 TOK "(nforces2)", BreakSpace (1,2)],
+                  term_name = "nsatis", paren_style = OnlyIfNecessary}
+
+val _ = overload_on("nsatis", “λM w f. ~satis M w f”);
+
+
 
 
 val _ = export_theory();
