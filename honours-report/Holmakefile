@@ -1,4 +1,4 @@
-INCLUDES = .. 
+INCLUDES = ..
 
 TEXDIR = $(HOLDIR)/src/TeX
 
@@ -6,7 +6,7 @@ report.pdf: report.tex dependency.tex
 	latexmk -pdf report
 
 
-munge.exe: ppLib.uo
+munge.exe: ppLib.uo prettyPrintingTheory.uo
 	$(protect $(HOLDIR)/bin/mkmunge.exe) $<
 
 EXTRA_CLEANS = munge.exe report.tex report.pdf report.aux report.fls report.log \

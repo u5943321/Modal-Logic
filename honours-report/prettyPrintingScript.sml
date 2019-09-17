@@ -143,7 +143,7 @@ Theorem pphom_def:
                 w ∈ M1.frame.world ⇒
                 f w ∈ M2.frame.world ∧
                 (∀p. w ∈ M1.valt p ⇒ f w ∈ M2.valt p)) ∧
-            (∀w v.  (w IN M1.frame.world /\ 
+            (∀w v.  (w IN M1.frame.world /\
                     v ∈ M1.frame.world /\
                     M1.frame.rel w v) ⇒
                     M2.frame.rel (f w) (f v))
@@ -740,8 +740,19 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 
 val _ = overload_on("equiv", “equiv0”);
 
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix(NONASSOC, 450),
+                  pp_elements = [TOK "(forces1)", TM,
+                                 HardSpace 1,
+                                 TOK "(forces2)", BreakSpace (1,2)],
+                  term_name = "satis", paren_style = OnlyIfNecessary}
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix(NONASSOC, 450),
+                  pp_elements = [TOK "(nforces1)", TM,
+                                 HardSpace 1,
+                                 TOK "(nforces2)", BreakSpace (1,2)],
+                  term_name = "nsatis", paren_style = OnlyIfNecessary}
 
-
-
+val _ = overload_on("nsatis", “λM w f. ~satis M w f”);
 
 val _ = export_theory();
