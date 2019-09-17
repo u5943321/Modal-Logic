@@ -120,7 +120,7 @@ Induct_on `phi` (* 3 *) >> rw[satis_def,feval_def]
          first_x_assum drule >> rw[] >> first_x_assum (qspec_then `x + 1` assume_tac) >>
          fs[APPLY_UPDATE_THM])))
 QED
-
+(*
 Theorem compactness_thm_L1tau:
 INFINITE (univ (:α)) ==> 
 !A. 
@@ -171,6 +171,37 @@ Cases_on `feval M σ f`
 >- metis_tac[]
 QED
 
+Theorem compactness_corollary_L1tau:
+INFINITE (univ (:α)) ==> 
+!A a. L1tau a ==> 
+  ((!f. f IN A ==> L1tau f) /\
+   (!M:α folModels$model σ:num -> α. valuation M σ ==>
+    (!f. f IN A ==> feval M σ f) ==> feval M σ a)) ==>
+  (?ss. FINITE ss /\ ss ⊆ A /\ 
+        (!M:α folModels$model σ:num -> α. valuation M σ ==>
+          (!f. f IN ss ==> feval M σ f) ==> feval M σ a))
+Proof
+rw[] >> drule compactness_thm_L1tau >> rw[] >> 
+SPOSE_NOT_THEN ASSUME_TAC >> 
+last_x_assum (qspec_then `A ∪ {fNOT a}` assume_tac) >> 
+`?M σ. valuation M σ /\ (∀f. f ∈ A ⇒ feval M σ f) /\ ¬feval M σ a` 
+  suffices_by metis_tac[] >>
+`∃M σ. valuation M σ ∧ ∀f. f ∈ A ∪ {fNOT a} ⇒ feval M σ f` 
+  suffices_by
+   (rw[fNOT_def,feval_def] >> map_every qexists_tac [`M`,`σ`] >> 
+    `feval M σ (a -> fFALSE)` by metis_tac[] >>
+    `¬feval M σ a` by fs[feval_def] >> metis_tac[]) >>
+first_x_assum irule >> rw[] (* 3 *)
+>- metis_tac[]
+>- fs[L1tau_def,fNOT_def,form_functions_def,form_predicates]
+>- (`ss DELETE (fNOT a) ⊆ A` by (fs[DELETE_DEF,SUBSET_DEF] >> metis_tac[]) >>
+   `FINITE (ss DELETE (fNOT a))` by fs[] >>
+   first_x_assum drule_all >> rw[] >> map_every qexists_tac [`M`,`σ`] >> rw[] >>
+   Cases_on `ff = fNOT a` (* 2 *)
+   >> rw[])
+QED
+
+*)
 
 Theorem modal_compactness_thm:
 INFINITE (univ (:α)) ==> 

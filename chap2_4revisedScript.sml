@@ -6,7 +6,7 @@ open relationTheory;
 open arithmeticTheory;
 open set_relationTheory;
 open finite_mapTheory;
-open chap1Theory;
+open chap1Theory chap2_2Theory chap2_5Theory;
 
 open folModelsTheory;
 open folLangTheory;
@@ -269,6 +269,31 @@ Proof
        by metis_tac[ST_alt_two_var] >>
      fs[SUBSET_DEF,UNION_DEF]) >>
   metis_tac[ST_ST_alt_fequiv]
+QED
+
+
+Theorem thm_2_68_half2:
+∀M N v w.
+      bisim_world M N w v ⇒
+     ∀σm σn. valuation (mm2folm M) σm /\ valuation (mm2folm N) σn ==>
+                 (fsatis (mm2folm M) σm⦇x ↦ w⦈ (ST x phi) ⇔
+                 fsatis (mm2folm N) σn⦇x ↦ v⦈ (ST x phi))
+Proof
+rw[] >> drule_all thm_2_20 >> rw[] >>
+`satis M w phi <=> satis N v phi` by metis_tac[modal_eq_tau] >>
+`IMAGE σm⦇x ↦ w⦈ 𝕌(:num) ⊆ M.frame.world /\
+ IMAGE σn⦇x ↦ v⦈ 𝕌(:num) ⊆ N.frame.world`
+  by (fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >> rw[] (* 2 *) >>
+     Cases_on `x'' = x` >> 
+     fs[combinTheory.APPLY_UPDATE_THM,bisim_world_def,mm2folm_def] >> rw[]) >>
+drule prop_2_47_i >> rw[] >> 
+first_x_assum (qspecl_then [`phi`,`x`] assume_tac) >>
+`∀phi x'.
+            satis M (σm⦇x ↦ w⦈ x') phi ⇔
+            fsatis (mm2folm M) σm⦇x ↦ w⦈ (ST x' phi)` 
+  by metis_tac[prop_2_47_i] >> 
+first_x_assum (qspecl_then [`phi`,`x`] assume_tac) >>
+fs[combinTheory.APPLY_UPDATE_THM]
 QED
 
 val _ = export_theory();

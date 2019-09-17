@@ -14,7 +14,12 @@ M4 1 \ensuremath{\mathfrak{M}\sb{4}}
 M3' 1 \ensuremath{\mathfrak{M}\sb{3}'}
 M1 1 \ensuremath{\mathfrak{M}\sb{1}}
 M2 1 \ensuremath{\mathfrak{M}\sb{2}}
+Mst 1 \ensuremath{\mathfrak{M}\sb{*}}
+Nst 1 \ensuremath{\mathfrak{N}\sb{*}}
+wst 1 \ensuremath{w\sb{*}}
+vst 1 \ensuremath{v\sb{*}}
 phi 1 \ensuremath{\phi}
+varphi 1 \ensuremath{\varphi}
 psi 1 \ensuremath{\psi}
 form1 1 \ensuremath{\phi\sb{1}}
 form2 1 \ensuremath{\phi\sb{2}}
