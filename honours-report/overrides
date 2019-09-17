@@ -14,19 +14,7 @@ M3' 1 \ensuremath{\mathfrak{M}}p3
 M4 1 \ensuremath{\mathfrak{M}}p4
 MS 1 \ensuremath{\mathfrak{M}{s}}
 FMS 1 \ensuremath{\mathfrak{M}{s}}
-<<<<<<< HEAD
-M4 1 \ensuremath{\mathfrak{M}\sb{4}}
-M3' 1 \ensuremath{\mathfrak{M}\sb{3}'}
-M1 1 \ensuremath{\mathfrak{M}\sb{1}}
-M2 1 \ensuremath{\mathfrak{M}\sb{2}}
-Mst 1 \ensuremath{\mathfrak{M}\sb{*}}
-Nst 1 \ensuremath{\mathfrak{N}\sb{*}}
-wst 1 \ensuremath{w\sb{*}}
-vst 1 \ensuremath{v\sb{*}}
-=======
->>>>>>> 622da21aaf9fcc8cef3e0499aea49b160c875e81
 phi 1 \ensuremath{\phi}
-varphi 1 \ensuremath{\varphi}
 psi 1 \ensuremath{\psi}
 form1 1 \ensuremath{\phi\sb{1}}
 form2 1 \ensuremath{\phi\sb{2}}
