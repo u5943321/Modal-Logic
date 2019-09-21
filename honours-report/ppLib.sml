@@ -25,6 +25,8 @@ val _ = temp_add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 
 end (* local *)
 val _ = Parse.type_abbrev_pp ("form", ``:'a chap1$form``);
+val _ = Parse.type_abbrev_pp ("folmodel", ``:'a folModels$model``);
+val _ = Parse.type_abbrev_pp ("folform", ``:folLang$form``);
 val _ = Parse.type_abbrev_pp ("model", ``:('a,'b) chap1$model``);
 val _ = Parse.overload_on ("pvalue", ``peval``);
 end (* struct *)
