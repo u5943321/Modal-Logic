@@ -1,10 +1,15 @@
-\documentclass[letterpaper]{article}
+\documentclass[a4paper,12pt]{book}
+\include{definitions}
+\renewcommand{\baselinestretch}{1.2}
+\newcommand{\blanknonumber}{\newpage\thispagestyle{empty}}
+\usepackage{graphics}
+%--------
 
-\setlength{\voffset}{-0.5in}
-\setlength{\textheight}{710pt}
+%\setlength{\voffset}{-0.5in}
+%\setlength{\textheight}{710pt} old setting
 
 
-\usepackage[margin=1in,footskip=0.25in]{geometry}
+%\usepackage[margin=1in,footskip=0.25in]{geometry}
 \usepackage{holtexbasic}
 \usepackage{stmaryrd}
 \usepackage{hyperref}
@@ -23,21 +28,41 @@
 \renewcommand{\HOLKeyword}[1]{\texttt{#1}}
 \renewcommand{\HOLTokenBar}{\mbox{$|$}}
 
+\setlength{\voffset}{-1in}
+\setlength{\hoffset}{-1in}
+\setlength{\oddsidemargin}{4cm}
+\setlength{\evensidemargin}{2.5cm}
+\setlength{\textwidth}{14.5cm}
+\setlength{\textheight}{22.5cm}
+\setlength{\topmargin}{2.5cm}
+
+
 %\newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/e0eb742bd0e2f65489f8829233a829e0b060d531/#2Script.sml\#L#3}{#1}}
 \newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/5b0350b067222d3b8b435bde496518bb30744c32/#2Script.sml\#L#3}{#1}}
 \newcommand{\holreff}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/dbfbba74de0af276f982867714fcd6eee221196e/#2Script.sml\#L#3}{#1}}
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
-\renewcommand{\baselinestretch}{1.4}
-\setcounter{section}{-1}
+%\renewcommand{\baselinestretch}{1.4}
+%\setcounter{section}{-1}
 \title{Modal Logic Mechanisation in HOL4}
 \author{Yiming Xu}
 \date{15/6/2018}
 
-\begin{document}
 
-\maketitle
+\begin{document}
+\frontmatter
+
+\include{titlepage}\blanknonumber
+\include{dedication}\blanknonumber
+\include{declaration}\blanknonumber
+\include{acknowledgements}\blanknonumber
+\include{abstract}\blanknonumber
+\tableofcontents\blanknonumber
+\include{notation}\blanknonumber
+
+\mainmatter
+%\maketitle old 
 
 
 %talk about bars when introduct formulas
@@ -48,21 +73,21 @@
 %explain choice we made along the way.
 %inductive relation bars // tell reader use standard notation in CS
 %something like Coqdoc Link the word to particular theorem and definition.
-
-\section{Introduction}
+\chapter{Introduction}
+\label{chapter1}
 
 
 There are four questions to answer in order to make sense of our title:
-\subsection{What is modal logic?}
+\section{What is modal logic?}
 
 It is hard to find a concise answer to this question. As stated in the textbook `Modal Logic' by Blackburn et al, if you ask three modal logicians, you are likely to get at least three different answers. Therefore, we will begin by asking what is modality. Let us consider first order logic for a moment. Suppose $x$ is a person. When we say `$x$ is happy', we are applying the predicate `is happy' to the person $x$. But also in our daily conversation, we may also say something like `perhaps $x$ is happy' or `$x$ must be happy'. Here, `perhaps' and `must' are used to describe the `mode' of the predicate `is happy', and they are examples of  \emph{modalities}. The modalities `perhaps' and `must', which are canonically called `possibly' and `necessarily' in formal modal logic, are denoted as `$\Diamond$' and `$\Box$' respectively. Let $P$ denote the predicate `is happy'. In formal language, we can then write `perhaps $x$ is happy' as `$\Diamond Px$', and write `$x$ must be happy' as `$\Box Px$'. 
 
-In the above discussion, we introduced modalities by considering their semantic meanings. But historically, when logicians start thinking about capture modalities using formal logic, they enriched propositional logic by adding a collection of extra symbols, called modal operators, together with some axioms describing their behaviour, but there was no satisfactory way of defining a formal semantics of those modal operators. Before they realized the usefulness of the semantic tools, modal logicians had a hard time attempting to solve problems of distinguishing different systems of axioms. But more than 40 years after the concept of modal logic was established, the usage of Kripke models brought many interesting result to this subject. The results on modal logic using Kripke models are conventionally called `modal model theory'. The work on modal model theory is exactly what we are formalizing in this project. 
+In the above discussion, we introduced modalities by considering their semantic meanings. But historically, when logicians start thinking about capture modalities using formal logic, they enriched propositional logic by adding a collection of extra symbols, called modal operators, together with some axioms describing their behavior, but there was no satisfactory way of defining a formal semantics of those modal operators. Before they realized the usefulness of the semantic tools, modal logicians had a hard time attempting to solve problems of distinguishing different systems of axioms. But more than 40 years after the concept of modal logic was established, the usage of Kripke models brought many interesting result to this subject. The results on modal logic using Kripke models are conventionally called `modal model theory'. The work on modal model theory is exactly what we are formalizing in this project. 
 
 Nowadays, modal logic is widely adopted in many disciplines, including, but not limited to, mathematics, philosophy, linguistics, and economics. In particular, the development of modal logic and computer science support each other. With the topics taken from computer science and everywhere else, modal logic is growing rapidly, and we have great chance to see more and more interesting application of this subject to both theoretical research and daily life.
 
 
-\subsection{What is HOL4?}
+\section{What is HOL4?}
 
 For a short answer, HOL4 is a theorem prover which is used to prove theorems interactively on a computer. Here we stress the fact that we need to interact with the machine rather then let it prove theorems automatically. In fact, for a decidable system, where there exists an algorithm that decides if the given statement is true, theorems can be proved automatically in the sense that we can give a statement to a machine and let the machine give the answer that whether the given statement holds. However, according to the Godel's incompleteness theorem, it is no algorithm that can determine the truth value of every mathematical statement. Hence in order to prove mathematical theorem, we do need to interact with the machine. Interactive theorem provers can use automatic techniques. For instance, as first-order logic and Peano arithmetic are both decidable, there is an automatic first-order solver implemented in HOL4, and simplifiers in HOL4 can automatically prove theorems about basic arithmetic. 
 
@@ -70,12 +95,12 @@ There are many theorem provers based on various foundation systems: HOL4 is base
 
 %HOL4 is on the sweet spot of the trade-off, We will identify where the lack of expressiveness cause problems. 
 
-\subsection{Why is the combining of the two interesting?}
+\section{Why is the combining of the two interesting?}
 
 As discussed above, modal model theory has a long history and many theorems in modal model theory have been proved since the usage of Kriple model became popular. Nevertheless, none of these theorems have been machine checked. By formalizing modal model theory in a computer, we will make sure that we have really understand every detail of the formalized theorems, find out hidden assumptions, and correct minor errors in the statements. And by formalizing it in HOL4, we will demonstrate that although simple type theory is a rather weak foundation system and does lack on express, it is still capable of capturing most of the theorems we are interested in. We will identify where the lack of expressiveness causes problems.
 
 
-\subsection{What have we done?}
+\section{What have we done?}
 
 Our project is to formalize some theorems of modal model theory, based on the first two chapters of the textbook `Modal Logic' Blackburn et al. In the beginning of the textbook, the authors gives three slogans of this subject:
 
@@ -94,7 +119,7 @@ A reader will see evidence of the three slogans consecutively in this thesis. Th
 %\holref{My Theorem}{chap2_2}{103}
 
 
-\section{Getting Started}
+\chapter{Getting Started}
 
 In our formalisation, we only consider the most standard modal language, called the basic modal language. There is only one primitive modal operator, namely the `$\Diamond$', in the basic modal language. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or else in the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
 
@@ -119,7 +144,7 @@ Note that \HOLtm{DISJ} is of type $\alpha \ form \to (\alpha \ form \to \alpha\ 
 
 For the non-primitive connectives: the conjunction `$\land$', the implication $\to$, and the truth `$\top$', they are defined in a standard way. 
 
-%In standard logical notation, the first two lines of definitions below are just $\phi_1\land \phi_2:=\lnot (\lnot \phi_1\lor \phi f_2)$ and $\phi_1\to \phi_2 := \lnot \phi_1\lor \phi_2$ respectively. And we use $\top$ to denote `truth', which is the negation of the falsity. 
+%In standard logical notation, the first two lines of definitions below are just $\phi_1\land \phi_2:=\lnot (\lnot \phi_1\lor \phi_2)$ and $\phi_1\to \phi_2 := \lnot \phi_1\lor \phi_2$ respectively. And we use $\top$ to denote `truth', which is the negation of the falsity. 
 
 \begin{defn}[\holref{Non-primitive connectives}{chap1}{34}]
 In standard logical notation, the first two lines are just $\phi_1\land \phi_2:=\lnot (\lnot \phi_1\lor \phi f_2)$ and $\phi_1\to \phi_2 := \lnot \phi_1\lor \phi_2$ respectively. And we use $\top$ to denote `truth', which is the negation of the falsity. 
@@ -251,7 +276,7 @@ If two models \HOLtm{M1} and \HOLtm{M2} has the same frame and agrees on the val
 
 
 
-\section{Invariant results and bisimulations}
+\chapter{Invariant results and bisimulations}
 
 
 The key concept we are interested in this chapter is called `modal equivalence'.
@@ -267,7 +292,7 @@ Two worlds in two models are called to be `modal equivalent' if they satisfy the
 In this chapter, we investigate when can we get modal equivalence. In the first section, we talk about how can we get new models from old models without affecting modal satisfaction. Then in the second section, we introduce morphisms between models and find out under which condition we can map a point of a model to another model preserving satisfaction. In the last section, we unify all the modal operations and morphisms we have mentioned which give modal equivalence using a relation between models, called bisimulation, by proving all these constructions are cases of bisimulation.
 
 
-\subsection{Operations on models}
+\section{Operations on models}
 
 Here we introduce two operations on models, called disjoint union and generated submodels respectively. 
 
@@ -344,7 +369,7 @@ Generated submodels do preserve modal satisfaction:
 %if talk about existence here, should define functions give gensubmodel but not only rooted ones !!!!!6
 
 
-\subsection{Morphisms between models}
+\section{Morphisms between models}
 
 In this section, we talk about various kinds of `morphisms' between models. Similar as in mathematics, the notion of `morphism' here is used to describe maps that preserves structures. For instance, `homomorphism' is the weakest notion of `structure-preserving map':
 \begin{defn}[\holref{Homomorphism}{chap2_1}{120}]
@@ -446,7 +471,7 @@ It is straightforward to check the map \HOLtm{LAST} that sends a list in \HOLtm{
 
 \end{proof}
 
-\subsection{Bisimulation}
+\section{Bisimulation}
 
 The three approaches to obtain modal equivalence has a common feature: all of them leads to a relation between models such that related states satisfies exactly the same set of propositional letters, and once we are able to make a transition in one model, we can make a corresponding transition in the other. This observation leads us to the concept of bisimulation: 
 \begin{defn}[\holref{Bisimulation}{chap2_2}{19}]
@@ -520,11 +545,11 @@ Using this lemma, we obtain the \HOLtm{psi} we want by plugging in $S_0$ to be t
 
 %The requirement for the models to be image finite is necessary: 
 
-\section{Finite model property}
+\chapter{Finite model property}
 
 In this chapter, we tell the story about the Slogan 2 as stated in the introduction: Modal formulas can only capture local information. It follows that there does not exist any modal formula which can capture information about points which are $n$-steps from the current state for every $n$. To see this, we will prove the \emph{finite model property} of modal formulas, which says if a modal formula is satisfied on an arbitary model, then it can be satisfied on a finite model, where finite model means a model whose world set is finite. We will discuss two methods of building finite models for satisfiable modal formulas, namely via filtration and selection, in the two sections of this chapter. 
 
-\subsection{Finite model property via filtration}
+\section{Finite model property via filtration}
 
 One way to get finite model from an arbitary model is by filtration. Filtration is just another name of the rather familar terminology `quotient'. In this method, we start with a possibly infinite model and make its world set smaller by quotienting out by a equivalence relation defined using the concept of \emph{subformulas}. Intuitively, a subformula of a modal formula is a part of a modal formula which is itself a modal formula. For instance, consider the formula $\lnot (\lnot \phi_1 \lor \phi_2)$, then the set of its subformulas is $\{\lnot (\lnot \phi \lor \phi_2),\lnot \phi_1, \lnot \phi_1\lor \phi_2, \phi_1,\phi_2\}$. However, $\lor \phi_2$ is not a subformula since it is not a modal formula at all.
 
@@ -677,7 +702,7 @@ Putting the above two theorems together yields the finite model property via fil
 By \texttt{prop_2_38} and \texttt{thm_2_39} above, we can take \HOLtm{M'} to be \HOLtm{FLT M (subforms phi)}. 
 \end{proof}
 
-\subsection{Finite model property via selection}
+\section{Finite model property via selection}
 
 Another method to build finite models for an arbitary model is by selection. In this method, to build a finite model of a satisfiable modal formula \HOLtm{phi}, we start with a model that the formula $\phi$ is satisfied, delete worlds from the model and only leaves finitely many worlds in it. The intuition behind this approach is that any modal formula can only contain finitely many diamond, each can `see' one step from the current state. Therefore, any formula can only capture the information of finitely depth. To make the notion of `depth' precise, we define the degree of a modal formula, which counts the number of diamonds appear in a model formula, in the sense that a modal formula \HOLtm{phi} has degree $n$ means there are $n$ `$\Diamond$'s in \HOLtm{phi}. In particular, a modal formula of degree zero is a modal formula with no diamond. Such a formula is precisely a propositional formula. 
 \begin{defn}[\holref{Degree of a modal formula}{chap2_3}{24}]
@@ -1360,11 +1385,11 @@ In the proof above, note that what we do to capture indexing of set: A family of
 As we took a detour through \texttt{prop_2_15_corollary}, this construction of finite model changes the type of model. If we start with an $(\alpha,\beta)$-model, then the finite model we build by selection will be a $(\alpha,\beta \ list)$-model. 
 
 
-\section{Reaching out to the world of first order logic}
+\chapter{Reaching out to the world of first order logic}
 
 As claimed by Slogan 3 in the introduction, modal logic is not an isolated formal system, in this chapter, we start connecting modal logic with the wider logical world by discussing about its relation to first order logic. In the first half of the chapter, we define standard translation as our link between modal logic and first order logic, and in the second half of the chapter, with the help of standard translation, we introduce the last one of the `big-four' constructions on models which give modal equivalence, and conclude this section by proving an elegant result about bisimulation: If we have a modal equivalence between worlds $w,v$ in two models \HOLtm{M} and \HOLtm{N}, although it may not the case that $w$ and $v$ are bisimilar, we can find a bisimulation in a pair of models constructed from \HOLtm{M} and \HOLtm{N}.
 
-\subsection{Standard Translation}
+\section{Standard Translation}
 
 To discuss the relationship between modal logic and first order logic, firstly we need to build some basics of first order logic in the HOL. First order logic is formalised in HOL light in 1998 by John Harrison, we take our construction of first-order model theory as in the paper (reference) of him.
 
@@ -1651,7 +1676,7 @@ To conclude this section, we state the result that every modal formula is `equiv
 \end{holmath}
 \end{prop}
 
-\subsection{Modal Saturation via ultrafilter extensions}
+\section{Modal Saturation via ultrafilter extensions}
 
 In the second chapter, we have seen bisimilarity implies modal equivalence, but only proved the converse for image finite models. In this section, we are interested in another particular class of models, called \emph{m-saturated} models, where worlds which are modal equivalent are bisimilar. 
 
@@ -2071,7 +2096,7 @@ Given two models \HOLtm{M1} and \HOLtm{M2} with \HOLtm{w1 IN M1.frame.world} and
 \end{thm}
 \begin{proof}Bisimulation implies modal equivalence by \texttt{thm_2_20}. For the reverse direction, if \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are modal equivalent, then \HOLtm{(principle_UF w1 M1.frame.world) IN (UE M1).frame.world} is modal equivalent to \HOLtm{(principle_UF w2 M2.frame.world) IN (UE M2).frame.world} by \texttt{prop_2_59_ii}. As \HOLtm{UE M1} and \HOLtm{UE M2} are m-saturated by \texttt{prop_2_61}, the result follows by \texttt{prop_2_54_DIST_TYPE}.
 \end{proof}
-\section{Two characterizing results}
+\chapter{Two characterizing results}
 
 In last chapter, we presented the definition of `invariant for bisimulation', and mentioned that if we are working with set theory, then we can prove that first order formulas that are invariant for bisimulation are precisely the first order formulas we can obtain by applying standard translation to modal formulas. We translated one direction of the set-theoretic proof of this result there. In the first section of this chapter, we will translate another half of the proof into HOL4, and explain why we cannot get the double implication when working with simple type theory.  In the second section, we translate a proof similar to the characterization of standard translations from set theory, which says a modal formula is \emph{preserved under simulation} if and only if it is \emph{positive existential}. The two new terminologies are to be introduced in the second section of this chapter.
 
@@ -2084,7 +2109,7 @@ In last chapter, we presented the definition of `invariant for bisimulation', an
 
 %This whole chapter relies highly on first order logic, and we will swap between modal models and first order models very frequently. Hence when we talk about first order models, we restrict our scope to the ones which contains the same amount of information as a modal model. And only talk about first order formulas which makes sense to such models. So when we say `a first order formula' in this chapter, we secretly refer to a first order formula with no function symbols and only have unary predicate symbols and only one binary predicate symbol.
 
-\subsection{The `modal' fragment of $\mathcal L_{\tau}^1$ formulas}
+\section{The `modal' fragment of $\mathcal L_{\tau}^1$ formulas}
 
 In the last chapter, we introduce the standard translation and proved that every modal formula is equivalent to a first order formula, in the sense that for any point in any model that satisfies the formula precisely when if we view the model as a first order model, the first order formula corresponds to the modal formula is satisfied. As discussed earlier, any first order formula which is corresponds to a first order formula is an $\mathcal L_{\tau}^1$ formula, but it is clearly not the fact that every $\mathcal L_{\tau}^1$ formula is equivalent to the standard translation of a modal formula. For instance, the formula \HOLtm{fR (fV 1) (fV 2)} is not a standard translation. Here comes a natural question: what are the $\mathcal L_{\tau}^1$-formulas which is equivalent to a standard translation? In last chapter, we have already given a short answer: an $\mathcal L_{\tau}^1$ formulas which is equivalent to a standard translation if and only if it is invariant under bisimulation. Also recall that we have already proved that standard translations are invariant under bisimulation. In this section, we devote to translate the proof of the other direction, saying `any formula which is invariant under bisimulation is equivalent to a standard translation', into HOL4, which uses simple type theory as its foundation. The tools that this proof will use centered on saturated models, which we are introducing now:
 
@@ -2148,7 +2173,7 @@ This proves \HOLtm{consistent M' Σ'}. Since \HOLtm{(mm2folm M)} is countably sa
 
 Knowing the interesting properties of countably saturated models, we now answer the question that where to obtain them. The canonical way to obtain such models involve the usage of ultraproducts, which we will discuss in the following interlude:
 
-\subsubsection{Interlude III: Countably saturated models via ultraproducts}
+\subsection{Interlude III: Countably saturated models via ultraproducts}
 
 Although we are interested in ultraproduct on models, we will begin by introducing the construction of ultraproduct of sets. 
 %Suppose $J\ne\emptyset$ and for each $j\in J$, $A_j$ is a non-empty set. The Cartestian product is the set of functions with domain $J$ such that for all $j\in J$, $f(j)\in A_j$. As before, in the definition below, \HOLtm{A} is encoded as a function, and hence for $j\in J$, \HOLtm{A j} is the set $A_j$ indexed by $j$.  
@@ -2729,7 +2754,7 @@ The fact that the two directions of implication does not yield an `if and only i
 
 
 
-\subsection{Characterizing formulas which are preserved under simulations}
+\section{Characterizing formulas which are preserved under simulations}
 
 In last section, we proved that standard translations are exactly $\mathcal L_{\tau}^1$-formulas which are invariant for bisimulations. There exists a concept of `half of a bisimulation', which is called \emph{simulation}. Accordingly, the $\mathcal L_{\tau}^1$-formulas which are \emph{preserved under simulation} are interesting. We have set-theoretic proof that these formulas can also be characterized using their syntax. The aim of this section is to translate this proof into simple type theory. For precisely the same reason as in the last section, after we translate the proof of implications in both direction, they cannot be unified into a double implication. Nevertheless, we will spell out our formalization of proofs for those two directions separately. 
 
@@ -2857,9 +2882,9 @@ Hence we obtain a model \HOLtm{N} realising \HOLtm{Γ ∪ {phi\}} at point $v$. 
 As \HOLtm{satis N v phi}, \texttt{prop_2_59_ii} gives \HOLtm{satis (UE N) (principle_UF v N.frame.world) phi}, as $\phi$ is preserved under simulation, we have 
 \HOLtm{satis (UE M) (principle_UF w M.frame.world) phi}. Again by  \texttt{prop_2_59_ii} , it implies \HOLtm{satis M w phi}. This completes the proof.
 \end{proof}
-\section{Conclusion}
+\chapter{Conclusion}
 
-\subsection{What we have done}
+\section{What we have done}
 
 \begin{itemize}
 \item Our entire project aim to formalize the theorems proved in the textbook `Modal Logic' by Blackburn et al. By now, every theorem proved in the book up to section 2.7 that can be captured by the basic modal language and the HOL4 are formalised. We take the proofs of those theorems from the textbook, and our definitions, statements and proofs are taken to be as close as possible to the original version of them appear in the book. 
@@ -2893,7 +2918,7 @@ As \HOLtm{satis N v phi}, \texttt{prop_2_59_ii} gives \HOLtm{satis (UE N) (princ
 (2) For the proofs of Interlude I, which uses equivalence classes, we proved some theorems about partitioning a set using equivalence relations. This is the file \texttt{equiv_on_partitionTheory}. 
 \end{itemize}
 
-\subsection{Choices we made}
+\section{Choices we made}
 
 \begin{itemize}
 \item Our entire formalization is only about one modal language, namely the basic modal language. In general, we allow more than one modal operator in a modal language and allow them to correspond to relations of any arity. We made this choice because of limitation of time, and the fact that the proofs for the basic modal language can be easily generalized to any modal language if we really take time to do it. 
@@ -2904,7 +2929,7 @@ As \HOLtm{satis N v phi}, \texttt{prop_2_59_ii} gives \HOLtm{satis (UE N) (princ
 
 \end{itemize}
 
-\subsection{Problems we met}
+\section{Problems we met}
 
 All the problem we met in the project are due to the lack of expressiveness of simple type theory. 
 
@@ -2924,7 +2949,7 @@ All the problem we met in the project are due to the lack of expressiveness of s
 \end{itemize}
 
 
-\subsection{Future work}
+\section{Future work}
 
 \begin{itemize}
 \item Although some theorems (theorem 2.75 and 2.76) in the `decidability' section in chapter 2 cannot be directly stated in HOL4, it is still possible to capture the ideas of those proofs and prove some weakened version in HOL4. A possible further project is to capture those ideas and to work out which result can we prove in HOL4 using the idea of those proofs. 
