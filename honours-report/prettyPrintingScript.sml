@@ -575,11 +575,31 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Suffix 2100, pp_elements = [TOK "(Mw)"],
                   term_name = "Mw", paren_style = OnlyIfNecessary}
 
-val _ = overload_on("Mr", “λM. M.frame.rel”);
+val _ = overload_on("Mr", “λu M v. M.frame.rel u v”);
+val _ = overload_on("Mrr", “λu M s v. RESTRICT M.frame.rel s u v”);
+val _ = overload_on("Mrrrtc", “λu M s v. (RESTRICT M.frame.rel s)^* u v”);
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Suffix 2100, pp_elements = [TOK "(Mr)"],
+                  fixity = Infix(NONASSOC,450),
+                  pp_elements = [HardSpace 1, TOK "(Mr1)", TM, TOK "(Mr2)",
+                                 BreakSpace(1,0)],
                   term_name = "Mr", paren_style = OnlyIfNecessary}
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix(NONASSOC,450),
+                  pp_elements = [HardSpace 1, TOK "(Mrr1)", TM, TOK "(Mrr2)",
+                                 TM, TOK "(Mrr3)",
+                                 BreakSpace(1,0)],
+                  term_name = "Mrr", paren_style = OnlyIfNecessary}
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix(NONASSOC,450),
+                  pp_elements = [HardSpace 1, TOK "(Mrrrtc1)", TM,
+                                 TOK "(Mrrrtc2)",
+                                 TM, TOK "(Mrrrtc3)",
+                                 BreakSpace(1,0)],
+                  term_name = "Mrrrtc", paren_style = OnlyIfNecessary}
+
 
 val _ = overload_on("Mv", “λM. M.valt”);
 

@@ -28,7 +28,14 @@ SET_TO_LIST 4 \ensuremath{\HOLConst{toList}}
 lit_list_to_form2 5 l2f
 lit_list_to_form 5 ll2f
 (Mw) 1 \ensuremath{\sp{W}}
-(Mr) 1 \ensuremath{\sp{R}}
+(Mr1) 3 \ensuremath{\longrightarrow\sb{
+(Mr2) 0 }}
+(Mrr1) 3 \ensuremath{\longrightarrow\sb{
+(Mrr2) 1 /
+(Mrr3) 0 }}
+(Mrrrtc1) 3 \ensuremath{\longrightarrow\sb{
+(Mrrrtc2) 1 /
+(Mrrrtc3) 0 }\sp{*}}
 (Mv) 1 \ensuremath{\sp{V}}
 (forces1) 1 ,
 (forces2) 1 \ensuremath{\Vdash}
