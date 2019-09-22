@@ -133,6 +133,30 @@ Proof
 rw[SUBMODEL_def] >> fs[IN_DEF] >> metis_tac[]
 QED
 
+Theorem ppFINITE_FINITE_IBC:
+∀fs. (fs ≠ ∅ /\ FINITE (fs//E μ)) ⇒ FINITE ({f | IBC f fs}//E μ)
+Proof
+metis_tac[FINITE_FINITE_IBC]
+QED
+
+Theorem ppprop_2_31_half1:
+∀M M' n w w' f.
+             (nbisim M M' f n w w' /\
+             DEG phi ≤ n) ⇒ (satis M w phi ⇔ satis M' w' phi)
+Proof
+metis_tac[prop_2_31_half1]
+QED
+
+Theorem ppprop_2_31_half2:
+∀M M' n (w:β) (w':'c).
+            (INFINITE 𝕌(:β) ∧ INFINITE 𝕌(:γ) ∧ FINITE 𝕌(:α) ∧
+            w ∈ M.frame.world ∧ w' ∈ M'.frame.world /\
+            (∀phi:α chap1$form. DEG phi ≤ n ⇒ (satis M w phi ⇔ satis M' w' phi))) ⇒
+            ∃f. nbisim M M' f n w w'
+Proof
+metis_tac[prop_2_31_half2]
+QED
+
 Theorem ppGENSUBMODEL_def:
 ∀M1 M2.
             GENSUBMODEL M1 M2 ⇔
