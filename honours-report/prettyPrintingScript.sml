@@ -443,15 +443,7 @@ Theorem ppDNF_OF_cset:
 Proof
 cheat (* rw[dsatis_def] >> drule DNF_OF_cset >> rw[] *)
 QED
-(*
-Theorem ppthm_2_34:
-∀M1 w1 phi.
-         satis M1 w1 phi ⇒
-         ∃M v. FINITE M.frame.world ∧ v ∈ M.frame.world ∧ satis M v phi
-Proof
-cheat
-QED
-*)
+
 
 Theorem ppdsatis_ALL_POSSIBLE_VALUE = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] IBCDNFrevisedTheory.dsatis_ALL_POSSIBLE_VALUE
 
@@ -463,20 +455,29 @@ Theorem ppis_lset_DNF_OF_EXISTS:
                  (∀M w. w ∈ M.frame.world ⇒ (satis M w f ⇔ dsatis M w s)) ∧
                  DNF_OF f fs
 Proof
+(*
+rw[] >> irule is_lset_DNF_OF_EXISTS >> rw[]
+*)
 cheat
 QED
 
+(*
 Theorem ppmm2folm_folm2mm_feval:
 ∀f σ M. L1tau f /\ valuation M σ ==>
            (feval (mm2folm (folm2mm M)) σ f ⇔ feval M σ f)
 Proof
 cheat
 QED
-
+*)
 Theorem ppprop_2_47_i:
 !M w:'b phi (σ:num -> 'b) x:num. valuation (mm2folm M) σ
                        ==> (satis M (σ x) phi <=> fsatis (mm2folm M) σ (ST x phi))
 Proof
+(*
+rw[] >>
+`IMAGE σ 𝕌(:num) ⊆ M.frame.world` suffices_by metis_tac[prop_2_47_i] >>
+fs[valuation_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]
+*)
 cheat
 QED
 
@@ -484,6 +485,9 @@ Theorem ppprop_2_47_i':
  !M w:'b phi σ x. valuation M σ
                        ==> (satis (folm2mm M) (σ x) phi <=> feval M σ (ST x phi))
 Proof
+(* rw[] >>
+`IMAGE σ 𝕌(:num) ⊆ M.Dom` suffices_by metis_tac[prop_2_47_i'] >>
+fs[valuation_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]*)
 cheat
 QED
 
@@ -493,8 +497,14 @@ Theorem ppprop_2_47_i_alt:
                        ==> (satis M (σ 1) phi <=> fsatis (mm2folm M) σ (ST_alt 1 phi)) /\
 		           (satis M (σ 0) phi <=> fsatis (mm2folm M) σ (ST_alt 0 phi))
 Proof
-cheat
+(*
+rw[] >>
+`IMAGE σ 𝕌(:num) ⊆ M.frame.world` suffices_by metis_tac[prop_2_47_i_alt] >>
+fs[valuation_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]
+*) cheat
 QED
+
+
 
 Theorem ppST_BIGCONJ:
 !s x.
@@ -505,15 +515,32 @@ Theorem ppST_BIGCONJ:
                    (!f. f IN s ==> feval M σ f))) /\
            ?psi. cf = ST x psi
 Proof
+(* rw[] >> drule ST_BIGCONJ >> rw[] >> first_x_assum drule >> strip_tac >>
+qexists_tac `cf` >> rw[] 
+>- (fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
+metis_tac[]
+*)
 cheat
 QED
-
+(*
+Theorem FC_form_functions:
+!t c. c IN (FCT t) <=> (c,0) IN (term_functions t)
+Proof
+completeInduct_on `term_size t` >> rw[] >> 
+Cases_on `t` >> rw[FCT_def] >> rw[]
+QED
+*)
 Theorem ppexpansion_shift_feval:
   !M A M' f σ phi. (expansion (mm2folm M) A M' f /\ valuation (mm2folm M) σ /\
                     (form_functions phi ⊆ {(c1,0) | c1 < (CARD A)})) ==>
                     (feval M' σ phi <=>
                     feval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi))
 Proof
+(*rw[] >> irule expansion_shift_feval >> rw[] 
+>- fs[FC_def]
+expand def of FC, not done
+
+ *)
 cheat
 QED
  
@@ -524,7 +551,9 @@ Theorem ppshift_FV:
             FV (shift_form (CARD A) phi) DIFF count (CARD A) ⊆
             {x + CARD A | x ∈ s}
 Proof
-cheat
+(*
+rw[] >> irule shift_FV >> rw[] >> Cases_on `c` >> fs[SUBSET_DEF,FST,SND] >>
+first_x_assum drule >> rw[]*) cheat
 QED
 
 Theorem ppshift_form_functions_EMPTY:
@@ -532,29 +561,36 @@ Theorem ppshift_form_functions_EMPTY:
             (form_functions phi ⊆ {(c1,0) | c1 < (CARD A)}) ⇒
             form_functions (shift_form (CARD A) phi) = ∅
 Proof
-cheat
+(*
+rw[] >> irule shift_form_functions_EMPTY >> fs[SUBSET_DEF,FST,SND] >> 
+rw[] >> Cases_on `c` >> first_x_assum drule >> rw[] *) cheat
 QED
 
 Theorem ppthm_A_19_i:
-!t U I. ultrafilter U I ==>
-          !σ FMS. (valuation (ultraproduct_folmodel U I FMS) σ /\
-                   (!i. i IN I ==> wffm (FMS i))) ==>
+!t U I σ FMS. (ultrafilter U I /\
+               (valuation (ultraproduct_folmodel U I FMS) σ /\
+                   (!i. i IN I ==> wffm (FMS i)))) ==>
           termval (ultraproduct_folmodel U I FMS) σ t =
           {f | Uequiv U I (folmodels2Doms FMS) f
                (\i. termval (FMS i) (\n. CHOICE (σ n) i) t)}
 Proof
-cheat
+(*rw[] >> drule thm_A_19_i >> rw[] >> first_x_assum irule >>
+ fs[IMAGE_DEF,valuation_def,wffm_def,SUBSET_DEF,ultraproduct_folmodel_def] >>
+metis_tac[]*) cheat
 QED
 
 
 Theorem ppthm_A_19_ii:
-!U I phi. ultrafilter U I ==>
-      !σ FMS. (valuation (ultraproduct_folmodel U I FMS) σ /\
-               (!i. i IN I ==> wffm (FMS i))) ==>
+!U I phi σ FMS. (ultrafilter U I /\
+                 (valuation (ultraproduct_folmodel U I FMS) σ) /\
+                 (!i. i IN I ==> wffm (FMS i))) ==>
                   (feval (ultraproduct_folmodel U I FMS) σ phi <=>
                   {i | i IN I /\ feval (FMS i) (\x. (CHOICE (σ x)) i) phi} IN U)
 Proof
-cheat
+(*
+rw[] >> drule thm_A_19_ii >> rw[] >> first_x_assum irule >>
+ fs[IMAGE_DEF,valuation_def,wffm_def,SUBSET_DEF,ultraproduct_folmodel_def] >>
+metis_tac[]*) cheat
 QED
 
 Theorem ppultraproduct_suffices_rep:
@@ -566,56 +602,40 @@ Theorem ppultraproduct_suffices_rep:
      feval (ultraproduct_folmodel U I FMS)
            (\v. {g | Uequiv U I (folmodels2Doms FMS) g (rv v)}) phi
 Proof
-cheat
+(*rw[] >> drule ultraproduct_suffices_rep >> rw[] >> first_x_assum irule <<
+fs[valuation_def,wffm_def] >> metis_tac[]*) cheat
 QED
 
 
 
 Theorem ppcorollary_A_21:
- !U I FMS FM σ.
+ !U I FMS FM σ phi.
    (ultrafilter U I /\
     (!i. i IN I ==> FMS i = FM) /\ wffm FM /\ valuation FM σ) ==>
-     !phi.
-           (feval FM σ phi <=>
+     (feval FM σ phi <=>
             feval (ultraproduct_folmodel U I FMS)
             (\x. {g | Uequiv U I (folmodels2Doms FMS) g (\i. σ x)}) phi)
 Proof
-cheat
+(*rw[] >> drule corollary_A_21 >> rw[valuation_def,IMAGE_DEF,SUBSET_DEF] >>
+fs[wffm_def] >> fs[valuation_def] >> first_x_assum irule >> metis_tac[]*) cheat
 QED
 
 Theorem ppultraproduct_comm_feval:
-  !phi U I MS σ. (ultrafilter U I /\
-                  L1tau phi /\
-                   valuation (mm2folm (ultraproduct_model U I MS)) σ) ==>
-                (feval (mm2folm (ultraproduct_model U I MS)) σ phi <=>
-                 feval (ultraproduct_folmodel U I (\i. mm2folm (MS i))) σ phi)
+  !phi U I MS σ. 
+ (ultrafilter U I /\
+         form_functions phi = ∅ /\
+         valuation (mm2folm (ultraproduct_model U I MS)) σ) ⇒
+             (feval (mm2folm (ultraproduct_model U I MS)) σ phi ⇔
+              feval (ultraproduct_folmodel U I (λi. mm2folm (MS i))) σ phi)
 Proof
-(*rw[L1tau_def] >> drule ultraproduct_comm_feval >> 
+(*rw[] >> drule ultraproduct_comm_feval >> 
 strip_tac >> 
-rw[] *) cheat
+rw[] >> 
+`IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (models2worlds MS)` suffices_by metis_tac[] >>
+rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def,ultraproduct_model_def,mm2folm_def]
+
+*) cheat
 QED
-(*
-Theorem ppultraproduct_comm_feval':
-!phi U I MS σ.
-  (ultrafilter U I /\
-   L1tau phi /\
-   (!i. i IN I ==> wffm (MS i)) /\
-   valuation (ultraproduct_folmodel U I MS) σ)  ==>
-     (feval (ultraproduct_folmodel U I MS) σ phi <=>
-      feval (mm2folm (ultraproduct_model U I (λi. folm2mm (MS i)))) σ phi)
-Proof
-(*
-rw[] >> drule ultraproduct_comm_feval' >> strip_tac >> fs[wffm_def,L1tau_def] >>
-qabbrev_tac `MMS := \i.` <| Dom := (MS i).Dom;
-                           Fun := (\n l. CHOICE ((MS i).Dom));
-                           Pred := (\p l. 
-                                      if ((p = 0 /\ LENGTH l = 2) \/ LENGTH l = 1) then (MS i).Pred p l else F)|>`
-
-
-
-
-rw[] >> *) cheat
-QED*)
 
 val nfm_def = Define
 `nfm M <=> (∀n. ¬M.Pred n []) /\
@@ -632,75 +652,14 @@ Theorem ppultraproduct_comm_feval':
      (feval (ultraproduct_folmodel U I MS) σ phi <=>
       feval (mm2folm (ultraproduct_model U I (λi. folm2mm (MS i)))) σ phi)
 Proof
+(*rw[nfm_def] >> drule ultraproduct_comm_feval' >> rw[] >> 
+`IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms MS)` suffices_by metis_tac[] >> rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def] >> fs[ultraproduct_folmodel_def]*)
 cheat
 QED
-
-(*
-Theorem ppultraproduct_mm2folm_folm2mm_comm_feval:
-!M σ a I U.
-   (FV a ⊆ {x} /\ L1tau a /\
-    ultrafilter U I /\
-    wffm M /\
-    valuation M σ) ==>
-    (feval M σ a <=>
-     feval (mm2folm (ultraproduct_model U I (λi. folm2mm M)))
-       (λx. {fw | Uequiv U I (models2worlds (λi. folm2mm M)) (λi. σ x) fw}) a)
-Proof
-cheat
-QED
-*)
-
-(*
-
-Theorem holds_functions_predicates:
-   M2.Dom = M1.Dom ∧ 
-  (∀P zs. (P,LENGTH zs) ∈ form_predicates p ⇒ (M2.Pred P zs ⇔ M1.Pred P zs)) /\
-  (∀f zs. (f,LENGTH zs) ∈ form_functions p ⇒ M2.Fun f zs = M1.Fun f zs) ⇒
-      (∀v. feval M2 v p ⇔ feval M1 v p)
-Proof
-rw[] >> 
-qabbrev_tac `M1' = <| Dom := M1.Dom ;
-                      Fun := M2.Fun ;
-                      Pred := M1.Pred |>` >>
-`M2.Dom = M1'.Dom`
-  by
-   (fs[Abbr`M1'`]) >>
-drule holds_predicates >> rw[] >>
-`(feval M2 v p ⇔ feval M1' v p)` 
-  by
-   (first_x_assum irule >> rw[] (*  2*)
-    >- fs[Abbr`M1'`,FUN_EQ_THM]
-    >- fs[Abbr`M1'`]) >>
-rw[] >> 
-`M1'.Dom = M1.Dom` by fs[Abbr`M1'`] >>
-drule holds_functions >> rw[] >>
-first_x_assum irule >> rw[] (* 2 *)
->- fs[Abbr`M1'`]
->- fs[Abbr`M1'`,FUN_EQ_THM]
-QED
-
-*)
 
 
 
 Theorem ppultraproduct_sat:
-!U I FMS x f.
-   (countably_incomplete U I /\
-    valuation (ultraproduct_folmodel U I FMS) f /\
-    (∀i. i ∈ I ⇒ wffm (FMS i))) ==>
-  !s. (!phi. phi IN s ==> L1tau phi /\ (FV phi) DIFF N ⊆ {x}) ==>
-       (!ss. FINITE ss /\ ss ⊆ s ==>
-          ?σ. (valuation (ultraproduct_folmodel U I FMS) σ) /\
-              (!n. n IN N ==> σ n = f n) /\
-              (!phi. phi IN ss ==> feval (ultraproduct_folmodel U I FMS) σ phi)) ==>
-       (?σ. valuation (ultraproduct_folmodel U I FMS) σ /\
-            (!n. n IN N ==> σ n = f n)  /\
-            (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
-Proof
-cheat
-QED
-
-Theorem pp2ultraproduct_sat:
 !U I FMS x f s.
    (countably_incomplete U I /\
     valuation (ultraproduct_folmodel U I FMS) f /\
@@ -714,59 +673,57 @@ Theorem pp2ultraproduct_sat:
             (!n. n IN N ==> σ n = f n)  /\
             (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
 Proof
-cheat
+(*rw[valuation_def] >> drule ultraproduct_sat >> rw[] >>
+`∃σ.
+                IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
+                (∀n. n ∈ N ⇒ σ n = f n) ∧
+                ∀phi. phi ∈ s ⇒ feval (ultraproduct_folmodel U I' FMS) σ phi`
+suffices_by 
+  (rw[] >> qexists_tac `σ` >> rw[] >> fs[IMAGE_DEF,SUBSET_DEF] >>
+   fs[ultraproduct_folmodel_def] >> metis_tac[]) >>
+first_x_assum irule >> rw[]
+>- fs[wffm_def]
+>- (qexists_tac `x` >> fs[L1tau_def])
+>- (`∃σ.
+                (∀n. σ n ∈ (ultraproduct_folmodel U I' FMS).Dom) ∧
+                (∀n. n ∈ N ⇒ σ n = f n) ∧
+                ∀phi. phi ∈ ss ⇒ feval (ultraproduct_folmodel U I' FMS) σ phi`
+     suffices_by 
+       (rw[] >> first_x_assum drule_all >> strip_tac >> qexists_tac `σ` >>
+        rw[] >> rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def]) >>
+   metis_tac[])
+>- rw[IMAGE_DEF,SUBSET_DEF] >> fs[ultraproduct_folmodel_def]*)cheat
 QED
 
 Theorem pppreserved_under_sim_def:
- ∀phi.
+ ∀phi:num chap1$form.
          preserved_under_sim (:α) (:β) phi ⇔
          ∀M M' Z w:α w':β.
              w ∈ M.frame.world ∧ w' ∈ M'.frame.world ∧ sim Z M M' ∧ Z w w' ⇒
              satis M w phi ⇒
              satis M' w' phi
 Proof
-cheat
+metis_tac[preserved_under_sim_def] 
 QED
 
 
 
-Theorem ppultraproduct_sat':
-!U I MS x N f.
-     (countably_incomplete U I /\
-      (!i. i IN I ==> (MS i).frame.world <> {}) /\
-      (valuation (mm2folm (ultraproduct_model U I MS)) f)) ==>
-  !s. (!phi. phi IN s ==> form_functions phi = {} /\ (FV phi) DIFF N ⊆ {x}) ==>
-       (!ss. FINITE ss /\ ss ⊆ s ==>
-          ?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\
-              (!n. n IN N ==> σ n = f n) /\
-              (!phi. phi IN ss ==> feval (mm2folm (ultraproduct_model U I MS)) σ phi)) ==>
-      (?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\
-           (!n. n IN N ==> σ n = f n)  /\
-           (!phi. phi IN s ==> feval (mm2folm (ultraproduct_model U I MS)) σ phi))
+Theorem ppthm_2_68_half1:
+∀a x.
+            (INFINITE 𝕌(:α) /\
+            invar4bisim x (:(num -> α) -> bool) (:(num -> α) -> bool) a) ⇒
+            ∃phi. ∀M v. valuation M v ⇒ (feval M v a ⇔ feval M v (ST x phi))
+
 Proof
 cheat
 QED
 
-
-Theorem ppultraproduct_sat'':
-!U I MS x A M' f.
-      (countably_incomplete U I /\
-       (∀i. i ∈ I ⇒ (MS i).frame.world ≠ ∅) /\
-       expansion (mm2folm (ultraproduct_model U I MS)) A M' f /\
-       (valuation (mm2folm (ultraproduct_model U I MS)) f)) ==>
-  !s. (!phi. phi IN s ==>  (∀c. c ∈ form_functions phi ⇒ FST c ∈ count (CARD A) ∧ SND c = 0)
-           /\ FV phi ⊆ {x}) ==>
-       (!ss. FINITE ss /\ ss ⊆ s ==>
-          ?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\
-              (!phi. phi IN ss ==> feval M' σ phi)) ==>
-      (?σ. (valuation (mm2folm (ultraproduct_model U I MS)) σ) /\
-           (!phi. phi IN s ==> feval M' σ phi))
+Theorem ppthm_2_78_half2:
+(INFINITE 𝕌(:β) /\
+preserved_under_sim (:(β -> bool) -> bool) (:(β -> bool) -> bool) phi) ⇒ ∃phi0:num chap1$form. equiv0 (:β) phi phi0 ∧ PE phi0
 Proof
-cheat
+metis_tac[thm_2_78_half2]
 QED
-
-
-(*Theorem foo = SIMP_RULE bool_ss [PULL_FORALL, PULL_EXISTS] old_th*)
 
 val _ = overload_on("Mw", “λM. M.frame.world”);
 

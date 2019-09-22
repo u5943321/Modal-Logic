@@ -50,6 +50,8 @@ Mst 1 \ensuremath{\mathfrak{M}\sb{*}}
 Nst 1 \ensuremath{\mathfrak{N}\sb{*}}
 wst 1 \ensuremath{w\sb{*}}
 vst 1 \ensuremath{v\sb{*}}
+σm 1 \ensuremath{\sigma\sb{\mathfrak{M}}}
+σn 1 \ensuremath{\sigma\sb{\mathfrak{N}}}
 (Mw) 1 \ensuremath{\sp{W}}
 (Mr) 1 \ensuremath{\sp{R}}
 (Mv) 1 \ensuremath{\sp{V}}
