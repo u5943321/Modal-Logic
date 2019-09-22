@@ -630,5 +630,11 @@ fs[prop_letters_def] >> metis_tac[]
 QED
 
 
+Theorem subst_comp:
+ subst g (subst f x) = subst ((subst g) o f) x
+Proof
+Induct_on `x` >> rw[subst_def]
+QED
+
 val _ = export_theory();
 

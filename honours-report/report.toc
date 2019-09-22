@@ -1,0 +1,32 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}% 
+\contentsline {section}{\numberline {1.1}What is modal logic?}{1}{section.1.1}% 
+\contentsline {section}{\numberline {1.2}What is HOL4?}{2}{section.1.2}% 
+\contentsline {section}{\numberline {1.3}Why is the combining of the two interesting?}{3}{section.1.3}% 
+\contentsline {section}{\numberline {1.4}What have we done?}{3}{section.1.4}% 
+\contentsline {chapter}{\numberline {2}Getting Started}{5}{chapter.2}% 
+\contentsline {chapter}{\numberline {3}Invariant results and bisimulations}{13}{chapter.3}% 
+\contentsline {section}{\numberline {3.1}Operations on models}{13}{section.3.1}% 
+\contentsline {section}{\numberline {3.2}Morphisms between models}{15}{section.3.2}% 
+\contentsline {section}{\numberline {3.3}Bisimulation}{20}{section.3.3}% 
+\contentsline {chapter}{\numberline {4}Finite model property}{23}{chapter.4}% 
+\contentsline {section}{\numberline {4.1}Finite model property via filtration}{23}{section.4.1}% 
+\contentsline {section}{\numberline {4.2}Finite model property via selection}{28}{section.4.2}% 
+\contentsline {subsection}{\numberline {4.2.1}Interlude I: Finiteness of non-equivalent modal formulas in each degree}{29}{subsection.4.2.1}% 
+\contentsline {subsubsection}{Base case}{30}{section*.2}% 
+\contentsline {subsubsection}{Step case}{31}{section*.3}% 
+\contentsline {subsubsection}{Case for $\phi \in \phi s$}{36}{section*.4}% 
+\contentsline {subsubsection}{Case for disjunction}{40}{section*.5}% 
+\contentsline {subsubsection}{Case for negation}{41}{section*.6}% 
+\contentsline {chapter}{\numberline {5}Reaching out to the world of first order logic}{53}{chapter.5}% 
+\contentsline {section}{\numberline {5.1}Standard Translation}{53}{section.5.1}% 
+\contentsline {section}{\numberline {5.2}Modal Saturation via ultrafilter extensions}{64}{section.5.2}% 
+\contentsline {subsection}{\numberline {5.2.1}Interlude II: Ultrafilters}{66}{subsection.5.2.1}% 
+\contentsline {chapter}{\numberline {6}Two characterizing results}{79}{chapter.6}% 
+\contentsline {section}{\numberline {6.1}The `modal' fragment of $\mathcal L_{\tau }^1$ formulas}{79}{section.6.1}% 
+\contentsline {subsection}{\numberline {6.1.1}Interlude III: Countably saturated models via ultraproducts}{82}{subsection.6.1.1}% 
+\contentsline {section}{\numberline {6.2}Characterizing formulas which are preserved under simulations}{103}{section.6.2}% 
+\contentsline {chapter}{\numberline {7}Conclusion}{109}{chapter.7}% 
+\contentsline {section}{\numberline {7.1}What we have done}{109}{section.7.1}% 
+\contentsline {section}{\numberline {7.2}Choices we made}{110}{section.7.2}% 
+\contentsline {section}{\numberline {7.3}Problems we met}{111}{section.7.3}% 
+\contentsline {section}{\numberline {7.4}Future work}{111}{section.7.4}% 

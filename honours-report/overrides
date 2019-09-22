@@ -5,17 +5,35 @@ $Turnstile$ 5 \ensuremath{\HOLTokenTurnstile}
 -> 2 \ensuremath{\rightarrow}
 M 1 \ensuremath{\mathfrak{M}}
 N 1 \ensuremath{\mathfrak{N}}
-M' 1 \ensuremath{\mathfrak{M}p}
-M'' 1 \ensuremath{\mathfrak{M}pp}
+M' 1 \ensuremath{\mathfrak{M}'}
+M'' 1 \ensuremath{\mathfrak{M}''}
 M1 1 \ensuremath{\mathfrak{M}}1
 M2 1 \ensuremath{\mathfrak{M}}2
 M3 1 \ensuremath{\mathfrak{M}}3
-M3' 1 \ensuremath{\mathfrak{M}}p3
-M4 1 \ensuremath{\mathfrak{M}}p4
+M3' 1 \ensuremath{\mathfrak{M}'}3
+M4 1 \ensuremath{\mathfrak{M}}4
 MS 1 \ensuremath{\mathfrak{M}{s}}
 FMS 1 \ensuremath{\mathfrak{M}{s}}
+FM 1 \ensuremath{\mathfrak{M}}
+f1 1 \ensuremath{\phi\sb{1}}
+f2 1 \ensuremath{\phi\sb{2}}
+psi1 1 \ensuremath{\psi\sb{1}}
+psi2 1 \ensuremath{\psi\sb{2}}
+f3 1 \ensuremath{\phi\sb{3}}
+phi1 1 \ensuremath{\phi\sb{1}}
+phi' 1 \ensuremath{\phi '}
+phi2 1 \ensuremath{\phi\sb{2}}
+phi3 1 \ensuremath{\phi\sb{3}}
+phi4 1 \ensuremath{\phi\sb{4}}
 phi 1 \ensuremath{\phi}
+phis 1 \ensuremath{\phi s}
+phil1 1 \ensuremath{\phi l\sb{1}}
+phil2 1 \ensuremath{\phi l\sb{2}}
+fs 1 \ensuremath{\phi s}
+fs0 1 \ensuremath{\phi s\sb{0}}
+varphi 1 \ensuremath{\varphi}
 psi 1 \ensuremath{\psi}
+cpsi 1 \ensuremath{c\psi}
 form1 1 \ensuremath{\phi\sb{1}}
 form2 1 \ensuremath{\phi\sb{2}}
 TRUE 1 \ensuremath{\top}
@@ -27,6 +45,13 @@ DIFF 1 \ensuremath{\setminus}
 SET_TO_LIST 4 \ensuremath{\HOLConst{toList}}
 lit_list_to_form2 5 l2f
 lit_list_to_form 5 ll2f
+
+Mst 1 \ensuremath{\mathfrak{M}\sb{*}}
+Nst 1 \ensuremath{\mathfrak{N}\sb{*}}
+wst 1 \ensuremath{w\sb{*}}
+vst 1 \ensuremath{v\sb{*}}
+σm 1 \ensuremath{\sigma\sb{\mathfrak{M}}}
+σn 1 \ensuremath{\sigma\sb{\mathfrak{N}}}
 (Mw) 1 \ensuremath{\sp{W}}
 (Mr1) 3 \ensuremath{\longrightarrow\sb{
 (Mr2) 0 }}
@@ -41,3 +66,4 @@ lit_list_to_form 5 ll2f
 (forces2) 1 \ensuremath{\Vdash}
 (nforces1) 1 ,
 (nforces2) 1 \ensuremath{\not\Vdash}
+L1tau 2 \ensuremath{{\cal L}^1_\tau}

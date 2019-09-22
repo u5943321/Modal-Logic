@@ -607,4 +607,12 @@ val thm_2_62 = store_thm(
      modal_eq M' (UE M') w' (principle_UF w' M'.frame.world)` by metis_tac[prop_2_59_ii] >>
      metis_tac[modal_eq_TRANS,modal_eq_SYM]));
 
+
+Theorem can_see_UNION:
+can_see M (X ∪ Y) = (can_see M X) ∪ (can_see M Y)
+Proof
+rw[can_see_def,EXTENSION,EQ_IMP_THM] (* 6 *)
+>> metis_tac[]
+QED
+
 val _ = export_theory();

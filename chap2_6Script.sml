@@ -470,7 +470,7 @@ QED
 
 (*detour lemma 2.74 2.62*)
 
-
+(*
 val invar4bisim_def = Define`
   invar4bisim x (t1: μ itself) (t2: ν itself) phi <=> 
      (FV phi ⊆ {x} /\ (* form_functions a = {} *)
@@ -479,7 +479,7 @@ val invar4bisim_def = Define`
            (!(σm: num -> μ) (σn: num -> ν). fsatis (mm2folm M) σm(|x |-> w|) phi <=> 
                     fsatis (mm2folm N) σn(|x |-> v|) phi))`
 
-
+*)
 Theorem ST_CONJ:
 ST x (AND f1 f2) = fAND (ST x f1) (ST x f2)
 Proof
@@ -924,10 +924,7 @@ rw[EXTENSION,EQ_IMP_THM] >> metis_tac[Uequiv_SYM]
 QED
 
 val wffm = Define`
-wffm M <=> ((∀n. M.Pred n [] ⇔ F) /\
-              (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
-              (∀a b c d n. M.Pred n (a::b::c::d) ⇔ F) /\
-              (∀n0 l0. M.Fun n0 l0 ∈ M.Dom))`
+wffm M <=> (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)`
 
 
 Theorem mm2folm_folm2mm_Pred0:
@@ -1899,7 +1896,14 @@ first_x_assum irule >> rw[] (* 2 *)
 >- fs[Abbr`M1'`,FUN_EQ_THM]
 QED
 
-
+Theorem thm_2_68_half2':
+!phi x. invar4bisim x (:α) (:α) (ST x phi)
+Proof
+rw[invar4bisim_def] (* 3 *)
+>- metis_tac[ST_FV_singleton]
+>- metis_tac[ST_L1tau]
+>- metis_tac[thm_2_68_half2]
+QED
 
 val _ = export_theory();
 
