@@ -1,5 +1,5 @@
 \documentclass[a4paper,12pt]{book}
-\include{definitions}
+
 \renewcommand{\baselinestretch}{1.2}
 \newcommand{\blanknonumber}{\newpage\thispagestyle{empty}}
 \usepackage{graphics}
@@ -53,13 +53,6 @@
 \begin{document}
 \frontmatter
 
-\include{titlepage}\blanknonumber
-\include{dedication}\blanknonumber
-\include{declaration}\blanknonumber
-\include{acknowledgements}\blanknonumber
-\include{abstract}\blanknonumber
-\tableofcontents\blanknonumber
-\include{notation}\blanknonumber
 
 \mainmatter
 %\maketitle old 

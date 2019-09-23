@@ -296,16 +296,6 @@ first_x_assum (qspecl_then [`phi`,`x`] assume_tac) >>
 fs[combinTheory.APPLY_UPDATE_THM]
 QED
 
-
-
-val invar4bisim_def = Define`
-  invar4bisim x (t1: μ itself) (t2: ν itself) phi <=> 
-     (FV phi ⊆ {x} /\ (* form_functions a = {} *)
-     !(M:(num,μ) chap1$model) (N:(num,ν) chap1$model) v w.
-        bisim_world M N (w:μ) (v:ν) ==> 
-           (!(σm: num -> μ) (σn: num -> ν). fsatis (mm2folm M) σm(|x |-> w|) phi <=> 
-                    fsatis (mm2folm N) σn(|x |-> v|) phi))`
-
 val _ = export_theory();
 	          
 	    

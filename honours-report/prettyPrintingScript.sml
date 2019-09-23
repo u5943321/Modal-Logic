@@ -808,4 +808,7 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 	val _ = overload_on("nsatis", “λM w f. ~satis M w f”);
 
 
+
+
+
 val _ = export_theory();
