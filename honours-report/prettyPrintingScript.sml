@@ -792,20 +792,25 @@ val _ = overload_on("equiv", “equiv0”);
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 	                  fixity = Infix(NONASSOC, 450),
-	                  pp_elements = [HardSpace 1,
-	                                 TOK "(forces1)", HardSpace 1, TM,
-	                                 HardSpace 1,
+	                  pp_elements = [TOK "(forces1)", TM,
 	                                 TOK "(forces2)", BreakSpace (1,2)],
 	                  term_name = "satis", paren_style = OnlyIfNecessary}
-	val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-	                  fixity = Infix(NONASSOC, 450),
-	                  pp_elements = [HardSpace 1,
-	                                 TOK "(nforces1)", HardSpace 1, TM,
-	                                 HardSpace 1,
-	                                 TOK "(nforces2)", BreakSpace (1,2)],
-	                  term_name = "nsatis", paren_style = OnlyIfNecessary}
-	
-	val _ = overload_on("nsatis", “λM w f. ~satis M w f”);
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+	          fixity = Infix(NONASSOC, 450),
+	          pp_elements = [TOK "(nforces1)", TM,
+	                         TOK "(nforces2)", BreakSpace (1,2)],
+	          term_name = "nsatis", paren_style = OnlyIfNecessary}
+
+val _ = overload_on("nsatis", “λM w f. ~satis M w f”);
+
+val _ = app clear_overloads_on ["◇", "□"]
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Prefix 900, pp_elements = [TOK "◇"], 
+                  term_name = "DIAM", paren_style = OnlyIfNecessary}
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Prefix 900, pp_elements = [TOK "□"], 
+                  term_name = "BOX", paren_style = OnlyIfNecessary}
 
 
 

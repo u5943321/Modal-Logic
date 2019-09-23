@@ -24,6 +24,9 @@
 \newtheorem{prop}{Proposition}
 \renewcommand{\HOLConst}[1]{{\textsf{\upshape\small #1}}}
 \renewcommand{\HOLinline}[1]{\ensuremath{#1}}
+\renewcommand{\HOLFieldName}[1]{\HOLConst{#1}}
+\renewcommand{\HOLTokenLeftrec}{\ensuremath{\langle\!\langle}}
+\renewcommand{\HOLTokenRightrec}{\ensuremath{\rangle\!\rangle}}
 \newcommand{\holthmenv}[1]{\begin{array}[t]{l}#1\end{array}}
 \renewcommand{\HOLKeyword}[1]{\texttt{#1}}
 \renewcommand{\HOLTokenBar}{\mbox{$|$}}
@@ -191,7 +194,7 @@ A model for modal logic is a frame together with a function called \HOLtm{valt},
   \HOLthm{chap1.datatype_model}
 \end{holmath}
 \end{defn}
-Here the $<| \ |>$ is the notation for defining a structure. When we say an $(\alpha,\beta)$-model, we mean a model for $\alpha$-formulas with a $\beta$-set as its underlying set.
+Here the $\HOLTokenLeftrec\cdots\HOLTokenRightrec$ is the notation for defining a structure. When we say an $(\alpha,\beta)$-model, we mean a model for $\alpha$-formulas with a $\beta$-set as its underlying set.
 HOL4 identifies a set with elements of type $\alpha$ and their characteristic function as the subset of the set of all the terms of type $\alpha$, denoted as \HOLtm{univ(:α)} in HOL4. So an $\alpha$-set is the same as the function that takes an term $a$ of $\alpha$ and give the truth value $\sf T$ if and only if $a$ is in the set, and hence is of type $\alpha\to bool$. 
 Note that in an $(\alpha,\beta)$-model \HOLtm{M}, \HOLtm{M.valt} is a function takes a propositional letter $p$ of type $\alpha$ and $w$ of type $\beta$, and give a truth value. It can be regarded as assigning each propositional letter $p$ an assignment of truth value on terms of type $\beta$, where a term $w$ of type $\beta$ is assigned to \HOLtm{T} if and only if \HOLtm{M.valt p w}. Alternatively, it can be regarded as assigning each term $w$ of type $\beta$ an assignment of truth value on terms of type $\alpha$, where a term $p$ of type \HOLtm{α} is assigned to \HOLtm{T} if and only if \HOLtm{M.valt p w}. But as we will see soon, we will always only care about the values we are assign to the terms of type $\beta$ which is in the world set. For a model \HOLtm{M}, \HOLtm{M.valt} will be called \emph{valuation} in the discussion afterwards.  
 In the rest of the thesis, we use the notation \HOLtm{M.frame.world}, \HOLtm{M.frame.rel} and \HOLtm{M.valt} to denote the world set, the relation, and the valuation of the model. 

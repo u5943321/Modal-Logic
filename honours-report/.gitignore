@@ -9,3 +9,5 @@ report.pdf
 *.blg
 *.aux
 munge.exe
+*.toc
+holtexbasic.sty
