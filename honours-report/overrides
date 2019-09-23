@@ -56,11 +56,11 @@ vst 1 \ensuremath{v\sb{*}}
 (Mr1) 3 \ensuremath{\longrightarrow\sb{
 (Mr2) 0 }}
 (Mrr1) 3 \ensuremath{\longrightarrow\sb{
-(Mrr2) 1 /
-(Mrr3) 0 }}
+(Mrr2) 1 \mid\sb{
+(Mrr3) 0 }}}
 (Mrrrtc1) 3 \ensuremath{\longrightarrow\sb{
-(Mrrrtc2) 1 /
-(Mrrrtc3) 0 }\sp{*}}
+(Mrrrtc2) 1 \mid\sb{
+(Mrrrtc3) 0 }}\sp{*}}
 (Mv) 1 \ensuremath{\sp{V}}
 (forces1) 1 ,
 (forces2) 1 \ensuremath{\Vdash}
