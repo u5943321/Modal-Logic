@@ -45,6 +45,7 @@ DIFF 1 \ensuremath{\setminus}
 SET_TO_LIST 4 \ensuremath{\HOLConst{toList}}
 lit_list_to_form2 5 l2f
 lit_list_to_form 5 ll2f
+DIAM 1 \ensuremath{\Diamond}
 
 Mst 1 \ensuremath{\mathfrak{M}\sb{*}}
 Nst 1 \ensuremath{\mathfrak{N}\sb{*}}
@@ -53,6 +54,8 @@ vst 1 \ensuremath{v\sb{*}}
 σm 1 \ensuremath{\sigma\sb{\mathfrak{M}}}
 σn 1 \ensuremath{\sigma\sb{\mathfrak{N}}}
 (Mw) 1 \ensuremath{\sp{W}}
+(Mr) 1 \ensuremath{\sp{R}}
+
 (Mr1) 3 \ensuremath{\longrightarrow\sb{
 (Mr2) 0 }}
 (Mrr1) 3 \ensuremath{\longrightarrow\sb{
@@ -66,5 +69,113 @@ vst 1 \ensuremath{v\sb{*}}
 (forces2) 1 \ensuremath{\Vdash}
 (nforces1) 1 ,
 (nforces2) 1 \ensuremath{\not\Vdash}
-L1tau 2 \ensuremath{{\cal L}^1_\tau}
+(UPM1) 1 \Pi\sb{ 
+(UPM2) 0 }
+
+(meq1) 1 \equiv\sb{
+(meq2) 0 }
+
+(upr1) 1 \sim\sb{
+(upr2) 0 }\sp{ 
+(upr3) 0 }
+
+(uprr1) 1 \sim\sb{
+(uprr2) 0 }\sp{ 
+(uprr3) 0 }
+
+(ptt) 1 /
+
+L1tau 2 \ensuremath{{\mathcal L}^1_\tau}
 : 1 {:}
+
+models2worlds 6 worlds
+folmodels2Doms 4 Doms
+
+(cp1) 1 \Pi\sb{j \in 
+(cp2) 0 }
+(cp3) 1 \sb{j}
+
+(disj) 1 \ensuremath{\lor}
+
+(ad) 1 \ensuremath{\land}
+
+(rst1) 0 {
+(rst2) 0 }\ensuremath{\mid}\sb{
+(rst3) 0 }
+
+VAR 1 V
+
+(mdeq1) 1 ,
+(mdeq2) 1 \ensuremath{\leftrightsquigarrow}
+(mdeq3) 1 ,
+
+(gsm) 1 \ensuremath{\rightarrowtail}
+
+(hom1) 0 \overset{
+(hom2) 0 }\to
+
+
+(bisim1) 0 \overset{
+(bisim2) 0 }\leftrightarroweq
+
+(bw1) 1 ,
+(bw2) 1 \ensuremath{\leftrightarroweq}
+(bw3) 1 ,
+
+BIGUNION 1 \ensuremath{\bigcup}
+BIGINTER 1 \ensuremath{\bigcap}
+
+(nbw1) 1 ,
+(nbw2) 0 \overset{
+(nbw3) 0 }\leftrightarroweq\sb{ 
+(nbw4) 0 }
+(nbw5) 1 ,
+
+heightLE 6 \ensuremath{{\sf height}\sb{\le}}
+
+fV 1 \ensuremath{{\sf V}\sb{f}}
+Fn 1 \ensuremath{{\sf Fn}\sb{f}} 
+FALL 1 \ensuremath{{\forall}\sb{f}}
+(prd1) 2 \ensuremath{{\sf P}\sb{f} \ }
+(prd2) 1 { \ }
+(prd3) 1 {}
+fFALSE 1 \ensuremath{\bot\sb{f}}
+fNOT 1 \ensuremath{{\lnot}\sb{f}} 
+(fdisj) 1 \ensuremath{\ {\lor}\sb{f} \ }
+(fad) 1 \ensuremath{\ {\land}\sb{f} \ }
+fEXISTS 1 \ensuremath{{\exists}\sb{f}}
+True 1 \ensuremath{{\top}\sb{f}} 
+fR 1 \ensuremath{{\sf R}\sb{f}}
+
+(cs1) 1 m\sb{\Diamond}(
+(cs2) 1 )
+
+(os1) 1 m\sp{\delta}\sb{\Diamond}(
+(os2) 1 )
+
+(uer1) 0 {}\sp{ue}{
+(uer2) 1 }\sp{R}
+
+(ue1) 0 {}\sp{ue}{
+(ue2) 1 }
+
+(pf1) 1 \pi\sb{
+(pf2) 0 }\sp{
+(pf3) 0 }
+
+(sim1) 0 \underline{\overset{
+(sim2) 1 }{\to}}
+
+(fev1) 1 ,
+(fev2) 1 \ensuremath{\vDash}
+
+(bmi1) 0 \overset{
+(bmi2) 0 }\twoheadrightarrow
+
+(M3) 1 \ensuremath{\mathfrak{M}\sb{3}}
+
+(st1) 2 {\sf ST}\sb{
+(st2) 1 }
+
+(fst1) 1 ,
+(fst2) 1 \ensuremath{\vDash}
