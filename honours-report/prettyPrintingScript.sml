@@ -1040,6 +1040,16 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 	                  pp_elements = [TOK "(fst1)", TM,
 	                                 TOK "(fst2)", BreakSpace (1,2)],
 	                  term_name = "fst", paren_style = OnlyIfNecessary}
+
+
+Overload UPMM = ``\U MS. ultraproduct_model U (J:α -> bool) MS`` 
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Closefix, pp_elements = [TOK "(UPMM1)", TM, TOK "(UPMM2)"], 
+                  term_name = "UPMM", paren_style = OnlyIfNecessary}
+
+
+
 val _ = export_theory();
 
 

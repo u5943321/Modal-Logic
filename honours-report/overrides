@@ -69,7 +69,7 @@ vst 1 \ensuremath{v\sb{*}}
 (forces2) 1 \ensuremath{\Vdash}
 (nforces1) 1 ,
 (nforces2) 1 \ensuremath{\not\Vdash}
-(UPM1) 1 \Pi\sb{ 
+(UPM1) 1 {}^{\sf f}\Pi\sb{ 
 (UPM2) 0 }
 
 (meq1) 1 \equiv\sb{
@@ -133,19 +133,19 @@ BIGINTER 1 \ensuremath{\bigcap}
 
 heightLE 6 \ensuremath{{\sf height}\sb{\le}}
 
-fV 1 \ensuremath{{\sf V}\sb{f}}
-Fn 1 \ensuremath{{\sf Fn}\sb{f}} 
-FALL 1 \ensuremath{{\forall}\sb{f}}
-(prd1) 2 \ensuremath{{\sf P}\sb{f} \ }
+fV 1 \ensuremath{{}^{\sf f}{\sf V}}
+Fn 1 \ensuremath{{}^{\sf f}{\sf Fn}} 
+FALL 1 \ensuremath{{}^{\sf f}{\forall}}
+(prd1) 2 \ensuremath{{}^{\sf f}{\sf P} \ }
 (prd2) 1 { \ }
 (prd3) 1 {}
-fFALSE 1 \ensuremath{\bot\sb{f}}
-fNOT 1 \ensuremath{{\lnot}\sb{f}} 
-(fdisj) 1 \ensuremath{\ {\lor}\sb{f} \ }
-(fad) 1 \ensuremath{\ {\land}\sb{f} \ }
-fEXISTS 1 \ensuremath{{\exists}\sb{f}}
-True 1 \ensuremath{{\top}\sb{f}} 
-fR 1 \ensuremath{{\sf R}\sb{f}}
+fFALSE 1 \ensuremath{{}^{\sf f}\bot}
+fNOT 1 \ensuremath{{^{\sf f}}{\lnot}} 
+(fdisj) 1 \ensuremath{\ {}^{\sf f} {\lor} \ }
+(fad) 1 \ensuremath{\ {}^{\sf f}{\land} \ }
+fEXISTS 1 \ensuremath{ {}^{\sf f}{\exists}}
+True 1 \ensuremath{{}^{\sf f}{\top}} 
+fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 
 (cs1) 1 m\sb{\Diamond}(
 (cs2) 1 )
@@ -179,3 +179,6 @@ fR 1 \ensuremath{{\sf R}\sb{f}}
 
 (fst1) 1 ,
 (fst2) 1 \ensuremath{\vDash}
+
+(UPMM1) 1 \Pi\sb{ 
+(UPMM2) 0 }
