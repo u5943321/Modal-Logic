@@ -475,7 +475,7 @@ For a finite $\alpha$-set $s$, if $\beta$ is an infinite type, then for any natu
 \end{holmath}
 \end{lm}
 
-Here the `$// E\ \mu$' denotes the operation of taking the partition of the set \HOLtm[phi/f]{{f | DEG f <= n /\ prop_letters f ⊆ s\}} by the equivalence relation \HOLtm{equiv0 μ}, where $\mu$ denote the type $\beta$ itself. We require the assumption that $\beta$ is an infinite since we used Proposition \ref{2.2} when proving the proposition above.
+Here the `$\{\phi\mid {\sf DEG} \ \phi \le n \land {\sf prop\_letters \ \phi \subseteq }\ s\} / \equiv_{(:\beta)}$' is the of equivalence classes obtained by partitioning the set \HOLtm[phi/f]{{f | DEG f <= n /\ prop_letters f ⊆ s\}} by the equivalence relation $\equiv_{(:\beta)}$. We require the assumption that $\beta$ is an infinite since we used Proposition \ref{2.2} when proving the proposition above.
 
 
 Recall in the last chapter, we have seen that a bisimulation gives arise to modal equivalence, modal equivalence between worlds means satisfying exactly the same formulas', but when we are building a finite model for a formula $\phi$, we do not care about the satisfaction of any formula of degree above \HOLtm{DEG phi}, since such formula cannot affect the satisfaction of $\phi$. Therefore, we just need some relation such that related worlds satisfy the same modal formulas up to some degree $n$. It turns out that the notion of `finite approximation of bisimulation' is such a relation. For a `finite approximation of bisimulation up to depth $n$'. it is called an \emph{$n$-bisimulation}. Let \HOLtm[w1/w,M1/M]{w IN M.frame.world} and \HOLtm[w2/w',M2/M']{w' IN M'.frame.world}, $w_1$ and $w_2$ are $n$-bisimilar if there exists a sequence of relations $Z_n\subseteq \cdots\subseteq Z_0$ such that:

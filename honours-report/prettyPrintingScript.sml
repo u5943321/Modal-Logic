@@ -1097,6 +1097,12 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, pp_elements = [TOK "(UPMMN1)", TM, TOK "(UPMMN2)"], 
                   term_name = "UPMMN", paren_style = OnlyIfNecessary}
 
+Overload Emu = ``\s. s //E μ`` 
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Closefix, pp_elements = [TOK "(Emu1)", TM, TOK "(Emu2)"], 
+                  term_name = "Emu", paren_style = OnlyIfNecessary}
+
 val _ = export_theory();
 
 
