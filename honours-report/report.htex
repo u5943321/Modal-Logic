@@ -125,47 +125,37 @@ A reader will see evidence of the three slogans consecutively in this thesis. Th
 
 \section{HOL4 syntax}
 
-Inductive types: For inductive type, we write bars between the constructors of the type. An example will be shown soon. 
+Our theorem prover HOL4 is based on simple type theory. This makes the statements in HOL4 straightforward to be read in most of time. We can read off the conjunctions, disjunctions and implications in the statement directly. However, there are some special syntax for HOL4 which is worthwhile to be explained firstly. 
+\begin{itemize}
+\item Inductive types: When defining inductive types, we write bars between the constructors of the type.
 
-Record types: We use put the fields of a record type into `$\HOLTokenLeftrec\cdots \HOLTokenRightrec$'. 
+\item Record types: We put the fields of a record type into `$\HOLTokenLeftrec\cdots \HOLTokenRightrec$', and separate the fields using `:'. For instance, if define a type with `$\sf Mytype := \HOLTokenLeftrec\ \sf field1 := \cdots; field2 :=\cdots \HOLTokenRightrec$', where the `$\cdots$' will actually be a type. If $\sf Eg$ is of type $\sf Mytype$, we can write $\sf Eg.field1$ to get the $\sf field1$ of $\sf Eg$. 
 
-Quantification: When using quantifier in HOL4, we put a dot after the thing that we are quantifying on. For example, \HOLtm{!x. P x} reads `for all $x$, $P x$'  and \HOLtm{?x. P x} reads `exists an $x$ such that $P x$', where $P$ is a predicate. When quantifying over multiple things, we only write one quantifier at the very beginning. For example, `\HOLtm{!x y. R x y}' reads `for all $x$, for all $y$, we have $R x y$' and `\HOLtm{?x y. R x y}' reads `exists $x$ and $y$ such that $R x y$', where $R$ is a relation.
+\item Function application: Unless in what we write in common mathematical textbooks, when we apply a function $f$ of type $\alpha\to \beta$ on a term $a$ of type $\alpha$, we write $f \ a$ instead of $f(a)$. 
 
+\item $\lambda$-abstraction: We can use $\lambda$-abstraction to define functions. For instance, the function \HOLtm{\i. f i} is the same as the function $f$, since it means that `for each $i$, send $i$ to $f\ i$'. 
 
-Function application:
+\item Primitive recursive function: We can use primitive recursion to define functions from the type $num$ of natural numbers. That is, defining function by induction. We write \HOLtm{PRIM_REC x f}, where $f$ is of type $\alpha\to num\to\alpha$, for the function from $num$ to a type $\alpha$ defined by sending $0$ to $x$, and sending the successor \HOLtm{SUC m} of a natural number $n$ to \HOLtm{f (PRIM_REC x f m) m}. 
 
-$\lambda$-abstraction: 
-List: 
-
-\HOLtm{SET_TO_LIST}
-
-\HOLtm{SET}
-
-\HOLtm{LENGTH}
-
-\HOLtm{HD}
-
-\HOLtm{EL}
-
-\HOLtm{LAST}
-
-\HOLtm{MAP}
-
-Tookit of functions: 
-
-\HOLtm{MAP}
-
-\HOLtm{RESTRICT}
-
-\HOLtm{INFINITE}
+\item Quantification: When using quantifier in HOL4, we put a dot after the thing that we are quantifying on. For example, \HOLtm{!x. P x} reads `for all $x$, $P x$'  and \HOLtm{?x. P x} reads `exists an $x$ such that $P x$', where $P$ is a predicate. When quantifying over multiple things, we only write one quantifier at the very beginning. For example, `\HOLtm{!x y. R x y}' reads `for all $x$, for all $y$, we have $R x y$' and `\HOLtm{?x y. R x y}' reads `exists $x$ and $y$ such that $R x y$', where $R$ is a relation.
 
 
+\item Lists: There are some functions which deals with lists:
+\begin{itemize}
+\item \HOLtm{LENGTH}: The function \HOLtm{LENGTH} takes a list and give its length, which is a natural number.
 
-$bool$
+\item \HOLtm{HD}: The function \HOLtm{HD} takes a list and give the first member of it. 
+
+\item \HOLtm{EL}: The function \HOLtm{EL} takes a list, a natural number $n$, and give the $n$-th member of it.
+
+\item \HOLtm{LAST}: The function \HOLtm{LAST} takes a list and give the last member of it. 
+
+\item \HOLtm{MAP}: The function \HOLtm{MAP} takes a function of type $\alpha\to\beta$ and an $\alpha$-list $l$ and gives the $\beta$-list such that the $n$-th member is $f\ a$ where $a$ is the $n$-th member of $l$.
 
 
+\end{itemize}
 
-
+\end{itemize}
 
 \section{The basic setups}
 In our formalisation, we only consider the basic modal language, in which the only one primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or else in the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
@@ -238,14 +228,9 @@ For two modal formulas using the same type of propositional letters, we have the
 \begin{defn}[\holref{Equivalence}{IBCDNFrevised}{17}]
 If \HOLtm{phi1}, \HOLtm{phi2} are \HOLtm{α} formulas, \HOLtm{equiv0 (:β) phi1 phi2} means for every $(\beta,\alpha)$-model \HOLtm{M} and every world \HOLtm{w} in it, we have \HOLtm{satis  M w phi1 <=> satis M w phi2}.
 \begin{holmath}
-  \HOLthm[def,showtypes,(:'b)/μ]{prettyPrinting.ppequiv0_def}\\[3mm]
+  \HOLthm[def,showtypes,(:'b)/μ,width=70]{prettyPrinting.ppequiv0_def}\\[3mm]
 \end{holmath}
 \end{defn}
-%\begin{prop}[\texttt{equiv0_equiv_on}]
-%\begin{holmath}
-  %\HOLthm{IBCDNFrevised.equiv0_equiv_on}
-%\end{holmath}
-%\end{prop}
 
 A notable thing is that we need to refer to type of models when talking about equivalent of formulas. We are not allowed to omit the type parameter \HOLtm{(:β)} in the definition, since then there will be a type, namely the type of the underlying set of the models we are talking about, that only appears on the right hand side but not on the left hand side of the definition, which is not allowed in HOL4. Also we are not allowed to quantify over types, so it is also impossible to define the equivalence to be \HOLtm{!μ. equiv μ phi1 phi2}, where $\mu$ denotes a type. Therefore, because of such a specific problem in HOL4 (actually, in simple type theory), this definition is not encoding the equivalence in mathematical sense precisely, since when we mention equivalence of formulas in usual mathematical language, we are implicitly referring to the class of all models, but the constraint here bans us from talking about all models of all possible types at once. Such a constraint give arise to some problems in our formalization, as we will see in later chapters. 
 
@@ -289,7 +274,7 @@ By \HOLtm{SUBMODEL M1 M2}, we mean:
 \item For every world of \HOLtm{M1}, its valuation of propositional letters is exactly the same as that in \HOLtm{M2}.
 \end{itemize}
 \begin{holmath}
-  \HOLthm[def]{prettyPrinting.ppSUBMODEL_def}
+  \HOLthm[def,width=60]{prettyPrinting.ppSUBMODEL_def}
 \end{holmath}
 \end{defn}
 
@@ -299,7 +284,7 @@ It is not necessary that submodel construction preserves modal satisfaction. Alt
 
 \begin{defn}[\holref{Generated submodel}{chap2_1}{68}]
 \begin{holmath}
-  \HOLthm[def]{prettyPrinting.ppGENSUBMODEL_def}
+  \HOLthm[def,width=60]{prettyPrinting.ppGENSUBMODEL_def}
 \end{holmath}
 \end{defn}
 
@@ -489,7 +474,7 @@ Recall in the last chapter, we have seen that a bisimulation gives arise to moda
 Such a sequence of $Z_i$ is a family of relations indexed by natural numbers from $0$ to $n$. When the world set of \HOLtm{M1} has type $\beta$ and the world set of \HOLtm{M2} has type $\gamma$, we encode such a family using functions $f:num\to \beta\to\gamma\to bool$. Such a function assigns each natural number a relation between terms of type $\beta$ and $\gamma$, so the \HOLtm{f i} is the relation $Z_i$ in the usual mathematical definition, and \HOLtm{nbisim M1 M2 f n w1 w2} means $w_1$ and $w_2$ are worlds in \HOLtm{M1} and \HOLtm{M2} respectively which are $n$-bisimilar via the family of relations given by $f$, as shown below. 
 \begin{defn}[\holref{$n$-bisimulation}{chap2_3}{1059}]
 \begin{holmath}
-  \HOLthm[def,M1/M,M2/M',w1/w,w2/w',v1/v,v2/v',u1/u,u2/u']{chap2_3.nbisim_def}
+  \HOLthm[def,M1/M,M2/M',w1/w,w2/w',v1/v,v2/v',u1/u,u2/u',width=60]{chap2_3.nbisim_def}
 \end{holmath} 
 \end{defn}
 
@@ -520,7 +505,7 @@ We define the actual height of a world $w$ to be the smallest natural number $n$
 
 
 Obviously, the root of any rooted model have height $0$. We are particularly interested in talking about heights in tree-like model. 
-%When \HOLtm{M} is tree-like, if \HOLtm{w IN M.frame.world} has height $n$, then any world \HOLtm{v IN M.frame.world} such that \HOLtm{M.frame.rel w v} will have height $n+1$.
+
 \begin{lm}[\holref{\texttt{tree_height_rel_lemma}}{chap2_3}{1673}]
 When \HOLtm{M} is tree-like, if \HOLtm{w IN M.frame.world} has height $n$, then any world \HOLtm{v IN M.frame.world} such that \HOLtm{M.frame.rel w v} will have height $n+1$.
 \begin{holmath}
@@ -530,11 +515,11 @@ When \HOLtm{M} is tree-like, if \HOLtm{w IN M.frame.world} has height $n$, then 
 
 
 The restriction of a rooted model \HOLtm{M} to the height $k$ is the submodel consisting of all the worlds in \HOLtm{M} of height up to $k$.
-% We define a function \HOLtm{hrestriction} that takes a rooted model \HOLtm{M} sitting in an ambient model \HOLtm{M'} together with a natural number $n$, and give the model obtained by restricting \HOLtm{M} to the height \HOLtm{n}. The restriction of a tree-like model to any height is again a tree-like model:
+
 \begin{defn}[\holref{Restriction a model up to some height}{chap2_3}{1442}]
 We define a function \HOLtm{hrestriction} that takes a rooted model \HOLtm{M} sitting in an ambient model \HOLtm{M'} together with a natural number $n$, and give the model obtained by restricting \HOLtm{M} to the height \HOLtm{n}.
 \begin{holmath}
-  \HOLthm[def,p/phi,w1/n1,w2/n2,w/n]{chap2_3.hrestriction_def}
+  \HOLthm[def,p/phi,w1/n1,w2/n2,w/n,width=60]{chap2_3.hrestriction_def}
 \end{holmath}
 \end{defn}
 
@@ -546,7 +531,10 @@ If we restrict a rooted model \HOLtm{M} to height $k$, then a world $w$ of heigh
 \end{holmath}
 \end{lm}
 \begin{proof}
-The $n$-bisimilar relation is give as \HOLtm{λn w1 w2. w1 = w2 /\ height M x M' w1 <= k - n}.
+The $n$-bisimilar relation is give as 
+\begin{holmath}
+\HOLtm{λn w1 w2. w1 = w2 /\ height M x M' w1 <= k - n}
+\end{holmath}.
 \end{proof}
 
 Now we can start building a finite model via selection:
@@ -557,7 +545,7 @@ Now we can start building a finite model via selection:
 \end{thm}
 
 \begin{proof}
-Suppose \HOLtm{satis M1 w1 phi} where $w_1$ is of type $\beta$ and $\phi$ is an $\alpha$-formula of degree $k$, then by Proposition \ref{3.5}, there exists a tree-like model \HOLtm{M2} with \HOLtm{phi} satisfied at its root \HOLtm{w2}. Such an \HOLtm{M2} has its world set of type $\beta\ list \to bool$, so all the lemmas proved before with a infinite universe assumption applies for any model with its world set a subset of \HOLtm{M2.frame.world} . Define \HOLtm{M3} $:=$ \HOLtm{hrestriction M2 w2 M2 k} to be the restriction of \HOLtm{M2} to height $k$, then \HOLtm{M3} is rooted and we have \HOLtm{nbisim M3 M2 f k w2 w2} by Lemma \ref{4.3}, hence \HOLtm{satis M3 w2 phi}. By Proposition \ref{2.1}, if a propositional letter does not appear in $\phi$, then it has no effect to the satisfaction of $\phi$, so we can discard all the propositional letters in \HOLtm{M3} which does not occur in $\phi$ to obtain the model, by constructing a model \HOLtm{M'} whose world set and relation are both same as that of \HOLtm{M3}, and the valuation for any propositional letter which appears in \HOLtm{phi} is same as in \HOLtm{M3}, whereas for propositional letters which does not occur in \HOLtm{phi}, the valuation of \HOLtm{M3'} always assign them the truth value \HOLtm{F}. Such a model \HOLtm{M3'} looks like:
+Suppose \HOLtm{satis M1 w1 phi} where $w_1$ is of type $\beta$ and $\phi$ is an $\alpha$-formula of degree $k$, then by Proposition \ref{3.5}, there exists a tree-like model \HOLtm{M2} with \HOLtm{phi} satisfied at its root \HOLtm{w2}. Such an \HOLtm{M2} has its world set of type $\beta\ list \to bool$, so all the lemmas proved before with a infinite universe assumption applies for any model with its world set a subset of \HOLtm{M2.frame.world} . Define \HOLtm{M}${}_{3}:=$ \HOLtm{hrestriction M2 w2 M2 k} to be the restriction of \HOLtm{M2} to height $k$, then \HOLtm{M3} is rooted and we have \HOLtm{nbisim M3 M2 f k w2 w2} by Lemma \ref{4.3}, hence \HOLtm{satis M3 w2 phi}. By Proposition \ref{2.1}, if a propositional letter does not appear in $\phi$, then it has no effect to the satisfaction of $\phi$. By discarding all the propositional letters in \HOLtm{M3} which does not occur in $\phi$, we obtain the model \HOLtm{M3'}, which looks like:
 \begin{holmath}
 \HOLtm{M3' =
    <| frame := <| world := M3.frame.world ;
@@ -565,43 +553,38 @@ Suppose \HOLtm{satis M1 w1 phi} where $w_1$ is of type $\beta$ and $\phi$ is an 
                 |>;
        valt := \p v. if ((VAR p) IN (subforms phi)) then (M3.valt p v) else F |>}
 \end{holmath}
-, and still have \HOLtm{satis M3' w2 phi}. We will select a finite model inductively from \HOLtm{M3'}.
+. We still have \HOLtm{satis M3' w2 phi}. We will select a finite model inductively from \HOLtm{M3'}.
 
-Let $s$ denote the set of propositional letters used by $\phi$, so $s$ is finite. By Lemma \ref{4.1}, there are only finitely many non-equivalent formulas of degree less or equal to $k$ which only use propositional letters in $s$, that is, the set $\Delta=$ \HOLtm[phi/f]{{f | DEG f <= k /\ prop_letters f ⊆ s\}//E μ} is a finite. We care about the equivalence classes in $\Delta$ which are equivalence classes of formulas starting with a $\Diamond$. For such a equivalence class, taking the intersection with the set \HOLtm{{d | ?d0. d = DIAM d0\}} does not give the empty set. Take the image of $\Delta$ under the function \HOLtm{\s. s ∩ {d | ?d0. d = DIAM d0\}} and delete the empty set from the image, we obtain a set $fs$ of sets of formulas, where for each $x\in fs$, $x$ consists of equivalent formulas of degree less or equal to $k$, only use propositional letters in $s$, and start with diamond. For each $x\in fs$, we choose a representative from $x$ using the choice function, and collect these representatives into the set  
-$rs:=$ \HOLtm{IMAGE CHOICE 
-                             ((IMAGE 
-                               (\s. s INTER {d | ?d0. d = DIAM d0\})
-                               Δ) 
-                               DELETE {\})}. The set $rs$ is finite as the image of a finite set. 
+Let $s$ denote the set of propositional letters used by $\phi$, so $s$ is finite. By Lemma \ref{4.1}, there are only finitely many non-equivalent formulas of degree less or equal to $k$ which only use propositional letters in $s$, that is, the set $\Delta=$ \HOLtm[phi/f]{{f | DEG f <= k /\ prop_letters f ⊆ s\}//E μ} is a finite. We care about the equivalence classes in $\Delta$ which are equivalence classes of formulas starting with a $\Diamond$. For such equivalence classes, taking the intersection with the set $\Gamma:=$\HOLtm{{phi | ?phi0. phi = DIAM phi0\}} does not give the empty set. Take the image of $\Delta$ under the function \HOLtm{\s. s ∩ Γ} and delete the empty set from the image, we obtain a set $\Sigma$ of sets of formulas, where for each set $\phi s\in \Sigma$, $\phi s$ consists of equivalent formulas of degree less or equal to $k$, only use propositional letters in $s$, and start with diamond. For each $\phi s\in \Sigma$, we choose a representative from $\phi s$ using the choice function, and collect these representatives into the set  
+$R:= {\sf IMAGE} \ {\sf CHOICE} \ (\{s\cap \Gamma \mid s \in \Delta\}\setminus \{\emptyset\}) $.  The set $R$ is finite as the image of choice function of a finite set. 
 
-We will construct sets $S_0,\cdots, S_k$ of worlds in \HOLtm{M3'}, where the points in $S_n$ have height $n$. Start with $S_0:=\{w_2\}$, and inductively, assume $S_0,\cdots, S_n$ has been defined, construct $S_{n+1}$ as follows: Consider an element in $v\in S_n$, for each $\Diamond \phi\in rs$ such that \HOLtm{satis M3' w2 (DIAM phi)}, pick a world \HOLtm{u IN M3'.frame.world} such that \HOLtm{M3'.frame.rel v u} and \HOLtm{satis M3' u phi}. Do the same thing to all the $v\in S_n$, then take $S_{n+1}$ as the set of all the such $u$'s which are selected in this way. 
+We will construct sets $S_0,\cdots, S_k$ of worlds in \HOLtm{M3'}, where the worlds in $S_n$ have height $n$. Start with $S_0:=\{w_2\}$, and inductively, assume $S_0,\cdots, S_n$ has been defined, construct $S_{n+1}$ as follows: Consider an element in $v\in S_n$, for each $\Diamond \phi\in R$ such that \HOLtm{satis M3' w2 (DIAM phi)}, pick a world \HOLtm{u IN M3'.frame.world} such that \HOLtm{M3'.frame.rel v u} and \HOLtm{satis M3' u phi}. Do the same thing to all the $v\in S_n$, then take $S_{n+1}$ as the set of all the such $u$'s which are selected in this way. 
 
-To formalise the definition of such $S_i$'s, we define a primitive recursive function $ss:=$ \begin{holmath}
-\HOLtm[alltt,width=95]{PRIM_REC {w2\}
+To formalise the definition of such $S_i$'s, we define a primitive recursive function $Sn$ as:
+
+\begin{holmath}
+\HOLtm[alltt,width=70]{Sn = PRIM_REC {w2\}
                  (\s0:β list set n. 
-                      {CHOICE uset |
+                      {CHOICE us |
 	              ?phi v. satis M3' v (DIAM phi) /\ 
 	              ((DIAM phi) IN 
-                       (IMAGE CHOICE 
-                             ((IMAGE 
-                               (\s. s INTER {d | ?d0. d = DIAM d0\})
-                               Δ) 
-                               DELETE {\})) /\
+                       R /\
                       v IN s0 /\
-		      uset = { u | M3'.frame.rel v u /\ u IN M3'.frame.world /\
+		      us = { u | M3'.frame.rel v u /\ u IN M3'.frame.world /\
 		                   satis M3' u phi\})\})
 }
 \end{holmath}
-For each $i\le k$, $ss\ i$ will be our $S_i$. By induction on $i$, we can prove each $ss\ i$ is finite, so the set $W4 := \bigcup_i \{ss\ i\mid i \le k\}$ is finite. The resultant finite model we select is: 
+For each $i\le k$, $Sn \ i$ will be our $S_i$. By induction on $i$, we can prove each $ss\ i$ is finite, so the set $W4 := \bigcup_i \{Sn\ i\mid i \le k\}$ is finite. The resultant finite model we select is: 
 
 \begin{holmath}
 \HOLtm{M4 = <| frame:= <| world := W4;
                                   rel := M3.frame.rel |>;
 		        valt:= M3'.valt |>}.
 \end{holmath}
-To prove \HOLtm{satis M4 w2 phi}, it suffices to give a $k$-bisimulation between \HOLtm{M4} and \HOLtm{M3'} relating $w2$ to itself. Such a $k$-bisimulation can be given as: 
+To prove \HOLtm{satis M4 w2 phi}, it suffices to give a $k$-bisimulation between \HOLtm{M4} and \HOLtm{M3'} relating $w_2$ to itself. 
+Such a $k$-bisimulation can be given as: For \HOLtm{a1 IN M4.frame.world} and \HOLtm{a2 IN M3.frame.world}, $a_1$ is related by the $n$-th relation in the $k$-bisimulation if and only if $a_1$ and $a_2$ satisfies the same modal formulas up to degree $n$ as worlds in \HOLtm{M3}. The relation in HOL4 looks like:
 \begin{holmath}
-\HOLtm[alltt,width=120]{\n a1 a2. a1 IN M4.frame.world /\ a2 IN M3'.frame.world /\
+\HOLtm[alltt,width=70]{\n a1 a2. a1 IN M4.frame.world /\ a2 IN M3'.frame.world /\
                  height M3' w2 M3' a1 = height M3' w2 M3' a2 /\
 		 height M3' w2 M3' a1 <= k - n /\
                  (!phi. (DEG phi <= n /\ prop_letters phi ⊆ s)
@@ -613,7 +596,7 @@ The rest of the proof amounts to check the above indeed gives a $k$-bisimulation
 In the proof above, note that what we do to capture indexing of set: A family of set indexed by $J$ is a function that takes an element in $J$ and gives a set. Here in our case, the $S$'s are indexed by natural numbers, so to define the family $S_n$ for $0\le n\le k$, we use the function $ss$ which take the index and gives the actual set indexed by it. We will treat indexing similarly afterwards. 
 
 
-As we took a detour through Proposition \ref{3.5}, this construction of finite model changes the type of model. If we start with an $(\alpha,\beta)$-model, then the finite model we build by selection will be a $(\alpha,\beta \ list)$-model. If we want to obtain a finite model without changing the type of the model, it can be done by using filtration. 
+As we took a detour through Proposition \ref{3.5}, this construction of finite model changes the type of model. If we start with an $(\beta,\alpha)$-model, then the finite model we build by selection will be a $(\beta \ list,\alpha)$-model. If we want to obtain a finite model without changing the type of the model, it can be done by using filtration. 
 
 
 \chapter{Reaching out to the world of first order logic}
@@ -838,7 +821,7 @@ The m-saturated models are useful because it is another kind of models that make
 \begin{prop}[\holref{\texttt{prop_2_54_DIST_TYPE}}{chap2_5}{136}]\label{5.7}
 For two worlds $w_1$ and $w_2$ living in m-saturated models \HOLtm{M1} and \HOLtm{M2} respectively, if $w_1$ and $w_2$ are modal equivalent, then they are bisimilar.
 \begin{holmath}
-  \HOLthm[M1/M,M2/M',w1/w,w2/w']{prettyPrinting.ppprop_2_54_DIST_TYPE}
+  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=60]{prettyPrinting.ppprop_2_54_DIST_TYPE}
 \end{holmath}
 \end{prop}
 
@@ -859,7 +842,7 @@ As its name suggests, an ultrafilter is a special kind of filter.
 \begin{defn}[\holref{Filter}{ultrafilter}{18}]
  Given a non-empty set $J$, a set $L$ which is a subset of the power set of $J$, is called a filter if it contains $J$ itself, closed under binary intersection, and is closed upward. 
 \begin{holmath}
-  \HOLthm[def,L/FLT,J/W]{ultrafilter.filter_def}
+  \HOLthm[def,L/FLT,J/W,width=60]{ultrafilter.filter_def}
 \end{holmath}
 \end{defn}
 Note that by induction, closure under binary intersection implies closure under any finite intersection.
@@ -1008,7 +991,11 @@ In a countably incomplete ultrafilter $U$ on $J$, we can find a chain $J=J_0\sup
 \end{holmath}
 \end{prop}
 \begin{proof}
-By definition of countably incompleteness, there exists a family $X_n$ in $U$ indexed by natural numbers such that $\bigcap_{n\in \mathbb N}X_n=\emptyset$. Define $K_n:=\bigcap_{m\le n}X_n$. In HOL4, the family $K_n$ is defined recursively as the function \HOLtm{ PRIM_REC (X 0) (\Xn n. Xn ∩ (X (n + 1)))}. We get the desired chain $J_n$ by inserting $J$ at the begining of $K_n$.
+By definition of countably incompleteness, there exists a family $X_n$ in $U$ indexed by natural numbers such that $\bigcap_{n\in \mathbb N}X_n=\emptyset$. Define $K_n:=\bigcap_{m\le n}X_n$. In HOL4, the family $K_n$ is defined recursively as the function 
+\begin{holmath}
+\HOLtm{ PRIM_REC (X 0) (\Xn n. Xn ∩ (X (n + 1)))}
+\end{holmath}. 
+We get the desired chain $J_n$ by inserting $J$ at the begining of $K_n$.
 \end{proof}
  
 
@@ -1253,24 +1240,24 @@ In the definition of relation and valuation of ultraproduct modal model, the occ
 
 
 The critical result we will need about ultraproduct on modal models is a modal version of the fundamental theorem of ultraproducts, which is also called \L o\'s's theorem. 
-\begin{thm}[\holref{\texttt{Los_modal_thm}}{ultraproduct}{193}]
+\begin{thm}[\holref{\texttt{Los_modal_thm}}{ultraproduct}{193}]\label{6.3}
 The modal version of \L o\'s's theorem states that for $U$ a ultrafilter on $J$, and \HOLtm{MS} a family of models, on the ultraproduct of this family of models on $U$, a modal formula is satisfied at a equivalence class $fc$ if and only if there exists a function $f \in fc$ such that the set of elements $j$ in $J$ such that  \HOLtm{satis (MS j) (f j) phi} is in $U$.
 \begin{holmath}
   \HOLthm[MS/Ms,j/i]{ultraproduct.Los_modal_thm}
 \end{holmath}
 \end{thm}
 \begin{proof}
-  Given an ultrafilter $U$ on $J$ and a family \HOLtm{MS} of models. We proceed by induction on \HOLtm{phi}, the base case for \HOLtm{phi = VAR p} is directly by definition, and the case for \HOLtm{phi = FALSE} is by the fact that the empty set is not in the ultrafilter. The boolean cases are by basic property of ultrafilters. We only spell out the proof for diamond case. The induction hypothesis gives for any equivalence \HOLtm{fc} in the ultraproduct, we have 
+  Given an ultrafilter $U$ on $J$ and a family \HOLtm{MS} of modal models. We proceed by induction on \HOLtm{phi}, the base case for \HOLtm{phi = VAR p} is directly by definition, and the case for \HOLtm{phi = FALSE} is by the fact that the empty set is not in the ultrafilter. The boolean cases are by basic property of ultrafilters. We only spell out the proof for diamond case. The induction hypothesis gives for any equivalence \HOLtm{fc} in the ultraproduct, we have 
 \begin{holmath}
-\HOLtm{(satis (ultraproduct_model U J MS) fc phi ⇔
+\HOLtm{(satis (ultraproduct_model U (J:α-> bool) MS) fc phi ⇔
              ∃f. f ∈ fc ∧ {j | j ∈ J ∧ satis (MS j) (f j) phi\} ∈ U)}
 \end{holmath}
 Given a world $fc$ in \HOLtm{(ultraproduct_model U J MS)}, we will prove 
 \begin{holmath}
-\HOLtm{satis (ultraproduct_model U J MS) fc (◇ phi) ⇔
+\HOLtm{satis (ultraproduct_model U (J:α -> bool) MS) fc (◇ phi) ⇔
         ∃f. f ∈ fc ∧ {j | j ∈ J ∧ satis (MS j) (f j) (◇ phi)\} ∈ U}
 \end{holmath}
-Left to right: Assume the left hand side, then there is an equivalence class $gc$ that is related to \HOLtm{fc} and satisfied \HOLtm{phi}. Suppose the equivalence class $gc$ is represented by a function $g$, and $fc$ is represented by the function $f$. We check the $f$ can be taken as our $f$ as above. By defination of satisfaction, our task is to check the set 
+Left to right: Assume the left hand side, then there is an equivalence class $gc$ that is related to \HOLtm{fc} and satisfied \HOLtm{phi}. Suppose the equivalence class $gc$ is represented by a function $g$, and $fc$ is represented by the function $f$. We check the $f$ required above can be taken as our $f$ as above. By defination of satisfaction, our task is to check the set 
 \begin{holmath}
 \HOLtm[alltt,width=95]{A={j |
          j ∈ J ∧ 
@@ -1279,7 +1266,7 @@ Left to right: Assume the left hand side, then there is an equivalence class $gc
              satis (MS j) v phi\}} 
 \end{holmath}
 is in $U$.
-By inductive hypothesis, the fact that \HOLtm{phi} is satisfied at $gc$ implies the existence of an element $x$ in \HOLtm{gc} such that \HOLtm{ {j | j IN J /\ satis (MS j) (x j) phi\}} is in $U$, but as \HOLtm{Uequiv} is an equivalence relation, this implies \HOLtm{ {j | j IN J /\ satis (MS j) (g j) phi\}} is in $U$. As we can check: Since $x$ and $g$ lives in the same equivalence class, \HOLtm{{j | j IN J /\ g j = x j\}} is in $U$. As ultrafilters are closed under finite intersection, \HOLtm[alltt,width=90]{{j | j IN J /\ g j = x j\} ∩ {j | j IN J /\ satis (MS j) (x j) phi\}} is in $U$, this is a subset of  \HOLtm{ {j | j IN J /\ satis (MS j) (g j) phi\}}, hence by upward closure, the result follows. As $fc$ and $gc$ is related, there exists representatives $f' \in fc, g' \in gc$ such that \HOLtm{{j | j IN J /\ (MS j).frame.rel (f' j) (g' j)\}} is in $U$. By a same procedure of checking independence of representatives, we can show that the set \HOLtm{{j | j IN J /\ (MS j).frame.rel (f j) (g j)\}} is in $U$. Hence the intersection \HOLtm{{j | j IN J /\ (MS j).frame.rel (f j) (g j)\} ∩ {j | j IN J /\ satis (MS j) (g j) phi\}} is in $U$. As our $A$ is a supset of this set, $A$ is in $U$ as well.
+By inductive hypothesis, the fact that \HOLtm{phi} is satisfied at $gc$ implies the existence of an element $x$ in \HOLtm{gc} such that \HOLtm{ {j | j IN J /\ satis (MS j) (x j) phi\}} is in $U$, but as \HOLtm{Uequiv U J (models2worlds MS)} is an equivalence relation, this implies \HOLtm{ {j | j IN J /\ satis (MS j) (g j) phi\}} is in $U$. As we can check: Since $x$ and $g$ lives in the same equivalence class, \HOLtm{{j | j IN J /\ g j = x j\}} is in $U$. As ultrafilters are closed under finite intersection, \HOLtm[alltt,width=90]{{j | j IN J /\ g j = x j\} ∩ {j | j IN J /\ satis (MS j) (x j) phi\}} is in $U$, this is a subset of  \HOLtm{ {j | j IN J /\ satis (MS j) (g j) phi\}}, hence by upward closure, the result follows. As $fc$ and $gc$ are related, there exists representatives $f' \in fc, g' \in gc$ such that \HOLtm{{j | j IN J /\ (MS j).frame.rel (f' j) (g' j)\}} is in $U$. By a same procedure of checking independence of representatives, we can show that the set \HOLtm{{j | j IN J /\ (MS j).frame.rel (f j) (g j)\}} is in $U$. Hence the intersection \HOLtm{{j | j IN J /\ (MS j).frame.rel (f j) (g j)\} ∩ {j | j IN J /\ satis (MS j) (g j) phi\}} is in $U$. As our $A$ is a supset of this set, $A$ is in $U$ as well.
 
 Right to left: Suppose there is an $f\in fc$ such that
 \begin{holmath}
@@ -1295,11 +1282,10 @@ Right to left: Suppose there is an $f\in fc$ such that
           satis (MS j) v phi) then CHOICE {v | (MS j).frame.rel (f j) v /\ v IN (Ms j).frame.world /\ satis (MS j) v phi\}
 	  else CHOICE (MS j).frame.world}
 \end{holmath}
-checking this is the correct representative is tedious, but just routine, using representative independence and the property of \HOLtm{CHOICE} function. 
 
 \end{proof}
 
-In the case that we are taking the ultraproduct of a constant family of models with \HOLtm{MS j = M} for all $j\in J$, we get an ultrapower of \HOLtm{M}. Specialsing \texttt{Los_modal_thm} to the case of ultrapowers yields:
+In the case that we are taking the ultraproduct of a constant family of models with \HOLtm{MS j = M} for all $j\in J$, we get an ultrapower of \HOLtm{M}. Specialsing Theorem \ref{6.3} to the case of ultrapowers yields:
 \begin{coro}[\holref{\texttt{prop_2_71}}{ultraproduct}{490}]
 The map sends a world \HOLtm{w IN M.frame.world} to the equivalence class represents by constant function at $w$ embeds the model \HOLtm{M} to its ultrapower on $U$, with the corresponding points satisfy the same modal formulas. 
 \begin{holmath}
@@ -1333,18 +1319,6 @@ Here we fix the representative for each equivalence class $fc$ to be \HOLtm{CHOI
 
 Recall the discussion in a previous section, the \HOLtm{wffm M} here is just a well-formedness assumption that saying the functions in \HOLtm{M} never sends a list out of the domain of \HOLtm{M}. We will include such an assumption throughout our discussion of semantical behavior of first order ultraproduct models. We firstly ask where are first order terms evaluated to by \HOLtm{termval}. 
 
-%For an ultraproduct model of the family \HOLtm{MS} of first order models, a valuation $\sigma$ assigns each natural number an equivalence class in the ultraproduct of the world sets of the family, for each natural number \HOLtm{n}, pick \HOLtm{CHOICE (σ n)} as the representative of the equivalence class \HOLtm{σ n} assigned to $n$ by $\sigma$, then \HOLtm{CHOICE (σ n)} will be an element in the Cartesian product \HOLtm{Cart_prod J (folmodels2Doms MS)}, which means that for each \HOLtm{j IN J}, we have \HOLtm{((CHOICE (σ n)) j) IN (MS j).Dom}. Hence for each $j\in J$, the function defined on natural numbers that sends $n$ to \HOLtm{((CHOICE (σ n)) j)} is a valuation of the model \HOLtm{MS j}. For a term $t$, it will be evaluated to the equivalence class represented by the function that sends an element $j\in J$ to the element in \HOLtm{MS j} which we get by applying term evaluation on \HOLtm{t} in the model \HOLtm{MS j} using \HOLtm{\n. (CHOICE (σ n)) j} as assignment of free variables, in other words, such a representative function sends $j\in J$ to \HOLtm{termval (MS j) (\n. (CHOICE (σ n)) j) t}.
-
-
- %Recall the discussion in a previous section, the \HOLtm{wffm M} here is just a well-formedness assumption that saying the functions in \HOLtm{M} never sends a list out of the domain of \HOLtm{M}. We will include such an assumption throughout our discussion. 
-
-
- %A term $t$ will be sent to the equivalence class represented by the function defined as follows: 
-
-
-%Firstly, consider the function from $J$ defined as for any $j \in J$
-
-%for $j\in J$, the function that assigns a variable symbol $n$ to the representative of \HOLtm{σ n} evaluated at $i$ will be an assignment of variable symbols to elements in \HOLtm{FMS i}, and $i$ is sent to the element in \HOLtm{(FMS i).Dom} we will get by evaluating $t$ in \HOLtm{FMS i} using this assignment of variable symbols.
 \begin{thm}[\holref{\texttt{thm_A_19_i}}{ultraproduct}{632}]\label{6.5}
 For an ultraproduct model of the family \HOLtm{MS} of first order models, a valuation $\sigma$ assigns each natural number an equivalence class in the ultraproduct of the world sets of the family, for each natural number \HOLtm{n}, pick \HOLtm{CHOICE (σ n)} as the representative of the equivalence class \HOLtm{σ n} assigned to $n$ by $\sigma$, then \HOLtm{CHOICE (σ n)} will be an element in the Cartesian product \HOLtm{Cart_prod J (folmodels2Doms MS)}, which means that for each \HOLtm{j IN J}, we have \HOLtm{((CHOICE (σ n)) j) IN (MS j).Dom}. Hence for each $j\in J$, the function defined on natural numbers that sends $n$ to \HOLtm{((CHOICE (σ n)) j)} is a valuation of the model \HOLtm{MS j}. For a term $t$, it will be evaluated to the equivalence class represented by the function that sends an element $j\in J$ to the element in \HOLtm{MS j} which we get by applying term evaluation on \HOLtm{t} in the model \HOLtm{MS j} using \HOLtm{\n. (CHOICE (σ n)) j} as assignment of free variables, in other words, such a representative function sends $j\in J$ to \HOLtm{termval (MS j) (\n. (CHOICE (σ n)) j) t}.
 \begin{holmath}
@@ -1366,11 +1340,16 @@ For the ultraproduct of a family \HOLtm{MS} of first order models over an ultraf
 \end{thm}
 
 \begin{proof}
- By induction on \HOLtm{phi}. The base case for \HOLtm{fFALSE} comes from the fact that the empty set is not in an ultrafilter. The atomic case is a direct translation of its mathematical proof, which uses Theorem \ref{6.5}. The implication case is trivial from inductive hypothesis. We only spell out the proof for the case for universal quantifier. 
+ By induction on \HOLtm{phi}. The base case for \HOLtm{fFALSE} comes from the fact that the empty set is not in an ultrafilter. The atomic case is a direct translation of its mathematical proof, which uses Theorem \ref{6.5}. The implication case is trivial from inductive hypothesis. We only spell out the proof for the case for universal quantifier.
+ 
 From left to right, suppose \HOLtm{FALL n phi} is satisfied under a valuation \HOLtm{σ} in the ultraproduct model for \HOLtm{FMS}. We need \HOLtm[alltt,width=90]{{j | j ∈ J ∧ feval (FMS j) (λx. CHOICE (σ x) j) (FALL n phi)\} ∈
-                 U}. Suppose not, then as $U$ is an ultrafilter, \HOLtm[alltt,width=90]{B={j | j ∈ J ∧ feval (FMS j) (λx. CHOICE (σ x) j) (fEXISTS n (fNOT phi))\} IN U}. Use choice, define the function $f$ to send $j\in J$ to a chosen point in \HOLtm{(FMS j).Dom} where \HOLtm{phi} is not satisfied. Such a function in HOL looks like:
+                 U}. Suppose not, then as $U$ is an ultrafilter, the set
 \begin{holmath}
-\HOLtm[alltt,width=90,j/i]{f = \i. if 
+ \HOLtm[alltt,width=90]{B={j | j ∈ J ∧ feval (FMS j) (λx. CHOICE (σ x) j) (fEXISTS n (fNOT phi))\}}
+\end{holmath}
+which is the complement of $A$, is in $U$. Using choice, define the function $f$ to send $j\in J$ to a chosen point in \HOLtm{(FMS j).Dom} where \HOLtm{phi} is not satisfied. Such a function in HOL looks like:
+\begin{holmath}
+\HOLtm[alltt,width=70,j/i]{f = \i. if 
                   (∃a. a ∈ (FMS i).Dom ∧
                        ¬feval (FMS i) (λx. CHOICE (σ x) i)⦇n ↦ a⦈ phi) then 
                   (CHOICE {a | a ∈ (FMS i).Dom ∧ 
@@ -1379,9 +1358,16 @@ From left to right, suppose \HOLtm{FALL n phi} is satisfied under a valuation \H
 \end{holmath}
 .
 Then \HOLtm{{j | j IN J /\ 
-            ¬feval (FMS j) (λx. CHOICE (σ x) j)⦇n ↦ f j⦈ phi\} = B }, and hence  is in U. Then by the inductive hypothesis, we can show the equivalence class represented by $f$ does not satisfy \HOLtm{phi}, which contradicts our assumption. 
+            ¬feval (FMS j) (λx. CHOICE (σ x) j)⦇n ↦ f j⦈ phi\} = B }, and hence  is in U. By the inductive hypothesis, we can show the equivalence class represented by $f$ does not satisfy \HOLtm{phi}, which contradicts our assumption. 
 
-From right to left. It is straightforward to check \HOLtm[j/i]{{i | i ∈ J ∧ feval (FMS i) (λx. CHOICE (σ x) i) (FALL n phi)\}} is a subset of \HOLtm[j/i]{{i | i ∈ J ∧ feval (FMS i) (λx. CHOICE (σ⦇n ↦ a⦈ x) i) phi\}}, for any equivalence class $a$. So the assumption that former one is in $U$ implies the later one is in $U$, and we are done by the inductive hypothesis. 
+From right to left. It is straightforward to check 
+\begin{holmath}
+\HOLtm[j/i]{{i | i ∈ J ∧ feval (FMS i) (λx. CHOICE (σ x) i) (FALL n phi)\}}
+\end{holmath}
+ is a subset of
+\begin{holmath} 
+\HOLtm[j/i]{{i | i ∈ J ∧ feval (FMS i) (λx. CHOICE (σ⦇n ↦ a⦈ x) i) phi\}}
+\end{holmath}, for any equivalence class $a$. So the assumption that former one is in $U$ implies the later one is in $U$, and we are done by the inductive hypothesis. 
 
 \end{proof}
 
@@ -1390,47 +1376,38 @@ From right to left. It is straightforward to check \HOLtm[j/i]{{i | i ∈ J ∧ 
 \begin{coro}[\holref{\texttt{corollary_A_21}}{ultraproduct}{1556}]
 Any first order model \HOLtm{M} is embedded in its ultrapower on any ultrafilter $U$ on $J$ by sending a world to the equivalence class represented by the constant function on that world.
 \begin{holmath}
-  \HOLthm[J/I,j/i]{prettyPrinting.ppcorollary_A_21}
+  \HOLthm[J/I,j/i,width=70]{prettyPrinting.ppcorollary_A_21}
 \end{holmath}
 \end{coro}
 
 The above corollary is straightforward to prove once we get the following lemma:
 
-%Although the \L o\'s theorem proves above only gives us result when the representative is fixed using the choice function, in practice, we are able to freely apply the \L o\'s theorem regardless the choice of representatives. This is a consequence of the following result. 
 
-%The way we stated the \L o\'s theorem will looks not such satisfactory, since it seems to restrict us for the choice of representatives, but it is not. We can be very free with our choice of representatives, as indicated in the following result:
 \begin{lm}[\holref{\texttt{ultraproduct_rep_independence_lemma}}{ultraproduct}{1471}]
 Given a family \HOLtm{MS} of first order models indexed over $J$ and $U$ is an ultrafilter on $J$. Let \HOLtm{σ} be a valuation to the ultraproduct model of \HOLtm{MS} over \HOLtm{U}, then for a first order formula \HOLtm{phi}, if \HOLtm{rv} is a function that assigns each free variable $v$ in \HOLtm{phi} a representative in the equivalence class \HOLtm{σ v}, then for each \HOLtm{j IN J}, \HOLtm{\v. rv v j} will be a valuation. The set of elements $j$s in \HOLtm{J} such that \HOLtm{phi} holds in \HOLtm{MS j} under the valuation \HOLtm{(\v. CHOICE (σ v) j)} is in $U$ if and only if the set of elements $j$s in \HOLtm{J} such that \HOLtm{phi} holds in \HOLtm{MS j} under the valuation \HOLtm{(\v. rv v j)} is in $U$
 \begin{holmath}
   \HOLthm[v/x,J/I,j/i]{prettyPrinting.ppultraproduct_rep_independence_lemma}
 \end{holmath}
 If the index set $J$ is an $\alpha$-set and the world of models in \HOLtm{FMS} are of type $\beta$, then \HOLtm{rv} here is of type $num\to\alpha\to \beta$. 
-%For each natural number \HOLtm{v}, \HOLtm{σ v} is an equivalence class. The \HOLtm{rv} here assigns each variable symbol $v$ an element \HOLtm{rv v} in the equivalence class \HOLtm{σv v}. 
-\end{lm}
- 
-%If the world of models in \HOLtm{FMS} are of type $\beta$, then \HOLtm{rv} here is of type $num\to\beta$. For each natural number \HOLtm{v}, \HOLtm{σ v} is an equivalence class. The \HOLtm{rv} here assigns each variable symbol $v$ an element \HOLtm{rv v} in the equivalence class \HOLtm{σv v}. 
+
+\end{lm} 
 
 We will not show the proof of the above lemma since it actually amounts to check representative independence, which is of the same flavor of the second base case in the proof of \L o\'s's theorem.
 
-%With the help of \texttt{ultraproduct_rep_independence_lemma}, we can prove a classical corollary of \L o\'s theorem, which says any first order model \HOLtm{M} is embedded in its ultrapower on any ultrafilter $U$ on $J$ by sending a world to the equivalence class represented by the constant function on that world:
-
-%better explanation?
 
 The above `independence of representative' lemma is very helpful.  The lemma above enable us to be free of choice of representatives of equivalence classes in the ultraproduct when applying \L o\'s's theorem. 
 
-%In particular, it gives the following result, which says if we want to find a valuation of a ultraproduct model satisfying a first order formula $\phi$, instead of assigning equivalence classes to natural numbers directly, it suffices to assign representatives. 
-% each $v$ a suitable representative functions in the Cartesian product :
 \begin{prop}[\holref{\texttt{ultraproduct_suffices_rep}}{ultraproduct}{1643}]\label{6.9}
 If we want to find a valuation of a ultraproduct model satisfying a first order formula $\phi$, instead of assigning equivalence classes to natural numbers directly, it suffices to assign representatives. 
 \begin{holmath}
-  \HOLthm[J/I,j/i]{prettyPrinting.ppultraproduct_suffices_rep}
+  \HOLthm[J/I,j/i,width=70]{prettyPrinting.ppultraproduct_suffices_rep}
 \end{holmath}
 \end{prop}
 
 
 All the construction we done above serves to paving a way to getting a countably saturated model. The remaining task is to prove this lemma: 
 
-%nce we prove that for any family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is countably saturated, since we have already proved the existence of countably incomplete ultrafilters in interlude II, we will get some countably saturated models to use. Therefore, the remaining task is to prove this lemma: 
+
 \begin{lm}[\holref{\texttt{lemma_2_73}}{lemma2_73}{1085}]\label{6.10}
 For any family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is countably saturated. 
 \begin{holmath}
@@ -1448,7 +1425,7 @@ The first issue is to remove the expansion on the outmost layer. The key observa
   \HOLthm[def,phi/f]{lemma2_73.shift_form_def}
 \end{holmath}
 \end{defn}
-%Here we will need to prove the termination for the function \texttt{shift_term}. The termination relation is given by \HOLtm{measure (term_size o SND)}. %need to talk about termination?
+
 We can talk about the shifting construction only when we are considering an expansion of a model. If we expand a model by throwing in constants corresponds to elements in a set $A$, then the $n$ will be taken as \HOLtm{CARD A}. As an example, if \HOLtm{M'} obtained by expanding \HOLtm{M} by adding one constant corresponds to the point \HOLtm{a IN M.Dom}, then after the expansion, the formulas involves the term \HOLtm{Fn 0 []} makes sense to \HOLtm{M'}. If we do not want to work with expansion, given a formula where the only function symbol that may occur is \HOLtm{(0,0)}, then we can firstly add $1$ to any variable symbol that appear in the formula, and then replace any occurrence of \HOLtm{Fn 0 []} by \HOLtm{fV 0}. The formula \HOLtm{fR (Fn 0 []) (fV 0)} will become \HOLtm{fR (fV 0) (fV 1)}, and the formula \HOLtm{fDISJ (fP p (fV 1)) (fP q (fV 2))} will become \HOLtm{fDISJ (fP p (fV 2)) (fP q (fV 3))}. 
 
 
@@ -1465,11 +1442,7 @@ Continue with the previous example. Formerly, we can use the valuation \HOLtm{\n
 
 The shifting construction gives the desired semantic behavior on first order formulas:
 
-%In the following proposition, we see that if \HOLtm{M'} is a model we get by adding a bunch of constants corresponds to elements in a set $A$ to a model \HOLtm{M}, then for a first order formula \HOLtm{phi} such that the constants appear in \HOLtm{phi} can only be the ones that corresponds to element in $A$, \HOLtm{phi} is satisfied in \HOLtm{M} under valuation \HOLtm{σ} if and only if when we `shift away' all the constants in \HOLtm{phi} and shift the valuation \HOLtm{σ} accordingly, then the resultant formula will be satisfied on \HOLtm{M} under the shifted valuation.
 
-
-%the satisfaction of a first order formula with constants only corresponds to the functions added to   on is equivalent to the satisfaction
-%By `shifting away' function symbols in formulas with function symbols, we can talk get rid of taking about expansions. Recall our aim is to get rid of constants and hence avoid talking about expansion of models, the following proposition proves our construction does a good job:
 \begin{prop}[\holref{\texttt{expansion_shift_feval}}{lemma2_73}{382}]\label{6.11}
 If \HOLtm{M'} is a model we get by adding a bunch of constants corresponds to elements in a set $A$ to a model \HOLtm{M}, then for a first order formula \HOLtm{phi} such that the constants appear in \HOLtm{phi} can only be the ones that corresponds to element in $A$, \HOLtm{phi} is satisfied in \HOLtm{M} under valuation \HOLtm{σ} if and only if when we `shift away' all the constants in \HOLtm{phi} and shift the valuation \HOLtm{σ} accordingly, then the resultant formula will be satisfied on \HOLtm{M} under the shifted valuation.
 \begin{holmath}
@@ -1479,7 +1452,6 @@ If \HOLtm{M'} is a model we get by adding a bunch of constants corresponds to el
 
 The shifting construction get us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first model. To apply \L o\'s's theorem on such a model, we prove the ultraproduct construction on modal and first order models are equivalent on `good first order formulas' in the following sense: 
 
-%that if we take the ultraproduct of a family of modal models, if we view the resultant modal ultraproduct model as a first order model, this first order model will satisfies the same $\mathcal L_{\tau}^1$-formulas as the model we obtained by firstly view each modal model in the family as a first model, then take their ultraproduct as first order models. Moreover, for a family of first order models, if we take their first-order ultraproducts of them, the resultant model satisfies the same $\mathcal L_{\tau}^1$-formulas as the model we get by firstly regard this family as a family of modal models, take their ultraproduct as modal models, and then view the resultant ultraproduct modal model as a first order model.
 
 \begin{prop}[\holref{\texttt{ultraproduct_comm_feval}}{lemma2_73}{188}]\label{6.12}
 Take the ultraproduct of a family of modal models, if we view the resultant modal ultraproduct model as a first order model, this first order model will satisfies the same first order formulas without function symbols as the model we obtained by firstly view each modal model in the family as a first model, then take their ultraproduct as first order models.
@@ -1501,21 +1473,7 @@ For abbreviation, call a first model `nice' if the model only has unary predicat
 \end{holmath}
 \end{prop}
 
-%they are equivalent when we talk about formulas which makes sense to both of them. The capitability results are also witnesses of our success on construction of ultraproduct models. %recall function symbols does not make sense to modal models, so once modal models get involved, we cannot talk about constants anymore except in the case that we expand the model?
 
-%Firstly, if we start with a family of modal models and take their ultraproduct in modal sense, then turn the resultant model into a first order model, then this model satisfies the same well-formed formula as the model we get by firstly turning the family of modal models into a family of first order models, then apply the ultraproduct construction in first order sense.
-
-%Moreover, for a family of first order models, if we take their first-order ultraproducts of them, the resultant model satisfies the same $\mathcal L_{\tau}^1$-formulas as the model we get by firstly regard this family as a family of modal models, take their ultraproduct as modal models, and then view the resultant ultraproduct modal model as a first order model.
-
-
-
-
-%With the two lemmas above and  \texttt{corollary_A_21}, here is another version of the embedding lemma to ultraproduct models which will be:
-%\begin{prop}[\texttt{ultraproduct_mm2folm_folm2mm_comm_feval}]
-%\begin{holmath}
- % \HOL thm{prettyPrinting.ppultraproduct_mm2folm_folm2mm_comm_feval}
-%\end{holmath}
-%\end{prop}
 
 
 According to the discussion above, Proposition \ref{6.12} and Proposition \ref{6.11} reduce our task to the following: 
@@ -1528,13 +1486,13 @@ Let $f$ be a function from $C$ into the domain of \HOLtm{ultraproduct_folmodel U
 This $f$ serves to give meaning to the free variables in $C$, treating them as constants. 
 Then if for any finite subset $ss$ of $s$, there exists a valuation \HOLtm{σ} that agrees with $f$ on the elements of $C$ (i.e., it sends the `constants' to the correct places), and all the formulas in \HOLtm{ss} are satisfied in \HOLtm{ultraproduct_folmodel U J MS} under \HOLtm{σ}, then there exists a valuation \HOLtm{σ} sending the constants to the correct places that makes every formula in \HOLtm{s} satisfied on \HOLtm{ultraproduct_folmodel U J MS}.
 \begin{holmath}
-  \HOLthm[J/I,j/i,C/N]{prettyPrinting.ppultraproduct_sat}
+  \HOLthm[J/I,j/i,C/N,width=60]{prettyPrinting.ppultraproduct_sat}
 \end{holmath}
 \end{lm}
 \begin{proof}
 
 Given the assumptions, which read as: 
-Suppose $s$ is a set of formulas in $\mathcal L_{\tau}^1$, such that for each element $\phi$ in $s$, we only allow one free variable $x$ to occur in $\phi$ other then the ones in $C$ which are actually used to capture constants. In addition, for all finite $ss\subseteq s$, exists a valuation \HOLtm{σ} such that \HOLtm{σ n = f n} for all $n\in C$, and \HOLtm{feval (ultraproduct_folmodel U J FMS) phi} for each \HOLtm{phi IN ss}. If $s$ is finite, there is nothing to prove, so we assume $s$ is infinite. As we are using a countable first order language, any infinite set of first order formula is countable, and hence there exists a bijection \HOLtm{enum} from the set of all natural numbers to the set $s$. Thus it suffices to prove the existence of a valuation \HOLtm{σ} such that \HOLtm{σ} agree with $f$ on $C$ and moreover, \HOLtm{feval (ultraproduct_folmodel U J FMS) (enum n)} for all natural number $n$. The \HOLtm{σ} we want is an assignment of variables to equivalence class. But by Proposition \ref{6.9} and \L o\'s's theorem, instead of find out this assignment to equivalence classes, it suffices to find out a function \HOLtm{rv} that assigning each natural number a representative of some equivalence class satisfying the following conditions. 
+Suppose $s$ is a set of formulas in $\mathcal L_{\tau}^1$, such that for each element $\phi$ in $s$, we only allow one free variable $x$ to occur in $\phi$ other then the ones in $C$ which are actually used to capture constants. In addition, for all finite $ss\subseteq s$, exists a valuation \HOLtm{σ} such that \HOLtm{σ n = f n} for all $n\in C$, and \HOLtm{feval (ultraproduct_folmodel U J FMS) σ phi} for each \HOLtm{phi IN ss}. If $s$ is finite, there is nothing to prove, so we assume $s$ is infinite. As we are using a countable first order language, any infinite set of first order formula is countable, and hence there exists a bijection \HOLtm{enum} from the set of all natural numbers to the set $s$. Thus it suffices to prove the existence of a valuation \HOLtm{σ} such that \HOLtm{σ} agree with $f$ on $C$ and moreover, \HOLtm{feval (ultraproduct_folmodel U J FMS) σ (enum n)} for all natural number $n$. The \HOLtm{σ} we want is an assignment of variables to equivalence class. But by Proposition \ref{6.9} and \L o\'s's theorem, instead of find out this assignment to equivalence classes, it suffices to find out a function \HOLtm{rv} that assigning each natural number a representative of some equivalence class satisfying the following conditions. 
 
 \begin{itemize}
   \item \HOLtm{∀v j. j ∈ J ⇒ rv v j ∈ (FMS j).Dom }
@@ -1543,7 +1501,7 @@ Suppose $s$ is a set of formulas in $\mathcal L_{\tau}^1$, such that for each el
              {j | j ∈ J ∧ feval (FMS j) (λv. rv v j) (conj k)\} ∈ U}
 \end{itemize}
 
-The first item says what $rv$ assign to each natural number must be an element in the Cartesion product. And the second item says that the equivalence class assigned to free variables in $C$ has already been fixed by $f$. Both of these two are easy to be satisfied. We devote find and $rv$ satisfying the third condition. 
+The first item says what $rv$ assign to each natural number must be an element in the Cartesian product. And the second item says that the equivalence class assigned to free variables in $C$ has already been fixed by $f$. Both of these two are easy to be satisfied. We devote find and $rv$ satisfying the third condition. 
 
 By Proposition \ref{5.15}, we have a chain \HOLtm{In} where \HOLtm{In n ∈ U} and \HOLtm{In (n + 1) ⊆ In n} for each \HOLtm{n}, which start with \HOLtm{In 0 = J}. Moreover, the intersection of this chain is empty. Let 
 \begin{holmath}
@@ -1551,7 +1509,7 @@ By Proposition \ref{5.15}, we have a chain \HOLtm{In} where \HOLtm{In n ∈ U} a
 \end{holmath}
 , hence \HOLtm{conj 0 = True}, and \HOLtm{conj n} is the conjunction of first order fomulas in $s$ from \HOLtm{enum 0} to \HOLtm{enum (n - 1)}. Define 
 \begin{holmath}
-\HOLtm[alltt,width=100]{Jn = \n. {j | j IN J /\ 
+\HOLtm[alltt,width=75]{Jn = \n. {j | j IN J /\ 
                  (!σ.
                     (!k. k IN N ==> σ k = CHOICE (f k) j) ==>
                       feval (FMS j) σ (Exists x (conj n)) 
@@ -1562,7 +1520,7 @@ By Proposition \ref{5.15}, we have a chain \HOLtm{In} where \HOLtm{In n ∈ U} a
 
 The \HOLtm{rv} we are looking for can be taken as:
 \begin{holmath}
-\HOLtm[alltt,width=100]{(\v j. if (v IN C) 
+\HOLtm[alltt,width=75]{(\v j. if (v IN C) 
         then (CHOICE (f v) j)
        else 
        (CHOICE 
@@ -1594,9 +1552,9 @@ The \HOLtm{U} we require here is any countably incomplete ultrafilter which exis
 The last ingredient we need for the main theorem we are proving is the compactness theorem of first order logic. The standard statement of compactness theorem says that for a set \HOLtm{Σ} of modal formulas, if for each finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a model such that all the formulas in \HOLtm{Σ0} are satisfied, then there exists a model such that all the formulas in \HOLtm{Σ} are satisfied. This standard version of compactness theorem is formalized in 1998 in HOL4 by John Harrison. The way that Harrison states the compactness theorem looks very different from the style that we are working with. Hence with the help of a corollary proved from Harrison's work by my supervisor, we can connect the work of Harrison with our project and prove a version of compactness theorem for $\mathcal L_{\tau}^1$-formulas, which is no more than a specialization to the standard version of compactness theorem to $\mathcal L_{\tau}^1$-formulas. We will use this version of compactness theorem for our work. The statement looks like:
 
 \begin{thm}[\holref{\texttt{compactness_thm_L1tau}}{chap2_6}{1432}]\label{6.16}
-If $\alpha$-is an infinite type, then for any set $A$ of $\cal L_{\tau}^1$-formulas, if for any finite subset $ss$ of $A$, there exists an $\alpha$-model \HOLtm{M} and a valuation \HOLtm{σ} such that every formula in $ss$ is satisfied in \HOLtm{M} under \HOLtm{σ}, then there exists a $\alpha$-model \HOLtm{M} and a valuation on \HOLtm{M} such that all the formulas in $A$ are satisfied. 
+If $\alpha$-is an infinite type, then for any set $A$ of $\mathcal L_{\tau}^1$-formulas, if for any finite subset $ss$ of $A$, there exists an $\alpha$-model \HOLtm{M} and a valuation \HOLtm{σ} such that every formula in $ss$ is satisfied in \HOLtm{M} under \HOLtm{σ}, then there exists a $\alpha$-model \HOLtm{M} and a valuation on \HOLtm{M} such that all the formulas in $A$ are satisfied. 
 \begin{holmath}
-  \HOLthm[phi/f,phi/ff]{prettyPrinting.ppcompactness_thm_L1tau}
+  \HOLthm[phi/f,phi/ff,width=70]{prettyPrinting.ppcompactness_thm_L1tau}
 \end{holmath}
 \end{thm}
 
@@ -1666,7 +1624,7 @@ The fact that the two directions of implication does not yield an `if and only i
 
 
 
-\section{Characterizing formulas which are preserved under simulations}
+\section{Positive existential formulas and Preservation under simulations}
 
 In last section, we proved that standard translations are exactly $\mathcal L_{\tau}^1$-formulas which are invariant for bisimulations. There exists a concept of `half of a bisimulation', which is called \emph{simulation}. Accordingly, the $\mathcal L_{\tau}^1$-formulas which are \emph{preserved under simulation} are interesting. We have set-theoretic proof that these formulas can also be characterized using their syntax. The aim of this section is to translate this proof into simple type theory. For precisely the same reason as in the last section, after we translate the proof of implications in both direction, they cannot be unified into a double implication. Nevertheless, we will spell out our formalization of proofs for those two directions separately. 
 
@@ -1692,7 +1650,7 @@ A simulation $Z$ between two worlds \HOLtm{w IN M.frame.world} and \HOLtm{w' IN 
 \begin{defn}[\holref{Preserved under simulation}{chap2_7}{38}]
 A modal formula \HOLtm{phi} is preserved under simulation if once we have \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} with a simulation relating $w$ to $w'$, then if \HOLtm{phi} is satisfied at $w$, then it is also satisfied at $w'$.
 \begin{holmath}
-  \HOLthm[def]{prettyPrinting.pppreserved_under_sim_def}
+  \HOLthm[def,width=60]{prettyPrinting.pppreserved_under_sim_def}
 \end{holmath}
 \end{defn}
 The predicate \HOLtm{preserved_under_sim} takes type parameters by the same reason as discussed when we define \HOLtm{invar4bisim}. 
@@ -1740,7 +1698,7 @@ As the last theorem that is proved in the project, we translate the proof of the
 \begin{thm}[\holref{Compactness of modal logic}{chap2_7}{206}]\label{6.20}
 If $\alpha$ is an infinite type, then given a set $s$ of $num$-modal formulas, if for any finite subset $ss$ of $s$, there exist a modal model \HOLtm{M} with $\alpha$-world set and a world \HOLtm{w IN M.frame.world} such that \HOLtm{satis M w phi} for every \HOLtm{phi IN ss}, then there exists a model with $\alpha$-world set and a world in \HOLtm{M} which satisfies all the modal formulas in $s$. 
 \begin{holmath}
-  \HOLthm[phi/f]{chap2_7.modal_compactness_thm}
+  \HOLthm[phi/f,width=60]{chap2_7.modal_compactness_thm}
 \end{holmath}
 \end{thm}
 \begin{proof}
@@ -1750,7 +1708,7 @@ By Proposition \ref{5.4} and Theorem \ref{6.16}.
 \begin{coro}[\holref{\texttt{modal_compactness_corollary}}{chap2_7}{277}]\label{6.21}
 For $\alpha$ is an infinite type, given a modal formula $a$ and a set $s$ of $num$-modal formulas, if for any modal model \HOLtm{M} with $\alpha$-world set, any world \HOLtm{w} which satisfies all the formulas in $s$ will also satisfy $a$, then there exists a finite subset of $s$ such that once a world $w$ in a model \HOLtm{M} with $\alpha$-world set, if every formula in $ss$ is satisfied at $w$, then $a$ is satisfied at $w$.
 \begin{holmath}
-  \HOLthm[phi/f]{chap2_7.modal_compactness_corollary}
+  \HOLthm[phi/f,width=60]{chap2_7.modal_compactness_corollary}
 \end{holmath}
 \end{coro}
 \begin{proof}
@@ -1762,7 +1720,7 @@ All the modal formulas appear in the above theorems are required to be $num$-for
 For the same reason that we did it for Theorem \ref{6.18}, we only consider simulations between models of the same type here. 
 
 
- %if possible, talk more about this difference
+
 \begin{thm}[\holref{\texttt{thm_2_78_half2}}{chap2_7}{399}]
 If $\beta$ is an infinite type. Then for any $num$-modal formula $\phi$, if $\phi$ is preserved under simulation on models with $(\beta\to bool)\to bool$ world sets, then there exists a positive existential $num$-modal formula which is equivalent to $\phi$ on models with $\beta$-world sets. 
 \begin{holmath}
@@ -1770,9 +1728,12 @@ If $\beta$ is an infinite type. Then for any $num$-modal formula $\phi$, if $\ph
 \end{holmath}
 \end{thm}
 \begin{proof}
-  Suppose $\phi$ is preserved under simulation. Consider the set of positive existential formulas which are implied by $\phi$, defined as \HOLtm[alltt,width=100]{PEC = {psi | PE psi /\ 
+  Suppose $\phi$ is preserved under simulation. Consider the set of positive existential formulas which are implied by $\phi$, defined as 
+\begin{holmath}
+\HOLtm[alltt,width=100]{PEC = {psi | PE psi /\ 
                           (!M w:β. w IN M.frame.world ==>
-                               satis M w phi ==> satis M w psi)\}} in HOL4.
+                               satis M w phi ==> satis M w psi)\}}
+\end{holmath} in HOL4.
 By Corollary \ref{6.21}, if we can prove for any model \HOLtm{M} and \HOLtm{w IN M.frame.world}, \HOLtm{satis M w psi} for all \HOLtm{psi IN PEC} implies \HOLtm{satis M w phi}, then there exists a finite subset $S$ of \HOLtm{PEC} that entails $\phi$. This will prove $\phi$ is equivalent to the conjunction of all the formulas in $S$, which is again a positive existential formula.
 
 Therefore, our task is to prove the entailment from \HOLtm{PEC} to $\phi$. Suppose \HOLtm{satis M w psi} for all \HOLtm{psi IN PEC} , we prove \HOLtm{satis M w phi}. Define \HOLtm{Γ={NOT psi | PE psi /\ satis M w (NOT psi)\}}. We claim that there exists a model with a world that satisfies the set \HOLtm{Γ ∪ {phi\}}. By Theorem \ref{6.20}, it suffices to prove each finite subset of \HOLtm{Γ ∪ {phi\}} is satisfied by some model. Suppose there exists a finite subset of \HOLtm{Γ ∪ {phi\}} which cannot be satisfied by any model, then there exists $\lnot\psi_0,\cdots,\lnot\psi_n\in \Gamma$ such that for any model \HOLtm{N} and any world $v$ of it, if \HOLtm{satis N v phi}, then there exists some $0\le i\le n$ such that \HOLtm{satis N v} $\psi_i$. As all these $\psi$'s are positive existential, so does their big disjunction $\psi$, and hence \HOLtm{psi IN PEC}.  As \HOLtm{M} entails \HOLtm{PEC}, we have \HOLtm{satis M w psi}, and hence \HOLtm{satis M w} $\psi_i$ for some $i$ by definition of the $\psi$. But on other hand, \HOLtm{satis M w} $\lnot \phi_i$ for any $\psi_i$ by definition of \HOLtm{Γ}, this is a contradiction. 
