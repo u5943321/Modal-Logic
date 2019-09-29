@@ -72,6 +72,9 @@ vst 1 \ensuremath{v\sb{*}}
 (UPM1) 1 {}^{\sf f}\Pi\sb{ 
 (UPM2) 0 }
 
+(UPMN1) 1 {}^{\sf f}\Pi\sb{ 
+(UPMN2) 0 }
+
 (meq1) 1 \equiv\sb{
 (meq2) 0 }
 
@@ -82,6 +85,14 @@ vst 1 \ensuremath{v\sb{*}}
 (uprr1) 1 \sim\sb{
 (uprr2) 0 }\sp{ 
 (uprr3) 0 }
+
+(uprn1) 1 \sim\sb{
+(uprn2) 0 }\sp{ 
+(uprn3) 0 }
+
+(uprrn1) 1 \sim\sb{
+(uprrn2) 0 }\sp{ 
+(uprrn3) 0 }
 
 (ptt) 1 /
 
@@ -182,3 +193,7 @@ fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 
 (UPMM1) 1 \Pi\sb{ 
 (UPMM2) 0 }
+
+(UPMMN1) 1 \Pi\sb{ 
+(UPMMN2) 0 }
+

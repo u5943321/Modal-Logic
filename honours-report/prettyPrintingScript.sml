@@ -124,12 +124,12 @@ Theorem ppSUBMODEL_def:
 ∀M1 M2.
             SUBMODEL M1 M2 ⇔
             M1.frame.world ⊆ M2.frame.world ∧
-            (∀w1.
-                w1 ∈ M1.frame.world ⇒
-                (∀v. M1.valt v w1 ⇔ M2.valt v w1)) ∧
             (∀w1 w2.
                     (w1 ∈ M1.frame.world /\ w2 IN M1.frame.world) ⇒
-                    (M1.frame.rel w1 w2 ⇔ M2.frame.rel w1 w2))
+                    (M1.frame.rel w1 w2 ⇔ M2.frame.rel w1 w2)) /\
+            (∀w1.
+                w1 ∈ M1.frame.world ⇒
+                (∀v. M1.valt v w1 ⇔ M2.valt v w1))
 Proof
 rw[SUBMODEL_def] >> fs[IN_DEF] >> metis_tac[]
 QED
@@ -731,7 +731,19 @@ Proof
 metis_tac[preserved_under_sim_def] 
 QED
 
-
+Theorem ppinvar4bisim_def:
+ ∀x phi.
+            invar4bisim x (:α) (:β) phi ⇔
+            FV phi ⊆ {x} ∧ L1tau phi ∧
+            ∀M N v:β w:α.
+                bisim_world M N w v ⇒
+                ∀σm σn.
+                    valuation (mm2folm M) σm ∧ valuation (mm2folm N) σn ⇒
+                    (fsatis (mm2folm M) σm⦇x ↦ w⦈ phi ⇔
+                     fsatis (mm2folm N) σn⦇x ↦ v⦈ phi)
+Proof
+rw[invar4bisim_def]
+QED
 
 Theorem ppthm_2_68_half1:
 ∀a x.
@@ -748,6 +760,14 @@ Theorem ppthm_2_78_half2:
 preserved_under_sim (:(β -> bool) -> bool) (:(β -> bool) -> bool) phi) ⇒ ∃phi0:num chap1$form. equiv0 (:β) phi phi0 ∧ PE phi0
 Proof
 metis_tac[thm_2_78_half2]
+QED
+
+
+Theorem ppL1tau_mm2folm_folm2mm_comm_feval:
+ (L1tau f/\ valuation M v) ⇒
+                (feval (mm2folm (folm2mm M)) v f ⇔ feval M v f)
+Proof
+metis_tac[L1tau_mm2folm_folm2mm_comm_feval]
 QED
 
 val _ = overload_on("Mw", “λM. M.frame.world”);
@@ -838,6 +858,14 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, pp_elements = [TOK "(UPM1)", TM, TOK "(UPM2)"], 
                   term_name = "UPM", paren_style = OnlyIfNecessary}
 
+
+Overload UPMN = ``\U MS. ultraproduct_folmodel U (J:num -> bool) MS`` 
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Closefix, pp_elements = [TOK "(UPMN1)", TM, TOK "(UPMN2)"], 
+                  term_name = "UPMN", paren_style = OnlyIfNecessary}
+
+
 Overload myequiv = ``\f1 ty f2. equiv0 ty f1 f2``
 
 
@@ -859,6 +887,21 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, 
                   pp_elements = [TOK "(uprr1)", TM, TOK "(uprr2)",TM, TOK "(uprr3)"], 
                   term_name = "uprr", paren_style = OnlyIfNecessary}
+
+Overload uprn = ``\f U A g. Uequiv U (J: num -> bool) A f g``
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix (NONASSOC, 450), 
+                  pp_elements = [TOK "(uprn1)", TM, TOK "(uprn2)",TM, TOK "(uprn3)"], 
+                  term_name = "uprn", paren_style = OnlyIfNecessary}
+
+Overload uprrn = ``\U A. Uequiv U (J: num -> bool) A``
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Closefix, 
+                  pp_elements = [TOK "(uprrn1)", TM, TOK "(uprrn2)",TM, TOK "(uprrn3)"], 
+                  term_name = "uprrn", paren_style = OnlyIfNecessary}
+
 
 Overload pt = ``\s r.partition r s``
 
@@ -1048,7 +1091,11 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, pp_elements = [TOK "(UPMM1)", TM, TOK "(UPMM2)"], 
                   term_name = "UPMM", paren_style = OnlyIfNecessary}
 
+Overload UPMMN = ``\U MS. ultraproduct_model U (J:num -> bool) MS`` 
 
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Closefix, pp_elements = [TOK "(UPMMN1)", TM, TOK "(UPMMN2)"], 
+                  term_name = "UPMMN", paren_style = OnlyIfNecessary}
 
 val _ = export_theory();
 
