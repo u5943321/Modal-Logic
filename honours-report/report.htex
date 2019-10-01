@@ -447,7 +447,9 @@ In this chapter, we tell the story about the Slogan 2 as stated in the introduct
 In this method, to build a finite model of a satisfiable modal formula \HOLtm{phi}, we start with a model that the formula $\phi$ is satisfied, delete worlds from the model and only leaves finitely many worlds in it. The intuition behind this approach is that any modal formula can only contain finitely many diamond, each can `see' one step from the current state. Therefore, any formula can only capture the information of finitely depth. To make the notion of `depth' precise, we define the degree of a modal formula, which counts the number of diamonds appear in a model formula, in the sense that a modal formula \HOLtm{phi} has degree $n$ means there are $n$ `$\Diamond$'s in \HOLtm{phi}. In particular, a modal formula of degree zero is a modal formula with no diamond. Such a formula is precisely a propositional formula. 
 \begin{defn}[\holref{Degree of a modal formula}{chap2_3}{24}]
 \begin{holmath}
-  \HOLthm[def,phi/form]{chap2_3.DEG_def}
+\begin{array}{rcl}
+  \HOLthm[aligneddef,phi/form]{chap2_3.DEG_def}
+\end{array}
 \end{holmath}
 \end{defn}
 

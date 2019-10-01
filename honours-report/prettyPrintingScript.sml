@@ -1,6 +1,6 @@
 open HolKernel Parse boolLib bossLib;
 
-open chap1Theory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_5Theory chap2_6Theory chap2_7Theory lemma2_73Theory IBCDNFrevisedTheory pred_setTheory pairTheory 
+open chap1Theory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_5Theory chap2_6Theory chap2_7Theory lemma2_73Theory IBCDNFrevisedTheory pred_setTheory pairTheory folLangTheory folModelsTheory ultraproductTheory
 
 val _ = new_theory "prettyPrinting";
 
@@ -22,7 +22,7 @@ Theorem ppprop_2_9:
             SURJ f M.frame.world M'.frame.world ⇒
             modal_eq M M' w (f w)
 Proof
-cheat
+rw[] >> drule prop_2_9 >> rw[]
 QED
 
 
@@ -40,15 +40,6 @@ QED
 
 
 
-Theorem ppDU_def:
-  DU (f, dom) = <| frame := <| world := {(i,w) | i IN dom /\ w IN (f i).frame.world};
-                                 rel := \(i1,w1) (i2,w2). i1 = i2 /\
-				                i1 IN dom /\
-				                (f i1).frame.rel w1 w2 |>;
-				valt := \v (i,w). (f i).valt v w |>
-Proof
-cheat
-QED
 
 Theorem pprooted_model_def:
 !M x M'. rooted_model M x M' <=> x IN M'.frame.world /\
@@ -67,45 +58,6 @@ Proof
 rw[] >> drule prop_2_15_corollary >> metis_tac[]
 QED
 
-
-Theorem ppREL_CUS_def:
-REL_CUS Σ M w1 w2 <=> w1 IN M.frame.world /\
-                    w2 IN M.frame.world /\
-                    (!phi. phi IN Σ ==> (satis M w1 phi <=> satis M w2 phi))
-Proof
-rw[REL_CUS_def]
-QED
-
-Theorem ppfiltration_def:
-filtration M Σ L <=>
-CUS Σ /\
-(L.frame.world = EC_REP_SET Σ M) /\
-(!w v. w IN M.frame.world /\ v IN M.frame.world /\ M.frame.rel w v ==> L.frame.rel (EC_REP Σ M w) (EC_REP Σ M v)) /\
-(!w v. w IN M.frame.world /\ v IN M.frame.world /\ L.frame.rel (EC_REP Σ M w) (EC_REP Σ M v) ==> (!phi psi. (phi IN Σ /\ phi = DIAM psi /\ satis M v psi) ==> satis M w phi)) /\
-(!p s. L.valt p s <=> (?w. s = EC_REP Σ M w /\ satis M w (VAR p)))
-Proof
-rw[filtration_def] >> metis_tac[]
-QED
-
-Theorem ppprop_2_38:
-!Σ M L. FINITE Σ /\ filtration M Σ L ==> CARD (L.frame.world) <= 2 ** (CARD (Σ))
-Proof
-rw[] >> drule prop_2_38 >> metis_tac[]
-QED
-
-Theorem ppthm_2_39:
-!phi. phi IN Σ ==> (!w. w IN M.frame.world /\ filtration M Σ L ==> (satis M w phi <=> satis L (EC_REP Σ M w) phi))
-Proof
-rw[] >> metis_tac[thm_2_39]
-QED
-
-Theorem ppREL_2_42_def:
-    REL_2_42 Σ M w1 w2 = ?w v. (w IN M.frame.world /\ w1 = EC_CUS Σ M w /\
-                               v IN M.frame.world /\ w2 = EC_CUS Σ M v /\
-                         (!phi. (DIAM phi) IN Σ /\ satis M v (DISJ phi (DIAM phi)) ==> satis M w (DIAM phi)))
-Proof
-rw[REL_2_42_def,PULL_EXISTS]
-QED
 
 
 Theorem ppequiv0_def:
@@ -134,11 +86,6 @@ Proof
 rw[SUBMODEL_def] >> fs[IN_DEF] >> metis_tac[]
 QED
 
-Theorem ppFINITE_FINITE_IBC:
-∀fs. (fs ≠ ∅ /\ FINITE (fs//E μ)) ⇒ FINITE ({f | IBC f fs}//E μ)
-Proof
-metis_tac[FINITE_FINITE_IBC]
-QED
 
 Theorem ppprop_2_31_half1:
 ∀M M' n w w' f.
@@ -209,23 +156,6 @@ Theorem ppsubforms_def:
 Proof
 rw[subforms_def,Once UNION_DEF,Once INSERT_DEF,EXTENSION,EQ_IMP_THM] >>
 metis_tac[]
-QED
-
-
-Theorem pppeval_equiv0:
-∀f1 f2.
-            propform f1 ∧ propform f2 ∧ equiv0 μ f1 f2 ⇒
-            (∀σ. peval σ f1 ⇔ peval σ f2)
-Proof 
-rw[] >> drule peval_equiv0 >> rw[] >> fs[equiv0_def]
-QED
-
-Theorem ppwffm_def:
- ∀M.
-         wffm M ⇔
-         ∀n0 l0. M.Fun n0 l0 ∈ M.Dom
-Proof
-cheat
 QED
 
 
@@ -317,11 +247,11 @@ Theorem ppultraproduct_rep_independence_lemma:
                 ({i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U ⇔
                  {i | i ∈ I ∧ feval (FMS i) (λv. rv v i) phi} ∈ U)
 Proof
-(*rw[] >> 
+rw[] >> 
 `IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms FMS)`
   suffices_by metis_tac[ultraproduct_rep_independence_lemma] >>
 fs[IMAGE_DEF,SUBSET_DEF,valuation_def] >> fs[ultraproduct_folmodel_def] >>
-metis_tac[]*) cheat
+metis_tac[]
 QED
 
 Theorem pplemma_2_73:
@@ -338,28 +268,23 @@ Theorem ppcompactness_thm_L1tau:
      (∀f. f ∈ A ⇒ L1tau f) ∧
          (∀ss.
               FINITE ss ∧ ss ⊆ A ⇒
-              ∃M:α model σ. valuation M σ ∧ ∀ff. ff ∈ ss ⇒ feval M σ ff)) ⇒
-         ∃M:α model σ. valuation M σ ∧ ∀f. f ∈ A ⇒ feval M σ f
+              ∃M σ:num -> α. valuation M σ ∧ ∀ff. ff ∈ ss ⇒ feval M σ ff)) ⇒
+         ∃M σ:num -> α. valuation M σ ∧ ∀f. f ∈ A ⇒ feval M σ f
 Proof
-(*rw[] >> drule compactness_thm_L1tau >> rw[]*) cheat
+rw[] >> drule compactness_thm_L1tau >> rw[]
 QED
 
 Theorem ppcompactness_corollary_L1tau:
 !A a. (INFINITE 𝕌(:α) /\ L1tau a /\
          (∀f. f ∈ A ⇒ L1tau f) ∧
-         (∀M:α model σ. valuation M σ ⇒ (∀f. f ∈ A ⇒ feval M σ f) ⇒ feval M σ a)) ⇒
+         (∀M σ:num -> α. valuation M σ ⇒ (∀f. f ∈ A ⇒ feval M σ f) ⇒ feval M σ a)) ⇒
          ∃ss.
              FINITE ss ∧ ss ⊆ A ∧
-             ∀M:α model σ. valuation M σ ⇒ (∀f. f ∈ ss ⇒ feval M σ f) ⇒ feval M σ a
+             ∀M σ:num -> α. valuation M σ ⇒ (∀f. f ∈ ss ⇒ feval M σ f) ⇒ feval M σ a
 Proof
-(*rw[] >> drule compactness_corollary_L1tau >> rw[]*) cheat
+rw[] >> drule compactness_corollary_L1tau >> rw[]
 QED
 
-Theorem ppprop_2_3:
-!i w f. i IN dom ==> (satis (f i) w phi <=> satis (DU (f, dom)) (i,w) phi)
-Proof
-rw[] >> `FST (i,w) IN dom` by fs[FST] >> drule prop_2_3 >> fs[FST,SND]
-QED
 
 Theorem ppprop_2_29_strengthen:
 !s. FINITE s /\ INFINITE univ(:'b) ==> !n. FINITE (partition (equiv0 (μ:'b itself)) {f| DEG f <= n /\ prop_letters f ⊆ s})
@@ -370,226 +295,39 @@ rw[] >> drule prop_2_29_strengthen >> rw[] >>
 rw[EXTENSION,SUBSET_DEF] >> metis_tac[prop_letters_subforms]
 QED
 
-Theorem ppIMAGE_peval_singlton_strengthen:
-!x form. x IN {f | propform f /\ prop_letters f ⊆ s}//e /\ form IN x ==>
-IMAGE (λf. {σ | peval σ f} ∩ POW s) x = {{σ | (peval σ form)} INTER (POW s)}
-Proof
-rw[] >> 
-`{f | propform f ∧ prop_letters f ⊆ s} = {f | propform f ∧ ∀a. VAR a ∈ subforms f ⇒ a ∈ s}` suffices_by metis_tac[IMAGE_peval_singlton_strengthen] >>
-rw[EXTENSION,SUBSET_DEF] >> metis_tac[prop_letters_subforms]
-QED
-
-Theorem ppequiv0_peval_strengthen:
-!f1 f2.
-( propform f1 /\ propform f2 /\
-(prop_letters f1 ⊆ s) /\
-(prop_letters f2 ⊆ s))==>
-(!σ. σ IN (POW s) ==> peval σ f1 = peval σ f2) ==> (!M w. satis M w f1 <=> satis M w f2)
-Proof
-rw[] >> drule equiv0_peval_strengthen >> rw[] >> 
-fs[SUBSET_DEF] >> metis_tac[prop_letters_subforms]
-QED
-
-Theorem ppINJ_peval_partition_strengthen:
-INJ
-  (\eqc. ((IMAGE (λf. {σ| peval σ f} INTER (POW s)) eqc)))
-  {f | propform f /\ prop_letters f ⊆ s}//e
-  (POW (POW (POW s)))
-Proof
-rw[] >> 
-`{f | propform f ∧ prop_letters f ⊆ s} = {f | propform f ∧ ∀a. VAR a ∈ subforms f ⇒ a ∈ s}` suffices_by metis_tac[INJ_peval_partition_strengthen] >>
-rw[EXTENSION,SUBSET_DEF] >> metis_tac[prop_letters_subforms]
-QED
-
-Theorem ppDEG_IBC_strengthen:
-∀x.
-   DEG x ≤ n + 1 ∧ (prop_letters x ⊆ s) ⇔
-   IBC x
-     ({VAR v | v ∈ s} ∪
-      {◇ psi | DEG psi ≤ n ∧ prop_letters psi ⊆ s})
-Proof
-(*rw[EQ_IMP_THM] (* 3 *)
->- (`{◇ psi | DEG psi ≤ n ∧ prop_letters psi ⊆ s} = {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s} /\ (∀a. VAR a ∈ subforms x ⇒ a ∈ s)` 
-     suffices_by metis_tac[DEG_IBC_strengthen] >>
-   simp[EXTENSION] >> metis_tac[prop_letters_subforms,SUBSET_DEF])
->- (`{◇ psi | DEG psi ≤ n ∧ prop_letters psi ⊆ s} = {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s}` 
-     suffices_by metis_tac[DEG_IBC_strengthen] >>
-    simp[EXTENSION] >> metis_tac[prop_letters_subforms,SUBSET_DEF])
->- (*(`{◇ psi | DEG psi ≤ n ∧ prop_letters psi ⊆ s} = {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s} /\ (∀a. VAR a ∈ subforms x ⇒ a ∈ s)` 
-     suffices_by metis_tac[DEG_IBC_strengthen,SUBSET_DEF] >> rw[] (*2 *)
-   >- (simp[EXTENSION] >> metis_tac[prop_letters_subforms,SUBSET_DEF])
-   >- (`{◇ psi | DEG psi ≤ n ∧ prop_letters psi ⊆ s} = 
-        {◇ psi | DEG psi ≤ n ∧ ∀a. VAR a ∈ subforms psi ⇒ a ∈ s}`
-       by (simp[EXTENSION] >> metis_tac[prop_letters_subforms,SUBSET_DEF]) >>
-       fs[] >> metis_tac[DEG_IBC_strengthen])) have already proved it anyway*) cheat*) cheat
- 
-QED
-
-
-Theorem ppDNF_OF_DISJ_equiv0_case4:
-∀p1 p2 fs.
-            (DISJ_OF0 p1 fs /\ DISJ_OF0 p2 fs) ⇒ ∃f. DISJ_OF0 f fs ∧ equiv0 μ f (DISJ p1 p2)
-Proof
-(*rw[] >> metis_tac[DNF_OF_DISJ_equiv0_case4]*) cheat
-QED
-
-
-Theorem pplist_demorgan:
-∀l.
-         l ≠ [] ⇒
-         equiv0 μ (AND e (lit_list_to_form2 l))
-           (lit_list_to_form2 (MAP (AND e) l))
-Proof
-cheat (* metis_tac[list_demorgan] *)
-QED
-
-Theorem ppDISJ_OF0_cset:
-∀d fs.
-         DISJ_OF0 d fs ⇒
-         ∀fs0.
-             fs ⊆ {c | CONJ_OF c fs0} ⇒
-             ∃cs.
-                 (∀c. c ∈ cs ⇒ is_lset c fs0) ∧
-                 ∀M w.
-                     w ∈ M.frame.world ⇒
-                     (satis M w d ⇔ dsatis M w cs)
-Proof
-cheat (* rw[dsatis_def] >> drule DISJ_OF0_cset >> rw[] *)
-QED
-
-Theorem ppDNF_OF_cset:
-∀d fs.
-         DNF_OF d fs ⇒
-         ∃cs.
-             (∀c. c ∈ cs ⇒ is_lset c fs) ∧
-             ∀M w.
-                 w ∈ M.frame.world ⇒
-                 (satis M w d ⇔ dsatis M w cs)
-Proof
-cheat (* rw[dsatis_def] >> drule DNF_OF_cset >> rw[] *)
-QED
-
-
-Theorem ppdsatis_ALL_POSSIBLE_VALUE = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] IBCDNFrevisedTheory.dsatis_ALL_POSSIBLE_VALUE
-
-Theorem ppis_lset_DNF_OF_EXISTS:
-∀s fs.
-         (FINITE s /\
-             FINITE fs ∧ fs ≠ ∅ ∧ (∀c. c ∈ s ⇒ is_lset c fs)) ⇒
-             ∃f.
-                 (∀M w. w ∈ M.frame.world ⇒ (satis M w f ⇔ dsatis M w s)) ∧
-                 DNF_OF f fs
-Proof
-(*
-rw[] >> irule is_lset_DNF_OF_EXISTS >> rw[]
-*)
-cheat
-QED
-
-(*
-Theorem ppmm2folm_folm2mm_feval:
-∀f σ M. L1tau f /\ valuation M σ ==>
-           (feval (mm2folm (folm2mm M)) σ f ⇔ feval M σ f)
-Proof
-cheat
-QED
-*)
 Theorem ppprop_2_47_i:
 !M w:'b phi (σ:num -> 'b) x:num. valuation (mm2folm M) σ
                        ==> (satis M (σ x) phi <=> fsatis (mm2folm M) σ (ST x phi))
 Proof
-(*
 rw[] >>
 `IMAGE σ 𝕌(:num) ⊆ M.frame.world` suffices_by metis_tac[prop_2_47_i] >>
 fs[valuation_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]
-*)
-cheat
 QED
 
 Theorem ppprop_2_47_i':
  !M w:'b phi σ x. valuation M σ
                        ==> (satis (folm2mm M) (σ x) phi <=> feval M σ (ST x phi))
 Proof
-(* rw[] >>
-`IMAGE σ 𝕌(:num) ⊆ M.Dom` suffices_by metis_tac[prop_2_47_i'] >>
-fs[valuation_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]*)
-cheat
-QED
-
-
-Theorem ppprop_2_47_i_alt:
-!M w:'b phi σ. valuation (mm2folm M) σ
-                       ==> (satis M (σ 1) phi <=> fsatis (mm2folm M) σ (ST_alt 1 phi)) /\
-		           (satis M (σ 0) phi <=> fsatis (mm2folm M) σ (ST_alt 0 phi))
-Proof
-(*
 rw[] >>
-`IMAGE σ 𝕌(:num) ⊆ M.frame.world` suffices_by metis_tac[prop_2_47_i_alt] >>
+`IMAGE σ 𝕌(:num) ⊆ M.Dom` suffices_by metis_tac[prop_2_47_i'] >>
 fs[valuation_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]
-*) cheat
 QED
 
 
-
-Theorem ppST_BIGCONJ:
-!s x.
-   (FINITE s /\
-    (!f. f IN s ==> ?phi. f = ST x phi)) ==>
-       ?cf. (!M σ. valuation M σ ==>
-                  (feval M σ cf <=>
-                   (!f. f IN s ==> feval M σ f))) /\
-           ?psi. cf = ST x psi
-Proof
-(* rw[] >> drule ST_BIGCONJ >> rw[] >> first_x_assum drule >> strip_tac >>
-qexists_tac `cf` >> rw[] 
->- (fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
-metis_tac[]
-*)
-cheat
-QED
-(*
-Theorem FC_form_functions:
-!t c. c IN (FCT t) <=> (c,0) IN (term_functions t)
-Proof
-completeInduct_on `term_size t` >> rw[] >> 
-Cases_on `t` >> rw[FCT_def] >> rw[]
-QED
-*)
 Theorem ppexpansion_shift_feval:
   !M A M' f σ phi. (expansion (mm2folm M) A M' f /\ valuation (mm2folm M) σ /\
                     (form_functions phi ⊆ {(c1,0) | c1 < (CARD A)})) ==>
                     (feval M' σ phi <=>
                     feval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi))
 Proof
-(*rw[] >> irule expansion_shift_feval >> rw[] 
->- fs[FC_def]
-expand def of FC, not done
-
- *)
-cheat
+rw[] >> irule expansion_shift_feval >> rw[] 
+>- (fs[FC_def] >>
+   qspec_then `phi` assume_tac FC_form_functions >>
+   fs[SUBSET_DEF] >> first_x_assum drule >> rw[] >> Cases_on `c'` >> rw[] >>
+   first_x_assum drule >> rw[]) >>
+fs[mm2folm_def,valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[]
 QED
  
-Theorem ppshift_FV:
-∀phi s.
-            FV phi ⊆ s ∧
-            (form_functions phi ⊆ {(c1,0) | c1 < (CARD A)}) ⇒
-            FV (shift_form (CARD A) phi) DIFF count (CARD A) ⊆
-            {x + CARD A | x ∈ s}
-Proof
-(*
-rw[] >> irule shift_FV >> rw[] >> Cases_on `c` >> fs[SUBSET_DEF,FST,SND] >>
-first_x_assum drule >> rw[]*) cheat
-QED
-
-Theorem ppshift_form_functions_EMPTY:
-∀phi.
-            (form_functions phi ⊆ {(c1,0) | c1 < (CARD A)}) ⇒
-            form_functions (shift_form (CARD A) phi) = ∅
-Proof
-(*
-rw[] >> irule shift_form_functions_EMPTY >> fs[SUBSET_DEF,FST,SND] >> 
-rw[] >> Cases_on `c` >> first_x_assum drule >> rw[] *) cheat
-QED
 
 Theorem ppthm_A_19_i:
 !t U I σ FMS. (ultrafilter U I /\
@@ -599,9 +337,9 @@ Theorem ppthm_A_19_i:
           {f | Uequiv U I (folmodels2Doms FMS) f
                (\i. termval (FMS i) (\n. CHOICE (σ n) i) t)}
 Proof
-(*rw[] >> drule thm_A_19_i >> rw[] >> first_x_assum irule >>
+rw[] >> drule thm_A_19_i >> rw[] >> first_x_assum irule >>
  fs[IMAGE_DEF,valuation_def,wffm_def,SUBSET_DEF,ultraproduct_folmodel_def] >>
-metis_tac[]*) cheat
+metis_tac[]
 QED
 
 
@@ -612,10 +350,9 @@ Theorem ppthm_A_19_ii:
                   (feval (ultraproduct_folmodel U I FMS) σ phi <=>
                   {i | i IN I /\ feval (FMS i) (\x. (CHOICE (σ x)) i) phi} IN U)
 Proof
-(*
 rw[] >> drule thm_A_19_ii >> rw[] >> first_x_assum irule >>
  fs[IMAGE_DEF,valuation_def,wffm_def,SUBSET_DEF,ultraproduct_folmodel_def] >>
-metis_tac[]*) cheat
+metis_tac[]
 QED
 
 Theorem ppultraproduct_suffices_rep:
@@ -627,8 +364,8 @@ Theorem ppultraproduct_suffices_rep:
      feval (ultraproduct_folmodel U I FMS)
            (\v. {g | Uequiv U I (folmodels2Doms FMS) g (rv v)}) phi
 Proof
-(*rw[] >> drule ultraproduct_suffices_rep >> rw[] >> first_x_assum irule <<
-fs[valuation_def,wffm_def] >> metis_tac[]*) cheat
+rw[] >> drule ultraproduct_suffices_rep >> rw[] >> first_x_assum irule >>
+fs[valuation_def,wffm_def] >> metis_tac[]
 QED
 
 
@@ -641,8 +378,8 @@ Theorem ppcorollary_A_21:
             feval (ultraproduct_folmodel U I FMS)
             (\x. {g | Uequiv U I (folmodels2Doms FMS) g (\i. σ x)}) phi)
 Proof
-(*rw[] >> drule corollary_A_21 >> rw[valuation_def,IMAGE_DEF,SUBSET_DEF] >>
-fs[wffm_def] >> fs[valuation_def] >> first_x_assum irule >> metis_tac[]*) cheat
+rw[] >> drule corollary_A_21 >> rw[valuation_def,IMAGE_DEF,SUBSET_DEF] >>
+fs[wffm_def] >> fs[valuation_def] >> first_x_assum irule >> metis_tac[]
 QED
 
 Theorem ppultraproduct_comm_feval:
@@ -653,13 +390,11 @@ Theorem ppultraproduct_comm_feval:
              (feval (mm2folm (ultraproduct_model U I MS)) σ phi ⇔
               feval (ultraproduct_folmodel U I (λi. mm2folm (MS i))) σ phi)
 Proof
-(*rw[] >> drule ultraproduct_comm_feval >> 
+rw[] >> drule ultraproduct_comm_feval >> 
 strip_tac >> 
 rw[] >> 
 `IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (models2worlds MS)` suffices_by metis_tac[] >>
 rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def,ultraproduct_model_def,mm2folm_def]
-
-*) cheat
 QED
 
 val nfm_def = Define
@@ -677,9 +412,8 @@ Theorem ppultraproduct_comm_feval':
      (feval (ultraproduct_folmodel U I MS) σ phi <=>
       feval (mm2folm (ultraproduct_model U I (λi. folm2mm (MS i)))) σ phi)
 Proof
-(*rw[nfm_def] >> drule ultraproduct_comm_feval' >> rw[] >> 
-`IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms MS)` suffices_by metis_tac[] >> rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def] >> fs[ultraproduct_folmodel_def]*)
-cheat
+rw[nfm_def] >> drule ultraproduct_comm_feval' >> rw[] >> 
+`IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms MS)` suffices_by metis_tac[] >> rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def] >> fs[ultraproduct_folmodel_def]
 QED
 
 
@@ -698,7 +432,7 @@ Theorem ppultraproduct_sat:
             (!n. n IN N ==> σ n = f n)  /\
             (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
 Proof
-(*rw[valuation_def] >> drule ultraproduct_sat >> rw[] >>
+rw[valuation_def] >> drule ultraproduct_sat >> rw[] >>
 `∃σ.
                 IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
                 (∀n. n ∈ N ⇒ σ n = f n) ∧
@@ -717,7 +451,7 @@ first_x_assum irule >> rw[]
        (rw[] >> first_x_assum drule_all >> strip_tac >> qexists_tac `σ` >>
         rw[] >> rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def]) >>
    metis_tac[])
->- rw[IMAGE_DEF,SUBSET_DEF] >> fs[ultraproduct_folmodel_def]*)cheat
+>- (rw[IMAGE_DEF,SUBSET_DEF] >> fs[ultraproduct_folmodel_def])
 QED
 
 Theorem pppreserved_under_sim_def:
@@ -749,10 +483,10 @@ Theorem ppthm_2_68_half1:
 ∀a x.
             (INFINITE 𝕌(:α) /\
             invar4bisim x (:(num -> α) -> bool) (:(num -> α) -> bool) a) ⇒
-            ∃phi. ∀M v. valuation M v ⇒ (feval M v a ⇔ feval M v (ST x phi))
+            ∃(phi:num chap1$form). ∀M v:num -> α. valuation M v ⇒ (feval M v a ⇔ feval M v (ST x phi))
 
 Proof
-cheat
+rw[] >> drule thm_2_68_half1 >>  metis_tac[]
 QED
 
 Theorem ppthm_2_78_half2:
@@ -781,43 +515,6 @@ val _ = overload_on("Mr", “\M. M.frame.rel”);
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Suffix 2100, pp_elements = [TOK "(Mr)"],
                   term_name = "Mr", paren_style = OnlyIfNecessary}
-
-(*val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix(NONASSOC,450),
-                  pp_elements = [HardSpace 1, TOK "(Mr1)", TM, TOK "(Mr2)",
-                                 BreakSpace(1,0)],
-                  term_name = "Mr", paren_style = OnlyIfNecessary}
-*)
-(*
-val _ = overload_on("Mrr", “λu M s v. RESTRICT M.frame.rel s u v”);
-val _ = overload_on("Mrrrtc", “λu M s v. (RESTRICT M.frame.rel s)^* u v”);
-
-
-
-
-val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix(NONASSOC,450),
-                  pp_elements = [HardSpace 1, TOK "(Mr1)", TM, TOK "(Mr2)",
-                                 BreakSpace(1,0)],
-                  term_name = "Mr", paren_style = OnlyIfNecessary}
-
-val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix(NONASSOC,450),
-                  pp_elements = [HardSpace 1, TOK "(Mrr1)", TM, TOK "(Mrr2)",
-                                 TM, TOK "(Mrr3)",
-                                 BreakSpace(1,0)],
-                  term_name = "Mrr", paren_style = OnlyIfNecessary}
-
-val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix(NONASSOC,450),
-                  pp_elements = [HardSpace 1, TOK "(Mrrrtc1)", TM,
-                                 TOK "(Mrrrtc2)",
-                                 TM, TOK "(Mrrrtc3)",
-                                 BreakSpace(1,0)],
-                  term_name = "Mrrrtc", paren_style = OnlyIfNecessary}
-*)
-
-
 
 
 val _ = overload_on("Mv", “λM. M.valt”);
