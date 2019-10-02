@@ -43,9 +43,11 @@
 \setlength{\topmargin}{2.5cm}
 
 
-%\newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/e0eb742bd0e2f65489f8829233a829e0b060d531/#2Script.sml\#L#3}{#1}}
-\newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/5b0350b067222d3b8b435bde496518bb30744c32/#2Script.sml\#L#3}{#1}}
-\newcommand{\holreff}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/dbfbba74de0af276f982867714fcd6eee221196e/#2Script.sml\#L#3}{#1}}
+%\newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/5b0350b067222d3b8b435bde496518bb30744c32/#2Script.sml\#L#3}{#1}}
+%\newcommand{\holreff}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/dbfbba74de0af276f982867714fcd6eee221196e/#2Script.sml\#L#3}{#1}}
+
+
+\newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/14eba6e9c055ab77018ee5afe2b1323ffe415793/#2Script.sml\#L#3}{#1}}
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
@@ -110,6 +112,18 @@ Yiming Xu
 
 \chapter*{Acknowledgements}\label{acknowledgements}
 \addcontentsline{toc}{chapter}{Acknowledgements}
+
+Firstly, Thanks for my project supervisors Michael Norrish and Scott Morrison. Michael - thank you for teaching me theorem-proving with absolutely zero background through these two years, and being super responsive for all my emails. 
+
+
+I feel that I am the luckiest person in the world for having all of you as my instructors. I will definitely try my best in my further studying to prove that I deserve all the good education from you.  
+
+Secondly, thanks to all the honours students, including the senior ones who entered their honours half a year before I did. Special thanks to Ameilia Han, Fredrick Yuan, Kelly Maggs, Chris Hone, Mitchell Rowett, Josh Tomlin, Keeley Hoek, Michael Howes, for collaborating on assignments and sharing ideas about mathematics. 
+
+Moreover, thanks for Robert Culling, for being my tutor from Algebra 1 to Algebra 3, and proofreading. I would also thank Zoey Chen for feeding me. 
+
+
+Finally, thanks to my parents for supporting my studying through all these years. 
 \tableofcontents
 
 \mainmatter
@@ -465,7 +479,7 @@ Two worlds which are bisimilar are always modal equivalent.
 Now we ask if the converse of the above holds: is that the fact that a modal equivalence always give a bisimulation? The answer is no. For example, consider models \HOLtm{M} and \HOLtm{N} defined as the picture below, where the arrows denotes relations (non-transitive). Both \HOLtm{M} and \HOLtm{N} has infinitely many branches, from their roots \HOLtm{w}, \HOLtm{w'} respectively. The difference is that \HOLtm{N} has a branch which is infinitely long, whereas all the branches in \HOLtm{M} are of finite length. The worlds \HOLtm{w} and \HOLtm{w'} can be shown to be modal equivalent, but they are not bisimilar. Suppose, in order to get a contradiction, that \HOLtm{bisim M Z N} and \HOLtm{Z w w'}, then there exists \HOLtm{v0 IN M.frame.world} such that \HOLtm{Z v0 v0'}, where \HOLtm{v0'} is the first world on the infinite branch in \HOLtm{N} such that \HOLtm{N.frame.rel w' v0'}. The branch that \HOLtm{v0} lies on is finitely long, say, the worlds $w,v_0,\cdots, v_{n}$ are all the worlds on this branch. Then by clause on `forward condition' in the definition of bisimulation, there are worlds $v_1',\cdots,v_{n}'$ on the infinite branch of \HOLtm{N} such that $Z\ v_i \ v_i'$ for each $1\le i\le n$. The world $v_n'$ has a successor $v_{n+1}'$ in \HOLtm{N}, so the backward clause on relation requires the existence of a world in \HOLtm{M} which is related to $v_n$ and is related to $v_{n+1}'$ by $Z$. But such a world does not exist since $v_n$ is at the end of the branch it lies on. 
 
 \begin{center}
-\begin{tikzpicture}[scale=1.5]
+\begin{tikzpicture}[scale=1.5,baseline=0]
 \node [label={right:$w$}] at (0,0) {\Huge.};
 %\filldraw[black] (0,0) circle (0.5pt);
 
@@ -484,7 +498,7 @@ Now we ask if the converse of the above holds: is that the fact that a modal equ
 
 \end{tikzpicture}
 \qquad
-\begin{tikzpicture}[scale=1.5]
+\begin{tikzpicture}[scale=1.5,baseline=0]
 
 \node [label={right:$w'$}] at (0,0) {\Huge.};
 
@@ -699,8 +713,13 @@ In the proof above, note that what we do to capture indexing of set: A family of
 
 As we took a detour through Proposition \ref{3.5}, this construction of finite model changes the type of model. If we start with an $(\beta,\alpha)$-model, then the finite model we build by selection will be a $(\beta \ list,\alpha)$-model. If we want to obtain a finite model without changing the type of the model, it can be done by using filtration. 
 
+\chapter[\texorpdfstring{Reaching out to the world of first order logic
+    }{Reaching out to the world of first order logic}
+]{\chaptermark{Reaching towards FOL} Reaching out to the world of first order logic}
+\chaptermark{Reaching towards FOL}
 
-\chapter{Reaching out to the world of first order logic}
+
+%\chapter[Reaching towards FOL]{Reaching out to the world of first order logic}
 
 As claimed by Slogan 3 in the introduction, modal logic is not an isolated formal system, in this chapter, we start connecting modal logic with the wider logical world by discussing about its relation to first order logic. In the first half of the chapter, we define standard translation as our link between modal logic and first order logic, and in the second half of the chapter, with the help of standard translation, we introduce another construction on models which give modal equivalence, and conclude this section by proving an elegant result about bisimulation: If we have a modal equivalence between worlds $w,v$ in two models \HOLtm{M} and \HOLtm{N}, although it may not the case that $w$ and $v$ are bisimilar, we can find a bisimulation in a pair of models constructed from \HOLtm{M} and \HOLtm{N}.
 
@@ -1123,7 +1142,14 @@ With the theory about ultrafilters built in HOL4, we can now launch on the const
 Fix a model \HOLtm{M} and a subset $X$ of its world set, we can consider two set of worlds arises from $X$: One of them is the set of worlds of \HOLtm{M} which `can see' some world in $X$, an element of this set is a world $w$ of \HOLtm{M} such that there exists some \HOLtm{v IN X} such that \HOLtm{M.frame.rel w v}.  The other one is the set of worlds in \HOLtm{M} which `only see' the worlds in $X$, an element $w$ of this set is a world in \HOLtm{M} such that once we have \HOLtm{M.frame.rel w v} for some other world \HOLtm{v IN M.frame.world}, we must have \HOLtm{v IN X} as well. Formally, their definitions are given as:
 
 \begin{defn}[\holref{`Can see'}{chap2_5}{189} and \holref{`Only see'}{chap2_5}{192}]
-Given a model \HOLtm{M} and a set \HOLtm{X} of worlds of \HOLtm{M}, an element in the set of worlds of \HOLtm{M} which `can see' some world in $X$ is a world $w$ of \HOLtm{M} such that there exists some \HOLtm{v IN X} such that \HOLtm{M.frame.rel w v}.  An element in the set of worlds in \HOLtm{M} which `only see' the worlds in $X$ is a world $w$ in \HOLtm{M} such that once we have \HOLtm{M.frame.rel w v} for some other world \HOLtm{v IN M.frame.world}, we must have \HOLtm{v IN X}.
+Given a model \HOLtm{M} and a set \HOLtm{X} of worlds of \HOLtm{M}, we define sets:
+
+\begin{itemize}
+\item The set of worlds that `can see' $X$ (notation \HOLtm{can_see M X}) is the set of worlds $w$ of \HOLtm{M} such that there exists some \HOLtm{v IN X} such that \HOLtm{M.frame.rel w v}.
+
+\item The set of worlds that `only see' $X$ (notation \HOLtm{only_see M X}) is the set of worlds $w$ in \HOLtm{M} such that once we have \HOLtm{M.frame.rel w v} for some other world \HOLtm{v IN M.frame.world}, we must have \HOLtm{v IN X}.
+\end{itemize}
+
 \begin{holmath}
   \HOLthm[def]{chap2_5.can_see_def}\\[3mm]
   \HOLthm[def]{chap2_5.only_see_def}
@@ -1144,11 +1170,10 @@ The worlds that can see an world in $X$ is precisely a world that does not only 
 \end{holmath}
 \end{prop}
 
-A world can see some world in the union of $X$ and $Y$ if and only if it can see a world in $X$ or a world in $Y$, hence \HOLtm{can_see} distributes over union. Similarly, a worlds only see the worlds in the intersection of $X$ and $Y$ if and only if it can only see worlds in $X$ and worlds in $Y$.
+A world can see some world in the union of $X$ and $Y$ if and only if it can see a world in $X$ or a world in $Y$, hence $m_{\Diamond}$ distributes over union. Similarly, a worlds only see the worlds in the intersection of $X$ and $Y$ if and only if it can only see worlds in $X$ and worlds in $Y$, therefore, $m_{\Diamond}^{\delta}$ distributes over intersection.
 
 
-\begin{prop}[\holreff{\texttt{can_see_UNION}}{chap2_5}{611}, \holref{\texttt{only_see_INTER}}{chap2_5}{273}]\label{5.17}
-The operation \HOLtm{can_see M} for any model \HOLtm{M} distributes over union, and \HOLtm{only_see M} distributes over intersection. 
+\begin{prop}[\holref{\texttt{can_see_UNION}}{chap2_5}{611}, \holref{\texttt{only_see_INTER}}{chap2_5}{273}]\label{5.17}
 \begin{holmath}
   \HOLthm{prettyPrinting.ppcan_see_UNION}\\[3mm]
   \HOLthm{chap2_5.only_see_INTER}
@@ -1741,8 +1766,12 @@ We get into this situation because the statements we have proved for both direct
 The fact that the two directions of implication does not yield an `if and only if' statement is an evident to the restriction of  simple type theory.
 
 
-
-\section{Positive existential formulas and Preservation under simulations}
+\section[\texorpdfstring{Positive existential formulas and Preservation under simulations
+    }{Positive existential formulas and Preservation under simulations}
+]{\chaptermark{`Positive' formulas and simulation} Positive existential formulas and Preservation under simulations}
+\chaptermark{`Positive' formulas and simulation}
+\label{CH:Chap}
+%\section[`Positive' formulas and simulation]{Positive existential formulas and Preservation under simulations}
 
 In last section, we proved that standard translations are exactly $\mathcal L_{\tau}^1$-formulas which are invariant for bisimulations. There exists a concept of `half of a bisimulation', which is called \emph{simulation}. Accordingly, the $\mathcal L_{\tau}^1$-formulas which are \emph{preserved under simulation} are interesting. We have set-theoretic proof that these formulas can also be characterized using their syntax. The aim of this section is to translate this proof into simple type theory. For precisely the same reason as in the last section, after we translate the proof of implications in both direction, they cannot be unified into a double implication. Nevertheless, we will spell out our formalization of proofs for those two directions separately. 
 

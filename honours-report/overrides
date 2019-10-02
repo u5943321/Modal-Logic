@@ -163,11 +163,15 @@ fEXISTS 1 \ensuremath{ {}^{\sf f}{\exists}}
 True 1 \ensuremath{{}^{\sf f}{\top}} 
 fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 
-(cs1) 1 m\sb{\Diamond}(
-(cs2) 1 )
+(cs1) 0 {
+(cs2) 1 }\sb{\Diamond}(
+(cs3) 1 )
 
-(os1) 1 m\sp{\delta}\sb{\Diamond}(
-(os2) 1 )
+(os1) 0 {
+(os2) 1 }\sp{\delta}\sb{\Diamond}(
+(os3) 1 )
+
+
 
 (uer1) 0 {}\sp{ue}{
 (uer2) 1 }\sp{R}

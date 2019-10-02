@@ -697,20 +697,20 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   pp_elements = [TOK "(nbw1)", TM, TOK "(nbw2)", TM, TOK "(nbw3)",TM, TOK "(nbw4)",TM, TOK "(nbw5)"], 
                   term_name = "nbw", paren_style = OnlyIfNecessary}
 
-Overload cs = ``\X. can_see M (X: α -> bool)``
-Overload cs = ``\X. can_see M (X: β -> bool)``
+Overload cs = ``\M X. can_see M (X: α -> bool)``
+Overload cs = ``\M X. can_see M (X: β -> bool)``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(cs1)", TM, TOK "(cs2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(cs1)", TM, TOK "(cs2)",TM, TOK"(cs3)"], 
                   term_name = "cs", paren_style = OnlyIfNecessary}
 
 
 
-Overload os = ``\X. only_see M (X:α -> bool) ``
-Overload os = ``\X. only_see M (X:β -> bool) ``
+Overload os = ``\M X. only_see M (X:α -> bool) ``
+Overload os = ``\M X. only_see M (X:β -> bool) ``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(os1)", TM, TOK "(os2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(os1)", TM, TOK "(os2)",TM, TOK "(os3)"], 
                   term_name = "os", paren_style = OnlyIfNecessary}
 
 Overload uer = ``\M. UE_rel M``
