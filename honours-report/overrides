@@ -151,9 +151,13 @@ FALL 1 \ensuremath{{}^{\sf f}{\forall}}
 (prd1) 2 \ensuremath{{}^{\sf f}{\sf P} \ }
 (prd2) 1 { \ }
 (prd3) 1 {}
+(prdl1) 2 \ensuremath{{}^{\sf f}{\sf Pred} \ }
+(prdl2) 1 { \ }
+(prdl3) 1 {}
 fFALSE 1 \ensuremath{{}^{\sf f}\bot}
 fNOT 1 \ensuremath{{^{\sf f}}{\lnot}} 
 (fdisj) 1 \ensuremath{\ {}^{\sf f} {\lor} \ }
+(fimp) 1 \ensuremath{\ {}^{\sf f} {\to} \ }
 (fad) 1 \ensuremath{\ {}^{\sf f}{\land} \ }
 fEXISTS 1 \ensuremath{ {}^{\sf f}{\exists}}
 True 1 \ensuremath{{}^{\sf f}{\top}} 

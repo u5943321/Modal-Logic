@@ -625,6 +625,12 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   pp_elements = [TOK "(fdisj)"], 
                   term_name = "fdisj", paren_style = OnlyIfNecessary}
 
+Overload fimp = ``\f1 f2. IMP (f1: folLang$form) f2``
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix (NONASSOC, 450), 
+                  pp_elements = [TOK "(fimp)"], 
+                  term_name = "fimp", paren_style = OnlyIfNecessary}
+
 
 Overload ad = ``\f1 f2. AND f1 f2``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
@@ -691,7 +697,8 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   pp_elements = [TOK "(nbw1)", TM, TOK "(nbw2)", TM, TOK "(nbw3)",TM, TOK "(nbw4)",TM, TOK "(nbw5)"], 
                   term_name = "nbw", paren_style = OnlyIfNecessary}
 
-Overload cs = ``\X. can_see M X``
+Overload cs = ``\X. can_see M (X: α -> bool)``
+Overload cs = ``\X. can_see M (X: β -> bool)``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, pp_elements = [TOK "(cs1)", TM, TOK "(cs2)"], 
@@ -699,7 +706,8 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 
 
 
-Overload os = ``\X. only_see M X``
+Overload os = ``\X. only_see M (X:α -> bool) ``
+Overload os = ``\X. only_see M (X:β -> bool) ``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, pp_elements = [TOK "(os1)", TM, TOK "(os2)"], 
@@ -748,7 +756,14 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   pp_elements = [TOK "(bmi1)", TM, TOK "(bmi2)"], 
                   term_name = "bmi", paren_style = OnlyIfNecessary}
 
-Overload prd = ``\a l. Pred a l``
+Overload prdl = ``\a l. Pred a l``
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Closefix, 
+                  pp_elements = [TOK "(prdl1)", TM, TOK "(prdl2)", TM, TOK "(prdl3)"], 
+                  term_name = "prdl", paren_style = OnlyIfNecessary}
+
+
+Overload prd = ``\a l. fP a l``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, 
