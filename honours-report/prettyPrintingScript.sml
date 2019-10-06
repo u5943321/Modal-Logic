@@ -239,11 +239,11 @@ rw[EQ_IMP_THM] (* 2 *)
 QED
 
 Theorem ppultraproduct_rep_independence_lemma:
-∀U I FMS σ.
-            (ultrafilter U I /\
-            valuation (ultraproduct_folmodel U I FMS) σ) ⇒
-            ∀phi rv.
-                (∀v. v ∈ FV phi ⇒ rv v ∈ σ v) ⇒
+∀U I FMS σ phi rv.
+            ((ultrafilter U I /\
+            valuation (ultraproduct_folmodel U I FMS) σ) /\
+          
+                (∀v. v ∈ FV phi ⇒ rv v ∈ σ v)) ⇒
                 ({i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U ⇔
                  {i | i ∈ I ∧ feval (FMS i) (λv. rv v i) phi} ∈ U)
 Proof
@@ -458,8 +458,8 @@ Theorem pppreserved_under_sim_def:
  ∀phi:num chap1$form.
          preserved_under_sim (:α) (:β) phi ⇔
          ∀M M' Z w:α w':β.
-             w ∈ M.frame.world ∧ w' ∈ M'.frame.world ∧ sim Z M M' ∧ Z w w' ⇒
-             satis M w phi ⇒
+             (w ∈ M.frame.world ∧ w' ∈ M'.frame.world ∧ sim Z M M' ∧ Z w w' /\
+             satis M w phi) ⇒
              satis M' w' phi
 Proof
 metis_tac[preserved_under_sim_def] 
@@ -469,14 +469,13 @@ Theorem ppinvar4bisim_def:
  ∀x phi.
             invar4bisim x (:α) (:β) phi ⇔
             FV phi ⊆ {x} ∧ L1tau phi ∧
-            ∀M N v:β w:α.
-                bisim_world M N w v ⇒
-                ∀σm σn.
-                    valuation (mm2folm M) σm ∧ valuation (mm2folm N) σn ⇒
+            ∀M N v:β w:α σm σn.
+                (bisim_world M N w v /\
+                valuation (mm2folm M) σm ∧ valuation (mm2folm N) σn) ⇒
                     (fsatis (mm2folm M) σm⦇x ↦ w⦈ phi ⇔
                      fsatis (mm2folm N) σn⦇x ↦ v⦈ phi)
 Proof
-rw[invar4bisim_def]
+rw[invar4bisim_def] >> metis_tac[]
 QED
 
 Theorem ppthm_2_68_half1:
@@ -503,6 +502,76 @@ Theorem ppL1tau_mm2folm_folm2mm_comm_feval:
 Proof
 metis_tac[L1tau_mm2folm_folm2mm_comm_feval]
 QED
+
+Theorem pptree_no_loop:
+∀s r t0 t. (tree s r /\ (RESTRICT s.rel s.world)⁺ t0 t) ⇒ t0 ≠ t
+Proof
+metis_tac[tree_no_loop]
+QED
+
+Theorem pptree_height_rel_lemma:
+∀M x w v.
+        (tree M.frame x /\
+        w ∈ M.frame.world ∧ height M x M w = n /\ 
+        M.frame.rel w v ∧ v ∈ M.frame.world) ⇒
+                    height M x M v = n + 1
+Proof
+metis_tac[tree_height_rel_lemma]
+QED
+
+Theorem pplemma_2_33:
+∀M x M' k w.
+            (rooted_model M x M'/\ w ∈ (hrestriction M x M' k).frame.world) ⇒
+                ∃f.
+                    nbisim (hrestriction M x M' k) M f (k − height M x M' w)
+                      w w
+Proof
+metis_tac[lemma_2_33]
+QED
+
+
+Theorem ppLos_modal_thm:
+∀U J Ms phi fc.
+            (ultrafilter U J /\
+                fc ∈ (ultraproduct_model U J Ms).frame.world) ⇒
+                (satis (ultraproduct_model U J Ms) fc phi ⇔
+                 ∃f. f ∈ fc ∧ {i | i ∈ J ∧ satis (Ms i) (f i) phi} ∈ U)
+Proof
+metis_tac[Los_modal_thm]
+QED
+
+Theorem ppexercise_2_7_1:
+∀M M' w w'.
+            (M_sat M ∧ M_sat M' ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world /\
+             (∀phi. PE phi ⇒ satis M w phi ⇒ satis M' w' phi)) ⇒
+            ∃Z. sim Z M M' ∧ Z w w'
+Proof
+metis_tac[exercise_2_7_1]
+QED
+
+Theorem ppmodal_compactness_thm:
+(INFINITE 𝕌(:α) /\ (∀ss: num chap1$form -> bool.
+                 FINITE ss ∧ ss ⊆ s ⇒
+                 ∃M w:α. w ∈ M.frame.world ∧ ∀f. f ∈ ss ⇒ satis M w f)) ⇒
+            ∃M w:α. w ∈ M.frame.world ∧ ∀f. f ∈ s ⇒ satis M w f
+Proof
+metis_tac[modal_compactness_thm]
+QED
+
+Theorem ppmodal_compactness_corollary:
+INFINITE 𝕌(:α) /\
+        (∀M w:α.
+                 w ∈ M.frame.world ⇒ (∀f. f ∈ s ⇒ satis M w f) ⇒ satis M w a) ⇒
+            ∃ss: num chap1$form -> bool.
+                FINITE ss ∧ ss ⊆ s ∧
+                ∀M w:α.
+                    w ∈ M.frame.world ⇒
+                    (∀f. f ∈ ss ⇒ satis M w f) ⇒
+                    satis M w a
+Proof
+metis_tac[modal_compactness_corollary]
+QED
+
 
 val _ = overload_on("Mw", “λM. M.frame.world”);
 
