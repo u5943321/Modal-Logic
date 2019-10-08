@@ -90,7 +90,11 @@
 
 \begin{center}\emph{
 %
-For
+For the four supervisors/lecturers who have been guiding me for no less than a whole year, namely: \\
+Michael Norrish\\
+Scott Morrison\\
+James Borger\\
+Vigleik Angeltveit
 %
 }
 \end{center}
@@ -113,14 +117,9 @@ Yiming Xu
 \chapter*{Acknowledgements}\label{acknowledgements}
 \addcontentsline{toc}{chapter}{Acknowledgements}
 
-Firstly, Thanks for my project supervisors Michael Norrish and Scott Morrison.  ...
+Firstly, big thanks to my project main supervisor Michael Norrish and co-supervisor Scott Morrison, as well as the two supervisors/lecturers James Borger and Vigleik Angeltveit who have provided me significant amount of guidance on my studying. The whole list of specific things which I need to thank you about is too long to be displayed here. But overall, I feel that I am the luckiest person in the world for having all of you teaching me all these interesting stuff and helping me developing all these useful skills. I will definitely try my best in my further studying to prove that I deserve all the good education from you.  
 
-%Michael - thank you for teaching me theorem-proving with absolutely zero background through these two years, and being super responsive for all my emails. 
-
-
-I feel that I am the luckiest person in the world for having all of you teaching me all these interesting stuff and helping me developing all these useful skills. I will definitely try my best in my further studying to prove that I deserve all the good education from you.  
-
-Secondly, thanks to all the honours students, including the senior ones who entered their honours half a year before I did. Special thanks to Ameilia Han, Fredrick Yuan, Kelly Maggs, Chris Hone, Mitchell Rowett, Josh Tomlin, Keeley Hoek, Michael Howes, for collaborating on assignments, and chatting. 
+Secondly, thanks to all the honours students. Special thanks to Ameilia Han, Fredrick Yuan, Chris Hone, Mitchell Rowett, Josh Tomlin, Keeley Hoek, Michael Howes, Kelly Maggs, Ben Leedom, for both collaborating on assignments and chatting. 
 
 Moreover, thanks for Robert Culling, for being my tutor from Algebra 1 to Algebra 3, and proofreading. I would also thank Zoey Chen for feeding me. 
 
@@ -175,7 +174,7 @@ In summary:
 \item  By now, every theorem proved in the book up to section 2.7 that can be captured by the basic modal language and the HOL4 are formalised. We take the proofs of those theorems from the textbook, and our definitions, theorems and proofs are taken to be as close as possible to the original version of the mathematical statements appear in the book. 
 
 
-\item There are some results which are only used but not proved in the textbook. To be safe when using them, we formalize them all. The most significant part is the work on ultrafilters and ultraproducts, which only depend on set theory library and the work of John Harrison on first-order logic, respectively. We will discuss ultrafilter and ultraproducts as interludes in this thesis when we are about to use them. 
+\item There are some results which are only used but not proved in the textbook. To be safe when using them, we formalize them all. The most significant part is the work on ultraproducts which only depend on the work of John Harrison on first-order logic. We will discuss about ultraproducts as a interlude in this thesis when we are about to use them. 
 
 
 \end{itemize}
@@ -212,7 +211,7 @@ Our theorem prover HOL4 is based on simple type theory. This makes most of state
 
 \item \HOLtm{LAST}: The function \HOLtm{LAST} takes a list and give the last member of it. 
 
-\item \HOLtm{MAP}: The function \HOLtm{MAP} takes a function of type $\alpha\to\beta$ and an $\alpha$-list $l$ and gives the $\beta$-list such that the $n$-th member is $f\ a$ where $a$ is the $n$-th member of $l$.
+\item \HOLtm{MAP}: The function \HOLtm{MAP} takes a function of type $\alpha\to\beta$ and an $\alpha$-list $l$ and gives the $\beta$-list such that the $n$-th member is $f\ a$, where $a$ is the $n$-th member of $l$.
 
 
 \end{itemize}
@@ -969,9 +968,8 @@ Under the assumptions above, let \HOLtm{Σ} denote the set of formulas satisfied
 
 \end{proof}
 
-Since m-saturated models are nice, here is a natural question: How can we get such models? In the following of this section, we will see the fact that for every model its \emph{ultrafilter extension} is an m-saturated model. In order to talk about ultrafilter extensions, we need to build a theory of ultrafilters in HOL4.
-
-\subsection{Interlude I: Ultrafilters}
+Since m-saturated models are nice, here is a natural question: How can we get such models? In the following of this section, we will see the fact that for every model its \emph{ultrafilter extension} is an m-saturated model. In order to talk about ultrafilter extensions, we wrote a theory about ultrafilters in HOL4. We will not show the whole theory here, but will just give the ingredients we will need only for the sake of this section. 
+%I am a dividing line -----------------------------------
 
 As its name suggests, an ultrafilter is a special kind of filter. 
 
@@ -984,37 +982,25 @@ As its name suggests, an ultrafilter is a special kind of filter.
 \end{defn}
 Note that by induction, closure under binary intersection implies closure under every finite intersection.
 
-The simplest example of a filter is the power set \HOLtm{POW} $J$ itself. By upward closure, if a filter on $W$ contains the empty set, then the filter must be the whole power set \HOLtm{POW} $J$. We are mainly interested to filters which is not a power set, such a filter is called a \emph{proper filter}. 
+The simplest example of a filter is the power set \HOLtm{POW} $J$ itself. By upward closure, if a filter on $W$ contains the empty set, then the filter must be the whole power set \HOLtm{POW} $J$. A filter which is not a power set is called a \emph{proper filter}. 
 
-For a partially ordered set $C$, it is called a \emph{chain} if for every pair of elements $a,b\in C$, we have either $a \le b$ or $b\le a$. In particular, a set of sets is natually equipped with a partial order given by containment. We can union a chain of proper filters to get a proper filter. 
-
-
-Besides the proper filters, another important kind of filter is called the \emph{generated filter}. It has many versions of definitions, which are all equivalent. Fix a set $J$ and a subset $E$ of its power set, all of the followings can serve as as a definition of `the filter on $J$ generated by $E$':
-\begin{itemize}
-
-\item The filter generated by $E$ is the intersection of all of the filters on $W$ which contains $E$, that is, it is the big intersection $\bigcap\ \{F\mid E\subseteq F\land F\text{ is a filter on } J\}$.
-
-\item The filter generated by $E$ is the smallest filter on $J$ that contains $E$.
-
-\item The filter generated by $E$ is the set of all the subsets of $J$ which is either $J$ itself or contains an intersection of finitely many elements in $E$, in mathematical language, it is the set
-$\{X\mid X\subseteq J\land((X = J)\lor ((\exists S\subseteq E)(S \text{ is finite}\land \bigcap S\subseteq X)))\}$.
-
-\end{itemize}
-
-We take the first of those three as our definition of the generated filter as it is defined in terms of big intersection. All these three definitions are encoded, and are  proved to be equivalent in HOL4. 
-
-The filters generated by a singleton are particularly interesting. For a set $J$ and an element $w\in J$, by definition of generated filter, the filter generated by \HOLtm{{w\}} is the set of subsets of $J$ that contains $w$, it is trivial to check it is indeed a filter. Such a filter is called \emph{principal filters}. In HOL4, we define a function that takes an element $w\in J$ and a set $J$, and give the principle filter generated by $w$, which is denoted as \HOLtm{principle_UF w J}. Actually, principal filters are the simplest examples of \emph{ultrafilters}. 
+For a set $J$ and an element $w\in J$, the filter generated by \HOLtm{{w\}} is the set of subsets of $J$ that contains $w$, it is trivial to check it is indeed a filter. Such a filter is called \emph{principal filters}. In HOL4, we define a function that takes an element $w\in J$ and a set $J$, and give the principle filter generated by $w$, which is denoted as \HOLtm{principle_UF w J}. Actually, principal filters are the simplest examples of ultrafilters: \emph{ultrafilters}. 
 \begin{defn}[\holref{Ultrafilter}{ultrafilter}{34}]
  An ultrafilter on a set $J$ is a proper filter $U$ such that for every $S\subseteq W$, either $S$ or its complement $J\setminus S$ is in $U$, but not both.
 \begin{holmath}
-  \HOLthm[def,J/W,width=65]{ultrafilter.ultrafilter_def}\\[3mm]
-
+  \HOLthm[def,J/W,width=65]{ultrafilter.ultrafilter_def}
 \end{holmath}
 \end{defn}
 
+There are two results about ultrafilter which will be used in this section, the first one is the \emph{ultrafilter theorem}:
+\begin{thm}[\holref{\texttt{ultrafilter_theorem}}{ultrafilter}{361}]\label{5.11}
+Every proper filter is contained in an ultrafilter. 
+\begin{holmath}
+  \HOLthm[L/f,J/w]{ultrafilter.ultrafilter_theorem}
+\end{holmath}
+\end{thm}
 
-In the rest of this interlude, we are interested in the question that how can we get an ultrafilter. We will get our answer by the end of the interlude, which proves a corollary of the ultrafilter theorem. This corollary says that for every subset of \HOLtm{POW J} which has \emph{finite intersection property}, it can be extended to an ultrafilter on $J$. 
-
+The other one is a corollary of the ultrafilter theorem. This corollary says that for every subset of \HOLtm{POW J} which has \emph{finite intersection property}, it can be extended to an ultrafilter on $J$. In HOL4, the definition of finite intersection property is given as:
 \begin{defn}[\holref{Finite intersection property}{ultrafilter}{179}]
  A subset of $\mathcal P (J)$ has finite intersection property if once we take the intersection of finitely many elements in it, the resultant set is nonempty. We read `\HOLtm{FIP A J}' as $A$ is a set of subsets of $J$ with finite intersection property.
 \begin{holmath}
@@ -1024,64 +1010,7 @@ In the rest of this interlude, we are interested in the question that how can we
 
 Note that finite intersection property is a property of subsets of power sets, hence \HOLtm{FIP} defined below takes two parameters, a set of subsets of $J$, and an ambient set $J$. Every proper filter has finite intersection property. 
 
-\begin{prop}[\holref{\texttt{proper_filter_INSERT_FIP}}{ultrafilter}{266}]\label{5.8}
-For $B\subseteq W$ such that neither $B$ nor its complement is in $U$, inserting $B$ to $U$ does not destroy the finite intersection property of $U$.
-\begin{holmath}
-  \HOLthm[J/W,width=65]{ultrafilter.proper_filter_INSERT_FIP}
-\end{holmath}
-\end{prop}
-
-\begin{proof} 
-Take a finite subset $S\subseteq \{B\}\cup U$, if $B\notin S$, then we are done as proper filters have finite intersection property. Otherwise, if we have $\bigcap S = B \cap (\bigcap U')=\emptyset$ for some finite $U'\subseteq U$, it will imply $\bigcap U'\subseteq J\setminus B$, hence $J\setminus B\in U$ by upward closure of a filter, contradicting the assumption that $J\setminus B\notin U$.
-\end{proof}
-
-Towards the goal of extending a set with finite intersection property to an ultrafilter, we first prove that a set with finite intersection property can be extended into a proper filter.
-\begin{prop}[\holref{\texttt{FIP_PSUBSET_proper_filter}}{ultrafilter}{212}]\label{5.9}
-For every set $S$ of subsets of a nonempty set $W$ with finite, there is a proper filter that contains $S$. 
-\begin{holmath}
-  \HOLthm[J/W,B/S]{ultrafilter.FIP_PSUBSET_proper_filter}
-\end{holmath}
-\end{prop}
-\begin{proof}
-The desired proper filter is given by the filter generated by $S$.
-\end{proof}
-
-
-A proper filter which is contained in no proper filter is called a maximal filter. In particular, consider an ultrafilter $U$ on $J$. If a filter $U'$ properly contains $U$, then it must contain both $A$ and $J\setminus A$ for some $A\subseteq J$. It follows that $U'$ will contain the empty set, and hence is not proper. This shows every ultrafilter is maximal. The converse is proved as follows:
-
-\begin{prop}[\holref{\texttt{maximal_ultrafilter}}{ultrafilter}{297}]\label{5.10}
-Every maximal filter is an ultrafilter. 
-\begin{holmath}
-  \HOLthm[J/W,width=65]{ultrafilter.maximal_ultrafilter}
-\end{holmath}
-\end{prop}
-\begin{proof}
-If a maximal filter $U$ on $J$ is not an ultrafilter, then for some $A$, either $A\in U\land J \setminus A\in U$ or $A\notin U\land J\setminus A\notin U$. In the first case we have $\emptyset\in U$, contradicts the properness of maximal filter. In the second case, by Proposition \ref{5.8}, the set $U\cup \{A\}$ has the finite intersection property, hence extends to a proper filter $U'$ by Proposition \ref{5.9}. But then $U$ is properly contained in $U'$ since $A\in U'$ but $A\notin U$, contradicts the maximality of $U$. This completes the proof. 
-\end{proof}
-
-We can begin our proof of ultrafilter theorem now.
-%talk about Zorn's lemma in the HOL?
-\begin{thm}[\holref{\texttt{ultrafilter_theorem}}{ultrafilter}{361}]\label{5.11}
-Every proper filter is contained in an ultrafilter. 
-\begin{holmath}
-  \HOLthm[L/f,J/w]{ultrafilter.ultrafilter_theorem}
-\end{holmath}
-\end{thm}
-
-\begin{proof}
-Given a proper filter $L$, consider the set $S$ of all the proper filters containing $L$, ordered by inclusion, we will apply Zorn's lemma on $S$. 
-The thing to check is that every chain $T$ on $S$ has an upper bound. If the chain is empty, then the upper bound is clearly $L$. Otherwise, we claim the union of the chain is the upper bound. To prove the claim, it amounts to check:
-
-\begin{itemize}
-  \item $\bigcup T$ is a proper filter containing $L$.
-  \item Every element in $T$ is a subset of $\bigcup T$.
-\end{itemize}
-  The second item is trivial, the first one is by the basic fact that taking the union of a chain of proper filters gives a proper filter. 
-
-Applying the Zorn's lemma gives a proper filter $X\in S$ which is a maximal element of $S$, it suffices to prove $X$ is an ultrafilter. The fact that $X$ is the maximal element of $S$ proves $X$ is a maximal filter, hence we are done by Proposition \ref{5.10}. 
-\end{proof}
-
-As a corollary, we can extend every set with finite intersection into an ultrafilter:
+And the corollary is stated as:
 
 \begin{prop}[\holref{\texttt{ultrafilter_theorem_corollary}}{ultrafilter}{417}]\label{5.12}
 For every set $A$ of subsets of a non-empty set $W$, there exists an ultrafilter on $W$ which contains $A$.
@@ -1090,55 +1019,12 @@ For every set $A$ of subsets of a non-empty set $W$, there exists an ultrafilter
 \end{holmath}
 \end{prop}
 
-\begin{proof}
-For $A\subseteq {\mathcal P}(W)$ with finite intersection property, by Proposition \ref{5.9}, we have a proper filter $P$ containing $A$, and $P$ extends to an ultrafilter $U$ such that $A\subseteq P\subseteq U$ by Theorem \ref{5.11}. 
-\end{proof}
 
 
-As an application of Proposition \ref{5.12}, we prove the existence of \emph{countably incomplete ultrafilters}. A countably incomplete ultrafilter is an ultrafilter which is not closed under countably infinite intersection.
+%(long long long dividing line- --------------------------)
 
 
-\begin{prop}[\holref{\texttt{example_2_72}}{ultrafilter}{513}]
-Every ultrafilter $U$ on the natural numbers $\mathbb N$ which contains no singleton is countably incomplete.
-\begin{holmath}
-  \HOLthm{ultrafilter.example_2_72}
-\end{holmath}
-\end{prop}
-\begin{proof}
-Under the assumptions, the countable intersection of the sets $\mathbb N\setminus \{n\}$ which are members of $U$ yields the empty set.
-\end{proof}
-
-Therefore, we just need to find out an ultrafilter on $\mathbb N$ which contains no singleton. Clearly, we will be done if we can prove the existence of an ultrafilter on $\mathbb N$ which  contains no finite set. It suffices to prove the set of subsets of $\mathbb N$ of form $\mathbb N\setminus X$ has finite intersection property, then by Proposition \ref{5.12}, this set will extend to an ultrafilter. This ultrafilter will contain no finite set, otherwise, it will contain both a subset of $\mathbb N$ and also its complement, which will contradict its properness.
-\begin{prop}[\holref{\texttt{exercise_2_5_4_a}}{ultrafilter}{536}]
-The set of subsets of $\mathbb N$ of form $\mathbb N\setminus X$ has finite intersection property.
-\begin{holmath}
-  \HOLthm{ultrafilter.exercise_2_5_4_a}
-\end{holmath}
-\end{prop}
-\begin{proof}
-
-By definition of the finite intersection property, it suffices to prove for every finite $S_0\subseteq$ \HOLtm{{𝕌(:num) DIFF X | FINITE X\}}, if $S_0\ne \emptyset$, then \HOLtm{BIGINTER S0} is infinite. This is done by induction of finiteness of $S$. 
-\end{proof}
-
-In the next chapter, we will see the usefulness of the following interesting feature of countably incomplete ultrafilters: 
-\begin{prop}[\holref{\texttt{countably_incomplete_chain}}{ultrafilter}{653}]\label{5.15}
-In a countably incomplete ultrafilter $U$ on $J$, we can find a chain $J=J_0\supseteq J_1\supseteq J_2\supseteq\cdots$ with each $J_i$ is in $U$, such that $\bigcap_{n\in \mathbb N}J_n=\emptyset$. As before, throughout the following proof, we will capture indexing of family of sets as a function from the index set. 
-\begin{holmath}
-  \HOLthm[J/I,Jn/In]{ultrafilter.countably_incomplete_chain}
-\end{holmath}
-\end{prop}
-\begin{proof}
-By definition of countably incompleteness, there exists a family $X_n$ in $U$ indexed by natural numbers such that $\bigcap_{n\in \mathbb N}X_n=\emptyset$. Define $K_n:=\bigcap_{m\le n}X_n$. In HOL4, the family $K_n$ is defined recursively as the function 
-\begin{holmath}
-\HOLtm{ PRIM_REC (X 0) (\Xn n. Xn ∩ (X (n + 1)))}
-\end{holmath}. 
-We get the desired chain $J_n$ by inserting $J$ at the beginning of $K_n$.
-\end{proof}
- 
-
-This is the end of Interlude II. 
-
-With the theory about ultrafilters built in HOL4, we can now launch on the construction of the ultrafilter extension of a model. For a model \HOLtm{M}, the world set of its ultrafilter extension of \HOLtm{M} is simply the set of ultrafilters on the world set of \HOLtm{M}, whereas the relation defined on the set of ultrafilters require more explanation. 
+We can now launch on the construction of the ultrafilter extension of a model. For a model \HOLtm{M}, the world set of its ultrafilter extension of \HOLtm{M} is simply the set of ultrafilters on the world set of \HOLtm{M}, whereas the relation defined on the set of ultrafilters require more explanation. 
 
 Fix a model \HOLtm{M} and a subset $X$ of its world set, we can consider two set of worlds arises from $X$: One of them is the set of worlds of \HOLtm{M} which `can see' some world in $X$, an element of this set is a world $w$ of \HOLtm{M} such that there exists some \HOLtm{v IN X} such that \HOLtm{M.frame.rel w v}.  The other one is the set of worlds in \HOLtm{M} which `only see' the worlds in $X$, an element $w$ of this set is a world in \HOLtm{M} such that once we have \HOLtm{M.frame.rel w v} for some other world \HOLtm{v IN M.frame.world}, we must have \HOLtm{v IN X} as well. Formally, their definitions are given as:
 
@@ -1334,7 +1220,7 @@ This proves \HOLtm{consistent M' Σ'}. Since \HOLtm{(mm2folm M)} is countably sa
 
 Knowing the interesting properties of countably saturated models, we now answer the question about where to obtain them. The canonical way to obtain such models involves the usage of ultraproducts, which we will discuss in the following interlude. 
 
-\subsection{Interlude II: Countably saturated models via ultraproducts}
+\subsection{Interlude: Countably saturated models via ultraproducts}
 
 Although we are ultimately interested in ultraproducts on models, we will begin by introducing the construction of ultraproducts of sets. 
 
@@ -1552,7 +1438,14 @@ If we want to find a valuation of a ultraproduct model satisfying a first-order 
 \end{prop}
 
 
-All the construction we did above serves to pave a way of getting a countably saturated model. The remaining task is to prove this lemma: 
+All the construction we did above serves to pave a way of getting a countably saturated model. For a family of non-empty models, their ultraproduct on a \emph{countably incomplete} ultrafilter is countably saturated. An ultrafilter $U$ on $J$ is countably incomplete if $U$ contains a countable infinite set of subsets of $J$ such that the intersection of these sets is empty. In HOL4:
+\begin{defn}[\texttt{countably_incomplete_def}]
+\begin{holmath}
+  \HOLthm[SS/IFS]{ultrafilter.countably_incomplete_def}
+\end{holmath}
+\end{defn}
+
+Countably incomplete does exists. To see this, first observe that the set $A$ of subsets of $\mathbb N$ of form ${\mathbb N}\setminus X$, where $X$ is a finite subset of $\mathbb N$, has finite intersection property, as we can prove by induction. Therefore, by \ref{5.12}, there exists an ultrafilter $U$ that contains $A$. The ultrafilter $U$ will not contain any finite set, otherwise, it will contain both a subset of $\mathbb N$ and its complement, contradicts the fact that $U$ is an ultrafilter. 
 
 
 \begin{lm}[\holref{\texttt{lemma_2_73}}{lemma2_73}{1085}]\label{6.10}
@@ -1561,7 +1454,6 @@ For a family of non-empty models, their ultraproduct on a countably incomplete u
   \HOLthm[J/I,j/i]{prettyPrinting.pplemma_2_73}
 \end{holmath}
 \end{lm}
-Once the above is proved, as we have already proved the existence of countably incomplete ultrafilters in Interlude II, we will get some countably saturated models to use.
 
 With all the setups about ultraproduct models, we may expect that this will be a consequence of \L o\'s's theorem. But if we take a closer look of the statement, we will find out \L o\'s's theorem cannot be directly applied here. The definition of countably saturated asks us to prove the realisation of a set of first-order formulas in an expanded first-order model, where the first-order model we expand is itself obtained from turning a modal model into a first-order model. The obstacles here will become clear when we compare what we want to prove to the statement of \L o\'s's theorem: \L o\'s's theorem tells us the result for an ultraproduct of first-order models, and says nothing about expansion. But we are proving a statement for an expanded model obtained from viewing an ultraproduct of modal models as a first-order model. However, as we shall see now, it cannot stop us from applying \L o\'s's theorem.%quote the goal?
 
@@ -1640,6 +1532,27 @@ Then if for every finite subset $ss$ of $s$, there exists a valuation \HOLtm{σ}
   \HOLthm[J/I,j/i,C/N,width=60]{prettyPrinting.ppultraproduct_sat}
 \end{holmath}
 \end{lm}
+
+
+The above is a classical theorem on ultraproduct models. To prove it, we need another lemma about countably incomplete ultrafilters:
+
+
+\begin{prop}[\holref{\texttt{countably_incomplete_chain}}{ultrafilter}{653}]\label{5.15}
+In a countably incomplete ultrafilter $U$ on $J$, we can find a chain $J=J_0\supseteq J_1\supseteq J_2\supseteq\cdots$ with each $J_i$ is in $U$, such that $\bigcap_{n\in \mathbb N}J_n=\emptyset$. As before, throughout the following proof, we will capture indexing of family of sets as a function from the index set. 
+\begin{holmath}
+  \HOLthm[J/I,Jn/In]{ultrafilter.countably_incomplete_chain}
+\end{holmath}
+\end{prop}
+\begin{proof}
+By definition of countably incompleteness, there exists a family $X_n$ in $U$ indexed by natural numbers such that $\bigcap_{n\in \mathbb N}X_n=\emptyset$. Define $K_n:=\bigcap_{m\le n}X_n$. In HOL4, the family $K_n$ is defined recursively as the function 
+\begin{holmath}
+\HOLtm{ PRIM_REC (X 0) (\Xn n. Xn ∩ (X (n + 1)))}
+\end{holmath}. 
+We get the desired chain $J_n$ by inserting $J$ at the beginning of $K_n$.
+\end{proof}
+
+Now we can prove the saturation of ultraproducts:
+
 \begin{proof}
 
 Given the assumptions, which read as: 
@@ -1695,7 +1608,7 @@ If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are moda
 \end{holmath}
 \end{thm}
 \begin{proof}
-The \HOLtm{U} we require here can be an arbitrary countably incomplete ultrafilter which exists by Interlude II. Then by Lemma \ref{6.10}, the models \HOLtm{(mm2folm (ultraproduct_model U J (\i.M)))}, \HOLtm{(mm2folm (ultraproduct_model U J (\i.N)))} are countably incomplete. Hence we are done by Proposition \ref{6.1} and Corollary \ref{6.4}.
+The \HOLtm{U} we require here can be an arbitrary countably incomplete ultrafilter. Then by Lemma \ref{6.10}, the models \HOLtm{(mm2folm (ultraproduct_model U J (\i.M)))}, \HOLtm{(mm2folm (ultraproduct_model U J (\i.N)))} are countably incomplete. Hence we are done by Proposition \ref{6.1} and Corollary \ref{6.4}.
 \end{proof}
 
 %The last step towards the main theorem is used to pass from infinite set to finite set.
