@@ -737,7 +737,7 @@ A term of the first-order language is either a variable letter $x$ or a function
   \HOLthm{folLang.datatype_term}
 \end{holmath}
 \end{defn}
-Hence our terms will look like \HOLtm{fV 6}, \HOLtm{Fn 1 [fV 1; fV 2]}, \HOLtm{Fn 2 [Fn 0 []]}, etc. The role of the two occurrences of the natural number $1$ in the term \HOLtm{Fn 1 [fV 1; fV 2]} are different: the first one is a function symbol, and the second one is variable letter. In the first-order term \HOLtm{Fn 2 [Fn 0 []]}, we note the iterated application of function symbols, and also, \HOLtm{Fn 0 []} is the term obtained by applying the function symbol $0$ to the empty list. The $0$ here is a nullary function symbol, which is the same as a constant. 
+Hence our terms will look like \HOLtm{fV 6}, \HOLtm{Fn 1 [fV 1; fV 2]}, \HOLtm{Fn 2 [Fn 0 []]}, etc. The role of the two occurrences of the natural number $1$ in the term \HOLtm{Fn 1 [fV 1; fV 2]} are different: the first one is a function symbol, and the second one is variable letter. In the first-order term \HOLtm{Fn 2 [Fn 0 []]}, we note the iterated application of function symbols, and also, \HOLtm{Fn 0 []} is the term obtained by applying the function symbol $0$ to the empty list. The $0$ here is a nullary function symbol, which is the same as a constant. We will write $\sf IMP \ \phi_1 \ \phi_2$ as $\phi_1 {}^{\sf f}\to \phi_2$. 
 
 Our formulas are defined inductively as well. 
 
