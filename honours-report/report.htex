@@ -47,6 +47,9 @@
 %\newcommand{\holreff}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/dbfbba74de0af276f982867714fcd6eee221196e/#2Script.sml\#L#3}{#1}}
 
 
+
+%Mention term size somewhere?
+
 \newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/14eba6e9c055ab77018ee5afe2b1323ffe415793/#2Script.sml\#L#3}{#1}}
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
@@ -57,6 +60,14 @@
 \author{Yiming Xu}
 \date{15/6/2018}
 
+
+%simply type theory
+%inductive types
+%Record type.
+%introduce syntax when use it.
+%(\beta,\alpha) model
+%how to read this thesis
+%HM thm one direction 
 
 \begin{document}
 \frontmatter
@@ -90,7 +101,7 @@
 
 \begin{center}\emph{
 %
-For the four supervisors/lecturers who have been guiding me for no less than a whole year, namely: \\
+For the four supervisors/lecturers who have been teaching me for no less than a whole year, namely: \\
 Michael Norrish\\
 Scott Morrison\\
 James Borger\\
@@ -200,6 +211,22 @@ Our theorem prover HOL4 is based on simple type theory. This makes most of state
 
 \item Quantification: When using quantifier in HOL4, we put a dot after the thing that we are quantifying on. For example, \HOLtm{!x. P x} reads `for all $x$, $P x$'  and \HOLtm{?x. P x} reads `exists an $x$ such that $P x$', where $P$ is a predicate. When quantifying over multiple things, we only write one quantifier at the very beginning. For example, `\HOLtm{!x y. R x y}' reads `for all $x$, for all $y$, we have $R x y$' and `\HOLtm{?x y. R x y}' reads `exists $x$ and $y$ such that $R x y$', where $R$ is a relation.
 
+\item Useful functions:
+\begin{itemize}
+\item \HOLtm{CARD}: The function \HOLtm{CARD} takes a set, and gives the natural number which is its cardinality.
+
+\item \HOLtm{count}: The function \HOLtm{count} takes a natural number $n$, and gives the set $\{0,1,\cdots,n-1\}$.
+
+\item \HOLtm{BIJ}: The function \HOLtm{BIJ} takes a term of type $f:\alpha\to \beta$, an $\alpha$-set $A$ and a $\beta$-set $B$, and gives the boolean value \HOLtm{T} if and only if $f$ is a bijection form $A$ to $B$, similar for the functions \HOLtm{INJ} and \HOLtm{SURJ}.
+
+\item \HOLtm{CHOICE}: The function \HOLtm{CHOICE} is just the choice function. For a non-empty set $X$, the only thing we know about \HOLtm{CHOICE X} is that \HOLtm{(CHOICE X) IN X}.
+
+\item \HOLtm{RESTRICT}: The function \HOLtm{RESTRICT} takes a relation on terms of type $\alpha$ and an $\alpha$-set $A$, and gives a relation \HOLtm{RESTRICT R A} defined as for any term $x$ and $y$ of type $\alpha$, we have \HOLtm{(RESTRICT R A) x y}, which reads `$x$ and $y$ are related by the relation \HOLtm{RESTRICT R A}', if and only if \HOLtm{x IN A} and \HOLtm{y IN A} and \HOLtm{R x y}. 
+
+\item \HOLtm{R^*} and \HOLtm{R^+}: For a relation \HOLtm{R} on $\alpha$-terms, we use \HOLtm{R^*} to denote its reflexive and transitive closure, and use \HOLtm{R^+} to denote its transitive closure. 
+
+\end{itemize}
+
 
 \item Lists: There are some functions which deal with lists:
 \begin{itemize}
@@ -248,19 +275,19 @@ Therefore, to interpret modal formulas, we need a \emph{relational structure}. A
 Returning to our formalization, we call a frame together with an assignment of truth values on propositional letters at each point a \emph{model}, or a \emph{Kripke model} of modal formulas. The underlying set of a model is called the `set of worlds' of the model.  
 
 \begin{defn}[\holref{Modal model as a type}{chap1}{76}]
-An $\beta$-frame consists of a world and a relation, where the world has type $\beta\to bool$ and the relation has type $\beta\to \beta\to bool$. 
+A $\beta$-frame consists of a world and a relation, where the world has type $\beta\to bool$ and the relation has type $\beta\to \beta\to bool$. 
 A model for modal logic is a frame together with a function called $\sf valt$, which assigns truth values of propositional letters at each world. 
 \begin{holmath}
   \HOLthm[:'b/:'a]{chap1.datatype_frame}\\
   \HOLthm[:'b/:'a,:'a/:'b]{chap1.datatype_model}
 \end{holmath}
 \end{defn}
-Here the $\HOLTokenLeftrec\cdots\HOLTokenRightrec$ is the notation for defining a structure. When we say a $(\beta,\alpha)$-model, we mean a model for $\alpha$-formulas with a $\beta$-set as its underlying set.
+Here the $\HOLTokenLeftrec\cdots\HOLTokenRightrec$ is the notation for defining a structure. When we say a $(\alpha,\beta)$-model, we mean a model for $\alpha$-formulas with a $\beta$-set as its underlying set.
  For a model \HOLtm{M}, \HOLtm{M.valt} will be called the \emph{valuation} in the discussion afterwards.  
 In the rest of the thesis, we use the notation \HOLtm{M.frame.world}, \HOLtm{M.frame.rel} and \HOLtm{M.valt} to denote the world set, the relation, and the valuation of the model \HOLtm{M}. 
 
 In HOL4, a $\beta$-set is the same as the function that takes a term $a$ of $\beta$ and gives the truth value $\sf T$ if and only if $a$ is in the set, and hence is of type $\beta\to bool$. 
-Note that in a $(\beta,\alpha)$-model \HOLtm{M}, \HOLtm{M.valt} is a function takes a propositional letter $p$ of type $\alpha$ and $w$ of type $\beta$, and give a truth value. It can be regarded as assigning each propositional letter $p$ an assignment of truth value on terms of type $\beta$, where a term $w$ of type $\beta$ is assigned \HOLtm{T} if and only if \HOLtm{M.valt p w}. Alternatively, it can be regarded as assigning each term $w$ of type $\beta$ an assignment of truth value on terms of type $\alpha$, where a term $p$ of type \HOLtm{α} is assigned \HOLtm{T} if and only if \HOLtm{M.valt p w}. 
+Note that in a $(\alpha,\beta)$-model \HOLtm{M}, \HOLtm{M.valt} is a function takes a propositional letter $p$ of type $\alpha$ and $w$ of type $\beta$, and give a truth value. It can be regarded as assigning each propositional letter $p$ an assignment of truth value on terms of type $\beta$, where a term $w$ of type $\beta$ is assigned \HOLtm{T} if and only if \HOLtm{M.valt p w}. Alternatively, it can be regarded as assigning each term $w$ of type $\beta$ an assignment of truth value on terms of type $\alpha$, where a term $p$ of type \HOLtm{α} is assigned \HOLtm{T} if and only if \HOLtm{M.valt p w}. 
 
 %For a model \HOLtm{M}, \HOLtm{M.valt} will be called the \emph{valuation} in the discussion afterwards.  In the rest of the thesis, we use the notation \HOLtm{M.frame.world}, \HOLtm{M.frame.rel} and \HOLtm{M.valt} to denote the world set, the relation, and the valuation of the model. 
 
@@ -316,7 +343,7 @@ For two modal formulas \HOLtm{phi1} and \HOLtm{phi2}, \HOLtm{phi1} and \HOLtm{ph
 The key concept we are interested in this chapter is called `modal equivalence'.
 
 \begin{prop}[\holref{\texttt{modal_eq_tau}}{chap2_5}{54}]
-Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} are called to be `modal equivalent' (Notation: \HOLtm{modal_eq M M' w w'}) if they satisfy the same set of modal formulas. 
+Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} are called to be `modal equivalent' (notation: \HOLtm{modal_eq M M' w w'}) if they satisfy the same set of modal formulas. 
 \begin{holmath}
   \HOLthm[phi/form,M'/Mp]{chap2_5.modal_eq_tau}
 \end{holmath}
@@ -325,7 +352,7 @@ Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} are calle
 The three sections in this chapter are about three ways to get modal equivalence, namely via generated submodels, bounded morphisms, and bisimulation. The first two construction will be proved to be special cases to be the third.  
 
 
-\section{Operations on models}
+\section{Submodels and generated submodels}
 
 
 Given a model, we have an operation allows us to restrict our scope to a smaller model without changing satisfaction of modal formulas, this is called the `generated submodel' construction. When we say `\HOLtm{M1} is a submodel of \HOLtm{M2}', we mean all the information of \HOLtm{M1} is inherited from that of \HOLtm{M2}. 
@@ -341,7 +368,7 @@ By \HOLtm{SUBMODEL M1 M2}, we mean:
 \end{holmath}
 \end{defn}
 
-It is not necessary that submodel construction preserves modal satisfaction. Although the clause about relation says that for every pair of worlds $w_1,w_2$ in \HOLtm{M1}, they are related in \HOLtm{M1} iff they are related in \HOLtm{M2}, it can be the case that $w_1,w_2$ are worlds in \HOLtm{M2} such that \HOLtm{M2.frame.rel w1 w2}, where $w_2$ is the only world that $w_1$ is related to, but \HOLtm{w1 IN M1.frame.world} whereas \HOLtm{w2 NOTIN M1.frame.world}. As a consequence, if we have \HOLtm{satis M2 w2 phi}, then we will have \HOLtm{satis M2 w1 (DIAM phi)} but not \HOLtm{satis M1 w1 (DIAM phi)}, since there is no world in \HOLtm{M1} which has a relation from \HOLtm{w1}. To avoid such situation, we can add an extra constraint on the world set of \HOLtm{M1}, and make sure that for each world $w$ in \HOLtm{M2}, if it is included in the world set of \HOLtm{M1}, then every world \HOLtm{w' IN M2.frame.world} such that \HOLtm{M2.frame.rel w w'} must also be included to the world set of \HOLtm{M1}. A submodel which satisfies this extra condition is called a generated submodel (Notation: `\HOLtm{GENSUBMODEL M1 M2}' reads `\HOLtm{M1} is a generated submodel of \HOLtm{M2}').
+It is not necessary that submodel construction preserves modal satisfaction. Although the clause about relation says that for every pair of worlds $w_1,w_2$ in \HOLtm{M1}, they are related in \HOLtm{M1} iff they are related in \HOLtm{M2}, it can be the case that $w_1,w_2$ are worlds in \HOLtm{M2} such that \HOLtm{M2.frame.rel w1 w2}, where $w_2$ is the only world that $w_1$ is related to, but \HOLtm{w1 IN M1.frame.world} whereas \HOLtm{w2 NOTIN M1.frame.world}. As a consequence, if we have \HOLtm{satis M2 w2 phi}, then we will have \HOLtm{satis M2 w1 (DIAM phi)} but not \HOLtm{satis M1 w1 (DIAM phi)} since there is no world in \HOLtm{M1} which has a relation from \HOLtm{w1}. To avoid such situation, we can add an extra constraint to make sure that for each world $w$ in \HOLtm{M2}, if it is included in the world set of \HOLtm{M1}, then every world \HOLtm{w' IN M2.frame.world} such that \HOLtm{M2.frame.rel w w'} must also be included to the world set of \HOLtm{M1}. A submodel which satisfies this extra condition is called a generated submodel (notation: `\HOLtm{GENSUBMODEL M1 M2}' reads `\HOLtm{M1} is a generated submodel of \HOLtm{M2}').
 
 %(Give an easy example?)!!!!!4
 
@@ -351,21 +378,21 @@ It is not necessary that submodel construction preserves modal satisfaction. Alt
 \end{holmath}
 \end{defn}
 
-Note that for a model \HOLtm{M1} to be a generated submodel of \HOLtm{M2}, we only require all the worlds $w'$ which have a link from a world $w$ in \HOLtm{M2} to be also included in the world set of \HOLtm{M1}. But if $w_1,w_2$ are in \HOLtm{M2} and \HOLtm{w2 IN M1.frame.world}, we are allowed not to include \HOLtm{w1} into \HOLtm{M1}. This is because the `$\Diamond$' operator in modal formulas cannot `look back', in the sense that adding extra connections or discard connections \emph{towards} a world $w$ does not change the satisfaction of modal formulas at $w$.
+Note that for a model \HOLtm{M1} to be a generated submodel of \HOLtm{M2}, if \HOLtm{w1 IN M1.frame.world}, we only require all the worlds $w_2$ which have a link from a world $w_1$ in \HOLtm{M2} to be also included in the world set of \HOLtm{M1}. But if $w_1,w_2$ are in \HOLtm{M2} and \HOLtm{w2 IN M1.frame.world}, we are allowed not to include \HOLtm{w1} into \HOLtm{M1}. This is because the `$\Diamond$' operator in modal formulas cannot `look back', in the sense that adding extra connections or discard connections \emph{towards} a world $w$ does not change the satisfaction of modal formulas at $w$.
  
 Generated submodels do preserve modal satisfaction:
 \begin{prop}[\holref{\texttt{prop_2_6}}{chap2_1}{75}]\label{3.2}
 \begin{holmath}
-  \HOLthm{chap2_1.prop_2_6}
+  \HOLthm[w/n]{chap2_1.prop_2_6}
 \end{holmath}
 \end{prop} 
 
 
 \section{Morphisms between models}
 
-In this section, we introduce `morphisms' between models. Similar as in category theory, the notion of `morphism' here is used to describe maps that preserves structures. For instance, `homomorphism' is the weakest notion of `structure-preserving map':
+In this section, we introduce `morphisms' between models. Similar as in category theory, the notion of `morphisms' here is used to describe maps that preserve structures. For instance, `homomorphism' is the weakest notion of `structure-preserving map':
 \begin{defn}[\holref{Homomorphism}{chap2_1}{120}]
-A homomorphism from a model \HOLtm{M1} to a model \HOLtm{M2} (Notation: \HOLtm{hom M1 f M2}) is a function from the world set of \HOLtm{M1} to the world set of \HOLtm{M2} that preserves relation and valuation of propositional letters.
+A homomorphism from a model \HOLtm{M1} to a model \HOLtm{M2} (notation: \HOLtm{hom M1 f M2}) is a function from the world set of \HOLtm{M1} to the world set of \HOLtm{M2} that preserves relation and valuation of propositional letters.
 \begin{holmath}
   \HOLthm[def]{prettyPrinting.pphom_def}
 \end{holmath}
@@ -377,16 +404,16 @@ We should point out that the last clause only says `relations in the source mode
 \begin{defn}[\holref{Bounded morphism}{chap2_1}{213}]
 A bounded morphism between two models \HOLtm{M1} and \HOLtm{M2} is a function $f$ between their world sets such that:
 \begin{itemize}
-\item For every world $w$ of \HOLtm{M1}, $w$ and $f(w)$ satisfies the same propositional letters.
-\item If $w,v$ are worlds in \HOLtm{M} such that \HOLtm{M1.frame.rel w v}, then we require \HOLtm{f w} and \HOLtm{f v} to be worlds in \HOLtm{M2} such that \HOLtm{M2.frame.rel (f w) (f v)}.
-\item If a world in \HOLtm{M2} is the image of some world $w$ in \HOLtm{M1} under $f$, then if it is related to a world \HOLtm{v'} in \HOLtm{M2}, it must be the case that we can find a world \HOLtm{v} in \HOLtm{M1} such that \HOLtm{M1.frame.rel w v} and $v$ is mapped to $v'$ by $f$. 
+\item For every world $w$ of \HOLtm{M1}, $w$ and \HOLtm{f w} satisfies the same propositional letters.
+\item If $w,v$ are worlds in \HOLtm{M1} such that \HOLtm{M1.frame.rel w v}, then we require \HOLtm{f w} and \HOLtm{f v} to be worlds in \HOLtm{M2} such that \HOLtm{M2.frame.rel (f w) (f v)}.
+\item If \HOLtm{w IN M1.frame.world} and we have \HOLtm{M2.frame.rel (f w) v'} for some \HOLtm{v' IN M2.frame.world}, then we can find a world \HOLtm{v} in \HOLtm{M1} such that \HOLtm{M1.frame.rel w v} and \HOLtm{f v = v'}.
 \end{itemize}
 \begin{holmath}
    \HOLthm[def,M1/M,M2/M']{chap2_1.bounded_mor_def}
 \end{holmath}
 \end{defn}
 
-From above, the notion of  bounded homomorphism is a strengthen of homomorphism. For a homomorphism, we only need propositional letters to be preserved, but for bounded morphism, we strengthen the condition on propositional letters to be an `if and only if'. Moreover, we added a `backward condition' on relations. 
+From above, the notion of  bounded morphism is a strengthen of homomorphism. For a homomorphism, we only need propositional letters to be preserved, but for bounded morphism, we strengthen the condition on propositional letters to be an `if and only if'. Moreover, we added a `backward condition' on relations. 
 
 Bounded morphism preserved modal satisfaction, in the following sense:
 
@@ -400,25 +427,32 @@ If \HOLtm{f} is a bounded morphism from \HOLtm{M1} to \HOLtm{M2}, then for each 
 
 The above result is very useful. As an application, now we use it to prove the \emph{tree-like property} of the basic modal language. The tree-like property says that for each formula $\phi$ satisfied on some point in some model, there exists a tree-like model such that $\phi$ is satisfied at the root of the tree. As the name indicates, a tree-like model is a model such that its underlying frame is a tree. 
 \begin{defn}[\holref{Tree}{chap2_1}{319}]
-The predicate \HOLtm{tree} takes a frame $S$ and a point $r$, and \HOLtm{tree} $S\ r$ means that $S$ is a tree with root $r$.  Here the `$\mid$' denotes the restriction of a relation: For a relation $R$ and a set $s$, we will have \HOLtm{RESTRICT R s x y} iff \HOLtm{x IN s}, \HOLtm{y IN s} and \HOLtm{R x y}. And the ${}^*$ is taking the reflexive and transitive closure. 
+The predicate \HOLtm{tree} takes a frame $H$ and a point $r$, and \HOLtm{tree H r} means that $H$ is a tree with root $r$.  A frame \HOLtm{H} is a tree with root $r$ if:
+\begin{itemize}
+\item We have $r$ is a world in of $H$.
+\item For any world \HOLtm{w IN H.world}, we have $r$ is related to $w$ via the reflexive and transitive closure of \HOLtm{H.rel}. 
+\item For any world \HOLtm{w IN H.world}, it cannot be linked back to the root $r$ via the reflexive and transitive closure of \HOLtm{H.rel}. 
+\item For any world \HOLtm{w IN H.world}, it has a unique predecessor. 
+In HOL4:
+\end{itemize}
 \begin{holmath}
-   \HOLthm[def]{chap2_1.tree_def}
+   \HOLthm[def,H/S,w/t,w/r0,w0/t0]{chap2_1.tree_def}
 \end{holmath}
 \end{defn}
 
 A tree has no loop:
 
 \begin{lm}[\holref{\texttt{tree_no_loop}}{chap2_1}{346}]
-Every world in a tree cannot be linked back to itself via the transitive closure of the relation defined on the tree. (Notation: For a relation $R$, $R^+$ denotes its transitive closure.)
+Every world in a tree cannot be linked back to itself via the transitive closure of the relation defined on the tree. 
 \begin{holmath}
-  \HOLthm{prettyPrinting.pptree_no_loop}
+  \HOLthm[H/s,w'/t0,w/t]{prettyPrinting.pptree_no_loop}
 \end{holmath}
 \end{lm}
 
 Every tree-like model is \emph{rooted}, where rooted models are just submodel generated by a singleton set. As an instance of generated models, a rooted model needs to be sitting in an ambient model. 
 
 \begin{defn}[\holref{Rooted model}{chap2_1}{380}]
-Rooted model is defined as a predicate that takes three parameters: The model itself, the point that generates it, and the ambient model that it is sitting in. 
+The predicate `\HOLtm{rooted_model}' takes three parameters: The model itself, the point that generates it, and the ambient model that it is sitting in. We read `\HOLtm{rooted_model M1 x M2}' as \HOLtm{M1} is a rooted model at root $x$ sitting in the ambient model \HOLtm{M2}. 
 \begin{holmath}
   \HOLthm[def,M1/M,M2/M',width=60]{prettyPrinting.pprooted_model_def}
 \end{holmath}
@@ -427,18 +461,18 @@ Rooted model is defined as a predicate that takes three parameters: The model it
 We now prove the tree-like property of modal formulas:
 \begin{prop}[\holref{\texttt{prop_2_15_corollary}}{chap2_1}{818}]\label{3.5}
 \begin{holmath}
-  \HOLthm[M1/M,M/M',phi/form]{prettyPrinting.ppprop_2_15_corollary}
+  \HOLthm[M1/M,M/M',phi/form,r/s,showtypes]{prettyPrinting.ppprop_2_15_corollary}
 \end{holmath}
 \end{prop}
 \begin{proof}
-Suppose \HOLtm{satis M1 w phi}. Let \HOLtm{M2} be the rooted model generated by \HOLtm{w}, then \HOLtm{satis M2 w phi} by Proposition \ref{3.2}. To find a tree-like model satisfying \HOLtm{phi}, by Proposition \ref{3.3}, it suffices to prove \HOLtm{M2} is the image of some bounded morphism from some tree-like model \HOLtm{M3} where the root of the tree is mapped to $w$, then \HOLtm{M3} will be the \HOLtm{M} we want. We construct \HOLtm{M3} as follows: Take the set of worlds to be the finite sequences [$w=u_0;u_1;\cdots ;u_n$] such that \HOLtm{M1.frame.rel} $u_i\ u_{i+1}$ for all $i$. Define \HOLtm{M3.frame.rel} $[w;u_1;\cdots ;u_n]\ [w;v_1;\cdots ;v_m]$ iff $m=n+1$, $m_i=v_i$ for $i\le n$, and \HOLtm{M1.frame.rel} $u_n\ v_m$. The valuation is given by $[w;u_1;\cdots;u_n]\in$ \HOLtm{M3.valt p} iff $u_n\in$ \HOLtm{M1.valt p}. Such a model in HOL4 looks like:
+Suppose \HOLtm{satis M1 w phi}. Let \HOLtm{M2} be the rooted model generated by \HOLtm{w}, then \HOLtm{satis M2 w phi} by Proposition \ref{3.2}. To find a tree-like model satisfying \HOLtm{phi}, by Proposition \ref{3.3}, it suffices to prove \HOLtm{M2} is the image of some bounded morphism from some tree-like model \HOLtm{M3} where the root of the tree is mapped to $w$, then \HOLtm{M3} will be the \HOLtm{M} we want. We construct \HOLtm{M3} as follows: Take the set of worlds to be the finite sequences [$w;u_1;\cdots ;u_n$] such that \HOLtm{M1.frame.rel} $u_i\ u_{i+1}$ for all $i$. Define \HOLtm{M3.frame.rel} $[w;u_1;\cdots ;u_n]\ [w;v_1;\cdots ;v_m]$ iff $m=n+1$, $u_i=v_i$ for $1\le i\le n$, and \HOLtm{M1.frame.rel} $u_n\ v_m$. The valuation is given by $[w;u_1;\cdots;u_n]\in$ \HOLtm{M3.valt p} iff $u_n\in$ \HOLtm{M1.valt p}. Such a model in HOL4 looks like:
 
 
 \begin{holmath}
   \HOLthm[def,M2/M,w/x]{chap2_1.bounded_preimage_rooted_def}
 \end{holmath}  
 
-The map \HOLtm{LAST} that sends a list \HOLtm{l IN M3.frame.world} to its last member is a bounded morphism, and the root $[w]$ of \HOLtm{M3} is sent to $w$ in \HOLtm{M2}, as desired.
+The map \HOLtm{LAST} that sends a list [$w;u_1;\cdots ;u_n$] in \HOLtm{M3.frame.world} to its last member is a bounded morphism, and the root $[w]$ of \HOLtm{M3} is sent to $w$ in \HOLtm{M2}, as desired.
 
 \end{proof}
 
@@ -446,15 +480,15 @@ The map \HOLtm{LAST} that sends a list \HOLtm{l IN M3.frame.world} to its last m
 
 The two approaches to obtain modal equivalence has a common feature: both of them leads to a relation between models such that related states satisfy exactly the same set of propositional letters, and once we can make a transition in one model, we can make a corresponding transition in the other. This observation leads us to the concept of bisimulation: 
 \begin{defn}[\holref{Bisimulation}{chap2_2}{19}]
-A bisimulation $Z$ between models \HOLtm{M1} and \HOLtm{M2} (Notation: \HOLtm{bisim M1 Z M2}) is a relation between their world sets, such that for worlds \HOLtm{w1 IN M.frame.world} and \HOLtm{w2 IN M2.frame.world} which are related by $Z$, we have:
+A bisimulation $Z$ between models \HOLtm{M1} and \HOLtm{M2} (notation: \HOLtm{bisim M1 Z M2}) is a relation between their world sets, such that for worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} which are related by $Z$, we have:
 \begin{itemize}
-\item For every propositional letter $p$, $p$ is satisfied at $w_1$ if and only if it is satisfied at $w_2$.
+\item For every propositional letter $p$, it is satisfied at $w_1$ if and only if it is satisfied at $w_2$.
 \item If we have a world \HOLtm{v1 IN M1.frame.world} such that $w_1$ is related to $v_1$ by the relation in \HOLtm{M1}, then we can find a world $v_2$ in \HOLtm{M2} such that $v_1$ and $v_2$ are related by $Z$ where $w_2$ is related to $v_2$ in \HOLtm{M2}.
 \item If we have a world \HOLtm{v2 IN M2.frame.world} such that $w_2$ is related to $v_2$ by the relation in \HOLtm{M2}, then  we can find a world $v_1$ in \HOLtm{M1} such that $v_1$ and $v_2$ are related by $Z$ where $w_1$ is related to $v_1$ in \HOLtm{M1}.
 \end{itemize}
 In HOL4:
 \begin{holmath}
-  \HOLthm[def,M1/M,M2/M',w1/w,w2/w',v1/v,v2/v',width=65]{chap2_2.bisim_def}
+  \HOLthm[def,M1/M,M2/M',w1/w,w2/w',v1/v,v2/v',p/a,width=65]{chap2_2.bisim_def}
 \end{holmath}
 \end{defn}
 
@@ -479,7 +513,8 @@ Two worlds which are bisimilar are always modal equivalent.
 \end{holmath}
 \end{thm}
 
-Now we ask if the converse of the above holds: is that the fact that a modal equivalence always give a bisimulation? The answer is no. For example, consider models \HOLtm{M} and \HOLtm{N} defined as the picture below, where the arrows denote relations (non-transitive). Both \HOLtm{M} and \HOLtm{N} have infinitely many branches, from their roots \HOLtm{w}, \HOLtm{w'} respectively. The difference is that \HOLtm{N} has an infinitely long branch, whereas all the branches in \HOLtm{M} are of finite length. The worlds \HOLtm{w} and \HOLtm{w'} can be shown to be modal equivalent, but they are not bisimilar. Suppose, in order to get a contradiction, that \HOLtm{bisim M Z N} and \HOLtm{Z w w'}, then there exists \HOLtm{v0 IN M.frame.world} such that \HOLtm{Z v0 v0'}, where \HOLtm{v0'} is the first world on the infinite branch in \HOLtm{N} such that \HOLtm{N.frame.rel w' v0'}. The branch that \HOLtm{v0} lies on is finitely long, say, the worlds $w,v_0,\cdots, v_{n}$ are all the worlds on this branch. Then by clause on `forward condition' in the definition of bisimulation, there are worlds $v_1',\cdots,v_{n}'$ on the infinite branch of \HOLtm{N} such that $Z\ v_i \ v_i'$ for each $1\le i\le n$. The world $v_n'$ has a successor $v_{n+1}'$ in \HOLtm{N}, so the backward clause on relation requires the existence of a world in \HOLtm{M} which is related to $v_n$ and is related to $v_{n+1}'$ by $Z$. But such a world does not exist since $v_n$ is at the end of the branch it lies on. 
+Now we ask if the converse of the above holds: is that the fact that a modal equivalence always give a bisimulation? The answer is no. For example, consider models \HOLtm{M} and \HOLtm{N} defined as the picture below, where the arrows denote relations (non-transitive). Both \HOLtm{M} and \HOLtm{N} have infinitely many branches, from their roots \HOLtm{w}, \HOLtm{w'} respectively. The difference is that \HOLtm{N} has an infinitely long branch, whereas all the branches in \HOLtm{M} are of finite length. Let valuation in \HOLtm{M} and \HOLtm{N} both be such that at every point, there is no propositional letter which is satisfied. 
+By induction, the worlds \HOLtm{w} and \HOLtm{w'} can be shown to be modal equivalent, but they are not bisimilar. Suppose, in order to get a contradiction, that \HOLtm{bisim M Z N} and \HOLtm{Z w w'}, then there exists \HOLtm{v0 IN M.frame.world} such that \HOLtm{Z v0 v0'}, where \HOLtm{v0'} is the first world on the infinite branch in \HOLtm{N} such that \HOLtm{N.frame.rel w' v0'}. The branch that \HOLtm{v0} lies on is finitely long, say, the worlds $w,v_0,\cdots, v_{n}$ are all the worlds on this branch. Then by clause on `forward condition' in the definition of bisimulation, there are worlds $v_1',\cdots,v_{n}'$ on the infinite branch of \HOLtm{N} such that $Z\ v_i \ v_i'$ for each $1\le i\le n$. The world $v_n'$ has a successor $v_{n+1}'$ in \HOLtm{N}, so the backward clause on relation requires the existence of a world in \HOLtm{M} which is related to $v_n$ and is related to $v_{n+1}'$ by $Z$. But such a world does not exist since $v_n$ is at the end of the branch it lies on. 
 
 \begin{center}
 \begin{tikzpicture}[scale=1.5,baseline=0]
@@ -962,7 +997,7 @@ For two worlds $w_1$ and $w_2$ living in m-saturated models \HOLtm{M1} and \HOLt
 \end{prop}
 
 \begin{proof}
-Let \HOLtm{M1} and \HOLtm{M2} be models. In fact, they can be $(\alpha,\beta),(\alpha,\gamma)$-models respectively, where $\beta$ and $\gamma$ not necessarily the same. Under the assumptions, the bisimulation relation is given by \HOLtm{λw1 w2. (!phi. satis M1 w1 phi <=> satis M2 w2 phi)}. To prove this relation is indeed a bisimulation, the only non-trivial clause to check is that for worlds $w_1,v_1$ of \HOLtm{M1} and world $w_2$ of \HOLtm{M2} such that $w_1$ and $w_2$ are modal equivalent, we can find a world $v_2$ of \HOLtm{M2} such that \HOLtm{M2.frame.rel w2 v2} and $v_1$ and $v_2$ are modal equivalent.
+Let \HOLtm{M1} and \HOLtm{M2} be models. In fact, they can be $(\beta,\alpha),(\gamma,\alpha)$-models respectively, where $\beta$ and $\gamma$ not necessarily the same. Under the assumptions, the bisimulation relation is given by \HOLtm{λw1 w2. (!phi. satis M1 w1 phi <=> satis M2 w2 phi)}. To prove this relation is indeed a bisimulation, the only non-trivial clause to check is that for worlds $w_1,v_1$ of \HOLtm{M1} and world $w_2$ of \HOLtm{M2} such that $w_1$ and $w_2$ are modal equivalent, we can find a world $v_2$ of \HOLtm{M2} such that \HOLtm{M2.frame.rel w2 v2} and $v_1$ and $v_2$ are modal equivalent.
 
 Under the assumptions above, let \HOLtm{Σ} denote the set of formulas satisfied by $v_1$, it suffices to find a successor of $w_2$ where each formula in \HOLtm{Σ} is satisfied. As \HOLtm{M2} is m-saturated, it suffices to prove each finite subset $\Delta\subseteq \Sigma$ is satisfied in some successor of $w_2$. Take such a $\Delta$, then it is satisfied at $v_1$ by its definition. As $\Delta$ is finite, we can conjunct all its elements to obtain a formula $\psi$. We have \HOLtm{satis M1 v1 psi}, and therefore \HOLtm{satis M1 w1 (DIAM psi)}. By modal equivalence of $w_1$ and $w_2$, we then get \HOLtm{satis M2 w2 (DIAM psi)}, so there exists a successor of $w_2$ that satisfies $\psi$. 
 
@@ -986,7 +1021,7 @@ The simplest example of a filter is the power set \HOLtm{POW} $J$ itself. By upw
 
 For a set $J$ and an element $w\in J$, the filter generated by \HOLtm{{w\}} is the set of subsets of $J$ that contains $w$, it is trivial to check it is indeed a filter. Such a filter is called \emph{principal filters}. In HOL4, we define a function that takes an element $w\in J$ and a set $J$, and give the principle filter generated by $w$, which is denoted as \HOLtm{principle_UF w J}. Actually, principal filters are the simplest examples of ultrafilters: \emph{ultrafilters}. 
 \begin{defn}[\holref{Ultrafilter}{ultrafilter}{34}]
- An ultrafilter on a set $J$ is a proper filter $U$ such that for every $S\subseteq W$, either $S$ or its complement $J\setminus S$ is in $U$, but not both.
+ An ultrafilter on a set $J$ is a proper filter $U$ such that for every $X\subseteq J$, either $X$ or its complement $J\setminus X$ is in $U$, but not both.
 \begin{holmath}
   \HOLthm[def,J/W,width=65]{ultrafilter.ultrafilter_def}
 \end{holmath}
@@ -1013,13 +1048,13 @@ Note that finite intersection property is a property of subsets of power sets, h
 And the corollary is stated as:
 
 \begin{prop}[\holref{\texttt{ultrafilter_theorem_corollary}}{ultrafilter}{417}]\label{5.12}
-For every set $A$ of subsets of a non-empty set $W$, there exists an ultrafilter on $W$ which contains $A$.
+For every set $A$ of subsets of a non-empty set $J$, there exists an ultrafilter on $J$ which contains $A$.
 \begin{holmath}
   \HOLthm[J/W,A/s]{ultrafilter.ultrafilter_theorem_corollary}
 \end{holmath}
 \end{prop}
 
-
+Although the proof of both ultrafilter theorem and its corollary are interesting from the mathematical aspect, they are not technical from the formalization aspect. So we have omitted their proof. 
 
 %(long long long dividing line- --------------------------)
 
@@ -1057,7 +1092,7 @@ The worlds that can see a world in $X$ is precisely a world that does not only s
 \end{holmath}
 \end{prop}
 
-A world can see some world in the union of $X$ and $Y$ if and only if it can see a world in $X$ or a world in $Y$, hence $m_{\Diamond}$ distributes over union. Similarly, a world only sees the worlds in the intersection of $X$ and $Y$ if and only if it can only see worlds in $X$ and worlds in $Y$, therefore, $m_{\Diamond}^{\delta}$ distributes over intersections.
+A world can see some world in the union of $X$ and $Y$ if and only if it can see a world in $X$ or a world in $Y$, hence ${\mathfrak M}_{\Diamond}$ distributes over union. Similarly, a world only sees the worlds in the intersection of $X$ and $Y$ if and only if it can only see worlds in $X$ and worlds in $Y$, therefore, ${\mathfrak M}_{\Diamond}^{\delta}$ distributes over intersections.
 
 
 \begin{prop}[\holref{\texttt{can_see_UNION}}{chap2_5}{611}, \holref{\texttt{only_see_INTER}}{chap2_5}{273}]\label{5.17}
@@ -1144,14 +1179,14 @@ Finally, as claimed at the beginning of this chapter, we arrive at the character
 \begin{thm}[\holref{\texttt{thm_2_62}}{chap2_5}{579}]
 Given two models \HOLtm{M1} and \HOLtm{M2} with \HOLtm{w1 IN M1.frame.world} and \HOLtm{M2.frame.world}, \HOLtm{w1} and \HOLtm{w2} are modal equivalent if and only if the principle filters generated by \HOLtm{w1} in the ultrafilter extension of \HOLtm{M1} and the principle filter generated by \HOLtm{w2} in the ultrafilter extension of \HOLtm{M2} are bisimilar. 
 \begin{holmath}
-  \HOLthm[width=60]{chap2_5.thm_2_62}
+  \HOLthm[w1/w,w2/w',M1/M,M2/M',width=60]{chap2_5.thm_2_62}
 \end{holmath}
 \end{thm}
 \begin{proof}Bisimulation implies modal equivalence by Theorem \ref{3.7}. For the reverse direction, if \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are modal equivalent, then \HOLtm{(principle_UF w1 M1.frame.world) IN (UE M1).frame.world} is modal equivalent to \HOLtm{(principle_UF w2 M2.frame.world) IN (UE M2).frame.world} by Proposition \ref{5.19}. As \HOLtm{UE M1} and \HOLtm{UE M2} are m-saturated by Proposition \ref{5.21}, the result follows by Proposition \ref{5.7}. 
 \end{proof}
 \chapter{Two characterizing results}
 
-In the last chapter, we presented the definition of `invariant for bisimulation', and mentioned that if we are working with set theory, then we can prove that first-order formulas that are invariant for bisimulation are precisely the first-order formulas we can obtain by applying standard translation to modal formulas. We translated one direction of the set-theoretic proof of this result there. In the first section of this chapter, we will translate another half of the proof into HOL4, and explain why we cannot get the double implication when working with simple type theory.  In the second section, we translate a proof similar to the characterization of standard translations from set theory, which says a modal formula is \emph{preserved under simulation} if and only if it is \emph{positive existential}. The two new terminologies are to be introduced in the second section of this chapter.
+In the last chapter, we presented the definition of `invariant for bisimulation', and mentioned that if we are working with set theory, then we can prove that first-order formulas that are invariant for bisimulation are precisely the ones which is equivalent to a formula that we can obtain from standard translation. We translated one direction of the set-theoretic proof of this result there. In the first section of this chapter, we will translate another half of the proof into HOL4, and explain why we cannot get the double implication when working with simple type theory.  In the second section, we translate a proof similar to the characterization of standard translations from set theory, which says a modal formula is \emph{preserved under simulation} if and only if it is \emph{positive existential}. The two new terminologies are to be introduced in the second section of this chapter.
 
 %In this chapter we put everything we have developed so far together. Using the theory we have already constructed, we can characteristic two semantical behaviour by syntactical features. In the first section, we prove that an $\mathcal L_{\tau}^1$ formula is invariant under bisimulations precisely when it is equivalent to a first-order formula which is obtained by standard translation. In the second section, we prove that a modal formula is \emph{preserved under simulation} if and only if it is \emph{positive existential}, where the two concepts are to be introduced there. 
 
@@ -1164,29 +1199,29 @@ In the last chapter, we presented the definition of `invariant for bisimulation'
 
 \section{The `modal' fragment of $\mathcal L_{\tau}^1$ formulas}
 
-In the last chapter, we introduce the standard translation and proved that every modal formula is equivalent to a first-order formula, in the sense that for every point in an arbitrary model that satisfies the formula precisely when if we view the model as a first-order model, the first-order formula corresponds to the modal formula is satisfied. As discussed earlier, every first-order formula which corresponds to a modal formula is an $\mathcal L_{\tau}^1$ formula, but it is not the fact that every $\mathcal L_{\tau}^1$ formula is equivalent to the standard translation of a modal formula. For instance, the formula \HOLtm{fR (fV 1) (fV 2)} is not a standard translation. Here comes a natural question: what are the $\mathcal L_{\tau}^1$-formulas which is equivalent to a standard translation? In the last chapter, we have already given a short answer: an $\mathcal L_{\tau}^1$ formula which is equivalent to a standard translation if and only if it is invariant under bisimulation. Also, recall that we have already proved that standard translations are invariant under bisimulation. In this section, we devote to translate the proof of the other direction, saying `every formula which is invariant under bisimulation is equivalent to a standard translation', into HOL4, which uses simple type theory as its foundation. The tools that this proof will use centered on saturated models, which we are introducing now:
+In the last chapter, we introduce the standard translation and proved that every modal formula is `equivalent to' a first-order formula. We mentioned that every first-order formula that corresponds to a modal formula is an $\mathcal L_{\tau}^1$ formula, but it is not the fact that every $\mathcal L_{\tau}^1$ formula is equivalent to the standard translation of a modal formula. For instance, the formula \HOLtm{fR (fV 1) (fV 2)} is not a standard translation. Here comes a natural question: what are the $\mathcal L_{\tau}^1$-formulas which is equivalent to a standard translation? In the last chapter, we have already given a short answer: an $\mathcal L_{\tau}^1$ formula is equivalent to a standard translation if and only if it is invariant under bisimulation. Also, recall that we have already proved that standard translations are invariant under bisimulation. In this section, we devote to translate the proof of the other direction, saying `every formula which is invariant under bisimulation is equivalent to a standard translation', into HOL4, which uses simple type theory as its foundation. The tools that this proof will use centered on saturated models, which we are introducing now:
 
-Given a first-order model \HOLtm{M}, we can expand it by adding some new function symbols to it. In HOL4, this operation is easy to define when we are expanding a model \HOLtm{M} with no interesting information on function symbols. Fortunately, we are only interested in such easy case throughout the discussion below, even more, here we are only considering adding finitely many nullary function symbols, which are actually constants. Hence to keep things simple, the definition of expansion of models is taken to be as follows:
+Given a first-order model \HOLtm{M}, we can expand it by adding some new function symbols to it. In HOL4, it is easy to define such an operation when we are expanding a model \HOLtm{M} with no interesting information on function symbols. Fortunately, we are only interested in such easy case throughout the discussion below, even more, here we are only considering adding finitely many nullary function symbols, which are actually constants. Hence to keep things simple, the definition of expansion of models is taken to be as follows:
 
 \begin{defn}[\holref{Expansion}{lemma2_73}{65}]
-In HOL4, \HOLtm{expansion} is defined as a predicate, where the model \HOLtm{M} is the model we start with and \HOLtm{M'} is the resultant model after adding a finite number of constants, each corresponds to an element in \HOLtm{A}, which is a world in \HOLtm{M}. For the notations: \HOLtm{CARD} is the function that takes a set and gives its cardinality, \HOLtm{count} is a function takes a natural number $m$ and gives the set $\{0,\cdots ,n-1\}$, and \HOLtm{BIJ f A B} means `$f$ is a bijection from $A$ to $B$'.
+In HOL4, the function \HOLtm{expansion} is defined as a predicate, where the model \HOLtm{M} is the model we start with and \HOLtm{M'} is the resultant model after adding a finite number of constants, each corresponds to an element in \HOLtm{A}, which is a world in \HOLtm{M}.
 \begin{holmath}
   \HOLthm[def,width=65]{lemma2_73.expansion_def}
 \end{holmath}
 \end{defn}
 
-If we expand a model \HOLtm{M} by throwing in a finite set of constants corresponds to elements in $A$, then we need to number the elements in $A$. In other words, we need to choose an order on $A$. There is no natural way of defining this order, and hence if we define expansion as a function that takes a model, a set of worlds, and give an expanded model, this function will involve choice, which is rather hard to work with. This is the reason why we define expansion as a predicate instead of a function. However, as the choice of order on $A$ does not really matter, there is `up to isomorphism' only one expansion of a model using a set of worlds. So we can say `the expansion of \HOLtm{M} by the set $A$'. 
+If we expand a model \HOLtm{M} by throwing in a finite set of constants corresponds to the elements in $A$, then we need to number the elements in $A$. In other words, we need to choose an order on $A$. There is no natural way of defining this order, and hence if we define expansion as a function that takes a model, a set of worlds, and gives an expanded model, this function will involve choice, which is less convenient to work with. This is the reason why we define expansion as a predicate instead of a function. However, as the choice of order on $A$ does not really matter, there is `up to isomorphism' only one expansion of a model using a set of worlds. So we can say `the expansion of \HOLtm{M} by the set $A$'. 
 
-The expanded model has the same domain and same predicate symbols as the unexpanded one, that are only the function symbols that make them different. Before the expansion, as there is no information contained in \HOLtm{M} about function symbols, once a first-order term  contains some function symbol, this term will not make sense to \HOLtm{M}, hence \HOLtm{M} can be used to interpret no formula with a function symbol. If $A$ has cardinality $m$, where $m$ is a natural number, after the expansion, every term \HOLtm{Fn t []} for $0\le t< m$ makes sense to \HOLtm{M'}, and it evaluated to the element \HOLtm{f t}. Therefore, the formulas which only uses these function symbols can be interpreted in the expanded model. The role of \HOLtm{f} here is to assign each $0\le t < m$ an element of the domain of \HOLtm{M}, where the term \HOLtm{Fn t []} will be evaluated to. 
+The expanded model has the same domain and the same predicate symbols as the unexpanded one, that are only the function symbols that make them different. Before the expansion, as there is no information contained in \HOLtm{M} about function symbols, once a first-order term  contains some function symbol, this term will not make sense to \HOLtm{M}, hence \HOLtm{M} can be used to interpret no formula with a function symbol. If $A$ has cardinality $m$, where $m$ is a natural number, after the expansion, every term \HOLtm{Fn t []} for $0\le t< m$ makes sense to \HOLtm{M'}, and is evaluated to the element \HOLtm{f t}. Therefore, the formulas which only uses these function symbols can be interpreted in the expanded model. The role of \HOLtm{f} here is to assign each $0\le t < m$ an element of the domain of \HOLtm{M}, where the term \HOLtm{Fn t []} will be evaluated to. 
 
 
-A set \HOLtm{Σ} of first-order formulas is called \emph{consistent} with a model \HOLtm{M} if for every finite subset \HOLtm{Σ0} of it, there exists an element in the domain of \HOLtm{M} such that all elements of \HOLtm{Σ0} are satisfied, in this case, we write \HOLtm{consistent M Σ}. A set \HOLtm{Γ} of first-order formula is called a \emph{type} if there is a variable symbol $x$ such that for each formula in \HOLtm{Σ}, the only free variable that it may contain is $x$, in this case, we write \HOLtm{ftype x Γ} in HOL4. When \HOLtm{ftype x Γ}, we say \HOLtm{Γ} is \emph{realized} in \HOLtm{M} if there is an element in the domain of \HOLtm{M} such that all the elements in \HOLtm{Γ} are satisfied, and write \HOLtm{frealizes M x Γ}. 
+A set \HOLtm{Σ} of first-order formulas is called \emph{consistent} with a model \HOLtm{M} if for every finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a valuation of \HOLtm{M} such that all elements of \HOLtm{Σ0} are satisfied, in this case, we write \HOLtm{consistent M Σ}. A set \HOLtm{Γ} of first-order formula is called a \emph{type} if there is a variable symbol $x$ such that for each formula in \HOLtm{Σ}, the only free variable that it may contain is $x$, in this case, we write `\HOLtm{ftype x Γ}' in HOL4. When `\HOLtm{ftype x Γ}', we say \HOLtm{Γ} is \emph{realized} in \HOLtm{M} if there is an element in the domain of \HOLtm{M} such that all the elements in \HOLtm{Γ} are satisfied, and write `\HOLtm{frealizes M x Γ}'. 
 
 
 
 
 \begin{defn}[\holref{$n$-saturated}{lemma2_73}{77} and \holref{countably saturated}{lemma2_73}{90}]
-A first-order model \HOLtm{M} is called $n$-saturated if for every set \HOLtm{A ⊆ M.frame.world} where \HOLtm{CARD A < n} and for every \HOLtm{M'} and \HOLtm{f} assigning natural numbers elements in the domain of \HOLtm{M} such that \HOLtm{expansion M A M' f}, \HOLtm{M'} realizes every consistent set \HOLtm{Γ} such that \HOLtm{ftype x Γ}, where $x$ is an arbitrary variable symbol. A model is countably saturated if it is $n$-saturated for all $n$.
+A first-order model \HOLtm{M} is called $n$-saturated if for every set \HOLtm{A ⊆ M.frame.world} where \HOLtm{CARD A < n} and for every \HOLtm{M'} and \HOLtm{f} assigning natural numbers elements in the domain of \HOLtm{M} such that \HOLtm{expansion M A M' f}, \HOLtm{M'} realizes every consistent set \HOLtm{Γ} such that \HOLtm{ftype x Γ}, where $x$ is an arbitrary variable symbol. A model is countably saturated if it is $n$-saturated for all $n$. In HOL4:
 \begin{holmath}
   \HOLthm[def,Γ/G]{prettyPrinting.ppn_saturated_def}\\[3mm]
   \HOLthm[def]{lemma2_73.countably_saturated_def}
@@ -1197,13 +1232,13 @@ Countably saturated models are interesting for us since for countably saturated 
 
 \begin{thm}[\holref{\texttt{thm_2_65_corollary}}{chap2_6}{407}]\label{6.1}
 \begin{holmath}
-  \HOLthm{prettyPrinting.ppthm_2_65_corollary}
+  \HOLthm[w1/w,w2/w',M1/M,M2/M']{prettyPrinting.ppthm_2_65_corollary}
 \end{holmath}
 \end{thm}
 
 By Proposition \ref{5.7}, to prove the above, it suffices to prove:
 \begin{thm}[\holref{\texttt{thm_2_65}}{chap2_6}{168}]
-Countably saturated first-order models are m-saturated when viewing as modal models. 
+If a modal model is countably saturated when we view it as a first-order, then this model is m-saturated.
 \begin{holmath}
   \HOLthm{chap2_6.thm_2_65}
 \end{holmath}
@@ -1212,13 +1247,13 @@ Countably saturated first-order models are m-saturated when viewing as modal mod
  Suppose \HOLtm{countably_saturated (mm2folm M)}. Let \HOLtm{a IN M.frame.world} and \HOLtm{Σ} a set of modal formulas which is finitely satisfiable in the set of successors of $a$. We find a successor of $a$ in \HOLtm{M} realising all the formulas in \HOLtm{Σ}. 
 
 
-Define \HOLtm{Σ' = {fR (Fn 0 []) (fV x)\} UNION {ST x phi | phi IN Σ\}} and let \HOLtm{M'} be the model obtained by expanding \HOLtm{(mm2folm M)} by adding a constant that corresponds to the world \HOLtm{a}. 
- We claim \HOLtm{consistent M' Σ'}. Take a finite set \HOLtm{Σ0 ⊆ Σ'}, we should find an element in \HOLtm{M'} where every formula in \HOLtm{Σ0} is satisfied. For each element in \HOLtm{Σ0} which is a standard translation, use \HOLtm{CHOICE} to choose a modal formula $p\in \Sigma$ that is translated to it. Collect the formulas we choose into a set \HOLtm{ps}, then \HOLtm{ps} is a finite subset of \HOLtm{Σ}. Recall we have assumed \HOLtm{Σ} is finitely satisfiable in the set of successors of \HOLtm{a}, hence there exists \HOLtm{b IN M.frame.world} and \HOLtm{M.frame.rel a b} such that \HOLtm{satis M b p} for every \HOLtm{p IN Σ0}. It follows by Proposition \ref{5.4} that no matter \HOLtm{fR (Fn 0 []) (fV x)} is in \HOLtm{Σ} or not, we have \HOLtm{Σ0} is satisfied at \HOLtm{b} in \HOLtm{M'}.
+Define \HOLtm{Σ' = {fR (Fn 0 []) (fV x)\} UNION {ST x phi | phi IN Σ\}} and let \HOLtm{M'} be the model obtained by expanding \HOLtm{(mm2folm M)} by adding a constant, which is a nullary function symbol represented by $0$, that corresponds to the world \HOLtm{a}. 
+ We claim \HOLtm{consistent M' Σ'}. Take a finite set \HOLtm{Σ0 ⊆ Σ'}, we should find an element in \HOLtm{M'} where every formula in \HOLtm{Σ0} is satisfied. For each element in \HOLtm{Σ0} which is a standard translation, use \HOLtm{CHOICE} to choose a modal formula $p\in \Sigma$ that is translated to it. Collect the formulas we choose into a set \HOLtm{ps}, then \HOLtm{ps} is a finite subset of \HOLtm{Σ}. Recall we have assumed \HOLtm{Σ} is finitely satisfiable in the set of successors of \HOLtm{a}, hence there exists \HOLtm{b IN M.frame.world} and \HOLtm{M.frame.rel a b} such that \HOLtm{satis M b p} for every \HOLtm{p IN ps}. It follows by Proposition \ref{5.4} that no matter \HOLtm{fR (Fn 0 []) (fV x)} is in \HOLtm{Σ0} or not, we have \HOLtm{Σ0} is satisfied at \HOLtm{b} in \HOLtm{M'}.
 
 This proves \HOLtm{consistent M' Σ'}. Since \HOLtm{(mm2folm M)} is countably saturated, the whole set \HOLtm{Σ'} itself is satisfied in some \HOLtm{b} in \HOLtm{M'}. The fact that \HOLtm{fR (Fn 0 []) (fV x)} holds at $b$ implies $b$ is a successor of $a$ in \HOLtm{M}, and \HOLtm{{ST x phi | phi IN Σ\}} holds at \HOLtm{b} implies that \HOLtm{satis M b phi} for every \HOLtm{phi IN Σ} by Proposition \ref{5.4}.
 \end{proof}
 
-Knowing the interesting properties of countably saturated models, we now answer the question about where to obtain them. The canonical way to obtain such models involves the usage of ultraproducts, which we will discuss in the following interlude. 
+As a reader may observe, we actually only need that \HOLtm{mm2folm M} is 2-saturated for the proof above. Knowing the interesting properties of countably saturated models, we now answer the question about where to obtain them. The canonical way to obtain such models involves the usage of ultraproducts, which we will discuss in the following interlude. 
 
 \subsection{Interlude: Countably saturated models via ultraproducts}
 
@@ -1598,6 +1633,8 @@ The first two conditions are immediate to check. It remains to show \HOLtm{{j | 
 
 \end{proof}
 
+This is the end of the interlude. 
+
 With the help of Lemma \ref{6.10}, we yield another theorem about `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models'. 
 
 
@@ -1613,7 +1650,7 @@ The \HOLtm{U} we require here can be an arbitrary countably incomplete ultrafilt
 
 %The last step towards the main theorem is used to pass from infinite set to finite set.
 
-The last ingredient we need for the main theorem we are proving is the compactness theorem of first-order logic. The standard statement of compactness theorem says that for a set \HOLtm{Σ} of modal formulas, if for each finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a model such that all the formulas in \HOLtm{Σ0} are satisfied, then there exists a model such that all the formulas in \HOLtm{Σ} are satisfied. This standard version of compactness theorem is formalized in 1998 in HOL4 by John Harrison. The way that Harrison states the compactness theorem looks very different from the style that we are working with. Hence with the help of a corollary proved from Harrison's work by my supervisor, we can connect the work of Harrison with our project and prove a version of compactness theorem for $\mathcal L_{\tau}^1$-formulas, which is no more than a specialization to the standard version of compactness theorem to $\mathcal L_{\tau}^1$-formulas. We will use this version of compactness theorem for our work. The statement looks like:
+The last ingredient we need for the main theorem we are proving is the compactness theorem of first-order logic. The standard statement of compactness theorem says that for a set \HOLtm{Σ} of modal formulas, if for each finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a model such that all the formulas in \HOLtm{Σ0} are satisfied, then there exists a model such that all the formulas in \HOLtm{Σ} are satisfied. This standard version of compactness theorem is formalized in 1998 in HOL4 by John Harrison. The way that Harrison states the compactness theorem looks very different from the style that we are working with. With the help of a corollary proved from Harrison's work by my supervisor, we have connected Harrison's work to our project by proving a version of compactness theorem for $\mathcal L_{\tau}^1$-formulas, which is no more than a specialization to the standard version of compactness theorem to $\mathcal L_{\tau}^1$-formulas. We will use this version of compactness theorem for our work. The statement looks like:
 
 \begin{thm}[\holref{\texttt{compactness_thm_L1tau}}{chap2_6}{1432}]\label{6.16}
 If $\alpha$-is an infinite type, then for each set $A$ of $\mathcal L_{\tau}^1$-formulas, if for every finite subset $ss$ of $A$, there exists an $\alpha$-model \HOLtm{M} and a valuation \HOLtm{σ} such that every formula in $ss$ is satisfied in \HOLtm{M} under \HOLtm{σ}, then there exists a $\alpha$-model \HOLtm{M} and a valuation on \HOLtm{M} such that all the formulas in $A$ are satisfied. 
@@ -1627,14 +1664,14 @@ The assumption on infiniteness of the type universe comes from similar reason as
 As a consequence of the compactness theorem, we have:
 
 \begin{coro}[\holref{\texttt{compactness_corollary_L1tau}}{chap2_6}{1482}]\label{6.17}
-If \HOLtm{Σ} is a set of $\mathcal L_{\tau}^1$ formula such that for every model \HOLtm{M} and valuation \HOLtm{σ}, if \HOLtm{feval M σ phi} for every \HOLtm{phi IN Σ}, then \HOLtm{feval M σ a}, then there exists a finite subset \HOLtm{Σ0} of \HOLtm{Σ} such that once every formula in \HOLtm{Σ0} is satisfied in \HOLtm{M} under a valuation \HOLtm{σ}, then \HOLtm{feval M σ a}. 
+Under the assumption that the type universe of $\alpha$ is infinite and \HOLtm{Σ} is a set of $\mathcal L_{\tau}^1$ formula such that for every $\alpha$-model \HOLtm{M} and valuation \HOLtm{σ}, if \HOLtm{feval M σ phi} for every \HOLtm{phi IN Σ}, then \HOLtm{feval M σ a}, then there exists a finite subset \HOLtm{Σ0} of \HOLtm{Σ} such that once every formula in \HOLtm{Σ0} is satisfied in an $\alpha$-model \HOLtm{M} under a valuation \HOLtm{σ}, then \HOLtm{feval M σ a}. 
 \begin{holmath}
   \HOLthm[phi/f]{prettyPrinting.ppcompactness_corollary_L1tau}
 \end{holmath}
 \end{coro}
 
 \begin{proof}
-Under the assumptions, suppose, in order to get a contradiction, that for every finite subset $ss$ of $A$, there exists a model \HOLtm{M} and a valuation \HOLtm{σ} where all the formulas in $ss$ are satisfied by $a$ is not satisfied, then every finite of \HOLtm{ss ∪ {fNOT a\}} is satisfied on some model \HOLtm{M} under some valuation \HOLtm{σ}. As $a$ is an $\mathcal L_{\tau}^1$-formula, so does $\lnot a$. By Theorem \ref{6.16}, this implies the whole set \HOLtm{ss ∪ {fNOT a\}} is satisfied on some model under some valuation, contradicts our assumption. 
+Under the assumptions, suppose, in order to get a contradiction, that for every finite subset $ss$ of $A$, there exists an $\alpha$-model \HOLtm{M} and a valuation \HOLtm{σ} where all the formulas in $ss$ are satisfied by $a$ is not satisfied, then every finite of \HOLtm{ss ∪ {fNOT a\}} is satisfied on some model \HOLtm{M} under some valuation \HOLtm{σ}. As $a$ is an $\mathcal L_{\tau}^1$-formula, so does $\lnot a$. By Theorem \ref{6.16}, this implies the whole set \HOLtm{ss ∪ {fNOT a\}} is satisfied on some $\alpha$-model under some valuation, contradicts our assumption. 
 \end{proof}
 
 
@@ -1656,18 +1693,17 @@ For an infinite type $\alpha$, if $a$ is a first-order formula which is invarian
 \end{holmath}
 Our first claim is that it suffices to prove \HOLtm{a} is implies by \HOLtm{MOC}. To see why it suffices, assume it is true, then by Corollary \ref{6.17}, there exists a finite subset of \HOLtm{Σ0} of \HOLtm{MOC} such that once all the formulas in \HOLtm{Σ0} are satisfied, then the $a$ is satisfied. Also by definition of \HOLtm{MOC}, once $a$ is satisfied, every formula in \HOLtm{Σ0} is satisfied. Hence $a$ will be equivalent to the big conjunction of formulas in \HOLtm{Σ0}, which is a standard translation. 
 
-Fix a model \HOLtm{M} and suppose \HOLtm{feval M σ varphi} for every \HOLtm{varphi IN MOC}, we prove \HOLtm{feval M σ a}. Consider of the set \HOLtm{Tx} of formulas \HOLtm{ST x phi} such that \HOLtm{feval M σ (ST x phi)}. Let \HOLtm{N} and a valuation \HOLtm{σn} satisfying each formula in \HOLtm{(Tx ∪ {a\})}. Such a model does exist:
+Fix a model \HOLtm{M} and suppose \HOLtm{feval M σ varphi} for every \HOLtm{varphi IN MOC}, we prove \HOLtm{feval M σ a}. Consider of the set \HOLtm{Tx} of formulas of the form \HOLtm{ST x phi} such that \HOLtm{feval M σ (ST x phi)}. Pick a model \HOLtm{N} and a valuation \HOLtm{σn} satisfying each formula in \HOLtm{(Tx ∪ {a\})}. Such a model does exist:
 Suppose, in order to get a contradiction, that such a model does not exist, then for every model, once all the formulas in \HOLtm{Tx} are satisfied, the formula \HOLtm{a} will not be satisfied. Then by compactness, there exists a finite subset of \HOLtm{Tx} implies $\lnot a$. Taking its contrapositive, then \HOLtm{a} implies the negation of the big conjunction \HOLtm{psi} of finitely many elements in \HOLtm{Tx}. As a negated big conjunction of standard translations is again a standard translation, we have  \HOLtm{(fNOT psi) IN MOC}. Recall we have assumed \HOLtm{feval M σ varphi} for every \HOLtm{varphi IN MOC}, so \HOLtm{feval M σ (fNOT psi)}, but also \HOLtm{feval M σ psi} by definition of \HOLtm{Tx}. This is a contradiction. 
 
- Now let \HOLtm{w} denote \HOLtm{σ x} and \HOLtm{v} denote \HOLtm{σn x}, we claim that if we regard both \HOLtm{M} and \HOLtm{N} as modal models, then \HOLtm{w} and \HOLtm{v} are modal equivalent. To prove this, suppose \HOLtm{satis (folm2mm M) w phi} for a modal formula \HOLtm{phi}, then \HOLtm{(ST x phi) IN Tx} by Proposition \ref{5.4}, Proposition \ref{5.3} and the definition of \HOLtm{Tx}, hence \HOLtm{feval N σn (ST x phi)}. By these two propositions again, we can prove \HOLtm{satis (folm2mm N) v phi}. This proves \HOLtm{!phi. satis (folm2mm M) w phi ==> satis (folm2mm N) v phi}. The other direction is by a symmetric argument. 
-
+ Now let \HOLtm{w} denote \HOLtm{σ x} and \HOLtm{v} denote \HOLtm{σn x}, we claim that if we regard both \HOLtm{M} and \HOLtm{N} as modal models, then \HOLtm{w} and \HOLtm{v} are modal equivalent. To prove this, suppose \HOLtm{satis (folm2mm M) w phi} for a modal formula \HOLtm{phi}, then \HOLtm{(ST x phi) IN Tx} by Proposition \ref{5.4}, Proposition \ref{5.3} and the definition of \HOLtm{Tx}, hence \HOLtm{feval N σn (ST x phi)}. By these two propositions again, we can prove \HOLtm{satis (folm2mm N) v phi}. This proves \HOLtm{!phi. satis (folm2mm M) w phi ==> satis (folm2mm N) v phi}. Similarly, if \HOLtm{ ¬satis (folm2mm M) w (phi)}, then \HOLtm{satis (folm2mm M) w (NOT phi)} and we can deduce \HOLtm{ ¬satis (folm2mm N) v (phi)} by a symmetric argument. 
 
 If modal equivalence implies bisimularity, then we are done: Suppose modal equivalence implies bisimularity, then as \HOLtm{w IN (folm2mm M).frame.world} and \HOLtm{v IN (folm2mm N).frame.world} are modal equivalent, there exists a bisimulation between them. As \HOLtm{a} is invariant for bisimulation and is satisfied at \HOLtm{v}, then it is also satisfied at \HOLtm{w}. 
 
-Although it is not always the case that modal equivalence implies bisimularity, we can take a detour with the help of Theorem \ref{6.15}. We firstly embed the worlds $w,v$ into these models \HOLtm{Mst = (ultraproduct_model U J (λi. folm2mm M))}
-,
-\HOLtm{Nst = (ultraproduct_model U J (λj. folm2mm N))} as \HOLtm{wst = {fw | Uequiv U J (models2worlds (λj. folm2mm M)) (λj. w) fw\}},
-\HOLtm{vst = {fv | Uequiv U J (models2worlds (λj. folm2mm N)) (λj. v) fv\}} respectively, where these two worlds are bisimilar. As $a$ is invariant for bisimulation, $a$ holds as \HOLtm{wst} in \HOLtm{(mm2folm Mst)} iff it holds at \HOLtm{vst} in \HOLtm{(mm2folm Nst)}. We are going to carry the $a$ from the model \HOLtm{N} where $a$ is satisfied at $v$, to the point \HOLtm{vst} in \HOLtm{(mm2folm Nst)}, then to the point \HOLtm{wst} in \HOLtm{(mm2folm Mst)}, and finally to \HOLtm{w} in \HOLtm{M}. 
+Although it is not always the case that modal equivalence implies bisimularity, we can take a detour with the help of Theorem \ref{6.15}. By \ref{6.15}, we obtain an ultrafilter $U$ on a set $J$ such that for the ultraproduct models \HOLtm{Mst = (ultraproduct_model U J (λj. folm2mm M))}
+and
+\HOLtm{Nst = (ultraproduct_model U J (λj. folm2mm N))}, the worlds \HOLtm{wst = {fw | Uequiv U J (models2worlds (λj. folm2mm M)) (λj. w) fw\}},
+\HOLtm{vst = {fv | Uequiv U J (models2worlds (λj. folm2mm N)) (λj. v) fv\}} are bisimilar. As $a$ is invariant for bisimulation, $a$ holds at \HOLtm{wst} in \HOLtm{(mm2folm Mst)} iff it holds at \HOLtm{vst} in \HOLtm{(mm2folm Nst)}. We are going to carry the $a$ from the model \HOLtm{N} where $a$ is satisfied at $v$, to the point \HOLtm{vst} in \HOLtm{(mm2folm Nst)}, then to the point \HOLtm{wst} in \HOLtm{(mm2folm Mst)}, and finally to \HOLtm{w} in \HOLtm{M}. 
 
 To carry $a$ around, it suffices to prove \HOLtm{feval M σ a ⇔ feval (mm2folm Mst) (λx. wst) a} and \HOLtm{feval N σn a ⇔ feval (mm2folm Nst) (λx. vst) a} under our assumptions by hand. These two equivalence are of the same pattern, hence we prove it as a lemma:
 
@@ -1680,7 +1716,7 @@ The lemma is proved by carrying $a$ around using Proposition \ref{6.12}, Proposi
 \end{proof}
 
 Now we have formalized both directions of the Van Benthem Characterization theorem. A reader may expect we can put them together to get a double implication. However, as already mentioned in last chapter, we cannot get an `if an only if' result. To see the reason, note that the statement we have just proved says that if \HOLtm{phi} is invariant under bisimulation for models with type $(num\to \alpha)\to bool$, then we can conclude $\phi$ is equivalent to a standard translation on model of type $\alpha$. However, if we want to prove the converse of the above statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models of type $\alpha$, and prove that $\phi$ is invariant for bisimulation for models of type $(num \to \alpha) \to bool$. But according to 
-Proposition \ref{5.6}, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. 
+Proposition \ref{5.6}, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. If the type universe of $(num \to \alpha) \to bool$ is small enough to be embedded into $\alpha$, then we will also done, but the cardinality of $(num \to \alpha) \to bool$ is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models of type $(num \to \alpha) \to bool$ from the fact that  $\phi$ is invariant for bisimulation for models of type $\alpha$. 
 
 We get into this situation because the statements we have proved for both directions are not a precise translation from their set-theoretic statement. Consider the easy direction, its set-theoretic statement is that if $\phi$ is equivalent to a standard translation on models of every type, then it will be invariant for bisimulation on models of every type, whereas in our statement `if $\phi$ is equivalent to a standard translation on models of type $\alpha$, then it is invariant for models of type $\alpha$', both the assumption and the conclusion are weakened. We cannot encode the original statement into HOL4, since we cannot quantify over types and refer to all the types to state `invariant for bisimulation for models of all types' and `equivalent to a standard translation on models of all types', just as the problem we encountered when defining equivalence of modal formulas. If we can quantify over types, that is, suppose we can state the goal `$\phi$ is invariant for bisimulation on models of every type if and only if $\phi$ is equivalent to a standard translation on models of every type', then we can prove it using the same proof we have written out. For the easy direction, the assumption is that $\phi$ is equivalent to a standard translation on models of every type, and we want to conclude that $\phi$ is invariant for bisimulation for models of type $\alpha$. But under assumption,  $\phi$ is equivalent to a standard translation on models of type $\alpha$ where $\alpha$ is an arbitrary type, so we prove the result by Proposition \ref{5.6}. Conversely, for the other direction, the assumption is that `$\phi$ is invariant for bisimulation on models of every type', and the goal is to prove $\phi$ is invariant on models of type $\alpha$ where $\alpha$ is an arbitrary type. By assumption, $\phi$ is invariant for bisimulation on models of type $(num\to \alpha)\to bool$, and the result follows from Theorem \ref{6.18}. 
 
@@ -1694,31 +1730,31 @@ The fact that the two directions of implication does not yield an `if and only i
 \label{CH:Chap}
 %\section[`Positive' formulas and simulation]{Positive existential formulas and Preservation under simulations}
 
-In the last section, we proved that standard translations are exactly $\mathcal L_{\tau}^1$-formulas which are invariant for bisimulations. There exists a concept of `half of a bisimulation', which is called \emph{simulation}. Accordingly, the $\mathcal L_{\tau}^1$-formulas which are \emph{preserved under simulation} are interesting. We have set-theoretic proof that these formulas can also be characterized using their syntax. The section aims to translate this proof into simple type theory. For precisely the same reason as in the last section, after we translate the proof of implications in both direction, they cannot be unified into a double implication. Nevertheless, we will spell out our formalization of proofs for those two directions separately. 
+There exists a concept of `half of a bisimulation', which is called \emph{simulation}. In this section, we are interested in the $\mathcal L_{\tau}^1$-formulas which are \emph{preserved under simulation}. We have set-theoretic proof that these formulas can also be characterized using their syntax. The section aims to translate this proof into simple type theory. For precisely the same reason as in the last section, after we translate the proof of implications in both direction, they cannot be unified into a double implication. Nevertheless, we will spell out our formalization of proofs for those two directions separately. 
 
  % We present this characterization in this section. 
 
-As we expect, the clauses defining  simulation is `half of' the clauses defining bisimulation. Recall for two worlds \HOLtm{w IN M.frame.world}, \HOLtm{w' IN M'.frame.world}, a bisimulation between \HOLtm{w} and \HOLtm{v} is a relation $Z$ between worlds in \HOLtm{M} and worlds in \HOLtm{M'} that relating $w$ and $v$, such that $w$ and $w'$ satisfies the same propositional letters, and we can make a transaction from $w$ to $v$ in \HOLtm{M} if and only if we can make a transaction from $w'$ to some $v'$ in \HOLtm{M'}, where $v$ and $v'$ are related by $Z$. After replacing `if and only if' in above clauses with one-direction implication, we will get the definition of simulation.
+As we expect, the clauses defining  simulation is `half of' the clauses defining bisimulation:
 
 
 
 \begin{defn}[\holref{Simulation}{chap2_7}{32}]
-A simulation $Z$ between two worlds \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} (Notation: \HOLtm{sim M Z M'})is a relation between worlds in \HOLtm{M} and \HOLtm{M'} relating $w$ and $w'$, such that:
+A simulation $Z$ between two worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} (notation: \HOLtm{sim M1 Z M2})is a relation between worlds in \HOLtm{M1} and \HOLtm{M2} relating $w_1$ and $w_2$, such that:
 \begin{itemize}
-\item Each propositional letter which is satisfied at $w$ is also satisfied at $w'$.
-\item If there is a world $v$ in \HOLtm{M} such that \HOLtm{M.frame.rel w v}, then there exists a world \HOLtm{v'} in \HOLtm{M'} such that \HOLtm{M'.frame.rel w' v'}, and moreover, $v$ and $v'$ are related by $Z$. 
+\item Each propositional letter which is satisfied at $w_1$ is also satisfied at $w_2$.
+\item If there is a world $v_1$ in \HOLtm{M1} such that \HOLtm{M1.frame.rel w1 v1}, then there exists a world \HOLtm{v2} in \HOLtm{M2} such that \HOLtm{M2.frame.rel w2 v2}, and moreover, $v_1$ and $v_2$ are related by $Z$. 
 \end{itemize}
 \begin{holmath}
-  \HOLthm[def]{chap2_7.sim_def}
+  \HOLthm[def,w1/w,w2/w',M1/M,M2/M']{chap2_7.sim_def}
 \end{holmath}
 \end{defn}
 
  The concept which corresponds to `invariant for bisimulation' is `preserved under simulation'. In contrast to that of `invariant for bisimulation', `preserved under simulation' is a concept about modal formula. 
 
 \begin{defn}[\holref{Preserved under simulation}{chap2_7}{38}]
-A modal formula \HOLtm{phi} is preserved under simulation if once we have \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} with a simulation relating $w$ to $w'$, then if \HOLtm{phi} is satisfied at $w$,  it is also satisfied at $w'$.
+A modal formula \HOLtm{phi} is preserved under simulation if once we have \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} with a simulation relating $w_1$ to $w_2$, then if \HOLtm{phi} is satisfied at $w_1$,  it is also satisfied at $w_2$.
 \begin{holmath}
-  \HOLthm[def,width=60]{prettyPrinting.pppreserved_under_sim_def}
+  \HOLthm[def,w1/w,w2/w',M1/M,M2/M',width=55]{prettyPrinting.pppreserved_under_sim_def}
 \end{holmath}
 \end{defn}
 The predicate \HOLtm{preserved_under_sim} takes type parameters by the same reason as discussed when we define \HOLtm{invar4bisim}. 
@@ -1731,7 +1767,7 @@ The rules of positive existential formulas read:
 \begin{itemize}
 \item The formulas `$\bot$' and `$\top$' are positive existential.
 \item A propositional letter standing alone is positive existential.
-\item If $f_1$ and $f_2$ are both positive existential, then both their conjunction and their disjunction are positive existential.
+\item If $\phi_1$ and $\phi_2$ are both positive existential, then both their conjunction and their disjunction are positive existential.
 \item Adding a diamond before a positive existential formula gives a positive existential formula.
 \end{itemize}
 \[
@@ -1741,27 +1777,27 @@ The rules of positive existential formulas read:
   \HOLthm[rule,conj3,width=20]{chap2_7.PE_rules} \ \ \ \ \
   \HOLthm[rule,conj4,width=80]{chap2_7.PE_rules} \ \ \ \ \ 
   \HOLthm[rule,conj5,width=80]{chap2_7.PE_rules} \ \ \ \ \ 
-  \HOLthm[rule,conj6,width=80]{chap2_7.PE_rules}
+  \HOLthm[rule,conj6,phi/f,width=80]{chap2_7.PE_rules}
 \end{array}
 \]
 \end{defn}
 By induction, every finite conjunction or disjunction of positive existential formulas is again a positive existential formula. We can immediately prove by rule induction on positive existential formulas that every positive existential formula is preserved under simulation, but the converse only holds for `good models'. In a previous section, we introduced the concept of m-saturated models, and we have already seen that they are `good' models, which gives equivalence between modal equivalence and bisimulation. It turns out that m-saturated models do not only give rise to nice properties about bisimulations, but also work well for simulations. 
 
 \begin{prop}[\holref{\texttt{exercise_2_7_1}}{chap2_7}{364}]\label{6.19}
- If \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M.frame.world} lives in m-saturated models \HOLtm{M} and \HOLtm{M'}. Then if for every positive existential formula $\phi$, the satisfaction of $\phi$ at $w$ implies the satisfaction of $\phi$ at $w'$, there exists a simulation relation between \HOLtm{M} and \HOLtm{M'} which relates $w$ to $w'$.  
+ If \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} lives in m-saturated models \HOLtm{M1} and \HOLtm{M2}. Then if for every positive existential formula $\phi$, the satisfaction of $\phi$ at $w_1$ implies the satisfaction of $\phi$ at $w_2$, there exists a simulation relation between \HOLtm{M1} and \HOLtm{M2} which relates $w_1$ to $w_2$.  
 \begin{holmath}
-  \HOLthm[width=65]{prettyPrinting.ppexercise_2_7_1}
+  \HOLthm[w1/w,w2/w',M1/M,M2/M',width=65]{prettyPrinting.ppexercise_2_7_1}
 \end{holmath}
 \end{prop}
 \begin{proof}
 
 
-   Under the assumptions, \HOLtm{\w1 w2. (!phi. PE phi ==> satis M w1 phi ==> satis M' w2 phi)} gives a simulation relation. Checking it is indeed a simulation is completely analogue to the proof of Proposition \ref{5.7}.
+   Under the assumptions, \HOLtm{\v1 v2. (!phi. PE phi ==> satis M1 v1 phi ==> satis M2 v2 phi)} gives a simulation relation. Checking it is indeed a simulation is completely analogue to the proof of Proposition \ref{5.7}.
 \end{proof}
 
 
 
-As the last theorem that is proved in the project, we translate the proof of the theorem that says modal formulas which are preserved under simulations are exactly those one which are equivalent to a positive existential formula into HOL4. This proof will use a similar idea as the characterization theorem proved in the last section. But this time, since this time we are working within a modal language instead of first-order language, we only need to work with ultrafilter extensions rather than ultrapowers. This proof will use the modal version of compactness theorem and its corollary. 
+As the last theorem that is proved in the project, we translate the proof of the theorem that says modal formulas which are preserved under simulations are exactly those one which are equivalent to a positive existential formula into HOL4. This proof will use a similar idea as the characterization theorem proved in the last section. But this time, since our proof does not involve first-order logic, we only need the modal version of compactness theorem and its corollary. 
 
 \begin{thm}[\holref{Compactness of modal logic}{chap2_7}{206}]\label{6.20}
 If $\alpha$ is an infinite type, then given a set $s$ of $num$-modal formulas, if for every finite subset $ss$ of $s$, there exists a modal model \HOLtm{M} with $\alpha$-world set and a world \HOLtm{w IN M.frame.world} such that \HOLtm{satis M w phi} for every \HOLtm{phi IN ss}, then there exists a model with $\alpha$-world set and a world in \HOLtm{M} which satisfies all the modal formulas in $s$. 
@@ -1774,7 +1810,7 @@ By Proposition \ref{5.4} and Theorem \ref{6.16}.
 \end{proof}
 
 \begin{coro}[\holref{\texttt{modal_compactness_corollary}}{chap2_7}{277}]\label{6.21}
-For $\alpha$ is an infinite type, given a modal formula $a$ and a set $s$ of $num$-modal formulas, if for every modal model \HOLtm{M} with $\alpha$-world set, every world \HOLtm{w} which satisfies all the formulas in $s$ will also satisfy $a$, then there exists a finite subset of $s$ such that once a world $w$ in a model \HOLtm{M} with $\alpha$-world set, if every formula in $ss$ is satisfied at $w$, then $a$ is satisfied at $w$.
+For $\alpha$ is an infinite type, given a modal formula $a$ and a set $s$ of $num$-modal formulas, if for every modal model \HOLtm{M} with $\alpha$-world set, every world \HOLtm{w} which satisfies all the formulas in $s$ will also satisfy $a$, then there exists a finite subset of $s$ such that for a world $w$ in a model \HOLtm{M} with $\alpha$-world set, if every formula in $ss$ is satisfied at $w$, then $a$ is satisfied at $w$.
 \begin{holmath}
   \HOLthm[phi/f,width=60]{prettyPrinting.ppmodal_compactness_corollary}
 \end{holmath}
@@ -1790,23 +1826,23 @@ For the same reason that we did it for Theorem \ref{6.18}, we only consider simu
 
 
 \begin{thm}[\holref{\texttt{thm_2_78_half2}}{chap2_7}{399}]
-If $\beta$ is an infinite type. Then for each $num$-modal formula $\phi$, if $\phi$ is preserved under simulation on models with $(\beta\to bool)\to bool$ world sets, then there exists a positive existential $num$-modal formula which is equivalent to $\phi$ on models with $\beta$-world sets. 
+If $\beta$ is an infinite type. Then for each $num$-modal formula $\phi$, if $\phi$ is preserved under simulation on $((\beta\to bool)\to bool,num)$-models, then there exists a positive existential $num$-modal formula which is equivalent to $\phi$ on $(\beta,num)$-models. 
 \begin{holmath}
   \HOLthm[showtypes,varphi/phi0]{prettyPrinting.ppthm_2_78_half2}
 \end{holmath}
 \end{thm}
 \begin{proof}
-  Suppose $\phi$ is preserved under simulation. Consider the set of positive existential formulas which are implied by $\phi$, defined as 
+  Suppose $\phi$ is preserved under simulation. Consider the set \HOLtm{PEC} of positive existential formulas $\varphi$ such that for every $(\beta,num)$-model \HOLtm{M} and every world \HOLtm{w IN M.frame.world}, if all the formulas in \HOLtm{PEC} are satisfied at \HOLtm{w}, then \HOLtm{varphi} is satisfied at $w$. In HOL4, the set \HOLtm{PEC} is defined as:
 \begin{holmath}
-\HOLtm[alltt,width=100]{PEC = {psi | PE psi /\ 
+\HOLtm[alltt,width=100]{PEC = {varphi | PE varphi /\ 
                           (!M w:β. w IN M.frame.world ==>
-                               satis M w phi ==> satis M w psi)\}}
-\end{holmath} in HOL4.
-By Corollary \ref{6.21}, if we can prove for every model \HOLtm{M} and \HOLtm{w IN M.frame.world}, \HOLtm{satis M w psi} for all \HOLtm{psi IN PEC} implies \HOLtm{satis M w phi}, then there exists a finite subset $S$ of \HOLtm{PEC} that entails $\phi$. This will prove $\phi$ is equivalent to the conjunction of all the formulas in $S$, which is again a positive existential formula.
+                               satis M w phi ==> satis M w varphi)\}}
+\end{holmath} 
+By Corollary \ref{6.21}, if we can prove for every $(\beta,num)$-model \HOLtm{M} and \HOLtm{w IN M.frame.world}, \HOLtm{satis M w varphi} for all \HOLtm{varphi IN PEC} implies \HOLtm{satis M w phi}, then there exists a finite subset $S$ of \HOLtm{PEC} that entails $\phi$. This will prove $\phi$ is equivalent to the conjunction of all the formulas in $S$, which is again a positive existential formula.
 
-Therefore, our task is to prove the entailment from \HOLtm{PEC} to $\phi$. Suppose \HOLtm{satis M w psi} for all \HOLtm{psi IN PEC} , we prove \HOLtm{satis M w phi}. Define \HOLtm{Γ={NOT psi | PE psi /\ satis M w (NOT psi)\}}. We claim that there exists a model with a world that satisfies the set \HOLtm{Γ ∪ {phi\}}. By Theorem \ref{6.20}, it suffices to prove each finite subset of \HOLtm{Γ ∪ {phi\}} is satisfied by some model. Suppose there exists a finite subset of \HOLtm{Γ ∪ {phi\}} which can be satisfied by no model, then there exists $\lnot\psi_0,\cdots,\lnot\psi_n\in \Gamma$ such that for every model \HOLtm{N} and every world $v$ of it, if \HOLtm{satis N v phi}, then there exists some $0\le i\le n$ such that \HOLtm{satis N v} $\psi_i$. As all these $\psi$'s are positive existential, so does their big disjunction $\psi$, and hence \HOLtm{psi IN PEC}.  As \HOLtm{M} entails \HOLtm{PEC}, we have \HOLtm{satis M w psi}, and hence \HOLtm{satis M w} $\psi_i$ for some $i$ by definition of the $\psi$. But on other hand, \HOLtm{satis M w} $\lnot \phi_i$ for every $\psi_i$ by definition of \HOLtm{Γ}, this is a contradiction. 
+Therefore, our task is to prove the entailment from \HOLtm{PEC} to $\phi$. Suppose \HOLtm{satis M w varphi} for all \HOLtm{varphi IN PEC} , we prove \HOLtm{satis M w phi}. Define \HOLtm{Γ={NOT psi | PE psi /\ satis M w (NOT psi)\}}. We claim that there exists a $(\beta,num)$-model with a world that satisfies the set \HOLtm{Γ ∪ {phi\}}. By Theorem \ref{6.20}, it suffices to prove each finite subset of \HOLtm{Γ ∪ {phi\}} is satisfied by some model. Suppose there exists a finite subset of \HOLtm{Γ ∪ {phi\}} which can be satisfied by no model, then there exists $\lnot\psi_0,\cdots,\lnot\psi_n\in \Gamma$ such that for every $(\beta,num)$-model \HOLtm{N} and every world $v$ of it, if \HOLtm{satis N (v:β) phi}, then there exists some $0\le i\le n$ such that ${\mathfrak N} ,\ v \ \Vdash \psi_i$. As all these $\psi$'s are positive existential, so does their big disjunction $\psi$, and hence \HOLtm{psi IN PEC}.  As \HOLtm{M} entails \HOLtm{PEC}, we have \HOLtm{satis M w psi}, and hence ${\mathfrak M}, \ w \Vdash \psi_i$  for some $i$ by definition of the $\psi$. But on other hand, ${\mathfrak M}, \ w \Vdash \lnot \psi_i$ for every $\psi_i$ by definition of \HOLtm{Γ}, this is a contradiction. 
 
-Hence we obtain a model \HOLtm{N} realising \HOLtm{Γ ∪ {phi\}} at point $v$. For every positive existential formula $\psi$ such that \HOLtm{¬satis M w psi}, we have \HOLtm{NOT psi IN Γ}, so \HOLtm{satis N v (NOT psi)}. Hence for every positive existential $\psi$, if \HOLtm{satis N v psi}, then \HOLtm{satis M w psi}. We migrant this implication onto ultrafilter extensions: We take the ultrafilter extension of \HOLtm{M} and \HOLtm{N} respectively. By Proposition \ref{5.19}, for every positive existential $\psi$, \HOLtm{satis (UE N) (principle_UF v N.frame.world) psi} implies \HOLtm{satis N v psi}, by the discussion above, it implies \HOLtm{satis M w phi}, and hence implies \HOLtm{satis (UE M) (principle_UF w M.frame.world) psi} by Proposition \ref{5.19} again. As \HOLtm{(UE M)} and \HOLtm{UE N} are m-saturated by Proposition \ref{5.21}, by Proposition \ref{6.19}, we have a simulation relating \HOLtm{(principle_UF v N.frame.world)} to \HOLtm{(principle_UF w M.frame.world)}. 
+Hence we obtain a model \HOLtm{N} such that every element in \HOLtm{Γ ∪ {phi\}} is satisfied at point $v$. For every positive existential formula $\psi$ such that \HOLtm{¬satis M w psi}, we have \HOLtm{NOT psi IN Γ}, so \HOLtm{satis N v (NOT psi)}. Hence for every positive existential $\psi$, if \HOLtm{satis N v psi}, then \HOLtm{satis M w psi}. We migrant this implication onto ultrafilter extensions: We take the ultrafilter extension of \HOLtm{M} and \HOLtm{N} respectively. By Proposition \ref{5.19}, for every positive existential $\psi$, \HOLtm{satis (UE N) (principle_UF v N.frame.world) psi} implies \HOLtm{satis N v psi}, by the discussion above, it implies \HOLtm{satis M w phi}, and hence implies \HOLtm{satis (UE M) (principle_UF w M.frame.world) psi} by Proposition \ref{5.19} again. As \HOLtm{(UE M)} and \HOLtm{UE N} are m-saturated by Proposition \ref{5.21}, by Proposition \ref{6.19}, we have a simulation relating \HOLtm{(principle_UF v N.frame.world)} to \HOLtm{(principle_UF w M.frame.world)}. 
 
 As \HOLtm{satis N v phi}, Proposition \ref{5.19} gives \HOLtm{satis (UE N) (principle_UF v N.frame.world) phi}, as $\phi$ is preserved under simulation, we have 
 \HOLtm{satis (UE M) (principle_UF w M.frame.world) phi}. Again by Proposition \ref{5.19} , it implies \HOLtm{satis M w phi}. This completes the proof.
