@@ -838,8 +838,8 @@ Interpretation of terms and formulas are given as \HOLtm{termval} and \HOLtm{fev
 
 If we want to use a first-model \HOLtm{M} to interpret a first-order formula \HOLtm{phi}, the first thing to make sure is that the actual functions assigned to the function symbols appear in \HOLtm{phi} does not send a list of elements in \HOLtm{M} out of the domain of \HOLtm{M}. Therefore, a theorem about interpreting a formula \HOLtm{phi} in \HOLtm{M} should start with an assumption 
 \begin{holmath}
-\HOLtm{!a. a IN (form_functions phi) ==> (!l. LENGTH l <= SND a ==> (M.Fun (FST a) l) IN M.Dom)}
-\end{holmath}. 
+\HOLtm{!a. a IN (form_functions phi) ==> (!l. LENGTH l <= SND a ==> (M.Fun (FST a) l) IN M.Dom)}.
+\end{holmath}
 But we may want to use the same model to interpret formulas with various function symbols and do not want such a long assumption everywhere.  Hence for our convenience, unless we have no function symbols at all, we only consider the models \HOLtm{M} such that \HOLtm{M.Fun f l} is in \HOLtm{M} for every function $n$ and list \HOLtm{l}. For such a model, we write \HOLtm{wffm M}, meaning `\HOLtm{M} is a well-formed first-order model'. 
 
 At noted before, the functions \HOLtm{mm2folm} and \HOLtm{folm2mm} are not inverses. However, we have:
@@ -851,74 +851,7 @@ An $\mathcal L_{\tau}^1$ formula is satisfied in \HOLtm{M} under $\sigma$ if and
 \end{holmath}
 \end{prop}
 
-
-
-
-
-It does not make sense for a first-order model to have functions that send a list of elements of its domain out of its domain. Hence unless we have no function symbols at all, we only consider the models \HOLtm{M} such that \HOLtm{M.Fun f l} is in \HOLtm{M} for every function $n$ and list \HOLtm{l}. For such a model, we write \HOLtm{wffm M}, means that `\HOLtm{M} is a well-formed first-order model'. 
-
-
-
-
-To discuss the relationship between modal logic and first-order logic, firstly we need to build some basics of first-order logic in the HOL. First-order logic is formalised in HOL light in 1998 by John Harrison, we take our construction of first-order model theory as in the paper (reference) of him.
-%explain everywhere???????????????????????????????
-A term of the first-order language is either a variable letter $x$ or a function symbol $f$ applied on a list of terms, which looks like $f(t_1,\cdots,t_n)$, where the $t$'s can either be variable letters or itself a function applied on some terms. As we are working in type theory, the variable letter $x$ need to come with its type. To avoid specifying the type of terms and formulas everywhere, we choose to fix the type of our first-order terms formulas to only use variables of the type $(:num)$ of natural numbers. By this choice we made, we restrict our scope to countable language. The first-order terms are encoded in HOL4 as below. We decorate first-order terms with an `${}^{\sf f}$' in order to distinguish from the constructions on modal logic. We will use the similar decoration for first-order formulas, connectives and ultraproduct first-order models (which is to be introduced later) afterwards. 
-\begin{defn}[First-order terms]
-\begin{holmath}
-  \HOLthm{folLang.datatype_term}
-\end{holmath}
-\end{defn}
-Hence our terms will look like \HOLtm{fV 6}, \HOLtm{Fn 1 [fV 1; fV 2]}, \HOLtm{Fn 2 [Fn 0 []]}, etc. The role of the two occurrences of the natural number $1$ in the term \HOLtm{Fn 1 [fV 1; fV 2]} are different: the first one is a function symbol, and the second one is variable letter. In the first-order term \HOLtm{Fn 2 [Fn 0 []]}, we note the iterated application of function symbols, and also, \HOLtm{Fn 0 []} is the term obtained by applying the function symbol $0$ to the empty list. The $0$ here is a nullary function symbol, which is the same as a constant. We will write $\sf IMP \ \phi_1 \ \phi_2$ as $\phi_1 {}^{\sf f}\to \phi_2$. 
-
-Our formulas are defined inductively as well. 
-
-\begin{defn}[First-order formulas]
-The primitive logical connectives we are using here are: the falsity `\HOLtm{fFALSE}', a predicate symbol applied on a list of variables, implication `\HOLtm{IMP}', and the universal quantification.
-\begin{holmath}
-  \HOLthm{folLang.datatype_form}
-\end{holmath}
-Note that we do not define a separate notion of relation symbol. An $n$-ary relation symbol is a predicate symbol that takes lists of length $n$. 
-\end{defn}
-A quantified variable is called a bounded variable, otherwise, it is called free. For instance, the $1$ in \HOLtm{Pred 4 [fV 1; fV 2]} is free, whereas the $1$ in \HOLtm{FALL 1 (Pred 4 [fV 1; fV 2])} is bounded. For a first-order formula \HOLtm{phi}, \HOLtm{FV phi} is the set of all its free variables and \HOLtm{BV phi} is the set of all its bounded variables. We also have functions \HOLtm{form_functions} and \HOLtm{form_predicates} which gives the set of function and predicate symbols of a first-order formula, respectively. For a function symbol, it is consists of two pieces of information: the natural number that represents it and its arity. For a function symbol denoted by $m$ of arity $n$, we use the pair $(n,m)$ to record the function symbol. For example, \HOLtm{term_functions (Fn 2 [fV 1;fV 3]) = {(2,2)\}} and \HOLtm{form_functions (Pred 1 [Fn 0 []; Fn 1 []]) = {(0,0); (1,0)\}}. Similarly, a predicate symbol denoted by natural number $m$ and arity $n$ is recorded as a pair $(m,n)$ as well. Hence both the function \HOLtm{form_functions} and \HOLtm{form_predicates} take a formula and give a set of pairs of natural numbers. 
-
-%A set of function symbols together with a set predicate symbols, which are both sets of pairs, determines a \emph{language}. For instance. 
-
-
-The non-primitive first-order connectives are defined in the canonical way:
-\begin{defn}[Non-primitive first-order connectives]
-\begin{holmath}
-\begin{array}{rcl}
-  \HOLthm[aligneddef,phi/f]{folLang.Not_def}\\
-  \HOLthm[aligneddef]{folLang.True_def}\\
-  \HOLthm[aligneddef,phi1/p,phi2/q]{folLang.Or_def}\\
-  \HOLthm[aligneddef,phi1/p,phi2/q]{chap2_4revised.fAND_def}\\
-  \HOLthm[aligneddef,phi/p]{folLang.Exists_def}
-\end{array}
-\end{holmath}
-\end{defn}
-
-To interpret these formulas, we need models for first order logic.
-
-\begin{defn}[First order model]
-A first order model \HOLtm{M} of type $\alpha$ is a triple consists of an $\alpha$-set \HOLtm{M.Dom} which is its domain, an interpretation \HOLtm{M.Fun} of function symbols, and an interpretation \HOLtm{M.Pred} of predicate symbols. Where an interpretation of function symbol is a function that assigns each function symbol an actual function, and an interpretation of predicate symbol is a function that assigns each predicate symbol an actual predicate. 
-\begin{holmath}
-  \HOLthm{folModels.datatype_model}
-\end{holmath}
-\end{defn}
-
-Since we are using natural numbers as function symbols, an interpretation of function symbols is a function that takes a natural number and give a function that sends a tuple, which is a list, of variables of type $\alpha$ to an element of type $\alpha$. Similar for interpretation of predicate symbols. 
-
-Given a first-order model \HOLtm{M}, we can interpret formulas or terms by assigning each variable symbol an element in \HOLtm{M.Dom}. As we are using natural numbers as variable symbols, such an assignment is a function from the universe of natural numbers. We are only interested in the case when a function from the universe of natural numbers does send each natural number to an element in \HOLtm{M.Dom}, such a function is called a \emph{valuation} of \HOLtm{M}. We write \HOLtm{valuation M v}, and read it as `$v$ is a valuation of the model \HOLtm{M}'. 
-
-Interpretation of terms and formulas are given as \HOLtm{termval} and \HOLtm{feval}. The function \HOLtm{termval} takes an $\alpha$-model, a function $v$ of type $num\to \alpha$, gives us an element of type $\alpha$. We will only use evaluations for our function $v$, therefore, we can make sure that the element we obtain by evaluating a term is always in the domain of the model we are working with. If we give the function \HOLtm{feval} a model \HOLtm{M}, a valuation $v$ and a first-order formula $\phi$, it will give us the truth value of $\phi$ in \HOLtm{M} under the valuation $v$. When $\phi$ is true in \HOLtm{M} under \HOLtm{v}, we write \HOLtm{feval M v phi}.
-
-
-%We only care about when the assignment of variable letters is indeed a valuation as defined above, when $\sigma$ is a valuation, each first order term is will be sent to an element of \HOLtm{M.Dom} under \HOLtm{termval}, and if in addition \HOLtm{feval M σ phi}, we say `\HOLtm{phi} is satisfied in \HOLtm{M} under the valuation $\sigma$', and write it as \HOLtm{fsatis M σ phi}. In particular, if there is only one free variable $x$ in $\phi$, then \HOLtm{fsatis M σ phi} just means that \HOLtm{phi} is satisfied at the point \HOLtm{σ x} in the model \HOLtm{M}.
-%When \HOLtm{σ} is a valuation for the model \HOLtm{M}, then a formula $\phi$ is satisfied in \HOLtm{M} if and only if \HOLtm{feval M σ phi}. Hence throughout our discussion, if we have already assumed \HOLtm{valuation M σ}, we will not distinguish between \HOLtm{feval M σ} and \HOLtm{fsatis M σ} in our following discussion. 
-
-It does not make sense for a first-order model to have functions that send a list of elements of its domain out of its domain. Hence unless we have no function symbols at all, we only consider the models \HOLtm{M} such that \HOLtm{M.Fun f l} is in \HOLtm{M} for every function $n$ and list \HOLtm{l}. For such a model, we write \HOLtm{wffm M}, means that `\HOLtm{M} is a well-formed first-order model'. 
-We note the follows. 
-%for a fixed model, the truth value of a first order formula only depends on what a valuation sends its free variable to. On the other hand, if the valuation is fixed, then two models are the same for evaluating a first order formula if they agree on all the functions and predicates appear in the formula. 
+Also we note the follows:
 
 \begin{prop}[\texttt{holds_valuation}]
 For a fixed model, the truth value of a first-order formula only depends on what a valuation sends its free variable to.
@@ -935,40 +868,6 @@ If the valuation is fixed, then two models are the same for evaluating a first-o
 
 
 Therefore, although a valuation $v$ of \HOLtm{M} assigns every natural number an element in \HOLtm{M.Dom}, what it effectively does is to only control where does the free variables in a formula goes to. The advantage of using a valuation instead of assigning free variables values one by one is that a valuation can simultaneously control every number of free variables.
-
-Let us start looking at how is modal logic related to first-order logic. Recall a modal model consists of three pieces of information: A set of worlds, a relation between these worlds, and a valuation of propositional letters at each world. A relation is a binary predicate, and for propositional letter $p$, it gives a unary predicate $P$ on the set of worlds such that $P \ w$ is true for a world if and only if \HOLtm{M.valt p w}. Hence for a $(num,\beta)$-modal model, the information it contains is actually enough for interpreting first-order formulas which contains no function symbol, only one binary predicate, some unary predicate, each corresponds to a propositional letter, and no predicate symbol of higher arity. For a formula satisfies these properties, we call it is in the \emph{language} $\mathcal L_{\tau}^1$ determined by our modal language. More generally, a language of first-order logic is determined by a set of function symbols and a set of predicate symbols, which both are sets of pairs. In our case, the two sets determine the language $\mathcal L_{\tau}^1$ are \HOLtm{{\}} and \HOLtm{(0,2) INSERT {(p,1) | p ∈ 𝕌(:num)\}}, for function and predicate symbols respectively. This means we fix the predicate symbol corresponds to the relation on the model to be $0$. In our formalization, the condition for a first-order formula to be in the language $\mathcal L_{\tau}^1$ is given as follows:
-\begin{defn}[\holref{The language $\mathcal L_{\tau}^1$}{chap2_6}{29}]
-\begin{holmath}
-  \HOLthm[def,width=65]{chap2_6.L1tau_def}
-\end{holmath}
-\end{defn}
-
-first-order formulas in the language $\mathcal L_{\tau}^1$ are of the main interest in the rest of the thesis. As mentioned above, such formulas can be interpreted by a modal model. But of course, we can not write \HOLtm{fsatis M σ phi} if \HOLtm{M} is not a first-order model but a modal model. Hence to interpret $\mathcal L_{\tau}^1$ formulas on modal models, the first thing to do is to formally convert a modal model into a first model. The function that takes a modal model and give the first model we will get by viewing it as a first-order model is \HOLtm{mm2folm}. 
-
-\begin{defn}[\holref{Conversion from a modal model to a first-order model}{chap2_4revised}{19}]
-\begin{holmath}
-  \HOLthm[def,w1/w,w3/v10,w4/v11]{chap2_4revised.mm2folm_def}
-\end{holmath}
-\end{defn}
-
-As we can see from the above, there is no interesting information in the field $\sf Fun$ of a first model obtained by conversion from a modal model, and for the predicates, the only interesting information is for unary and the only binary one, and the others are constantly false.
-
- Conversely, we can view a first-order model as a modal model by fixing one binary predicate as the relation in the modal model and let the unary predicate symbols correspond to propositional letters. Here we fix the relation to determined by the binary predicate symbol $0$. We define the function converting a first-order model into a modal model as \HOLtm{folm2mm}. 
-
-\begin{defn}[\holref{Conversion from a first-order model into a modal model}{chap2_6}{40}]
-\begin{holmath}
-  \HOLthm[def,M/FM]{chap2_6.folm2mm_def}
-\end{holmath}
-\end{defn}
-
-Whereas the conversion from a modal model into a first-order model preserves all the information of the original model, the conversion from a general first-order model into a modal model will omit a lot of information: we will lose every function symbols, all except for one binary predicate symbols and all higher arity predicate symbols. Hence we cannot expect the functions \HOLtm{mm2folm} and \HOLtm{folm2mm} are inverses to each other. However, the conversion procedure will preserve $\mathcal L_{\tau}^1$-formulas.
-
-\begin{prop}[\holref{\texttt{L1tau_mm2folm_folm2mm_comm_feval}}{chap2_6}{976}]\label{5.3}
-An $\mathcal L_{\tau}^1$ formula is satisfied in \HOLtm{M} under $\sigma$ if and only iff it is satisfied under $\sigma$ in the model we obtain after we firstly convert \HOLtm{M} to a modal model, and then back to a first-order model.
-\begin{holmath}
-  \HOLthm[ϕ/f]{prettyPrinting.ppL1tau_mm2folm_folm2mm_comm_feval}
-\end{holmath}
-\end{prop}
 
 With the setup on basics about first-order logic and how it interacts with modal logic, let us start building intuition about how do modal formulas correspond to first-order formulas. The first thing to note is that as every symbol in a first-order formula is represented by a natural number, without introducing cumbersome and complicated procedure, we can only translate $num$-modal formulas into first-order formulas. Observe that unlike modal formulas which atomic formulas are propositional letters standing alone, even the atomic first-order formulas (except \HOLtm{fFALSE}) have variable symbols involved. Hence to translate a modal formula into a first-order formula, we must get variables involved as well. For a model \HOLtm{M}, it is natural to regard each modal formula as a predicate to be evaluated at worlds of \HOLtm{M}, such that this predicate is true at a world $w$ if and only if the formula is satisfied at $w$. Hence to translate a modal formula into a first-order formula, the only natural thing to do is to get just one variable involved, and this variable will be later assigned to the state in a model by some valuation when we interpret the translated formula. 
 
@@ -1263,9 +1162,9 @@ Suppose \HOLtm{Σ} is a set of formulas which is finitely satisfiable in the set
 
 Consider the set $\Delta:=$
 \begin{holmath}
-\HOLtm{{{w | w IN M.frame.world /\ !phi.phi IN s ==> satis M w phi\}| FINITE s /\ s ⊆ Σ\} ∪ {Y | (only_see M Y) IN w /\ Y ⊆ M.frame.world\}}
+\HOLtm{{{w | w IN M.frame.world /\ !phi.phi IN s ==> satis M w phi\}| FINITE s /\ s ⊆ Σ\} ∪ {Y | (only_see M Y) IN w /\ Y ⊆ M.frame.world\}},
 \end{holmath}
-. We check $\Delta$ has the finite intersection property. The only nontrivial thing to check is that for $a$ in the first set of the union and $b$ in the second set of the union, we have $a\cap b\ne\emptyset$.
+ we check $\Delta$ has the finite intersection property. The only nontrivial thing to check is that for $a$ in the first set of the union and $b$ in the second set of the union, we have $a\cap b\ne\emptyset$.
 
 Suppose $s \subseteq\Sigma$ is finite, and $b$ is a set of worlds in \HOLtm{M} such that \HOLtm{(only_see M b) IN u}, we show \HOLtm{{w | w IN M.frame.world /\ !phi. phi IN s ==> satis M w phi\} ∩ b <> {\}}. Recall \HOLtm{Σ} is finitely satisfiable in the set of successors of $u$, we have a world $u''$ such that \HOLtm{UE_rel M u u''} and \HOLtm{satis (UE M) u'' phi} for all $\phi \in s$, in other worlds, \HOLtm{{w | w IN M.frame.world /\ satis M w phi\} IN u''} for all $\phi\in s$. Then as $s$ is finite, \HOLtm{{w | w IN M.frame.world /\ !phi.phi IN s ==> satis M w phi\}} is a big intersection of finitely many sets in $u''$, and hence is in $u''$. By Proposition \ref{5.18} again, \HOLtm{UE_rel M u u''} gives \HOLtm{{Y | (only_see M Y) IN u /\ Y ⊆ M.frame.world\} ⊆ u''}, so $b\in u''$ as well. As two elements in $u''$ has a nonempty intersection, we are done.
 
