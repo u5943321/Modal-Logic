@@ -190,24 +190,25 @@ In summary:
 
 \end{itemize}
 
+\section{How to read this thesis?}
 
-
+This thesis is to explain the mainline of the work we have done. In this thesis, we will explicitly give most of the formal definitions definitions we use, and give the formal statements of constructions and theorems when it is necessary. For controlling the length, we only talk about the rather interesting theorems, and omit the ones which are rather boring. Also for some theorems, we have omitted their proofs if it is routine or not interesting enough from the theorem-proving aspect. But all these missing proofs are formalized. If a reader is interested in more detail, all the theorems we have proved can be founded in github. And for all the given codes, clicking the link will lead the reader to github of its original code. 
 
 \chapter{Getting Started}
 
 \section{HOL4 syntax}
 
-Our theorem prover HOL4 is based on simple type theory. This makes most of statements in HOL4 straightforward to be read. We can read off the conjunctions, disjunctions and implications in the statement directly. However, there are some special syntax for HOL4 which is worthwhile to be explained first. 
+Our theorem prover HOL4 is based on simple type theory. We are not going to give a convoluted introduction on simple type theory, but just for reading this thesis, the reader only need to know that in simple type theory, once we refer to something, it must come up with its type. In the process of reading this thesis, the reader will get to known how to work with simple type theory. As mentioned in the introduction, the most obvious advantage of simple type theory is its simpleness, which makes most of statements in HOL4 straightforward to be read. We can read off the conjunctions, disjunctions and implications in the statement directly. However, there are some special syntax for HOL4 which is worthwhile to be explained first. While it may be helpful to read this list now, when each instance of this syntax is used for the first time, we will explain it there. 
 \begin{itemize}
 \item Inductive types: When defining inductive types, we write bars between the constructors of the type.
 
-\item Record types: We put the fields of a record type into `$\HOLTokenLeftrec\cdots \HOLTokenRightrec$', and separate the fields using `:'. For instance, if define a type with `$\sf Mytype := \HOLTokenLeftrec\ \sf field1 := \cdots; field2 :=\cdots \HOLTokenRightrec$', where the `$\cdots$' will be a type. If $\sf Eg$ is of type $\sf Mytype$, we can write $\sf Eg.field1$ to get the $\sf field1$ of $\sf Eg$. 
+\item Record types: We put the fields of a record type into `$\HOLTokenLeftrec\cdots \HOLTokenRightrec$', and separate the fields using `;'. For instance, if we define a type with `$\sf Mytype = \HOLTokenLeftrec\ \sf field1 := \cdots; field2 :=\cdots \HOLTokenRightrec$', where the `$\cdots$' will be a type. If $\sf Eg$ is of type $\sf Mytype$, we can write $\sf Eg.field1$ to get the $\sf field1$ of $\sf Eg$. 
 
-\item Function application: Unless in what we write in common mathematical textbooks, when we apply a function $f$ of type $\alpha\to \beta$ on a term $a$ of type $\alpha$, we write $f \ a$ instead of $f(a)$. For the application of a functions $f$ that takes a pair, we write $f \ a \ b$ instead of $f(a,b)$, which we usually do when writing mathematical arguments. 
+\item Function application: Unlike what we write in common mathematical textbooks, when we apply a function $f$ of type $\alpha\to \beta$ on a term $a$ of type $\alpha$, we write $f \ a$ instead of $f(a)$. For the application of a functions $f$ that takes a pair, we write $f \ a \ b$ instead of $f(a,b)$, which we usually do when writing mathematical arguments. 
 
 \item $\lambda$-abstraction: We can use $\lambda$-abstraction to define functions. For instance, the function \HOLtm{\i. f i} is the same as the function $f$, since it means that `for each $i$, send $i$ to $f\ i$'. 
 
-\item Primitive recursive function: We can use primitive recursion to define functions from the type $num$ of natural numbers. That is, defining function by induction. We write \HOLtm{PRIM_REC x f}, where $f$ is of type $\alpha\to num\to\alpha$, for the function from $num$ to a type $\alpha$ defined by sending $0$ to $x$, and sending the successor \HOLtm{SUC m} of a natural number $n$ to \HOLtm{f (PRIM_REC x f m) m}. 
+\item Primitive recursive function: We can use primitive recursion to define functions from the type $num$ of natural numbers. That is, we can define functions by induction. We write \HOLtm{PRIM_REC x f}, where $f$ is of type $\alpha\to num\to\alpha$, for the function from $num$ to a type $\alpha$ defined by sending $0$ to $x$, and sending the successor \HOLtm{SUC m} of a natural number $n$ to \HOLtm{f (PRIM_REC x f m) m}. 
 
 \item Quantification: When using quantifier in HOL4, we put a dot after the thing that we are quantifying on. For example, \HOLtm{!x. P x} reads `for all $x$, $P x$'  and \HOLtm{?x. P x} reads `exists an $x$ such that $P x$', where $P$ is a predicate. When quantifying over multiple things, we only write one quantifier at the very beginning. For example, `\HOLtm{!x y. R x y}' reads `for all $x$, for all $y$, we have $R x y$' and `\HOLtm{?x y. R x y}' reads `exists $x$ and $y$ such that $R x y$', where $R$ is a relation.
 
@@ -245,8 +246,8 @@ Our theorem prover HOL4 is based on simple type theory. This makes most of state
 
 \end{itemize}
 
-\section{The basic setups}
-In our formalisation, we only consider the basic modal language, in which the only one primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or else in the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
+\section{The basic setup}
+In our formalization, we only consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or else in the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
 
 
 In HOL4, we create a data type called `form' of the formulas of this modal language. To define a new type, we give a list of ways to construct terms of the type, separated with the symbol `$\mid$'. 
@@ -263,13 +264,13 @@ An $\alpha$-modal formula as described above is specified formally in HOL4 as:
 
 Note that \HOLtm{DISJ} is of type $\alpha \ form \to (\alpha \ form \to \alpha\ form)$, which means that it can be regarded as a function that takes two $\alpha$-modal formulas and gives an $\alpha$-modal formula. In particular, once \HOLtm{DISJ} appears, the two arguments after it are always $\alpha$-modal formula, otherwise it does not make sense. We will write `\HOLtm{DISJ phi1 phi2}' for `\HOLtm{DISJ} $\phi_1 \ \phi_2$' afterwards. We can also regard $\lnot$ and $\Diamond$ as functions of type $\alpha \ form\to \alpha \ form$. The functions \HOLtm{VAR}, \HOLtm{DISJ}, \HOLtm{NOT}, \HOLtm{DIAM} together with \HOLtm{FALSE} are called the \emph{constructors} of the type of $\alpha$-modal formulas. For abbreviation, we will write $\phi_1\lor \phi_2$ for \HOLtm{DISJ phi1 phi2} throughout this thesis. From now on, when we talk about $\alpha$-modal formula, we will call a term of type $\alpha$ a \emph{propositional letter}. We will just call an $\alpha$-modal formula an $\alpha$-formula if no confusion arises. 
 
-The non-primitive connectives, the conjunction `$\land$', the implication `$\to$', and the truth `$\top$', are defined in a standard way as $\phi_1\land \phi_2:=\lnot (\lnot \phi_1\lor \phi_2)$, $\phi_1\to \phi_2 := \lnot \phi_1\lor \phi_2$ and $\lnot\bot$ respectively.
+The non-primitive connectives, the conjunction `$\land$', the implication `$\to$', and the truth `$\top$', are defined in a standard way as $\phi_1\land \phi_2:=\lnot (\lnot \phi_1\lor \phi_2)$, $\phi_1\to \phi_2 := \lnot \phi_1\lor \phi_2$ and $\top:= \lnot\bot$ respectively.
 
 
 We have a modal operator that is dual to the diamond: the box $\Box \phi:= \lnot\Diamond \lnot \phi$, as an analogue of the duality between the universal quantifier and the existential quantifier, in the sense that $\exists$ is defined to be $\lnot\forall\lnot$ in classical logic. 
 
-Having defined the syntax of formulas, we can now define their \emph{semantics}. It is easy to come up with a way to interpret formulas which are no more than combinations of propositional letters using the connectives `$\lor$' and `$\lnot$'. However, to interpret a modal formula that involves diamonds, we need to assign the syntactical notation `$\Diamond$' an `actual meaning'. For a first example, consider a two-point set $\{a,b\}$, and let the relation be $\{(a,b)\}$. Let the propositional $p$ to be true on both $a$ and $b$. Now consider the modal formula \HOLtm{DIAM (VAR p)}. We say \HOLtm{DIAM (VAR p)} is true at $a$, since $b$ is a point that is related to $a$, where the formula \HOLtm{VAR p} holds there. On the other hand, \HOLtm{DIAM (VAR p)} does not hold at $b$, since there is no world related to $b$. In general, we say a modal formula \HOLtm{DIAM phi} holds at a world if there exists a world it is related to, where \HOLtm{phi} is satisfied. 
- 
+Having defined the syntax of formulas, we can now define their \emph{semantics}. It is easy to come up with a way to interpret formulas which are no more than combinations of propositional letters using the connectives `$\lor$' and `$\lnot$'. However, to interpret a modal formula that involves diamonds, we need to assign the syntactical notation `$\Diamond$' an `actual meaning'. For a first example, consider a two-point set $\{a,b\}$, and let the relation be $\{(a,b)\}$. Let the propositional $p$ to be true on both $a$ and $b$. We say a modal formula \HOLtm{DIAM phi} holds at a world if there exists a world it is related to, where \HOLtm{phi} is satisfied. For example, consider the modal formula \HOLtm{DIAM (VAR p)}. We say \HOLtm{DIAM (VAR p)} is true at $a$, since $b$ is a point that is related to $a$, where the formula \HOLtm{VAR p} holds there. On the other hand, \HOLtm{DIAM (VAR p)} does not hold at $b$, since there is no world related to $b$. 
+
 Therefore, to interpret modal formulas, we need a \emph{relational structure}. A relational structure consists of a set and a binary relation on it, such a relational structure is called a \emph{frame} in the rest of the thesis. If in addition, for each element of the underlying set of the relational structure, it is equipped with an assignment of truth values on propositional letters, then we will have enough information to interpret every modal formula by interpreting $\Diamond \phi$, where $\phi$ is a modal formula, as above. Accordingly, `\HOLtm{BOX phi}' will be interpreted as `for every point that is related to the current state, \HOLtm{phi} is true'. 
 
 Returning to our formalization, we call a frame together with an assignment of truth values on propositional letters at each point a \emph{model}, or a \emph{Kripke model} of modal formulas. The underlying set of a model is called the `set of worlds' of the model.  
@@ -279,7 +280,7 @@ A $\beta$-frame consists of a world and a relation, where the world has type $\b
 A model for modal logic is a frame together with a function called $\sf valt$, which assigns truth values of propositional letters at each world. 
 \begin{holmath}
   \HOLthm[:'b/:'a]{chap1.datatype_frame}\\
-  \HOLthm[:'b/:'a,:'a/:'b]{chap1.datatype_model}
+  \HOLthm{chap1.datatype_model}
 \end{holmath}
 \end{defn}
 Here the $\HOLTokenLeftrec\cdots\HOLTokenRightrec$ is the notation for defining a structure. When we say a $(\alpha,\beta)$-model, we mean a model for $\alpha$-formulas with a $\beta$-set as its underlying set.
@@ -294,7 +295,7 @@ Note that in a $(\alpha,\beta)$-model \HOLtm{M}, \HOLtm{M.valt} is a function ta
 %As for the interpretation of modal formulas, it is again an inductively-defined predicate, which takes a model, a world in the model, a modal formula, and give the truth value of the formula interpreted in the model \HOLtm{M} at the world $w$. We say a formula $\phi$ is satisfied at the world $w$ in a model \HOLtm{M} when the formula is true under our semantical interpretation. Here `\HOLtm{satis M w phi}' reads `$\phi$ is satisfied at the world $w$ in \HOLtm{M}'.
 We interpret modal formulas using the function called `satisfaction'. 
 \begin{defn}[\holref{Satisfaction}{chap1}{94}]
-Satisfaction is an inductively-defined predicate on modal formulas, which takes a model, a world in the model, a modal formula, and give the truth value of the formula interpreted in the model \HOLtm{M} at the world $w$. `\HOLtm{satis M w phi}' reads `$\phi$ is satisfied at the world $w$ in \HOLtm{M}'. For \HOLtm{w IN M.frame.world}, a propositional letter $p$ is satisfied at $w$ if \HOLtm{M.valt p w} is the boolean value $\sf T$. Falsity is never satisfied, a negation of a formula $\phi$ is satisfied if $\phi$ is not satisfied, a disjunction is satisfied if at least one of its disjuncts is satisfied, and a $\Diamond \phi$ is satisfied if there exists a world in the model that $w$ is related to where $\phi$ is satisfied. 
+Satisfaction is an inductively-defined predicate on modal formulas, which takes a model \HOLtm{M}, a world \HOLtm{w} in the model, a modal formula, and gives a truth value. We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOLtm{M}'. For \HOLtm{w IN M.frame.world}, a propositional letter $p$ is satisfied at $w$ if \HOLtm{M.valt p w} is the boolean value $\sf T$. Falsity is never satisfied, a negation of a formula $\phi$ is satisfied if $\phi$ is not satisfied, a disjunction is satisfied if at least one of its disjuncts is satisfied, and a $\Diamond \phi$ is satisfied if there exists a world in the model that $w$ is related to where $\phi$ is satisfied. 
 \begin{holmath}
 \begin{array}{rcl}
   \HOLthm[aligneddef,phi/form]{chap1.satis_def}
@@ -390,15 +391,15 @@ Generated submodels do preserve modal satisfaction:
 
 \section{Morphisms between models}
 
-In this section, we introduce `morphisms' between models. Similar as in category theory, the notion of `morphisms' here is used to describe maps that preserve structures. For instance, `homomorphism' is the weakest notion of `structure-preserving map':
+In this section, we introduce `morphisms' between models. Similarly as in category theory, the notion of `morphisms' here is used to describe maps that preserve structures. For instance, `homomorphism' is the weakest notion of `structure-preserving map':
 \begin{defn}[\holref{Homomorphism}{chap2_1}{120}]
-A homomorphism from a model \HOLtm{M1} to a model \HOLtm{M2} (notation: \HOLtm{hom M1 f M2}) is a function from the world set of \HOLtm{M1} to the world set of \HOLtm{M2} that preserves relation and valuation of propositional letters.
+A homomorphism from a model \HOLtm{M1} to a model \HOLtm{M2} (denoted \HOLtm{hom M1 f M2}) is a function from the world set of \HOLtm{M1} to the world set of \HOLtm{M2} that preserves relation and valuation of propositional letters.
 \begin{holmath}
   \HOLthm[def]{prettyPrinting.pphom_def}
 \end{holmath}
 \end{defn}
 
-We should point out that the last clause only says `relations in the source model is preserved by a homomorphism', and we are allowed to have relations in the target model which is not from a relation in the source model. Because of this, we cannot guarantee every world and its image in the target to satisfy exactly the same set of modal formulas. Actually, there exists more than one notions of morphisms which gives equivalences, but most of these notions are too strong to be interesting. The only one among these notions that we are interested in here is \emph{bounded morphism}. 
+We should point out that the last clause only says `relations in the source model are preserved by a homomorphism', and we are allowed to have relations in the target model which is not from a relation in the source model. Because of this, we cannot guarantee every world and its image in the target satisfy exactly the same set of modal formulas. Actually, there exists more than one notion of morphisms which gives equivalences, but most of these notions are too strong to be interesting. The only one among these notions that we are interested in here is \emph{bounded morphism}. 
 
 
 \begin{defn}[\holref{Bounded morphism}{chap2_1}{213}]
@@ -586,8 +587,8 @@ For image finite models, modal equivalence and bisimulation are indeed the same 
 \end{thm}
 
 \begin{proof}
-We prove the implication from left to right. Given \HOLtm{w1} and \HOLtm{w2} are worlds in \HOLtm{M1} and \HOLtm{M2} which are modal equivalent, we prove the relation \HOLtm[phi/form]{λn1 n2. (!form. satis M1 n1 form <=> satis M2 n2 form)} gives a bisimulation. The only non-trivial thing to check is that assume \HOLtm{modal_eq M1 M2 n1 n2} and \HOLtm{M1.frame.rel n1 n1'} for some \HOLtm{n1' IN M1.frame.world}, we need to prove the existence of the world \HOLtm{n2' IN M2.frame.world} such that \HOLtm{M2.frame.rel n2 n2'} and \HOLtm{modal_eq M1 M2 n1' n2'}. Suppose such a \HOLtm{n2'} does not exist, we derive a contradiction. Consider the set \HOLtm{S0 = { u' | (u' IN M2.frame.world /\ M2.frame.rel n2 u') \}}
-, the first claim is that $S_0$ is finite and nonempty. Finiteness comes from the fact that \HOLtm{M2} is image finite, and if the set is empty, then \HOLtm{BOX FALSE} will be a formula satisfied at \HOLtm{n2} but not at \HOLtm{n1}, contradicts the modal equivalence between \HOLtm{n1} and \HOLtm{n2}. By assumption, for each world in $S_0$, there is a formula \HOLtm{phi} such that \HOLtm{satis M1 n1' phi} but \HOLtm{¬satis M2 n2' phi}. As the set $S$ is finite, the set of such \HOLtm{phi}s is finite. Then we can take the conjunction of such \HOLtm{phi}s to obtain a formula \HOLtm{psi}. Then we will have \HOLtm{satis M1 n1 (DIAM psi)} but \HOLtm{¬satis M1 n2 (DIAM psi)}.
+We prove the implication from left to right. The other implication is Theorem \ref{3.7}.  Given \HOLtm{w1} and \HOLtm{w2} are worlds in \HOLtm{M1} and \HOLtm{M2} which are modal equivalent, we prove the relation \HOLtm[phi/form]{λn1 n2. (!form. satis M1 n1 form <=> satis M2 n2 form)} gives a bisimulation. The only non-trivial thing to check is that assuming \HOLtm{modal_eq M1 M2 n1 n2} and \HOLtm{M1.frame.rel n1 n1'} for some \HOLtm{n1' IN M1.frame.world}, we need to prove the existence of the world \HOLtm{n2' IN M2.frame.world} such that \HOLtm{M2.frame.rel n2 n2'} and \HOLtm{modal_eq M1 M2 n1' n2'}. Suppose such a \HOLtm{n2'} does not exist, we derive a contradiction. Consider the set \HOLtm{S0 = { u' | (u' IN M2.frame.world /\ M2.frame.rel n2 u') \}}
+, the first claim is that $S_0$ is finite and nonempty. Finiteness comes from the fact that \HOLtm{M2} is image finite, and if the set is empty, then \HOLtm{BOX FALSE} will be a formula satisfied at \HOLtm{n2} but not at \HOLtm{n1}, contradicting the modal equivalence between \HOLtm{n1} and \HOLtm{n2}. By assumption, for each world in $S_0$, there is a formula \HOLtm{phi} such that \HOLtm{satis M1 n1' phi} but \HOLtm{¬satis M2 n2' phi}. As the set $S$ is finite, the set of such \HOLtm{phi}s is finite. Then we can take the conjunction of such \HOLtm{phi}s to obtain a formula \HOLtm{psi}. Then we will have \HOLtm{satis M1 n1 (DIAM psi)} but \HOLtm{¬satis M1 n2 (DIAM psi)}.
 \end{proof}
 
 
@@ -595,7 +596,7 @@ We prove the implication from left to right. Given \HOLtm{w1} and \HOLtm{w2} are
 
 In this chapter, we tell the story about the Slogan 2 as stated in the introduction: Modal formulas can only capture local information. It follows that there does not exist a modal formula which can capture information about points which are $n$-steps from the current state for every $n$. To see this, we will prove the \emph{finite model property} of modal formulas, which says if a modal formula is satisfied on an arbitrary model, then it can be satisfied on a finite model, where finite model means a model whose world set is finite. There are classically two methods of building finite models for satisfiable modal formulas, namely via filtration and selection. Although we have formalized both of them in HOL4, the former is almost a direct translation of the mathematical proof and hence is not interesting from the formalizing aspect. We will only talk about finite model property via selection in this chapter. 
 
-In this method, to build a finite model of a satisfiable modal formula \HOLtm{phi}, we start with a model that the formula $\phi$ is satisfied, delete worlds from the model and only leaves finitely many worlds in it. The intuition behind this approach is that every modal formula can only contain finitely many diamonds, each can `see' one step from the current state. Therefore, each formula can only capture the information of finitely depth. To make the notion of `depth' precise, we define the degree of a modal formula, which counts the number of diamonds appear in a model formula, in the sense that a modal formula \HOLtm{phi} has degree $n$ means there are $n$ `$\Diamond$'s in \HOLtm{phi}. In particular, a modal formula of degree zero is a modal formula with no diamond. Such a formula is precisely a propositional formula. 
+In this method, to build a finite model of a satisfiable modal formula \HOLtm{phi}, we start with a model that the formula $\phi$ is satisfied, delete worlds from the model and only leave finitely many worlds in it. The intuition behind this approach is that every modal formula can only contain finitely many diamonds, each can `see' one step from the current state. Therefore, each formula can only capture the information of finite depth. To make the notion of `depth' precise, we define the degree of a modal formula, which counts the number of diamonds appearing in a model formula, in the sense that a modal formula \HOLtm{phi} has degree $n$ means there are $n$ `$\Diamond$'s in \HOLtm{phi}. In particular, a modal formula of degree zero is a modal formula with no diamond. Such a formula is precisely a propositional formula. 
 \begin{defn}[\holref{Degree of a modal formula}{chap2_3}{24}]
 \begin{holmath}
 \begin{array}{rcl}
@@ -613,10 +614,10 @@ For a finite $\alpha$-set $s$, if $\beta$ is an infinite type, then for every na
 \end{holmath}
 \end{lm}
 
-Here the `$\{\phi\mid {\sf DEG} \ \phi \le n \land {\sf prop\_letters \ \phi \subseteq }\ s\} / \equiv_{(:\beta)}$' is the of equivalence classes obtained by partitioning the set \HOLtm[phi/f]{{f | DEG f <= n /\ prop_letters f ⊆ s\}} by the equivalence relation $\equiv_{(:\beta)}$. We require the assumption that the universe of $\beta$ is infinite since we used Proposition \ref{2.2} when proving the proposition above.
+Here the `$\{\phi\mid {\sf DEG} \ \phi \le n \land {\sf prop\_letters \ \phi \subseteq }\ s\} / \equiv_{(:\beta)}$' is the set of equivalence classes obtained by partitioning the set \HOLtm[phi/f]{{f | DEG f <= n /\ prop_letters f ⊆ s\}} by the equivalence relation $\equiv_{(:\beta)}$. We require the assumption that the universe of $\beta$ is infinite since we used Proposition \ref{2.2} when proving the proposition above.
 
 
-Recall in the last chapter, we have seen that a bisimulation gives arise to modal equivalence, modal equivalence between worlds means satisfying exactly the same formulas', but when we are building a finite model for a formula $\phi$, we do not care about the satisfaction of the formulas of degree above \HOLtm{DEG phi}, since such formula cannot affect the satisfaction of $\phi$. Therefore, we just need some relation such that related worlds satisfy the same modal formulas up to some degree $n$. It turns out that the notion of `finite approximation of bisimulation' is such a relation. For a `finite approximation of bisimulation up to depth $n$'. it is called an \emph{$n$-bisimulation}. Let \HOLtm[w1/w,M1/M]{w IN M.frame.world} and \HOLtm[w2/w',M2/M']{w' IN M'.frame.world}, $w_1$ and $w_2$ are $n$-bisimilar if there exists a sequence of relations $Z_n\subseteq \cdots\subseteq Z_0$ such that:
+Recall in the last chapter, we have seen that a bisimulation gives rise to modal equivalence, modal equivalence between worlds means satisfying exactly the same formulas', but when we are building a finite model for a formula $\phi$, we do not care about the satisfaction of the formulas of degree above \HOLtm{DEG phi}, since such formula cannot affect the satisfaction of $\phi$. Therefore, we just need some relation such that related worlds satisfy the same modal formulas up to some degree $n$. It turns out that the notion of `finite approximation of bisimulation' is such a relation. For a `finite approximation of bisimulation up to depth $n$'. it is called an \emph{$n$-bisimulation}. Let \HOLtm[w1/w,M1/M]{w IN M.frame.world} and \HOLtm[w2/w',M2/M']{w' IN M'.frame.world}, $w_1$ and $w_2$ are $n$-bisimilar if there exists a sequence of relations $Z_n\subseteq \cdots\subseteq Z_0$ such that:
 \begin{itemize}
   \item $w_1$ and $w_2$ are related by $Z_n$
   \item If \HOLtm{v1 IN M1.frame.world} and \HOLtm{v2 IN M2.frame.world} are related by $Z_0$, then $v_1$ and $v_2$ satisfy the same propositional letters.
@@ -635,7 +636,7 @@ Such a sequence of $Z_i$ is a family of relations indexed by natural numbers fro
 When we use set theory as the foundation, if there are only possibly many propositional letters, then it is true that two worlds in two models agree on all the modal formulas  with degree up to $n$ if and only if there exists an n-bisimulation between them. However, we are using simple type theory as our  foundation in HOL4, so we require assumption on infiniteness on type universe again. The thing we can prove in  HOL4 is that: 
 Let $s$ be a finite $\alpha$-set, if we restrict our scope to the set $\Sigma$ of $\alpha$-formulas that only uses propositional symbols in $s$. Then for models \HOLtm{M1} and \HOLtm{M2} with underlying set type $\beta$, $\gamma$ respectively, where both $\beta$ and $\gamma$ has infinite universe, consider each \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world}, \HOLtm{w1} and \HOLtm{w2} agree on formulas in $\Sigma$ up to degree $n$ if and only if there is an $n$-bisimulation relating them. By induction on $n$, we prove If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} are related by an $n$-bisimulation, then they agree on all modal formulas up to degree $n$. And the other direction is by an argument similar to the proof of Hennessy-Milner theorem, using the  \HOLtm{λn w1 w2. (!(phi: 'a form). DEG phi <= n ==> (satis M w1 phi <=> satis M' w2 phi))} as the n-bisimulation relation. 
 
-We also want a concept that measures the depth of a model. As `depth' is a relative concept measuring the distance of two points, to talk about the depth of a world \HOLtm{w IN M.frame.world}, we need \HOLtm{M} to be naturally equipped with a base point. Hence the `height' of a world only makes sense to rooted models. To tell the HOL about this definition, we start by defining \HOLtm{heightLE} as an inductive relation:
+We also want a concept that measures the depth of a model. As `depth' is a relative concept measuring the distance of two points, to talk about the depth of a world \HOLtm{w IN M.frame.world}, we need \HOLtm{M} to be naturally equipped with a base point. Hence the `height' of a world only makes sense for rooted models. To tell HOL4 about this definition, we start by defining \HOLtm{heightLE} as an inductive relation:
 
 
 \begin{defn}[\holref{Upper bound of height}{chap2_3}{1429}]
@@ -647,7 +648,7 @@ We also want a concept that measures the depth of a model. As `depth' is a relat
 \]
 \end{defn}
 
-Recall how we defined rooted model: \HOLtm{rooted_model M x M'} means `\HOLtm{M} is a rooted model generated by the world $x$ in the ambient model \HOLtm{M'}'. As \HOLtm{heightLE} is designed to only make sense for rooted models, we encode the information about the rootedness of the model we are talking about into this definition. Therefore, \HOLtm{heightLE M x M' w n} reads `for the rooted model \HOLtm{M} generated by the root $x$ in \HOLtm{M'}, the distance from the world \HOLtm{w} to the root $x$ is less or equal to $n$', and we will always have an assumption on rootedness of \HOLtm{M} whence this definition is involved. The above rules mean:
+Recall how we defined a rooted model: \HOLtm{rooted_model M x M'} means `\HOLtm{M} is a rooted model generated by the world $x$ in the ambient model \HOLtm{M'}'. As \HOLtm{heightLE} is designed to only make sense for rooted models, we encode the information about the rootedness of the model we are talking about into this definition. Therefore, \HOLtm{heightLE M x M' w n} reads `for the rooted model \HOLtm{M} generated by the root $x$ in \HOLtm{M'}, the distance from the world \HOLtm{w} to the root $x$ is less or equal to $n$', and we will always have an assumption on rootedness of \HOLtm{M} whence this definition is involved. The above rules mean:
 \begin{itemize}
 
 \item The height of the root for each rooted model is less or equal to every natural number. 
@@ -759,9 +760,105 @@ As we took a detour through Proposition \ref{3.5}, this construction of the fini
 
 %\chapter[Reaching towards FOL]{Reaching out to the world of first order logic}
 
-As claimed by Slogan 3 in the introduction, modal logic is not an isolated formal system, in this chapter, we start connecting modal logic with the wider logical world by discussing its relation to first-order logic. In the first half of the chapter, we define standard translation as our link between modal logic and first-order logic, and in the second half of the chapter, with the help of standard translation, we introduce another construction on models which give modal equivalence, and conclude this section by proving an elegant result about bisimulation: If we have a modal equivalence between worlds $w,v$ in two models \HOLtm{M} and \HOLtm{N}, although it may not the case that $w$ and $v$ are bisimilar, we can find a bisimulation in a pair of models constructed from \HOLtm{M} and \HOLtm{N}.
+As claimed by Slogan 3 in the introduction, modal logic is not an isolated formal system. In this chapter, we start connecting modal logic with the wider logical world by discussing its relation to first-order logic. In the first half of the chapter, we define standard translation as our link between modal logic and first-order logic, and in the second half of the chapter, we introduce the \emph{ultrafilter extension} construction on models. With the help of the theorems about standard translation, we will conclude this section by proving an elegant result about bisimulation: If we have a modal equivalence between worlds $w,v$ in two models \HOLtm{M} and \HOLtm{N}, although it may not the case that $w$ and $v$ are bisimilar, we can find a bisimulation between the ultrafilter extension of \HOLtm{M} and of \HOLtm{N}.
 
 \section{Standard Translation}
+
+For a model \HOLtm{M}, the relation \HOLtm{M.frame.rel} is a binary predicate $R$ on worlds in \HOLtm{M}. For each propositional letter $p$, the valuation \HOLtm{M.valt} gives a way of associating to $p$ a unary predicate on the worlds in \HOLtm{M}, called $P_p$, than $P_p$ is defined by $P_p \ w$ if and only if \HOLtm{M.valt p w}. We will see a modal model can also be viewed as a model for a \emph{first-order language}. A first-order language is determined by a set of predicate symbols and a set of function symbols. Given a first-order language $L$ such that $L_F$ is the set of its function symbols and $L_P$ is its set of predicate symbols, a first-order formula is called an $L$-formula if it only contains function symbols in $L_F$ and predicate symbols in $L_P$. In our case, the first-order language that we can interpret using a modal model is the one such that the set of function symbols is empty, and the set of predicate symbols consists of the symbols of the form $\underline{P_p}$, where $p$ is a propositional symbol and $P_p$ is the predicate which is associated to $p$. This language that we are interested in is called $\mathcal L_{\tau}^1$. A model \HOLtm{M} of a first-order language $L$ consists of three pieces of information: a domain, where the variable letters of the first-order language will be sent to, for each $n$-ary function symbol, an actual function that takes an $n$-tuple of elements in \HOLtm{M} and gives an element in \HOLtm{M}, and for each $n$-ary predicate symbol, an actual predicate that takes an $n$-tuple of elements in \HOLtm{M} and give a boolean value, either \HOLtm{T} or \HOLtm{F}. In HOL4, the variable symbols, the function symbols, and the predicate symbols, are all encoded as natural numbers, hence a first order model looks like:
+
+
+\begin{defn}[First order model]
+%A first order model \HOLtm{M} of type $\alpha$ is a triple consists of an $\alpha$-set \HOLtm{M.Dom} which is its domain, an interpretation \HOLtm{M.Fun} of function symbols, and an interpretation \HOLtm{M.Pred} of predicate symbols. Where an interpretation of function symbol is a function that assigns each function symbol an actual function, and an interpretation of predicate symbol is a function that assigns each predicate symbol an actual predicate. 
+\begin{holmath}
+  \HOLthm{folModels.datatype_model}
+\end{holmath}
+\end{defn}
+
+As we can see, an $\alpha$-first-order model means a first order model with an $\alpha$-set as its domain. For an $\alpha$-first-order model \HOLtm{M} and  each function symbol $f$, where $f$ is a natural number, \HOLtm{M.Fun f} is the actual function which is assigned $f$, and for each predicate symbol $p$, \HOLtm{M.Pred p} is the actual predicate which is assigned $p$. 
+
+
+
+According to the above discussion, if a first order formula $\phi$ is purely a combination of the variable letters, which are to be interpreted as worlds in \HOLtm{M}, the binary predicate $R$ which corresponds to \HOLtm{M.frame.rel}, and the unary predicates $P_p$, where $p$ is a predicate symbol, using the first order connectives, then the information contained in a $(num,\beta)$-modal model \HOLtm{M}, where $\beta$ is an arbitrary type, is enough to interpret the formula $\phi$. But to formally interpret a first-order formula, we need to formally convert a modal model into a first-order model. The domain of the resulting model is the world set of \HOLtm{M}. As we are not going to use the resulting model to interpret formulas with function symbols, we do not really need any interesting information about the function symbol, hence we send every natural number to the constant function at an arbitrary point in \HOLtm{M.frame.world} that we pick. We fix the predicate symbol of the binary predicate $R$, determined by \HOLtm{M.frame.rel}, to be $0$, and for each propositional letter $p$, we just use $p$ itself to be the symbol of the predicate $P_p$ associate to $p$ (that is, in our formalization, we use $p$ itself as the symbol $\underline{P_p}$ in the discussion above). For a modal model \HOLtm{M}, the function that converts it to a first-order model is called \HOLtm{mm2folm}. In HOL4:
+
+\begin{defn}[\holref{Conversion from a modal model to a first-order model}{chap2_4revised}{19}]
+\begin{holmath}
+  \HOLthm[def,w1/w,w3/v10,w4/v11]{chap2_4revised.mm2folm_def}
+\end{holmath}
+\end{defn}
+
+
+ Conversely, we can view a $\beta$-first-order model \HOLtm{M} as a $(num,\beta)$-modal model. Given a first-order model, the relation on the modal model is given by the binary predicate with symbol $2$. The valuations of a propositional letter $p$ is given by the unary predicate in \HOLtm{M} with symbol $p$. The function converting a first-order model into a modal model is \HOLtm{folm2mm}. 
+
+\begin{defn}[\holref{Conversion from a first-order model into a modal model}{chap2_6}{40}]
+\begin{holmath}
+  \HOLthm[def,M/FM]{chap2_6.folm2mm_def}
+\end{holmath}
+\end{defn}
+
+Whereas the conversion from a modal model into a first-order model preserves all the information of the original model, the conversion from a general first-order model into a modal model will omit a lot of information: we will lose every function symbols, all except for one binary predicate symbols and all higher arity predicate symbols. 
+
+
+
+Now we can spell out how can we formally interpreted a first-order formula in the language $\mathcal L_{\tau}^1$. To do this, let us just spell out how to interpret a first-order formula on a first-order model in general. In HOL4, a \emph{term} of first-order logic is defined inductively. A first-order term is  either a variable symbol standing alone, which is of form \HOLtm{fV x}, where $x$ is a variable symbol, or a function symbol applied on a list of terms, which is written as \HOLtm{Fn f l}, where $f$ is the natural number serving as a function symbol, and $l$ is a list of terms. A term of first-order logic should not be confused with a term of a type (a reader should better consider them as unrelated, for the sake of reading this thesis). A first order formula is also defined inductively using four primitive connectives:
+
+\begin{defn}[First-order formulas]
+The primitive logical connectives we are using here are: the falsity `\HOLtm{fFALSE}', a predicate symbol applied on a list of variables, implication `\HOLtm{IMP}', and the universal quantification.
+\begin{holmath}
+  \HOLthm{folLang.datatype_form}
+\end{holmath}
+\end{defn}
+
+The non-primitive connectives are defined as:
+
+
+\begin{defn}[Non-primitive first-order connectives]
+\begin{holmath}
+\begin{array}{rcl}
+  \HOLthm[aligneddef,phi/f]{folLang.Not_def}\\
+  \HOLthm[aligneddef]{folLang.True_def}\\
+  \HOLthm[aligneddef,phi1/p,phi2/q]{folLang.Or_def}\\
+  \HOLthm[aligneddef,phi1/p,phi2/q]{chap2_4revised.fAND_def}\\
+  \HOLthm[aligneddef,phi/p]{folLang.Exists_def}
+\end{array}
+\end{holmath}
+\end{defn}
+
+A quantified variable is called a bounded variable, otherwise, it is called free. For instance, the $1$ in \HOLtm{Pred 4 [fV 1; fV 2]} is free, whereas the $1$ in \HOLtm{FALL 1 (Pred 4 [fV 1; fV 2])} is bounded. For a first-order formula \HOLtm{phi}, \HOLtm{FV phi} is the set of all its free variables and \HOLtm{BV phi} is the set of all its bounded variables. We also have functions \HOLtm{form_functions} and \HOLtm{form_predicates} which gives the set of function and predicate symbols of a first-order formula, respectively. 
+For a function symbol denoted by $m$, if it is applied on a list of terms of length $n$, then it will be recorded as the tuple $(m,n)$. For example, we have  \HOLtm{term_functions (Fn 2 [fV 1;fV 3]) = {(2,2)\}}, \HOLtm{form_functions (Pred 1 [Fn 2 [fV 1; fV 2]; Fn 2 []]) = {(2,2); (2,0)\}}, and \HOLtm{form_functions (Pred 1 [Fn 0 []; Fn 1 []]) = {(0,0); (1,0)\}}. Similarly, a predicate symbol denoted by natural number $m$ followed by a list of length $n$ is recorded as a pair $(m,n)$. Hence both the function \HOLtm{form_functions} and \HOLtm{form_predicates} take a formula and give a set of pairs of natural numbers. The language $\mathcal L_{\tau}^1$, as introduced before, is defined as a predicate, where `\HOLtm{L1tau phi}' reads `the formula \HOLtm{phi} is in the language $\mathcal L_{\tau}^1$', as follows:
+
+\begin{defn}[\holref{The language $\mathcal L_{\tau}^1$}{chap2_6}{29}]
+\begin{holmath}
+  \HOLthm[def,width=65]{chap2_6.L1tau_def}
+\end{holmath}
+\end{defn}
+
+Given a first-order model \HOLtm{M}, we can interpret formulas or terms by assigning each variable symbol an element in \HOLtm{M.Dom}. As we are using natural numbers as variable symbols, such an assignment is a function from the universe of natural numbers. We are only interested in the case when a function from the universe of natural numbers does send each natural number to an element in \HOLtm{M.Dom}, such a function is called a \emph{valuation} of \HOLtm{M}. We write \HOLtm{valuation M v}, and read it as `$v$ is a valuation of the model \HOLtm{M}'. 
+
+Interpretation of terms and formulas are given as \HOLtm{termval} and \HOLtm{feval}. The function \HOLtm{termval} takes an $\alpha$-model, a function $v$ of type $num\to \alpha$, gives us an element of type $\alpha$. We will only use evaluations for our function $v$, therefore, we can make sure that the element we obtain by evaluating a term is always in the domain of the model we are working with. If we give the function \HOLtm{feval} a model \HOLtm{M}, a valuation $v$ and a first-order formula $\phi$, it will give us the truth value of $\phi$ in \HOLtm{M} under the valuation $v$. When $\phi$ is true in \HOLtm{M} under \HOLtm{v}, we write \HOLtm{feval M v phi}.
+
+If we want to use a first-model \HOLtm{M} to interpret a first-order formula \HOLtm{phi}, the first thing to make sure is that the actual functions assigned to the function symbols appear in \HOLtm{phi} does not send a list of elements in \HOLtm{M} out of the domain of \HOLtm{M}. Therefore, a theorem about interpreting a formula \HOLtm{phi} in \HOLtm{M} should start with an assumption 
+\begin{holmath}
+\HOLtm{!a. a IN (form_functions phi) ==> (!l. LENGTH l <= SND a ==> (M.Fun (FST a) l) IN M.Dom)}
+\end{holmath}. 
+But we may want to use the same model to interpret formulas with various function symbols and do not want such a long assumption everywhere.  Hence for our convenience, unless we have no function symbols at all, we only consider the models \HOLtm{M} such that \HOLtm{M.Fun f l} is in \HOLtm{M} for every function $n$ and list \HOLtm{l}. For such a model, we write \HOLtm{wffm M}, meaning `\HOLtm{M} is a well-formed first-order model'. 
+
+At noted before, the functions \HOLtm{mm2folm} and \HOLtm{folm2mm} are not inverses. However, we have:
+
+\begin{prop}[\holref{\texttt{L1tau_mm2folm_folm2mm_comm_feval}}{chap2_6}{976}]\label{5.3}
+An $\mathcal L_{\tau}^1$ formula is satisfied in \HOLtm{M} under $\sigma$ if and only iff it is satisfied under $\sigma$ in the model we obtain after we firstly convert \HOLtm{M} to a modal model, and then back to a first-order model.
+\begin{holmath}
+  \HOLthm[ϕ/f]{prettyPrinting.ppL1tau_mm2folm_folm2mm_comm_feval}
+\end{holmath}
+\end{prop}
+
+
+
+
+
+It does not make sense for a first-order model to have functions that send a list of elements of its domain out of its domain. Hence unless we have no function symbols at all, we only consider the models \HOLtm{M} such that \HOLtm{M.Fun f l} is in \HOLtm{M} for every function $n$ and list \HOLtm{l}. For such a model, we write \HOLtm{wffm M}, means that `\HOLtm{M} is a well-formed first-order model'. 
+
+
+
 
 To discuss the relationship between modal logic and first-order logic, firstly we need to build some basics of first-order logic in the HOL. First-order logic is formalised in HOL light in 1998 by John Harrison, we take our construction of first-order model theory as in the paper (reference) of him.
 %explain everywhere???????????????????????????????
@@ -850,7 +947,7 @@ first-order formulas in the language $\mathcal L_{\tau}^1$ are of the main inter
 
 \begin{defn}[\holref{Conversion from a modal model to a first-order model}{chap2_4revised}{19}]
 \begin{holmath}
-  \HOLthm[def]{chap2_4revised.mm2folm_def}
+  \HOLthm[def,w1/w,w3/v10,w4/v11]{chap2_4revised.mm2folm_def}
 \end{holmath}
 \end{defn}
 
@@ -873,7 +970,7 @@ An $\mathcal L_{\tau}^1$ formula is satisfied in \HOLtm{M} under $\sigma$ if and
 \end{holmath}
 \end{prop}
 
-With the setup on basics about first-order logic and how does it interact with modal logic, let us start building intuition about how do modal formulas correspond to first-order formulas. The first thing to note is that as every symbol in a first-order formula is represented by a natural number, without introducing cumbersome and complicated procedure, we can only translate $num$-modal formulas into first-order formulas. Observe that unlike modal formulas which atomic formulas are propositional letters standing alone, even the atomic first-order formulas (except \HOLtm{fFALSE}) have variable symbols involved. Hence to translate a modal formula into a first-order formula, we must get variables involved as well. For a model \HOLtm{M}, it is natural to regard each modal formula as a predicate to be evaluated at worlds of \HOLtm{M}, such that this predicate is true at a world $w$ if and only if the formula is satisfied at $w$. Hence to translate a modal formula into a first-order formula, the only natural thing to do is to get just one variable involved, and this variable will be later assigned to the state in a model by some valuation when we interpret the translated formula. 
+With the setup on basics about first-order logic and how it interacts with modal logic, let us start building intuition about how do modal formulas correspond to first-order formulas. The first thing to note is that as every symbol in a first-order formula is represented by a natural number, without introducing cumbersome and complicated procedure, we can only translate $num$-modal formulas into first-order formulas. Observe that unlike modal formulas which atomic formulas are propositional letters standing alone, even the atomic first-order formulas (except \HOLtm{fFALSE}) have variable symbols involved. Hence to translate a modal formula into a first-order formula, we must get variables involved as well. For a model \HOLtm{M}, it is natural to regard each modal formula as a predicate to be evaluated at worlds of \HOLtm{M}, such that this predicate is true at a world $w$ if and only if the formula is satisfied at $w$. Hence to translate a modal formula into a first-order formula, the only natural thing to do is to get just one variable involved, and this variable will be later assigned to the state in a model by some valuation when we interpret the translated formula. 
 
 Hence for the function \HOLtm{ST} which translates a modal formula to a first-order formula, the first parameter it takes is a variable symbol $x$, which is represented by a natural number, that we will introduce to mark the world we are looking at, as discussed above, and the second parameter is the $num$-modal formula which we want to translate. 
 
@@ -888,7 +985,7 @@ Here `\HOLtm{ST x phi}' reads the standard translation of the modal formula $\ph
 
 \item The disjunction of two modal formulas $\phi$ and $\psi$ is translated into the first-order disjunction of the standard translation of $\phi$ and the standard translation of $\psi$. 
 
-\item A modal formula $\Diamond \phi$ is translated to the existential quantifier applied on the variable symbol $x+1$ and the first-order formula saying \HOLtm{fV x} is related to \HOLtm{fV (x + 1)} and \HOLtm{ST (x + 1) phi}. Here \HOLtm{fR (fV x) (fV (x + 1))} is the abbreviation of ${{}^{\sf f}\sf Pred} \  0 \ [({}^{\sf f}{\sf V} \ x ) ; ({}^{\sf f}{\sf V} \ (x + 1) ) ]$ (Recall that we have fixed $0$ as the predicate symbol which corresponds to relation on the modal model. ). 
+\item A modal formula $\Diamond \phi$ is translated to the existential quantifier applied on the variable symbol $x+1$ and the first-order formula saying \HOLtm{fV x} is related to \HOLtm{fV (x + 1)} and \HOLtm{ST (x + 1) phi}. Here \HOLtm{fR (fV x) (fV (x + 1))} is the abbreviation of ${{}^{\sf f}\sf Pred} \  0 \ [({}^{\sf f}{\sf V} \ x ) ; ({}^{\sf f}{\sf V} \ (x + 1) ) ]$ (Recall that we have fixed $0$ as the predicate symbol which corresponds to relation on the modal model). That is:
 
 % weird phrasing. 
 \end{itemize}
@@ -900,7 +997,7 @@ Here `\HOLtm{ST x phi}' reads the standard translation of the modal formula $\ph
 
 \end{defn}
 
-Note that for the last line, according to the semantical interpretation of the `\HOLtm{DIAM phi}', which is `exists a world related to the current state where \HOLtm{phi} is satisfied, we translate \HOLtm{DIAM phi} into the existential formula, to capture `there exists some world', we must come up with a fresh variable which is bounded by the existential quantifier. To make sure that we use a fresh variable symbol that is not the same as the variable $x$ which is marking the current state, we use $x+1$ as our new variable symbol, hence the standard translation of \HOLtm{DIAM phi} at $x$ says exactly the same thing as how do we interpret it in the model. 
+Note that for the last line, according to the semantical interpretation of the `\HOLtm{DIAM phi}', which is `there exists a world related to the current state where \HOLtm{phi} is satisfied', we translate \HOLtm{DIAM phi} into the existential formula, to capture `there exists some world'. To make sure that we use a fresh variable symbol that is not the same as the variable $x$ which is marking the current state, we use $x+1$ as our new variable symbol, hence the standard translation of \HOLtm{DIAM phi} at $x$ says exactly the same thing as how we interpret it in the model. 
 
 Some syntactic properties of standard translation are immediate to prove. For instance:
 \begin{itemize}
@@ -964,7 +1061,7 @@ In fact, using set theory as the foundation, we can prove that every formula whi
 
 In the second chapter, we have seen bisimilarity implies modal equivalence, but only proved the converse for image finite models. In this section, we are interested in another particular class of models, called \emph{m-saturated} models, where worlds which are modal equivalent are bisimilar. 
 
-Let us explain what is meant by `m-saturated' first. m-saturated is a sort of compactness property, which says `finite satisfaction implies satisfaction'. We need to give three definitions consecutively to finally get m-saturation to be formally defined in HOL4. 
+Let us explain what is meant by `m-saturated' first. Being m-saturated is a sort of compactness property, which says `finite satisfaction implies satisfaction'. We need to give three definitions consecutively to finally get m-saturation to be formally defined in HOL4. 
 
 \begin{defn}[\holref{Satisfiable}{chap2_5}{43}]
  A set of formulas \HOLtm{Σ} is called satisfiable in a set of worlds $X$ of a model \HOLtm{M} if there exists a world in $X$ such that all the formulas in \HOLtm{Σ} are satisfied. 
@@ -1602,11 +1699,11 @@ Suppose $s$ is a set of formulas in $\mathcal L_{\tau}^1$, such that for each el
 
 The first item says what $rv$ assign each natural number must be an element in the Cartesian product. And the second item says that the equivalence class assigned free variables in $C$ has already been fixed by $f$. Both of these two are easy to be satisfied. We devote find and $rv$ satisfying the third condition. 
 
-By Proposition \ref{5.15}, we have a chain \HOLtm{In} where \HOLtm{In n ∈ U} and \HOLtm{In (n + 1) ⊆ In n} for each \HOLtm{n}, which start with \HOLtm{In 0 = J}. Moreover, the intersection of this chain is empty. Let 
+By Proposition \ref{5.15}, we have a chain \HOLtm{In} where \HOLtm{In n ∈ U} and \HOLtm{In (n + 1) ⊆ In n} for each \HOLtm{n}, which start with \HOLtm{In 0 = J}. Moreover, the intersection of this chain is empty. Define
 \begin{holmath}
 \HOLtm{conj = PRIM_REC (True) (\conjn n. fAND conjn (enum n))}
 \end{holmath}
-, hence \HOLtm{conj 0 = True}, and \HOLtm{conj n} is the conjunction of first-order formulas in $s$ from \HOLtm{enum 0} to \HOLtm{enum (n - 1)}. Define 
+as a primitive recursive function, hence \HOLtm{conj 0 = True}, and \HOLtm{conj n} is the conjunction of first-order formulas in $s$ from \HOLtm{enum 0} to \HOLtm{enum (n - 1)}. Define 
 \begin{holmath}
 \HOLtm[alltt,width=75]{Jn = \n. {j | j IN J /\ 
                  (!σ.
@@ -1615,7 +1712,7 @@ By Proposition \ref{5.15}, we have a chain \HOLtm{In} where \HOLtm{In n ∈ U} a
                  )\}}
 \end{holmath}
 
-, then what the \HOLtm{Jn} actually give is that \HOLtm{Jn 0 = J}, and for $n>0$, \HOLtm{Jn n} is the subset of \HOLtm{J} indexing the set of models \HOLtm{MS j} with a point in its domain such that the conjunction from \HOLtm{enum 0} to \HOLtm{enum (n - 1)} are satisfied. Therefore, \HOLtm{Jn} is a descending chain. Since every finite subset of $ss$ is satisfied in \HOLtm{(ultraproduct_folmodel U J FMS)} by assumption, \L o\'s's theorem implies that \HOLtm{(Jn n) IN U} for every $n$. Define \HOLtm{Xn = \n. (In n) ∩ (Jn n)}, then \HOLtm{Xn} is a descending chain in $U$ starting with \HOLtm{J} and the intersection of all \HOLtm{Xn n} is the empty set. For such a chain, each element \HOLtm{j IN J} can only belong to finitely many of \HOLtm{Xn}s. Hence there exists a function \HOLtm{Nj} that send an element \HOLtm{j} to smallest set in the chain \HOLtm{Xn} that \HOLtm{j} belongs to. That is, for all \HOLtm{j ∈ J}, we have \HOLtm{j ∈ Xn (Nj j)} and \HOLtm{j ∉ Xn a} for every \HOLtm{a > Nj j}.
+as a function  that takes a natural number, then what the \HOLtm{Jn} actually give is that \HOLtm{Jn 0 = J}, and for $n>0$, \HOLtm{Jn n} is the subset of \HOLtm{J} indexing the set of models \HOLtm{MS j} with a point in its domain such that the conjunction from \HOLtm{enum 0} to \HOLtm{enum (n - 1)} are satisfied. Therefore, \HOLtm{Jn} is a descending chain. Since every finite subset of $ss$ is satisfied in \HOLtm{(ultraproduct_folmodel U J FMS)} by assumption, \L o\'s's theorem implies that \HOLtm{(Jn n) IN U} for every $n$. Define \HOLtm{Xn = \n. (In n) ∩ (Jn n)}, then \HOLtm{Xn} is a descending chain in $U$ starting with \HOLtm{J} and the intersection of all \HOLtm{Xn n} is the empty set. For such a chain, each element \HOLtm{j IN J} can only belong to finitely many of \HOLtm{Xn}s. Hence there exists a function \HOLtm{Nj} that send an element \HOLtm{j} to smallest set in the chain \HOLtm{Xn} that \HOLtm{j} belongs to. That is, for all \HOLtm{j ∈ J}, we have \HOLtm{j ∈ Xn (Nj j)} and \HOLtm{j ∉ Xn a} for every \HOLtm{a > Nj j}.
 
 The \HOLtm{rv} we are looking for can be taken as:
 \begin{holmath}

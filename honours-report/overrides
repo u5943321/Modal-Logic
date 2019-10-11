@@ -115,7 +115,6 @@ folmodels2Doms 4 Doms
 (rst2) 0 }\ensuremath{\mid}\sb{
 (rst3) 0 }
 
-VAR 1 V
 
 (mdeq1) 1 ,
 (mdeq2) 1 \ensuremath{\leftrightsquigarrow}
@@ -145,7 +144,7 @@ BIGINTER 1 \ensuremath{\bigcap}
 
 heightLE 6 \ensuremath{{\sf height}\sb{\le}}
 
-fV 1 \ensuremath{{}^{\sf f}{\sf V}}
+fV 1 \ensuremath{{}^{\sf f}{\sf VAR}}
 Fn 1 \ensuremath{{}^{\sf f}{\sf Fn}} 
 FALL 1 \ensuremath{{}^{\sf f}{\forall}}
 (prd1) 2 \ensuremath{{}^{\sf f}{\sf P} \ }
