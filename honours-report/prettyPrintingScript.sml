@@ -397,25 +397,6 @@ rw[] >>
 rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def,ultraproduct_model_def,mm2folm_def]
 QED
 
-val nfm_def = Define
-`nfm M <=> (∀n. ¬M.Pred n []) /\
-         (∀a b n. M.Pred n [a; b] ⇒ n = 0) /\
-         (∀a b c d n. ¬M.Pred n (a::b::c::d)) /\ 
-         (∀ff ll. M.Fun ff ll ∈ M.Dom)`
-
-Theorem ppultraproduct_comm_feval':
-!phi U I MS σ. 
-  (ultrafilter U I /\ 
-  form_functions phi = {} /\ 
-  (!i. i IN I ==> nfm (MS i)) /\
-  valuation (ultraproduct_folmodel U I MS) σ) ==>
-     (feval (ultraproduct_folmodel U I MS) σ phi <=>
-      feval (mm2folm (ultraproduct_model U I (λi. folm2mm (MS i)))) σ phi)
-Proof
-rw[nfm_def] >> drule ultraproduct_comm_feval' >> rw[] >> 
-`IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms MS)` suffices_by metis_tac[] >> rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def] >> fs[ultraproduct_folmodel_def]
-QED
-
 
 
 Theorem ppultraproduct_sat:
@@ -571,6 +552,28 @@ INFINITE 𝕌(:α) /\
 Proof
 metis_tac[modal_compactness_corollary]
 QED
+
+
+val UE'_def = Define`
+  UE' M = <| frame := <| world := {u | ultrafilter u M.frame.world};
+                        rel := UE_rel M |>;
+            valt := \p v. (ultrafilter v M.frame.world /\
+            {w | w IN M.frame.world /\  M.valt p w } IN v)|>`;
+
+
+Theorem ppultraproduct_comm_feval':
+∀phi U I MS σ.
+         (ultrafilter U I /\
+         L1tau phi /\
+         (∀i. i ∈ I ⇒ wffm (MS i)) /\
+          IMAGE σ 𝕌(:num) ⊆ ultraproduct U I (folmodels2Doms MS)) ⇒
+             (feval (ultraproduct_folmodel U I MS) σ phi ⇔
+              feval (mm2folm (ultraproduct_model U I (λi. folm2mm (MS i)))) σ
+                phi)
+Proof
+rw[] >> irule ultraproduct_comm_feval' >> rw[] >> fs[wffm_def]
+QED
+
 
 
 val _ = overload_on("Mw", “λM. M.frame.world”);
@@ -789,6 +792,7 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   term_name = "uer", paren_style = OnlyIfNecessary}
 
 Overload ue = ``\M. UE M``
+Overload ue = ``\M. UE' M``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, pp_elements = [TOK "(ue1)", TM, TOK "(ue2)"], 

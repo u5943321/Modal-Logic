@@ -1905,5 +1905,213 @@ rw[invar4bisim_def] (* 3 *)
 >- metis_tac[thm_2_68_half2]
 QED
 
+
+
+
+Theorem ultraproduct_comm_feval':
+!phi U I MS. 
+  ultrafilter U I ==>
+  L1tau phi ==>
+  (∀n0 l0 i. i IN I ==> (MS i).Fun n0 l0 ∈ (MS i).Dom) ==>
+  !σ. 
+     IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms MS) ==>
+     (feval (ultraproduct_folmodel U I MS) σ phi <=>
+      feval (mm2folm (ultraproduct_model U I (λi. folm2mm (MS i)))) σ phi)
+Proof
+Induct_on `phi` (* 4 *)
+>- fs[feval_def]
+>- (rw[feval_def] >>
+    `MAP (termval (ultraproduct_folmodel U I' MS) σ) l = 
+     MAP (termval
+           (mm2folm (ultraproduct_model U I' (λi. folm2mm (MS i)))) σ) l`
+     by 
+      (irule listTheory.MAP_CONG >> rw[] >> irule ultraproduct_comm_termval' >> rw[] >> fs[L1tau_def] >> 
+       SPOSE_NOT_THEN ASSUME_TAC >> fs[GSYM MEMBER_NOT_EMPTY] >>
+       `x' IN LIST_UNION (MAP term_functions l)` 
+         suffices_by metis_tac[MEMBER_NOT_EMPTY] >>
+       simp[IN_LIST_UNION] >> qexists_tac `term_functions x` >>
+       rw[MEM_MAP] >> metis_tac[]) >>
+    rw[] >>
+    qabbrev_tac 
+      `mapl = 
+        MAP (termval
+             (mm2folm (ultraproduct_model U I' (λi. folm2mm (MS i)))) σ) l` >>
+    Cases_on `mapl = []` (* 2 *)
+    >- (`form_predicates (Pred n l) ⊆ (0,2) INSERT {(p,1) | p ∈ 𝕌(:num)}`
+         by metis_tac[L1tau_def] >> 
+       `l = []` by 
+         (SPOSE_NOT_THEN ASSUME_TAC >> fs[Abbr`mapl`]) >> 
+       fs[])
+    >- (`(?a. l = [a]) \/ 
+         (?a b. l = [a;b]) \/ 
+         (?a b c d. l = a :: b :: c :: d)`
+          by 
+           (Cases_on `l` >> fs[] >>
+            Cases_on `t` >> fs[] >> Cases_on `t'` >> fs[]) (* 3 *)
+        >- (rw[] >>
+            qabbrev_tac 
+             `sl = termval (ultraproduct_folmodel U I' MS) σ a` >>
+            rw[mm2folm_def,
+               ultraproduct_folmodel_def,ultraproduct_model_def] >> 
+            `sl ∈ ultraproduct U I' (models2worlds (λi. folm2mm (MS i)))`
+             by
+              (rw[Abbr`sl`] >> drule termval_IN_ultraproduct_Dom' >>
+               rw[] >> 
+               metis_tac[folmodels2Doms_models2worlds_folm2mm]) >>
+            (*remove the conj first*)
+           `sl <> {}` by metis_tac[ultraproduct_eqclass_non_empty] >>
+           `CHOICE sl IN sl` by metis_tac[CHOICE_DEF] >>
+           `{i | i ∈ I' ∧ (MS i).Pred n [CHOICE sl i]} = 
+            {i | i ∈ I' ∧ CHOICE sl i ∈ (folm2mm (MS i)).valt n}`
+             by (rw[EXTENSION,EQ_IMP_THM,folm2mm_def] >> 
+                 drule ultraproduct_val_IN_A >> rw[] >>
+                 first_x_assum 
+                   (qspecl_then [`models2worlds (λi. folm2mm (MS i))`,
+                                 `sl`,`CHOICE sl`,`x`] assume_tac) >>
+                 `(models2worlds (λi. folm2mm (MS i))) x = (MS x).Dom`
+                   by rw[models2worlds_def,folm2mm_def] >>
+                 fs[]) >>
+           rw[EQ_IMP_THM] >- metis_tac[] >>
+           `{i | i IN I' /\ f i = (CHOICE sl) i} IN U` 
+             by 
+              (irule ultraproduct_same_eqclass >> rw[] >>
+               map_every qexists_tac
+                [`models2worlds (λi. folm2mm (MS i))`,`sl`] >> 
+               rw[]) >> 
+           `({i | i ∈ I' ∧ f i ∈ (folm2mm (MS i)).valt n} ∩
+             {i | i ∈ I' ∧ f i = CHOICE sl i}) IN U`
+             by metis_tac[ultrafilter_INTER] >>
+           irule ultrafilter_SUBSET' >> rw[PULL_EXISTS] (* 2 *)
+           >- (qexists_tac 
+                 `{i | i ∈ I' ∧ f i ∈ (folm2mm (MS i)).valt n} ∩
+                  {i | i ∈ I' ∧ f i = CHOICE sl i}` >> 
+               rw[SUBSET_DEF] >> metis_tac[]) >>
+           qexists_tac `I'` >> rw[SUBSET_DEF]
+           ) (*1 out of 3*)
+      >- (rw[] >>
+            qabbrev_tac 
+             `sl1 = termval (ultraproduct_folmodel U I' MS) σ a` >>
+            qabbrev_tac 
+             `sl2 = termval (ultraproduct_folmodel U I' MS) σ b` >>
+            rw[mm2folm_def,ultraproduct_folmodel_def,ultraproduct_model_def] >>
+            `{i | i ∈ I' ∧ (MS i).Pred n [CHOICE sl1 i; CHOICE sl2 i]} ∈ U ==>
+             n = 0`
+              by 
+               (rw[] >> SPOSE_NOT_THEN ASSUME_TAC >>
+                `{i | i ∈ I' ∧ (MS i).Pred n [CHOICE sl1 i; CHOICE sl2 i]} = {}`
+                  by 
+                   (fs[] >> 
+                    `form_predicates (Pred n [a; b]) ⊆ 
+                     (0,2) INSERT {(p,1) | p ∈ 𝕌(:num)}` by metis_tac[L1tau_def] >> fs[]
+                ) >>
+                metis_tac[EMPTY_NOTIN_ultrafilter]) >>
+            `sl1 ∈ ultraproduct U I' (models2worlds (λi. folm2mm (MS i))) ∧
+             sl2 ∈ ultraproduct U I' (models2worlds (λi. folm2mm (MS i)))`
+              by
+               (`!t. (termval (ultraproduct_folmodel U I' MS) σ t) IN
+                 ultraproduct U I' (models2worlds (λi. folm2mm (MS i)))`
+                  suffices_by metis_tac[] >>
+                drule termval_IN_ultraproduct_Dom' >>
+                rw[] >> 
+                metis_tac[folmodels2Doms_models2worlds_folm2mm]) >>
+            `sl1 <> {}` by metis_tac[ultraproduct_eqclass_non_empty] >>
+            `sl2 <> {}` by metis_tac[ultraproduct_eqclass_non_empty] >>
+            `CHOICE sl1 IN sl1 /\ CHOICE sl2 IN sl2` by metis_tac[CHOICE_DEF]>>
+            rw[EQ_IMP_THM,EXTENSION] (* 2 *)
+            >- (map_every qexists_tac [`CHOICE sl1`,`CHOICE sl2`] >>
+                rw[] >> 
+                `n = 0` by metis_tac[] >>
+                `!i. i IN I' ==> CHOICE sl1 i ∈ (MS i).Dom /\ 
+                 CHOICE sl2 i ∈ (MS i).Dom`
+                  by 
+                   (drule ultraproduct_val_IN_A >> 
+                    `!x. models2worlds (λi. folm2mm (MS i)) x = (MS x).Dom`
+                      by rw[models2worlds_def,folm2mm_def] >>
+                    metis_tac[CHOICE_DEF,ultraproduct_eqclass_non_empty]) >>
+                rw[folm2mm_def] >> 
+                `{i | i ∈ I' ∧ (MS i).Pred 0 [CHOICE sl1 i; CHOICE sl2 i]} = 
+                 {i | i ∈ I' ∧ (MS i).Pred 0 [CHOICE sl1 i; CHOICE sl2 i] ∧
+                   CHOICE sl1 i ∈ (MS i).Dom ∧ CHOICE sl2 i ∈ (MS i).Dom}`
+                  by rw[EXTENSION,EQ_IMP_THM] >>
+                metis_tac[]) >>
+            qmatch_abbrev_tac `ss IN U` >>
+            irule ultrafilter_INTER_INTER_SUBSET >>
+            `ss ⊆ I'` by fs[Abbr`ss`,SUBSET_DEF,INTER_DEF] >> rw[] (* 2 *)
+            >- (map_every qexists_tac
+                 [`{i | i IN I' /\ f i = (CHOICE sl1) i}`,
+                  `{i | i IN I' /\ g i = (CHOICE sl2) i}`,
+                  `{i | i ∈ I' ∧ (folm2mm (MS i)).frame.rel (f i) (g i)}`] >>
+                rw[SUBSET_DEF,folm2mm_def] (* 3 *)
+                >- (irule ultraproduct_same_eqclass >> rw[] >>
+                    map_every qexists_tac
+                    [`models2worlds (λi. folm2mm (MS i))`,`sl1`] >> 
+                    rw[])
+                >- (irule ultraproduct_same_eqclass >> rw[] >>
+                    map_every qexists_tac
+                    [`models2worlds (λi. folm2mm (MS i))`,`sl2`] >> 
+                    rw[]) >>
+                fs[Abbr`ss`] >> metis_tac[]) >>
+            qexists_tac `I'` >> rw[SUBSET_DEF])
+        >- (fs[] >> 
+            `form_predicates (Pred n (a::b::c::d)) ⊆ 
+             (0,2) INSERT {(p,1) | p ∈ 𝕌(:num)}` by metis_tac[L1tau_def] >>
+             fs[]
+
+(*
+
+
+`(mm2folm 
+              (ultraproduct_model U I' (λi. folm2mm (MS i)))).Pred n mapl = F`
+              by rw[mm2folm_def] >>
+            `(ultraproduct_folmodel U I' MS).Pred n mapl = F` 
+              by 
+              (`{i | i ∈ I' ∧ (MS i).Pred n (MAP (λfc. CHOICE fc i) mapl)} NOTIN
+                  U` 
+                 suffices_by fs[ultraproduct_folmodel_def] >>
+               `{i | i ∈ I' ∧ (MS i).Pred n (MAP (λfc. CHOICE fc i) mapl)} = {}`
+                 suffices_by metis_tac[EMPTY_NOTIN_ultrafilter] >>
+               rw[Once EXTENSION] >> metis_tac[]) >>
+            metis_tac[] *))
+    )
+   )
+>- (rw[] >> 
+    `L1tau phi /\ L1tau phi'` suffices_by metis_tac[] >> 
+    metis_tac[L1tau_fIMP])
+>- (rw[feval_def,EQ_IMP_THM] (* 2 *)
+    >- (`L1tau phi` by metis_tac[L1tau_FALL] >> 
+        first_x_assum drule >> rw[] >>
+        `IMAGE σ⦇n ↦ a⦈ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms MS)`
+          by (irule IMAGE_UPDATE >> 
+              `(mm2folm (ultraproduct_model U I' (λi. folm2mm (MS i)))).Dom =
+               ultraproduct U I' (folmodels2Doms MS)`
+               by 
+                (rw[mm2folm_def,ultraproduct_model_def] >>
+                 `(models2worlds (λi. folm2mm (MS i))) = (folmodels2Doms MS)`
+                   suffices_by metis_tac[] >>
+                 rw[FUN_EQ_THM,models2worlds_def,
+                    folm2mm_def,folmodels2Doms_def]) >>
+              metis_tac[]) >>
+        first_x_assum drule >> rw[] >>
+        `(ultraproduct_folmodel U I' MS).Dom = 
+         (mm2folm (ultraproduct_model U I' (λi. folm2mm (MS i)))).Dom`
+          suffices_by metis_tac[] >>
+        rw[ultraproduct_folmodel_def,mm2folm_def,ultraproduct_model_def] >>
+        metis_tac[folmodels2Doms_models2worlds_folm2mm])
+    >- (`L1tau phi` by metis_tac[L1tau_FALL] >> 
+        first_x_assum drule >> rw[] >>
+        `IMAGE σ⦇n ↦ a⦈ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms MS)`
+          by (irule IMAGE_UPDATE >> rw[] >> fs[ultraproduct_folmodel_def]) >>
+        `(ultraproduct_folmodel U I' MS).Dom = 
+         (mm2folm (ultraproduct_model U I' (λi. folm2mm (MS i)))).Dom`
+          suffices_by metis_tac[] >>
+        rw[ultraproduct_folmodel_def,mm2folm_def,ultraproduct_model_def] >>
+        metis_tac[folmodels2Doms_models2worlds_folm2mm])
+    )
+QED
+
+
+
+
+
 val _ = export_theory();
 
