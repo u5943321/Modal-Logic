@@ -296,6 +296,14 @@ first_x_assum (qspecl_then [`phi`,`x`] assume_tac) >>
 fs[combinTheory.APPLY_UPDATE_THM]
 QED
 
+
+Theorem holds_valuation':
+∀M p v1 v2. (valuation M v1 /\ valuation M v2) ==>
+            (∀x. x ∈ FV p ⇒ v1 x = v2 x) ⇒ (feval M v1 p ⇔ feval M v2 p)
+Proof
+metis_tac[holds_valuation]
+QED
+
 val _ = export_theory();
 	          
 	    

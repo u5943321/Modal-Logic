@@ -43,14 +43,7 @@
 \setlength{\topmargin}{2.5cm}
 
 
-%\newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/5b0350b067222d3b8b435bde496518bb30744c32/#2Script.sml\#L#3}{#1}}
-%\newcommand{\holreff}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/dbfbba74de0af276f982867714fcd6eee221196e/#2Script.sml\#L#3}{#1}}
-
-
-
-%Mention term size somewhere?
-
-\newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/14eba6e9c055ab77018ee5afe2b1323ffe415793/#2Script.sml\#L#3}{#1}}
+\newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/00d0ddde512a3b7f01e07aef05403a48a18be476/#2Script.sml\#L#3}{#1}}
 
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
@@ -514,7 +507,16 @@ Two worlds which are bisimilar are always modal equivalent.
 \end{holmath}
 \end{thm}
 
-Now we ask if the converse of the above holds: is that the fact that a modal equivalence always give a bisimulation? The answer is no. For example, consider models \HOLtm{M} and \HOLtm{N} defined as the picture below, where the arrows denote relations (non-transitive). Both \HOLtm{M} and \HOLtm{N} have infinitely many branches, from their roots \HOLtm{w}, \HOLtm{w'} respectively. The difference is that \HOLtm{N} has an infinitely long branch, whereas all the branches in \HOLtm{M} are of finite length. Let valuation in \HOLtm{M} and \HOLtm{N} both be such that at every point, there is no propositional letter which is satisfied. 
+Now we ask if the converse of the above holds: is that the fact that a modal equivalence always give a bisimulation? The answer is no, as we have proved in HOL4 that:
+\begin{prop}[\holref{\texttt{example_2_23}}{chap2_3}{2420}]\label{example}
+\begin{holmath}
+ \HOLthm{chap2_3.example_2_23}
+\end{holmath}
+\end{prop}
+
+The models \HOLtm{M} and \HOLtm{N} used in the proof of the theorem above are defined as the picture below, where the arrows denote relations (non-transitive). Both \HOLtm{M} and \HOLtm{N} have infinitely many branches, from their roots \HOLtm{w}, \HOLtm{w'} respectively. The difference is that \HOLtm{N} has an infinitely long branch, whereas all the branches in \HOLtm{M} are of finite length. In HOL4, the worlds of \HOLtm{M} and \HOLtm{N} are captured using pairs of natural numbers. The world \HOLtm{w IN M.frame.world} and \HOLtm{w' IN N.frame.world} are recorded as the pair \HOLtm{(0,0)}. For a world in \HOLtm{M} or a world in \HOLtm{N} which is the $b$-th point on a finite branch of length $a$, it is recorded as the pair \HOLtm{(a,b)}. The $n$-th point on the infinite branch in \HOLtm{N} is recorded as the pair \HOLtm{(0,n)}.
+
+Let valuation in \HOLtm{M} and \HOLtm{N} both be such that at every point, there is no propositional letter which is satisfied. 
 By induction, the worlds \HOLtm{w} and \HOLtm{w'} can be shown to be modal equivalent, but they are not bisimilar. Suppose, in order to get a contradiction, that \HOLtm{bisim M Z N} and \HOLtm{Z w w'}, then there exists \HOLtm{v0 IN M.frame.world} such that \HOLtm{Z v0 v0'}, where \HOLtm{v0'} is the first world on the infinite branch in \HOLtm{N} such that \HOLtm{N.frame.rel w' v0'}. The branch that \HOLtm{v0} lies on is finitely long, say, the worlds $w,v_0,\cdots, v_{n}$ are all the worlds on this branch. Then by clause on `forward condition' in the definition of bisimulation, there are worlds $v_1',\cdots,v_{n}'$ on the infinite branch of \HOLtm{N} such that $Z\ v_i \ v_i'$ for each $1\le i\le n$. The world $v_n'$ has a successor $v_{n+1}'$ in \HOLtm{N}, so the backward clause on relation requires the existence of a world in \HOLtm{M} which is related to $v_n$ and is related to $v_{n+1}'$ by $Z$. But such a world does not exist since $v_n$ is at the end of the branch it lies on. 
 
 \begin{center}
@@ -632,6 +634,7 @@ Such a sequence of $Z_i$ is a family of relations indexed by natural numbers fro
 \end{holmath} 
 \end{defn}
 
+Note that for models \HOLtm{M} and \HOLtm{N}, and worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world}, the existence of $n$-bisimulation between \HOLtm{w1} and \HOLtm{w2} for all $n$ does not imply that \HOLtm{w1} and \HOLtm{w2} are bisimilar. For the models \HOLtm{M} and \HOLtm{N} used in \ref{example}, the worlds $w$ and $w'$ are $n$-bisimilar for all $n$, with the $n$-bisimulation relation given as: for each $m\le n$, $f\ m$ is the relation that relating the points in \HOLtm{M} on the branches of length no more than \HOLtm{m-n} to the copy of itself in \HOLtm{N}, and for each $k$, the $k$-th point on the branch in \HOLtm{M} of length $n$ is related to the $k$-th point on the infinite branch in \HOLtm{N}. 
 
 When we use set theory as the foundation, if there are only possibly many propositional letters, then it is true that two worlds in two models agree on all the modal formulas  with degree up to $n$ if and only if there exists an n-bisimulation between them. However, we are using simple type theory as our  foundation in HOL4, so we require assumption on infiniteness on type universe again. The thing we can prove in  HOL4 is that: 
 Let $s$ be a finite $\alpha$-set, if we restrict our scope to the set $\Sigma$ of $\alpha$-formulas that only uses propositional symbols in $s$. Then for models \HOLtm{M1} and \HOLtm{M2} with underlying set type $\beta$, $\gamma$ respectively, where both $\beta$ and $\gamma$ has infinite universe, consider each \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world}, \HOLtm{w1} and \HOLtm{w2} agree on formulas in $\Sigma$ up to degree $n$ if and only if there is an $n$-bisimulation relating them. By induction on $n$, we prove If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{w' IN M'.frame.world} are related by an $n$-bisimulation, then they agree on all modal formulas up to degree $n$. And the other direction is by an argument similar to the proof of Hennessy-Milner theorem, using the  \HOLtm{λn w1 w2. (!(phi: 'a form). DEG phi <= n ==> (satis M w1 phi <=> satis M' w2 phi))} as the n-bisimulation relation. 
@@ -1542,6 +1545,11 @@ By induction on \HOLtm{phi}.
 
 
 Actually, we also have:
+\begin{prop}[\holref{\texttt{ultraproduct_comm_feval'}}{chap2_6}{1911}]\label{6000}
+\begin{holmath}
+  \HOLthm[J/I,j/i]{prettyPrinting.ppultraproduct_comm_feval'}
+\end{holmath}
+\end{prop}
 
 
 In summary, the above two propositions express the fact that the order of taking ultraproduct and converting between modal and first-order models does not matter if we only consider the satisfaction of $\mathcal L_{\tau}^1$-formulas.
@@ -1694,7 +1702,7 @@ For an infinite type $\alpha$, if $a$ is a first-order formula which is invarian
 Our first claim is that it suffices to prove \HOLtm{a} is implies by \HOLtm{MOC}. To see why it suffices, assume it is true, then by Corollary \ref{6.17}, there exists a finite subset of \HOLtm{Σ0} of \HOLtm{MOC} such that once all the formulas in \HOLtm{Σ0} are satisfied, then the $a$ is satisfied. Also by definition of \HOLtm{MOC}, once $a$ is satisfied, every formula in \HOLtm{Σ0} is satisfied. Hence $a$ will be equivalent to the big conjunction of formulas in \HOLtm{Σ0}, which is a standard translation. 
 
 Fix a model \HOLtm{M} and suppose \HOLtm{feval M σ varphi} for every \HOLtm{varphi IN MOC}, we prove \HOLtm{feval M σ a}. Consider of the set \HOLtm{Tx} of formulas of the form \HOLtm{ST x phi} such that \HOLtm{feval M σ (ST x phi)}. Pick a model \HOLtm{N} and a valuation \HOLtm{σn} satisfying each formula in \HOLtm{(Tx ∪ {a\})}. Such a model does exist:
-Suppose, in order to get a contradiction, that such a model does not exist, then for every model, once all the formulas in \HOLtm{Tx} are satisfied, the formula \HOLtm{a} will not be satisfied. Then by compactness, there exists a finite subset of \HOLtm{Tx} implies $\lnot a$. Taking its contrapositive, then \HOLtm{a} implies the negation of the big conjunction \HOLtm{psi} of finitely many elements in \HOLtm{Tx}. As a negated big conjunction of standard translations is again a standard translation, we have  \HOLtm{(fNOT psi) IN MOC}. Recall we have assumed \HOLtm{feval M σ varphi} for every \HOLtm{varphi IN MOC}, so \HOLtm{feval M σ (fNOT psi)}, but also \HOLtm{feval M σ psi} by definition of \HOLtm{Tx}. This is a contradiction. 
+Suppose, in order to get a contradiction, that such a model does not exist, then for every model, once all the formulas in \HOLtm{Tx} are satisfied, the formula \HOLtm{a} will not be satisfied. Then by Corollary \ref{6.17}, there exists a finite subset of \HOLtm{Tx} implies $\lnot a$. Taking its contrapositive, then \HOLtm{a} implies the negation of the big conjunction \HOLtm{psi} of finitely many elements in \HOLtm{Tx}. As a negated big conjunction of standard translations is again a standard translation, we have  \HOLtm{(fNOT psi) IN MOC}. Recall we have assumed \HOLtm{feval M σ varphi} for every \HOLtm{varphi IN MOC}, so \HOLtm{feval M σ (fNOT psi)}, but also \HOLtm{feval M σ psi} by definition of \HOLtm{Tx}. This is a contradiction. 
 
  Now let \HOLtm{w} denote \HOLtm{σ x} and \HOLtm{v} denote \HOLtm{σn x}, we claim that if we regard both \HOLtm{M} and \HOLtm{N} as modal models, then \HOLtm{w} and \HOLtm{v} are modal equivalent. To prove this, suppose \HOLtm{satis (folm2mm M) w phi} for a modal formula \HOLtm{phi}, then \HOLtm{(ST x phi) IN Tx} by Proposition \ref{5.4}, Proposition \ref{5.3} and the definition of \HOLtm{Tx}, hence \HOLtm{feval N σn (ST x phi)}. By these two propositions again, we can prove \HOLtm{satis (folm2mm N) v phi}. This proves \HOLtm{!phi. satis (folm2mm M) w phi ==> satis (folm2mm N) v phi}. Similarly, if \HOLtm{ ¬satis (folm2mm M) w (phi)}, then \HOLtm{satis (folm2mm M) w (NOT phi)} and we can deduce \HOLtm{ ¬satis (folm2mm N) v (phi)} by a symmetric argument. 
 
@@ -1711,7 +1719,7 @@ To carry $a$ around, it suffices to prove \HOLtm{feval M σ a ⇔ feval (mm2folm
   \HOLthm[J/I,j/i,:'a/:'b]{chap2_6.L1tau_ultraproduct_mm2folm_folm2mm_comm_feval}
 \end{holmath}
 
-The lemma is proved by carrying $a$ around using Proposition \ref{6.12}, Proposition \ref{5.3} and the commutativity of taking ultraproduct and converting between modal and first-order model. Hence we are done. 
+The lemma is proved by carrying $a$ around using Proposition \ref{6.12}, \ref{6000} and \ref{5.3}. Hence we are done. 
 
 \end{proof}
 

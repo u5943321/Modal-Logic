@@ -2110,7 +2110,14 @@ Induct_on `phi` (* 4 *)
 QED
 
 
-
+Theorem holds_functions_predicates':
+   (M2.Dom = M1.Dom ∧ valuation M1 v  /\ valuation M2 v) ==>  
+  (∀P zs. (P,LENGTH zs) ∈ form_predicates p ⇒ (M2.Pred P zs ⇔ M1.Pred P zs)) /\
+  (∀f zs. (f,LENGTH zs) ∈ form_functions p ⇒ M2.Fun f zs = M1.Fun f zs) ⇒
+      (∀v. feval M2 v p ⇔ feval M1 v p)
+Proof
+metis_tac[holds_functions_predicates]
+QED
 
 
 val _ = export_theory();
