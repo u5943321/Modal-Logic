@@ -404,11 +404,11 @@ Theorem ppultraproduct_sat:
    (countably_incomplete U I /\
     valuation (ultraproduct_folmodel U I FMS) f /\
     (∀i. i ∈ I ⇒ wffm (FMS i)) /\
-   (!phi. phi IN s ==> L1tau phi /\ (FV phi) DIFF N ⊆ {x})) ==>
+   (!phi. phi IN s ==> L1tau phi /\ (FV phi) DIFF N ⊆ {x}) /\
        (!ss. (FINITE ss /\ ss ⊆ s) ==>
           ?σ. (valuation (ultraproduct_folmodel U I FMS) σ) /\
               (!n. n IN N ==> σ n = f n) /\
-              (!phi. phi IN ss ==> feval (ultraproduct_folmodel U I FMS) σ phi)) ==>
+              (!phi. phi IN ss ==> feval (ultraproduct_folmodel U I FMS) σ phi))) ==>
        (?σ. valuation (ultraproduct_folmodel U I FMS) σ /\
             (!n. n IN N ==> σ n = f n)  /\
             (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
@@ -450,13 +450,42 @@ Theorem ppinvar4bisim_def:
  ∀x phi.
             invar4bisim x (:α) (:β) phi ⇔
             FV phi ⊆ {x} ∧ L1tau phi ∧
-            ∀M N v:β w:α σm σn.
-                (bisim_world M N w v /\
-                valuation (mm2folm M) σm ∧ valuation (mm2folm N) σn) ⇒
-                    (fsatis (mm2folm M) σm⦇x ↦ w⦈ phi ⇔
-                     fsatis (mm2folm N) σn⦇x ↦ v⦈ phi)
+            ∀M N v:β w:α.
+                bisim_world M N w v ⇒
+                    (fsatis (mm2folm M) (\n.w) phi ⇔
+                     fsatis (mm2folm N) (\n.v) phi)
 Proof
-rw[invar4bisim_def] >> metis_tac[]
+rw[invar4bisim_def,Once EQ_IMP_THM] (* 2 *)
+>- (`valuation (mm2folm M) (λn:num. w) ∧ valuation (mm2folm N) (λn:num. v)`
+      by fs[valuation_def,bisim_world_def,mm2folm_def] >>
+    `(fsatis (mm2folm M) (λn. w)⦇x ↦ w⦈ phi ⇔
+                 fsatis (mm2folm N) (λn. v)⦇x ↦ v⦈ phi)` by metis_tac[] >>
+    `(λn. w)⦇x ↦ w⦈ = (λn. w) /\ (λn. v)⦇x ↦ v⦈ = (λn. v)`
+       by 
+        (simp[FUN_EQ_THM] >> rw[] >>
+         Cases_on `n = x` >> fs[combinTheory.APPLY_UPDATE_THM]) >>
+    fs[]) >>
+first_x_assum drule >> rw[] >> 
+`fsatis (mm2folm M) (λn. w) phi = fsatis (mm2folm M) σm⦇x ↦ w⦈ phi /\ 
+ fsatis (mm2folm N) (λn. v) phi = fsatis (mm2folm N) σn⦇x ↦ v⦈ phi`
+   suffices_by metis_tac[] >>
+strip_tac 
+>- (`feval (mm2folm M) (λn. w) phi = feval (mm2folm M) σm⦇x ↦ w⦈ phi`
+        by 
+         (irule holds_valuation >> fs[SUBSET_DEF] >>
+          rw[combinTheory.APPLY_UPDATE_THM]) >>
+       `valuation (mm2folm M) (λn:num. w) /\ 
+        valuation (mm2folm M) σm⦇x ↦ w⦈`
+        by fs[valuation_def,mm2folm_def,bisim_world_def] >>
+        fs[fsatis_def]) >>
+`feval (mm2folm N) (λn. v) phi = feval (mm2folm N) σn⦇x ↦ v⦈ phi`
+        by 
+         (irule holds_valuation >> fs[SUBSET_DEF] >>
+          rw[combinTheory.APPLY_UPDATE_THM]) >>
+       `valuation (mm2folm N) (λn:num. v) /\ 
+        valuation (mm2folm N) σn⦇x ↦ v⦈`
+        by fs[valuation_def,mm2folm_def,bisim_world_def] >>
+        fs[fsatis_def]
 QED
 
 Theorem ppthm_2_68_half1:
@@ -678,12 +707,13 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Infix (LEFT, 500), 
                   pp_elements = [TOK "(ptt)"], 
                   term_name = "pt", paren_style = OnlyIfNecessary}
-
+(*
 Overload cp = ``\J A. Cart_prod (J:α -> bool)  A``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, pp_elements = [TOK "(cp1)", TM, TOK "(cp2)", TM, TOK "(cp3)"], 
                   term_name = "cp", paren_style = OnlyIfNecessary}
+*)
 
 Overload disj = ``\f1 f2. DISJ f1 f2``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
@@ -829,19 +859,7 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   pp_elements = [TOK "(bmi1)", TM, TOK "(bmi2)"], 
                   term_name = "bmi", paren_style = OnlyIfNecessary}
 
-Overload prdl = ``\a l. Pred a l``
-val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, 
-                  pp_elements = [TOK "(prdl1)", TM, TOK "(prdl2)", TM, TOK "(prdl3)"], 
-                  term_name = "prdl", paren_style = OnlyIfNecessary}
-
-
-Overload prd = ``\a l. fP a l``
-
-val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, 
-                  pp_elements = [TOK "(prd1)", TM, TOK "(prd2)", TM, TOK "(prd3)"], 
-                  term_name = "prd", paren_style = OnlyIfNecessary}
+Overload fPred = “\a l. Pred a l”
 
 Overload M3 = ``bounded_preimage_rooted M2 w``
 
@@ -887,6 +905,8 @@ Overload Emu = ``\s. s //E μ``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, pp_elements = [TOK "(Emu1)", TM, TOK "(Emu2)"], 
                   term_name = "Emu", paren_style = OnlyIfNecessary}
+
+Overload univn = ``univ(:num)``
 
 val _ = export_theory();
 

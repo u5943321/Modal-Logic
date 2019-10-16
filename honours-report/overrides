@@ -12,8 +12,8 @@ M2 1 \ensuremath{\mathfrak{M}}2
 M3 1 \ensuremath{\mathfrak{M}\sb{3}}
 M3' 1 \ensuremath{\mathfrak{M}'}3
 M4 1 \ensuremath{\mathfrak{M}}4
-MS 1 \ensuremath{\mathfrak{M}{s}}
-FMS 1 \ensuremath{\mathfrak{M}{s}}
+MS 1 \ensuremath{\mathfrak{M}\sp{\sf family}}
+FMS 1 \ensuremath{\mathfrak{M}\sp{\sf family}}
 FM 1 \ensuremath{\mathfrak{M}}
 f1 1 \ensuremath{\phi\sb{1}}
 f2 1 \ensuremath{\phi\sb{2}}
@@ -30,7 +30,7 @@ phi 1 \ensuremath{\phi}
 phis 1 \ensuremath{\phi s}
 phil1 1 \ensuremath{\phi l\sb{1}}
 phil2 1 \ensuremath{\phi l\sb{2}}
-fs 1 \ensuremath{\phi s}
+
 fs0 1 \ensuremath{\phi s\sb{0}}
 varphi 1 \ensuremath{\varphi}
 psi 1 \ensuremath{\psi}
@@ -150,9 +150,8 @@ FALL 1 \ensuremath{{}^{\sf f}{\forall}}
 (prd1) 2 \ensuremath{{}^{\sf f}{\sf P} \ }
 (prd2) 1 { \ }
 (prd3) 1 {}
-(prdl1) 2 \ensuremath{{}^{\sf f}{\sf Pred} \ }
-(prdl2) 1 { \ }
-(prdl3) 1 {}
+fP 3 \ensuremath{{}\sp{\mathsf{f}}\mathsf{P}}
+fPred 5 \ensuremath{{}\sp{\mathsf{f}}\mathsf{Pred}}
 fFALSE 1 \ensuremath{{}^{\sf f}\bot}
 fNOT 1 \ensuremath{{^{\sf f}}{\lnot}} 
 (fdisj) 1 \ensuremath{\ {}^{\sf f} {\lor} \ }
@@ -170,7 +169,7 @@ fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 (os2) 1 }\sp{\delta}\sb{\Diamond}(
 (os3) 1 )
 
-
+(univn) 1 {\mathbb N}
 
 (uer1) 0 {}\sp{ue}{
 (uer2) 1 }\sp{R}
@@ -207,3 +206,21 @@ fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 
 (Emu1) 0 {
 (Emu2) 1 } /{\equiv\sb{(:\beta)}}
+
+SUBMODEL 6 submodel
+expansion 8 is_expansion
+
+
+fc 2 \ensuremath{f\sb{U}}
+gc 2 \ensuremath{g\sb{U}}
+
+rv 2 rep
+
+In 3 \ensuremath{I\sp{\sf family}}
+Jn 3 \ensuremath{J\sp{\sf family}}
+Kn 3 \ensuremath{K\sp{\sf family}}
+Xn 3 \ensuremath{X\sp{\sf family}}
+Zn 3 \ensuremath{Z\sp{\sf family}}
+An 3 \ensuremath{A\sp{\sf family}}
+Sn 3 \ensuremath{S\sp{\sf family}}
+NN 1 N
