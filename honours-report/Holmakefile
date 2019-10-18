@@ -2,7 +2,7 @@ INCLUDES = ..
 
 TEXDIR = $(HOLDIR)/src/TeX
 
-report.pdf: report.tex dependency.tex
+report.pdf: report.tex dependency.tex everything.bib
 	latexmk -pdf report
 
 

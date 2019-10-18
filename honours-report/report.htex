@@ -43,7 +43,7 @@
 \setlength{\textwidth}{14.5cm}
 \setlength{\textheight}{22.5cm}
 \setlength{\topmargin}{2.5cm}
-
+%all lemmas and theorems are drawn from [5] unless noted otherwise. 
 
 \newcommand{\holref}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/00d0ddde512a3b7f01e07aef05403a48a18be476/#2Script.sml\#L#3}{#1}}
 
@@ -156,20 +156,32 @@ Nowadays, modal logic is widely adopted in many disciplines, including, but not 
 
 \section{What is HOL4?}
 
-A brief overview of HOL4 can be founded in ~\cite{Norrish}. For a short answer, HOL4 is a theorem prover which is used to prove theorems interactively on a computer. Here we stress the fact that we need to interact with the machine rather than let it prove theorems automatically. In fact, for a decidable system, where there exists an algorithm that decides if the given statement is true, theorems can be proved automatically in the sense that we can give a statement to a machine and let the machine give the answer that whether the given statement holds. However, according to Godel's incompleteness theorem, it is no algorithm that can determine the truth value of every mathematical statement. Hence to prove mathematical theorem, we do need to interact with the machine. Interactive theorem provers can use automatic techniques. For instance, as first-order logic and Peano arithmetic are both decidable, there is an automatic first-order solver implemented in HOL4, and simplifiers in HOL4 can automatically prove theorems about basic arithmetic. 
+A brief overview of HOL4 can be found in~\cite{Norrish}. 
+%
+For a short answer, HOL4 is an interactive theorem prover: a computer program used to prove mathematical theorems. 
+%
+We stress ``interactive'': we cannot let the machine prove theorems automatically. 
+%
+According to G\"odel's incompleteness theorem, there is no algorithm that can determine the truth value of every mathematical statement. 
+%
+Hence to prove mathematical theorems, we interact with the machine, providing human intelligence and guidance. 
+%
+However, it is also important that interactive theorem provers can and do use automatic techniques. 
+For instance, as there are such for both first-order logic and Presburger arithmetic, these can be embedded in HOL4, making it possible to work at a higher level when interacting with the machine. 
 
-There are many theorem provers based on various foundation systems: HOL4 is based on simple type theory, and there exist other theorem proves based on dependent type theory (e.g. Lean, Coq) and set theory (Mizar, metamath). Each of these systems has their advantages, but there is a trade-off: Simple type theory is widely considered as less expressive but rather easy to understand and to be implemented, whereas for more expressive systems, it takes longer for the machine to execute a proof step. 
+There are many theorem provers based on various foundational systems: HOL4 is based on simple type theory, and there exist other theorem proves based on dependent type theory (e.g. Lean, Coq) and set theory (Mizar, metamath). Each of these systems has their advantages, but there is a trade-off: simple type theory is widely considered as less expressive but rather easy to understand and to be implemented, whereas for more expressive systems, it takes longer for the machine to execute a proof step. 
 
 %HOL4 is on the sweet spot of the trade-off, We will identify where the lack of expressiveness cause problems. 
 
-\section{Why is the combining of the two interesting?}
+\section{Why is the combination of the two interesting?}
 
-As discussed above, modal model theory has a long history and many theorems in modal model theory have been proved since the usage of Kripke model became popular. Nevertheless, none of these theorems have been machine checked. By formalizing modal model theory in a computer, we will make sure that we have    understood every detail of the formalized theorems, find out hidden assumptions, and correct minor errors in the statements. And by formalizing it in HOL4, we will demonstrate that although simple type theory is a rather weak foundation system and does lack on express, it is still capable of capturing most of the theorems we are interested in. We will identify where the lack of expressiveness causes problems.
+As discussed above, modal model theory has a long history and many theorems in modal model theory have been proved since the usage of Kripke models became popular. Nevertheless, none of these theorems have been machine checked. By formalizing modal model theory in a computer, we will make sure that we have    understood every detail of the formalized theorems, find out hidden assumptions, and correct minor errors in their statements. And by formalizing in HOL4, we will demonstrate that although simple type theory is a rather weak foundational system and does lack expressiveness, it is still capable of capturing most of the theorems we are interested in. 
+We identify where the lack of expressiveness causes problems.
 
 
 \section{What have we done?}
 
-My project is to formalize some theorems of modal model theory, based on the first two chapters of the textbook `Modal Logic' Blackburn et al ~\cite{Blackburn}. At the beginning of the textbook, the authors give three slogans of this subject:
+My project is to formalize some theorems of modal model theory, based on the first two chapters of the textbook \emph{Modal Logic} by Blackburn, de Rijke and Venema~\cite{Blackburn}. At the beginning of the textbook, the authors give three slogans of this subject:
 
 \begin{description}
 \item [Slogan 1:] Modal languages are simple yet expressive languages for talking about relational structures.
@@ -191,13 +203,22 @@ In summary:
 
 \end{itemize}
 
-\section{How to read this thesis?}
+\section{How to read this thesis}
 
-This thesis is to explain the mainline of the work we have done, and it is made as self-contained as possible. We do not assume a reader to know either modal logic or theorem proving, so we are introducing both of them to the reader in this thesis. There is two choice of organizing the structure of the thesis, which is written in order to teaching the reader both modal logic and theorem proving: One approach is to introduce modal logic to the reader in a purely mathematical way first, then talk about its formalization. The other approach is to teach the reader about these two things at the same time. For controlling the length of the thesis, we will use the second approach.
+This thesis explains the most interesting parts of the work we have done, and it is as self-contained as possible. 
+We do not assume the reader knows either modal logic or theorem proving, so we will introduce both topics. 
+The approach we have taken to structuring the thesis is explain both topics at the same time. 
 
- In this thesis, we will explicitly give most of the formal definitions definitions we use, and give the formal statements of constructions and theorems when it is necessary. For controlling the length, we only talk about the rather interesting theorems, and omit the ones which are rather boring. We have omitted some proofs which are routine or not interesting enough from the theorem-proving aspect. But these missing proofs have all been formalized in HOL4. 
+We explicitly give most of the formal definitions we use, as well as the formal statements of constructions and theorems when necessary. 
+For the sake of length, we only explain the most interesting theorems, and omit those that are less interesting. 
+Though the thesis omits some proofs that are routine or not interesting enough from the theorem-proving aspect, all proofs have been formalized in HOL4. 
 
-For each of the definitions and theorems shown in this thesis, we have provided a link which the reader can click and go to github and see its statement in HOL4.
+For all definitions and theorems in this thesis, we provide a clickable link to the HOL sources on github, where the formal statements can be viewed. 
+All the results in the thesis have been pretty-printed from HOL sources, meaning that there is no chance of error in the transfer from checked material to \LaTeX. 
+However, the pretty-printing process does turn purely linear computer text into more agreeable printed mathematics, complete with subscripts, superscripts and the like. 
+We encourage the reader to follow at least one hyperlink to see the original text as it was provided to HOL, and to compare this with the pretty-printed version in the thesis.
+
+
 
 \chapter{Getting Started}
 
@@ -274,7 +295,9 @@ An $\alpha$-modal formula as described above is specified formally in HOL4 as:
 
 Note that \HOLtm{DISJ} is of type $\alpha \ form \to (\alpha \ form \to \alpha\ form)$, which means that it can be regarded as a function that takes two $\alpha$-modal formulas and gives an $\alpha$-modal formula. In particular, once \HOLtm{DISJ} appears, the two arguments after it are always $\alpha$-modal formula, otherwise it does not make sense. We will write `\HOLtm{DISJ phi1 phi2}' for `\HOLtm{DISJ} $\phi_1 \ \phi_2$' afterwards. We can also regard $\lnot$ and $\Diamond$ as functions of type $\alpha \ form\to \alpha \ form$. The functions \HOLtm{VAR}, \HOLtm{DISJ}, \HOLtm{NOT}, \HOLtm{DIAM} together with \HOLtm{FALSE} are called the \emph{constructors} of the type of $\alpha$-modal formulas. For abbreviation, we will write $\phi_1\lor \phi_2$ for \HOLtm{DISJ phi1 phi2} throughout this thesis. From now on, when we talk about $\alpha$-modal formula, we will call a term of type $\alpha$ a \emph{propositional letter}. We will just call an $\alpha$-modal formula an $\alpha$-formula if no confusion arises. 
 
-The non-primitive connectives, the conjunction `$\land$', the implication `$\to$', and the truth `$\top$', are defined in a standard way as $\phi_1\land \phi_2:=\lnot (\lnot \phi_1\lor \phi_2)$, $\phi_1\to \phi_2 := \lnot \phi_1\lor \phi_2$ and $\top:= \lnot\bot$ respectively.
+The non-primitive connectives, the conjunction `$\land$', the implication `$\to$', and the truth `$\top$', are defined in a standard way as $\phi_1\land \phi_2:=\lnot (\lnot \phi_1\lor \phi_2)$, $\phi_1\to \phi_2 := \lnot \phi_1\lor \phi_2$ and $\top:= \lnot\bot$ respectively. 
+
+Throughout this thesis, we will only consider conjunction and disjunction of finitely many formulas. 
 
 
 We have a modal operator that is dual to the diamond: the box $\Box \phi:= \lnot\Diamond \lnot \phi$, as an analogue of the duality between the universal quantifier and the existential quantifier, in the sense that $\exists$ is defined to be $\lnot\forall\lnot$ in classical logic. 
@@ -712,7 +735,7 @@ We define a function \HOLtm{hrestriction} that takes a rooted model \HOLtm{M}, i
 \end{defn}
 
 The restriction of a tree-like model to every height is again a tree-like model. Moreover, restriction of every rooted model gives arise of $n$-bisimulation. 
-\begin{lm}[\cite{Blackburn}{Lemma 2.33}, \holref{\texttt{lemma_2_33}}{chap2_3}{1530}]\label{4.3}
+\begin{lm}{\upshape\holref{\cite[Lemma 2.33]{Blackburn}}{chap2_3}{1530}}\label{4.3}
 If we restrict a rooted model \HOLtm{M} to height $k$, then a world $w$ of height $m$ in the restricted model is $k-m$-bisimilar to itself in the original model. 
 \begin{holmath}
   \HOLthm[r/x]{prettyPrinting.pplemma_2_33}
@@ -1469,8 +1492,8 @@ If we want to find a valuation of a ultraproduct model satisfying a first-order 
 
 All the construction we did above serves to pave a way of getting a countably saturated model. For a family of non-empty models, we will prove that their ultraproduct on a \emph{countably incomplete} ultrafilter is countably saturated. An ultrafilter $U$ on $J$ is countably incomplete if there exists a function \HOLtm{Sn} such that \HOLtm{(Sn n) IN U} for each natural number $n$, and the intersection $\bigcap_{n\in \mathbb N}$\HOLtm{Sn n} is empty. In other words, a countably incomplete ultrafilter is an ultrafilter which is not closed under infinite intersection. Countably incomplete ultrafilters do exist. To see this, first observe that the set $A$ of subsets of $\mathbb N$ of form ${\mathbb N}\setminus X$, where $X$ is a finite subset of $\mathbb N$, has finite intersection property. Therefore, by Proposition \ref{5.12}, there exists an ultrafilter $U$ that contains $A$. The ultrafilter $U$ will not contain any finite set, otherwise, it will contain both a subset of $\mathbb N$ and its complement, and hence contradict the fact that $U$ is an ultrafilter. 
 
-
-\begin{lm}[\cite{Blackburn}{Lemma 2.73}, \holref{\texttt{lemma_2_73}}{lemma2_73}{1085}]\label{6.10}
+\cite[Lemma 2.73]{Blackburn}
+\begin{lm}[\holref{\texttt{lemma_2_73}}{lemma2_73}{1085}]\label{6.10}
 For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is countably saturated. 
 \begin{holmath}
   \HOLthm[J/I,j/i]{prettyPrinting.pplemma_2_73}
@@ -1808,7 +1831,13 @@ By Corollary \ref{6.21}, if we can prove for every $(num,\beta)$-model \HOLtm{M}
 
 Therefore, our task is to prove the entailment from \HOLtm{PEC} to $\phi$. Suppose \HOLtm{satis M w varphi} for all \HOLtm{varphi IN PEC} , we prove \HOLtm{satis M w phi}. Define \HOLtm{Γ={NOT psi | PE psi /\ satis M w (NOT psi)\}}. We claim that there exists a $(num,\beta)$-model with a world that satisfies the set \HOLtm{Γ ∪ {phi\}}. By Theorem \ref{6.20}, it suffices to prove each finite subset of \HOLtm{Γ ∪ {phi\}} is satisfied by some model. Suppose there exists a finite subset of \HOLtm{Γ ∪ {phi\}} which can be satisfied by no model, then there exists $\lnot\psi_0,\cdots,\lnot\psi_n\in$ \HOLtm{Γ} such that for every $(num,\beta)$-model \HOLtm{N} and every world $v$ of it, if \HOLtm{satis N (v:β) phi}, then there exists some $0\le i\le n$ such that ${\mathfrak N} ,\ v \ \Vdash \psi_i$. As all these $\psi$'s are positive existential, so does their big disjunction $\psi$, and hence \HOLtm{psi IN PEC}.  As \HOLtm{M} entails \HOLtm{PEC}, we have \HOLtm{satis M w psi}, and hence ${\mathfrak M}, \ w \Vdash \psi_i$  for some $i$ by definition of the $\psi$. But on other hand, ${\mathfrak M}, \ w \Vdash \lnot \psi_i$ for every $\psi_i$ by definition of \HOLtm{Γ}. This is a contradiction. 
 
-Hence we obtain a model \HOLtm{N} such that every element in \HOLtm{Γ ∪ {phi\}} is satisfied at a point \HOLtm{v IN N.frame.world}. For every positive existential formula $\psi$ such that \HOLtm{¬satis M w psi}, we have \HOLtm{NOT psi IN Γ}, so \HOLtm{satis N v (NOT psi)}. Hence for every positive existential $\psi$, if \HOLtm{satis N v psi}, then \HOLtm{satis M w psi}. We migrant this implication onto ultrafilter extensions: We take the ultrafilter extension of \HOLtm{M} and \HOLtm{N} respectively. By Proposition \ref{5.19}, for every positive existential $\psi$, \HOLtm{satis (UE N) (principle_UF v N.frame.world) psi} implies \HOLtm{satis N v psi}, by the discussion above, it implies \HOLtm{satis M w phi}, and hence implies \HOLtm{satis (UE M) (principle_UF w M.frame.world) psi} by Proposition \ref{5.19} again. As \HOLtm{(UE M)} and \HOLtm{UE N} are m-saturated by Proposition \ref{5.21}, by Proposition \ref{6.19}, we have a simulation relating \HOLtm{(principle_UF v N.frame.world)} to \HOLtm{(principle_UF w M.frame.world)}. 
+Hence we obtain a model \HOLtm{N} such that every element in \HOLtm{Γ ∪ {phi\}} is satisfied at a point \HOLtm{v IN N.frame.world}. For every positive existential formula $\psi$ such that \HOLtm{¬satis M w psi}, we have \HOLtm{NOT psi IN Γ}, so \HOLtm{satis N v (NOT psi)}. Hence for every positive existential $\psi$, if \HOLtm{satis N v psi}, then \HOLtm{satis M w psi}. Consider the ultrafilter extensions \HOLtm{UE M} and \HOLtm{UE N}, we claim the worlds
+\HOLtm{satis (UE N) (principle_UF v N.frame.world) psi} is related to the world
+ \HOLtm{satis (UE M) (principle_UF w M.frame.world) psi} by a simulation. By Proposition \ref{6.19}, it suffices to prove that every positive existential formula which is satisfied at \HOLtm{satis (UE N) (principle_UF v N.frame.world) psi}  is also satisfied at \HOLtm{satis (UE M) (principle_UF w M.frame.world) psi}. Consider a positive existential $\psi$, \HOLtm{satis (UE N) (principle_UF v N.frame.world) psi} implies \HOLtm{satis N v psi}, by the discussion above, it implies \HOLtm{satis M w phi}, and hence implies \HOLtm{satis (UE M) (principle_UF w M.frame.world) psi} by Proposition \ref{5.19} again.
+
+
+
+%By Proposition \ref{5.19}, for every positive existential $\psi$, \HOLtm{satis (UE N) (principle_UF v N.frame.world) psi} implies \HOLtm{satis N v psi}, by the discussion above, it implies \HOLtm{satis M w phi}, and hence implies \HOLtm{satis (UE M) (principle_UF w M.frame.world) psi} by Proposition \ref{5.19} again. As \HOLtm{(UE M)} and \HOLtm{UE N} are m-saturated by Proposition \ref{5.21}, by Proposition \ref{6.19}, we have a simulation relating \HOLtm{(principle_UF v N.frame.world)} to \HOLtm{(principle_UF w M.frame.world)}. 
 
 As \HOLtm{satis N v phi}, Proposition \ref{5.19} gives \HOLtm{satis (UE N) (principle_UF v N.frame.world) phi}, as $\phi$ is preserved under simulation, we have 
 \HOLtm{satis (UE M) (principle_UF w M.frame.world) phi}. Again by Proposition \ref{5.19} , it implies \HOLtm{satis M w phi}. This completes the proof.
