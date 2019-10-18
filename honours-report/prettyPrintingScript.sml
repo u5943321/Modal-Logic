@@ -397,7 +397,13 @@ rw[] >>
 rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def,ultraproduct_model_def,mm2folm_def]
 QED
 
-
+Theorem ppprop_2_31_half1:
+∀M M' n w w' f.
+            (nbisim M M' f n w w' /\
+            DEG phi ≤ n) ⇒ (satis M w phi ⇔ satis M' w' phi)
+Proof
+metis_tac[prop_2_31_half1]
+QED
 
 Theorem ppultraproduct_sat:
 !U I FMS x f s.
@@ -566,6 +572,18 @@ Theorem ppmodal_compactness_thm:
             ∃M w:α. w ∈ M.frame.world ∧ ∀f. f ∈ s ⇒ satis M w f
 Proof
 metis_tac[modal_compactness_thm]
+QED
+
+
+Theorem pphrestriction_def:
+∀M x M' n.
+            hrestriction M x M' n =
+            <|frame :=
+                <|world := {w | w ∈ M.frame.world ∧ height M x M' w ≤ n};
+                  rel := M.frame.rel|>;
+              valt := M.valt|>
+Proof
+rw[hrestriction_def,FUN_EQ_THM]
 QED
 
 Theorem ppmodal_compactness_corollary:

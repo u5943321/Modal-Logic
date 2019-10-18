@@ -214,7 +214,6 @@ expansion 8 is_expansion
 fc 2 \ensuremath{f\sb{U}}
 gc 2 \ensuremath{g\sb{U}}
 
-rv 2 rep
 
 In 3 \ensuremath{I\sp{\sf family}}
 Jn 3 \ensuremath{J\sp{\sf family}}
@@ -224,3 +223,5 @@ Zn 3 \ensuremath{Z\sp{\sf family}}
 An 3 \ensuremath{A\sp{\sf family}}
 Sn 3 \ensuremath{S\sp{\sf family}}
 NN 1 N
+M_sat 2 m_sat
+rv 1 \ensuremath{\sigma\sb{\sf rep}}
