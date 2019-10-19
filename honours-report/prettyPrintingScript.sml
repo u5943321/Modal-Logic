@@ -795,12 +795,12 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   term_name = "hom", paren_style = OnlyIfNecessary}
 
 
-Overload bisim = ``\M1 Z M2. bisim Z M1 M2``
+Overload bisim' = ``\M1 Z M2. bisim Z M1 M2``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Infix (NONASSOC, 450), 
                   pp_elements = [TOK "(bisim1)", TM, TOK "(bisim2)"], 
-                  term_name = "bisim", paren_style = OnlyIfNecessary}
+                  term_name = "bisim'", paren_style = OnlyIfNecessary}
 
 
 Overload bw = ``\M1 w1 M2 w2. bisim_world M1 M2 w1 w2``
@@ -925,7 +925,6 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   term_name = "Emu", paren_style = OnlyIfNecessary}
 
 Overload univn = ``univ(:num)``
-
 val _ = export_theory();
 
 

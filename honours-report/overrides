@@ -215,13 +215,12 @@ fc 2 \ensuremath{f\sb{U}}
 gc 2 \ensuremath{g\sb{U}}
 
 
-In 3 \ensuremath{I\sp{\sf family}}
-Jn 3 \ensuremath{J\sp{\sf family}}
-Kn 3 \ensuremath{K\sp{\sf family}}
-Xn 3 \ensuremath{X\sp{\sf family}}
-Zn 3 \ensuremath{Z\sp{\sf family}}
-An 3 \ensuremath{A\sp{\sf family}}
-Sn 3 \ensuremath{S\sp{\sf family}}
+In 3 \ensuremath{I\sp{\sf s}}
+Jn 3 \ensuremath{J\sp{\sf s}}
+Kn 3 \ensuremath{K\sp{\sf s}}
+Xn 3 \ensuremath{X\sp{\sf s}}
+Zn 3 \ensuremath{Z\sp{\sf s}}
+An 3 \ensuremath{A\sp{\sf s}}
+Sn 3 \ensuremath{S\sp{\sf s}}
 NN 1 N
-M_sat 2 m_sat
 rv 1 \ensuremath{\sigma\sb{\sf rep}}

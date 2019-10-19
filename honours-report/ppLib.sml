@@ -29,4 +29,7 @@ val _ = Parse.type_abbrev_pp ("folmodel", ``:'a folModels$model``);
 val _ = Parse.type_abbrev_pp ("folform", ``:folLang$form``);
 val _ = Parse.type_abbrev_pp ("model", ``:('a,'b) chap1$model``);
 val _ = Parse.overload_on ("pvalue", ``peval``);
+
+(* val _ = Parse.remove_user_printer "pred_set.UNIV" *)
+
 end (* struct *)
