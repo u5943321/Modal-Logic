@@ -1157,7 +1157,7 @@ And the corollary of ultrafilter theorem that we will need is stated as:
 {\upshape\holref{\cite[Fact A.14, second half]{Blackburn}}{ultrafilter}{417}}
 %[\holref{\texttt{ultrafilter_theorem_corollary}}{ultrafilter}{417}]
 \label{5.12}
-For every set $A$ of subsets of a non-empty set $J$, there exists an ultrafilter on $J$ which contains $A$.
+For every set $A$ of subsets of a non-empty set $J$ with finite intersection property, there exists an ultrafilter on $J$ which contains $A$.
 \begin{holmath}
   \HOLthm[J/W,A/s,U/u]{ultrafilter.ultrafilter_theorem_corollary}
 \end{holmath}
@@ -1168,24 +1168,24 @@ The proof of both ultrafilter theorem and its corollary are not technical from t
 %(long long long dividing line- --------------------------)
 
 
-We can now launch on the construction of the ultrafilter extension of a model. For a model \HOLtm{M}, the world set of its ultrafilter extension of \HOLtm{M} is simply the set of ultrafilters on the world set of \HOLtm{M}, whereas the relation defined on the set of ultrafilters require more explanation. 
+We can now launch on the construction of the ultrafilter extension of a model. For a model \HOLtm{M}, the world set of the ultrafilter extension of \HOLtm{M} is simply the set of ultrafilters on the world set of \HOLtm{M}, whereas the relation defined on the set of ultrafilters require more explanation. 
 
 Fix a model \HOLtm{M} and a subset $X$ of its world set, we can consider two set of worlds determined by $X$: 
 
 \begin{defn}
 {\upshape\holref{\cite[Definition 2.55 (`Can See' and `Only See')]{Blackburn}}{chap2_5}{189}}
 %[\holref{`Can see'}{chap2_5}{189} and \holref{`Only see'}{chap2_5}{192}]
-Given a model \HOLtm{M} and a set \HOLtm{X} of worlds of \HOLtm{M}, we define sets:
+Given a model \HOLtm{M} and a set \HOLtm{X} of worlds of \HOLtm{M}, we define:
 
 \begin{itemize}
 \item The set of worlds that `can see' $X$ (notation: \HOLtm{can_see M X}) is the set of worlds $w$ of \HOLtm{M} such that there exists some \HOLtm{v IN X} such that \HOLtm{M.frame.rel w v}.
 
-\item The set of worlds that `only see' $X$ (notation: \HOLtm{only_see M X}) is the set of worlds $w$ of \HOLtm{M} such that once we have \HOLtm{M.frame.rel w v} for some other world \HOLtm{v IN M.frame.world}, we must have \HOLtm{v IN X}.
+\item The set of worlds that `only see' $X$ (notation: \HOLtm{only_see M X}) is the set of worlds $w$ of \HOLtm{M} such that once we have \HOLtm{M.frame.rel w v} for some world \HOLtm{v IN M.frame.world}, we must have \HOLtm{v IN X}.
 \end{itemize}
 In HOL:
 \begin{holmath}
-  \HOLthm[def]{chap2_5.can_see_def}\\[3mm]
-  \HOLthm[def]{chap2_5.only_see_def}
+  \HOLthm[def,v/x]{chap2_5.can_see_def}\\[3mm]
+  \HOLthm[def,v/x]{chap2_5.only_see_def}
 \end{holmath}
 \end{defn}
 
@@ -1199,7 +1199,7 @@ By definition of satisfaction, for every model formula \HOLtm{phi}, the worlds s
 {\upshape\holref{\cite[Proposition 2.56]{Blackburn}}{chap2_5}{207}}
 %[Duality between \holref{`can see'}{chap2_5}{213} and \holref{`only see'}{chap2_5}{207}]
 \label{5.16}
-The worlds that can see a world in $X$ is precisely a world that does not only see worlds that are not in $X$. Similarly, a world that can only see worlds in $X$ is precisely a world which can not see worlds which are not in $X$. 
+A world that can see a world in $X$ is precisely a world that does not only see worlds that are not in $X$. Similarly, a world that can only see worlds in $X$ is precisely a world which does not see worlds which are not in $X$. 
 \begin{holmath}
   \HOLthm{chap2_5.can_only_dual}\\[3mm]
   \HOLthm{chap2_5.only_can_dual}
@@ -1222,7 +1222,7 @@ Return to the discussion about the definition of relation on the ultrafilter ext
 \begin{defn}
 {\upshape\holref{\cite[Proposition 2.57 (Relation of Ultrafilter Extension)]{Blackburn}}{chap2_5}{221}}
 %[\holref{Relation used in ultrafilter extension}{chap2_5}{221}]
-Two ultrafilter $u,v$ on \HOLtm{M} are related in the ultrafilter extension of \HOLtm{M} if for every $X\in v$, the set of worlds that can see $X$ is in $u$. 
+Two ultrafilters $u,v$ on \HOLtm{M} are related in the ultrafilter extension of \HOLtm{M} if for every $X\in v$, the set of worlds that can see $X$ is in $u$. 
 \begin{holmath}
   \HOLthm[def,width=65]{chap2_5.UE_rel_def}
 \end{holmath}
@@ -1246,7 +1246,7 @@ Suppose \HOLtm{UE_rel M u v} and pick a set $Y$ of worlds such that \HOLtm{(only
 
 \end{proof}
 
-In order to define the ultrafilter extension model, the only remaining issue is to define the valuation. We define a propositional letter $p$ to be satisfied at an ultrafilter $v$ if and only if the set of worlds in \HOLtm{M} which satisfies the $p$ is in $v$. Hence the full definition of ultrafilter extension is:
+In order to define the ultrafilter extension model, the only remaining issue is to define the valuation. We define a propositional letter $p$ to be satisfied at an ultrafilter $v$ if and only if the set of worlds in \HOLtm{M} which satisfies $p$ is in $v$. Hence the full definition of ultrafilter extension is:
 
 \begin{defn}
 {\upshape\holref{\cite[Definition 2.57 (Ultrafilter Extension)]{Blackburn}}{chap2_5}{267}}
@@ -1294,15 +1294,15 @@ The ultrafilter extension of each model is M-saturated.
 \begin{proof}
 Suppose \HOLtm{Σ} is a set of formulas which is finitely satisfiable in the set of successors of a world \HOLtm{u IN (UE M).frame.world}, we need to find a world \HOLtm{u' IN (UE M).frame.world} such that \HOLtm{UE_rel M u u'} and \HOLtm{satis (UE M) u' phi} for all \HOLtm{phi IN Σ}. By Proposition \ref{5.18} and Proposition \ref{5.20}, it amounts to find an ultrafilter $u'$ on \HOLtm{M.frame.world} such that \HOLtm{{Y | (only_see M Y) IN u\} ⊆ u'} and \HOLtm{{w | w IN M.frame.world /\ satis M w phi\} IN u'} for all \HOLtm{phi IN Σ}.
 
-Consider the set $\Delta:=$
+Consider the set \HOLtm{Δ}
 \begin{holmath}
 \HOLtm{{{w | w IN M.frame.world /\ !phi.phi IN s ==> satis M w phi\}| FINITE s /\ s ⊆ Σ\} ∪ {Y | (only_see M Y) IN u /\ Y ⊆ M.frame.world\}},
 \end{holmath}
- we check $\Delta$ has the finite intersection property. The only nontrivial thing to check is that for $a$ in the first set of the union and $b$ in the second set of the union, we have $a\cap b\ne\emptyset$.
+ we check \HOLtm{Δ} has the finite intersection property. The only nontrivial thing to check is that for $a$ in the first set of the union and $b$ in the second set of the union, we have $a\cap b\ne\emptyset$.
 
 Suppose $s \subseteq\Sigma$ is finite, and $b$ is a set of worlds in \HOLtm{M} such that \HOLtm{(only_see M b) IN u}, we show \HOLtm{{w | w IN M.frame.world /\ !phi. phi IN s ==> satis M w phi\} ∩ b <> {\}}. Recall \HOLtm{Σ} is finitely satisfiable in the set of successors of $u$, we have a world $u''$ such that \HOLtm{UE_rel M u u''} and \HOLtm{satis (UE M) u'' phi} for all $\phi \in s$, in other worlds, \HOLtm{{w | w IN M.frame.world /\ satis M w phi\} IN u''} for all $\phi\in s$. Then as $s$ is finite, \HOLtm{{w | w IN M.frame.world /\ !phi.phi IN s ==> satis M w phi\}} is a big intersection of finitely many sets in $u''$, and hence is in $u''$. By Proposition \ref{5.18} again, \HOLtm{UE_rel M u u''} gives \HOLtm{{Y | (only_see M Y) IN u /\ Y ⊆ M.frame.world\} ⊆ u''}, so $b\in u''$ as well. As two elements in $u''$ has a nonempty intersection, we are done.
 
-Hence by Proposition \ref{5.12}, there exists an ultrafilter $u'$ contains $\Delta$, it is routine to check $u'$ is what we want.
+Hence by Proposition \ref{5.12}, there exists an ultrafilter $u'$ contains \HOLtm{Δ} is routine to check $u'$ is what we want.
 \end{proof}
 
 Finally, as claimed at the beginning of this chapter, we arrive at the characterization of modal equivalence as bisimilarity in the ultrafilter extensions:
