@@ -303,6 +303,38 @@ Theorem holds_valuation':
 Proof
 metis_tac[holds_valuation]
 QED
+(*
+Theorem prop_2_47_i'':
+satis M w phi ⇔ fsatis (mm2folm M) (\n.w) (ST x phi)
+Proof
+rw[EQ_IMP_THM] (* 2 *)
+>- (`IMAGE (\n.w) 𝕌(:num) ⊆ M.frame.world`
+     by 
+      (rw[IMAGE_DEF,SUBSET_DEF] >> metis_tac[satis_in_world]) >>
+   drule prop_2_47_i >> rw[] >> metis_tac[]) >>
+`IMAGE (\n.w) 𝕌(:num) ⊆ M.frame.world`
+  by
+   (fs[fsatis_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def,valuation_def]) >>
+drule prop_2_47_i >> rw[] >> metis_tac[]
+QED
+
+
+Theorem prop_2_47_i''':
+satis (folm2mm M) w phi ⇔ fsatis M (\n. w) (ST x phi)
+Proof
+rw[EQ_IMP_THM] (* 2 *)
+>- (`IMAGE (\n.w) 𝕌(:num) ⊆ M.Dom`
+     by 
+      (`(folm2mm M).frame.world = M.Dom` by fs[folm2mm_def] >>
+       rw[IMAGE_DEF,SUBSET_DEF] >> metis_tac[satis_in_world]) >>
+    drule prop_2_47_i' >> rw[fsatis_def]
+    >- fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >>
+    metis_tac[]) 
+>- (`IMAGE (\n.w) 𝕌(:num) ⊆ M.Dom`
+      by fs[IMAGE_DEF,SUBSET_DEF,fsatis_def,valuation_def] >> 
+    drule prop_2_47_i' >> rw[] >> fs[fsatis_def] >> metis_tac[])
+QED
+*)
 
 val _ = export_theory();
 	          

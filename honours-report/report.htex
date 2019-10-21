@@ -996,7 +996,7 @@ Some syntactic properties of standard translation are immediate to prove. For in
 
  On the other hand, standard translations have interesting semantical behavior as well. Their semantical features give a first-order reformulation of modal satisfaction. 
 \begin{prop}
-{\upshape\holref{\cite[Theorem 2.41 (i)]{Blackburn}}{chap2_4revised}{76}}
+{\upshape\holref{\cite[Theorem 2.47 (i)]{Blackburn}}{chap2_4revised}{76}}
 %[\cite{Blackburn}{Proposition 2.41 (i)}, \holref{\texttt{prop_2_47_i}}{chap2_4revised}{76}]
 \label{5.4}
 A modal formula \HOLtm{phi} is satisfied at a world in a modal model \HOLtm{M} iff its standard translation \HOLtm{ST x phi} is satisfied in \HOLtm{M} viewed as a first-order model when the free variable $x$ is assigned this world.
@@ -1053,7 +1053,7 @@ In the second chapter, we have seen bisimilarity implies modal equivalence, but 
 Let us explain what is meant by `M-saturated' first. Being M-saturated is a sort of compactness property, which says `finite satisfaction implies satisfaction'. We need to give three definitions consecutively to finally get M-saturation to be formally defined in HOL. 
 
 \begin{defn}
-{\upshape\holref{\cite[Definition 2.53 (Satisfiable), first part]{Blackburn}}{chap2_5}{43}}
+{\upshape\holref{\cite[Definition 2.53 (Satisfiable)]{Blackburn}}{chap2_5}{43}}
 %[\holref{Satisfiable}{chap2_5}{43}]
  A set of formulas \HOLtm{Σ} is called satisfiable in a set $X$ of worlds in a model \HOLtm{M} if there exists an element in $X$ such that all the formulas in \HOLtm{Σ} are satisfied. 
 \begin{holmath}
@@ -1092,15 +1092,15 @@ For two worlds $w_1$ and $w_2$ living in M-saturated models \HOLtm{M1} and \HOLt
 \end{prop}
 
 \begin{proof}
-Let \HOLtm{M1} and \HOLtm{M2} be models. In fact, they can be $(\alpha,\beta),(\alpha,\gamma)$-models respectively, where $\beta$ and $\gamma$ are not required to be the same. Under the assumptions, the bisimulation relation $Z$ we need is defined as  \HOLtm{Z w1 w2 <=> (!phi. satis M1 w1 phi <=> satis M2 w2 phi)}. To prove this relation is indeed a bisimulation, the only non-trivial clause to check is that for worlds $w_1,v_1$ of \HOLtm{M1} and world $w_2$ of \HOLtm{M2} such that $w_1$ and $w_2$ are modal equivalent, we can find a world $v_2$ of \HOLtm{M2} such that \HOLtm{M2.frame.rel w2 v2} and $v_1$ and $v_2$ are modal equivalent.
+Let \HOLtm{M1} and \HOLtm{M2} be models. In fact, they can be $(\alpha,\beta),(\alpha,\gamma)$-models respectively, where $\beta$ and $\gamma$ are not required to be the same. Under the assumptions, the bisimulation relation $Z$ we need is for \HOLtm{a IN M1.frame.world} and \HOLtm{b IN M2.frame.world}, we have \HOLtm{Z a b <=> (!phi. satis M1 a phi <=> satis M2 b phi)}. To prove this relation is indeed a bisimulation, the only non-trivial clause to check is that for worlds $w_1,v_1$ of \HOLtm{M1} and world $w_2$ of \HOLtm{M2} such that $w_1$ and $w_2$ are modal equivalent, we can find a world $v_2$ of \HOLtm{M2} such that \HOLtm{M2.frame.rel w2 v2} and $v_1$ and $v_2$ are modal equivalent.
 
 Under the assumptions above, let \HOLtm{Σ} denote the set of formulas satisfied by $v_1$, we will find a successor \HOLtm{w} of $w_2$ where each formula in \HOLtm{Σ} is satisfied, then the world \HOLtm{w} will be modal equivalent to \HOLtm{v1}. Indeed, if we find such a \HOLtm{w}, then for a formula \HOLtm{psi} which is not satisfied at \HOLtm{v1}, we will have \HOLtm{(NOT psi) IN Σ} and hence \HOLtm{NOT psi} will be satisfied at \HOLtm{w}, which implies \HOLtm{psi} is not satisfied at \HOLtm{w}. 
 
- As \HOLtm{M2} is M-saturated, it suffices to prove each finite subset $\Delta\subseteq \Sigma$ is satisfied in some successor of $w_2$. Take such a $\Delta$, then it is satisfied at $v_1$ by its definition. As $\Delta$ is finite, we can conjunct all its elements to obtain a formula $\psi$. We have \HOLtm{satis M1 v1 psi}, and therefore \HOLtm{satis M1 w1 (DIAM psi)}. By modal equivalence of $w_1$ and $w_2$, we then get \HOLtm{satis M2 w2 (DIAM psi)}, so there exists a successor $w$ of $w_2$ that satisfies $\psi$. Hence $w$ will satisfy every formula in \HOLtm{Δ}.
+ As \HOLtm{M2} is M-saturated, it suffices to prove each finite subset \HOLtm{Δ ⊆ Σ} is satisfied in some successor of $w_2$. Take such a \HOLtm{Δ}, then it is satisfied at $v_1$ by its definition. As \HOLtm{Δ} is finite, we can conjunct all its elements to obtain a formula $\psi$. We have \HOLtm{satis M1 v1 psi}, and therefore \HOLtm{satis M1 w1 (DIAM psi)}. By modal equivalence of $w_1$ and $w_2$, we then get \HOLtm{satis M2 w2 (DIAM psi)}, so there exists a successor $w'$ of $w_2$ that satisfies $\psi$. Hence $w'$ will satisfy every formula in \HOLtm{Δ}.
 
 \end{proof}
 
-Since M-saturated models are nice, here is a natural question: How can we get such models? In the rest of this section, we will see the fact the \emph{ultrafilter extension} of every model is M-saturated. In order to talk about ultrafilter extensions, we wrote a theory about ultrafilters in HOL. We will not show the whole theory here, but will just give the ingredients we will need only for the sake of this section. 
+Since M-saturated models are nice, here is a natural question: How can we get such models? In the rest of this section, we will see the fact the \emph{ultrafilter extension} of every model is M-saturated. In order to talk about ultrafilter extensions, we wrote a theory about ultrafilters in HOL. Instead of showing the whole theory here, we will just show what we need for this section. 
 %I am a dividing line -----------------------------------
 
 As its name suggests, an ultrafilter is a special kind of filter. 
@@ -1143,7 +1143,7 @@ The other one is a corollary of the ultrafilter theorem. This corollary says tha
 \begin{defn}
 {\upshape\holref{\cite[Definition A.13 (Finite Intersection Property)]{Blackburn}}{ultrafilter}{179}}
 %[\holref{Finite intersection property}{ultrafilter}{179}]
- A subset $A$ of \HOLtm{POW J} has finite intersection property if once we take the intersection of finitely many elements in $A$, the resultant set is nonempty. We read `\HOLtm{FIP A J}' as `$A$ is a set of subsets of $J$ with finite intersection property'.
+ A subset $A$ of \HOLtm{POW J} has finite intersection property if once we take the intersection of a finite, nonempty family in $A$, the resultant set is nonempty. We read `\HOLtm{FIP A J}' as `$A$ is a set of subsets of $J$ with finite intersection property'.
 \begin{holmath}
   \HOLthm[J/W,A/S,B/S',width=65]{ultrafilter.FIP_def}
 \end{holmath}
