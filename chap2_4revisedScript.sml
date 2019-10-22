@@ -303,8 +303,8 @@ Theorem holds_valuation':
 Proof
 metis_tac[holds_valuation]
 QED
-(*
-Theorem prop_2_47_i'':
+
+Theorem prop_2_47_i0:
 satis M w phi ⇔ fsatis (mm2folm M) (\n.w) (ST x phi)
 Proof
 rw[EQ_IMP_THM] (* 2 *)
@@ -317,9 +317,9 @@ rw[EQ_IMP_THM] (* 2 *)
    (fs[fsatis_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def,valuation_def]) >>
 drule prop_2_47_i >> rw[] >> metis_tac[]
 QED
+(*
 
-
-Theorem prop_2_47_i''':
+Theorem prop_2_47_i0':
 satis (folm2mm M) w phi ⇔ fsatis M (\n. w) (ST x phi)
 Proof
 rw[EQ_IMP_THM] (* 2 *)

@@ -9,11 +9,11 @@ M' 1 \ensuremath{\mathfrak{M}'}
 M'' 1 \ensuremath{\mathfrak{M}''}
 M1 1 \ensuremath{\mathfrak{M}}1
 M2 1 \ensuremath{\mathfrak{M}}2
-M3 1 \ensuremath{\mathfrak{M}\sb{3}}
-M3' 1 \ensuremath{\mathfrak{M}'}3
+M3 1 \ensuremath{\mathfrak{M}\sb{\mathrm{3}}}
+M3' 1 \ensuremath{\mathfrak{M}\sb{\mathrm{3}}\sp{\prime}}
 M4 1 \ensuremath{\mathfrak{M}}4
-MS 1 \ensuremath{\mathfrak{M}\sp{\sf family}}
-FMS 1 \ensuremath{\mathfrak{M}\sp{\sf family}}
+MS 1 \ensuremath{\mathfrak{M}\sp{\sf s}}
+FMS 1 \ensuremath{\mathfrak{M}\sp{\sf s}}
 FM 1 \ensuremath{\mathfrak{M}}
 f1 1 \ensuremath{\phi\sb{1}}
 f2 1 \ensuremath{\phi\sb{2}}

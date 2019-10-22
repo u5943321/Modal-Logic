@@ -621,7 +621,17 @@ Proof
 rw[] >> irule ultraproduct_comm_feval' >> rw[] >> fs[wffm_def]
 QED
 
-
+Theorem ppL1tau_ultraproduct_mm2folm_folm2mm_comm_feval:
+L1tau a ∧ FV a ⊆ {x} ∧ ultrafilter U I ∧ valuation M σ ⇒
+            (feval M σ a ⇔
+             feval (mm2folm (ultraproduct_model U I (λi. folm2mm M)))
+               (λv.
+                    {fw |
+                     Uequiv U I (models2worlds (λi. folm2mm M)) (λi. σ v) fw})
+               a)
+Proof
+metis_tac[L1tau_ultraproduct_mm2folm_folm2mm_comm_feval]
+QED
 
 val _ = overload_on("Mw", “λM. M.frame.world”);
 
@@ -807,7 +817,8 @@ Overload bw = ``\M1 w1 M2 w2. bisim_world M1 M2 w1 w2``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(bw1)", TM, TOK "(bw2)", TM, TOK "(bw3)"], 
+                  pp_elements = [TOK "(bw1)", TM, EndInitialBlock(PP.CONSISTENT,0), TOK "(bw2)", 
+                                 BeginFinalBlock(PP.CONSISTENT,0), TM, TOK "(bw3)"], 
                   term_name = "bw", paren_style = OnlyIfNecessary}
 
 Overload nbw = ``\M1 w1 f n M2 w2. nbisim M1 M2 f n w1 w2``
