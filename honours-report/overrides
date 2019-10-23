@@ -144,6 +144,7 @@ BIGINTER 1 \ensuremath{\bigcap}
 
 heightLE 6 \ensuremath{{\sf height}\sb{\le}}
 
+
 fV 1 \ensuremath{{}^{\sf f}{\sf VAR}}
 Fn 1 \ensuremath{{}^{\sf f}{\sf Fn}} 
 FALL 1 \ensuremath{{}^{\sf f}{\forall}}
@@ -209,6 +210,7 @@ fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 
 SUBMODEL 6 submodel
 expansion 8 is_expansion
+
 
 
 fc 2 \ensuremath{f\sb{U}}

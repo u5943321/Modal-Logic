@@ -336,6 +336,61 @@ rw[EQ_IMP_THM] (* 2 *)
 QED
 *)
 
+Theorem non_ST_exists_lemma:
+!phi x n.  x <> n ==> (?M σ:num -> num. valuation M σ /\ ¬(feval M σ (ST x phi) <=>
+                (feval M σ (Exists n (fR (fV n) (fV x))))))
+Proof
+rw[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
+qabbrev_tac `M = <| frame := <| world := {1;2};
+                                  rel := \a b. if a = 1 /\ b = 2 then T else F|>;
+                     valt := \p:num v. F |>` >>
+qabbrev_tac `N = <| frame := <| world := {2};
+                                  rel := \a b. F|>;
+                     valt := \p:num v. F |>` >> 
+`bisim_world M N 2 2` by
+(rw[] >> rw[bisim_world_def,bisim_def] >>
+qexists_tac `\w1 w2. if w1 = 2 /\ w2 = 2 then T else F` >> rw[] (* 9 *)
+>- rw[satis_def,Abbr`M`,Abbr`N`]
+>- rw[Abbr`N`]
+>- fs[Abbr`M`]
+>- fs[Abbr`M`]
+>- fs[Abbr`M`]
+>- fs[Abbr`N`]
+>- fs[Abbr`N`]
+>- rw[Abbr`M`]
+>- rw[Abbr`N`]) >> 
+drule thm_2_68_half2 >> rw[] >> 
+map_every qexists_tac [`x`,`phi`,`\x.2`,`\x.2`] >> rw[] (* 3 *)
+>- rw[valuation_def,Abbr`M`,mm2folm_def]
+>- rw[valuation_def,Abbr`N`,mm2folm_def]
+>- (`(λx. 2)⦇x ↦ 2⦈ = \x. 2` by 
+     (fs[FUN_EQ_THM] >> rw[] >> Cases_on `x' = x` >>
+     rw[combinTheory.APPLY_UPDATE_THM]) >>
+   fs[] >> 
+   `valuation (mm2folm M) (\x:num.2) /\ valuation (mm2folm N) (\x:num.2)`
+     by rw[valuation_def,Abbr`M`,mm2folm_def,Abbr`N`] >>
+   first_assum (qspecl_then [`mm2folm M`,`\x.2`] assume_tac) >> 
+   first_x_assum (qspecl_then [`mm2folm N`,`\x.2`] assume_tac) >> rw[] >>
+   `fsatis (mm2folm M) (λx. 2) (ST x phi) /\
+    ¬(fsatis (mm2folm N) (λx. 2) (ST x phi))` suffices_by metis_tac[] >> rw[] 
+  >- (rw[fsatis_def] >> 
+     qexists_tac `1` >> rw[Abbr`M`,mm2folm_def] (* 4 same *)
+     >> rw[combinTheory.APPLY_UPDATE_THM])
+  >- (rw[fsatis_def] >> 
+     `a IN (mm2folm N).Dom ==>
+        ¬(mm2folm N).Pred 0 [(λx. 2)⦇n ↦ a⦈ n; (λx. 2)⦇n ↦ a⦈ x]`
+       suffices_by metis_tac[] >>
+     rw[Abbr`N`,mm2folm_def]))
+QED
+    
+Theorem non_ST_exists:
+!phi. ?M σ:num -> num. valuation M σ /\ ¬(feval M σ (ST 1 phi) <=>
+                (feval M σ (Exists 2 (fR (fV 2) (fV 1)))))
+Proof
+`1 <> 2` by fs[] >> metis_tac[non_ST_exists_lemma]
+QED
+
+
 val _ = export_theory();
 	          
 	    
