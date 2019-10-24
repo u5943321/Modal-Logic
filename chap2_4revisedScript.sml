@@ -390,6 +390,18 @@ Proof
 `1 <> 2` by fs[] >> metis_tac[non_ST_exists_lemma]
 QED
 
+Definition feq_def:
+  feq (:α) f1 f2 <=>
+  (!M σ:num-> α. valuation M σ ==> (feval M σ f1 <=> feval M σ f2))
+End
+
+Theorem non_ST_exists':
+¬(?phi. feq (:num) (ST 1 phi) (Exists 2 (fR (fV 2) (fV 1))))
+Proof
+rw[feq_def, Excl "HOLDS"] >> MATCH_ACCEPT_TAC non_ST_exists
+QED
+
+
 
 val _ = export_theory();
 	          

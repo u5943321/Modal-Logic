@@ -1906,6 +1906,13 @@ rw[Abbr`M`,combinTheory.APPLY_UPDATE_THM]
 QED         
 
 
+Theorem feq_thm_2_68_half2:
+∀phi a x. (FV a ⊆ {x} ∧ L1tau a /\ feq (:α) a (ST x phi)) ==>
+invar4bisim x (:α) (:α) a
+Proof
+rw[] >> `invar4bisim x (:α) (:α) (ST x phi)` by metis_tac[thm_2_68_half2'] >>
+fs[feq_def,invar4bisim_def,fsatis_def] >> metis_tac[]
+QED
 
 
 val _ = export_theory();

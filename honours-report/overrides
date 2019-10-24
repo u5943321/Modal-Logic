@@ -22,6 +22,7 @@ psi2 1 \ensuremath{\psi\sb{2}}
 f3 1 \ensuremath{\phi\sb{3}}
 phi0 1 \ensuremath{\phi\sb{0}}
 phi1 1 \ensuremath{\phi\sb{1}}
+psi0 1 \ensuremath{\psi\sb{0}}
 phi' 1 \ensuremath{\phi '}
 phi2 1 \ensuremath{\phi\sb{2}}
 phi3 1 \ensuremath{\phi\sb{3}}
@@ -78,6 +79,9 @@ vst 1 \ensuremath{v\sb{*}}
 
 (meq1) 1 \equiv\sb{
 (meq2) 0 }
+
+(mfeq1) 1 {}\sp{\sf f}{\equiv}\sb{
+(mfeq2) 0 }
 
 (upr1) 1 \sim\sb{
 (upr2) 0 }\sp{ 

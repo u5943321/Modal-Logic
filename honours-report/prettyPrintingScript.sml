@@ -4,6 +4,14 @@ open chap1Theory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory 
 
 val _ = new_theory "prettyPrinting";
 
+(* val _ = remove_termtok { tok = " *)
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  paren_style = OnlyIfNecessary,
+                  fixity = Infixr 200,
+                  term_name = "==>",
+                  pp_elements = [HardSpace 1, TOK "⇒", BreakSpace(1,2)]}
+
+
 Theorem ppFINITE_BIGCONJ = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] chap2_2Theory.FINITE_BIGCONJ
 
 Theorem ppthm_2_74_half2 = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] chap2_6Theory.thm_2_74_half2
@@ -493,7 +501,7 @@ strip_tac
         by fs[valuation_def,mm2folm_def,bisim_world_def] >>
         fs[fsatis_def]
 QED
-
+(*
 Theorem ppthm_2_68_half1:
 ∀a x.
             (INFINITE 𝕌(:α) /\
@@ -503,6 +511,20 @@ Theorem ppthm_2_68_half1:
 Proof
 rw[] >> drule thm_2_68_half1 >>  metis_tac[]
 QED
+*)
+
+Theorem ppthm_2_68_half1:
+∀a x.
+            (INFINITE 𝕌(:α) /\
+            invar4bisim x (:(num -> α) -> bool) (:(num -> α) -> bool) a) ⇒
+            ∃(phi:num chap1$form). feq (:α) a (ST x phi)
+
+Proof
+rw[] >> drule thm_2_68_half1 >>  rw[feq_def] >> metis_tac[]
+QED
+
+
+
 
 Theorem ppthm_2_78_half2:
 (INFINITE 𝕌(:β) /\
@@ -699,6 +721,18 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Infix (NONASSOC, 450), 
                   pp_elements = [TOK "(meq1)", TM, TOK "(meq2)"], 
                   term_name = "myequiv", paren_style = OnlyIfNecessary}
+
+
+Overload myfeq = ``\f1 ty f2. feq ty f1 f2``
+
+
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Infix (NONASSOC, 450), 
+                  pp_elements = [HardSpace 2, TOK "(mfeq1)", TM, TOK "(mfeq2)", BreakSpace (2,0)], 
+                  term_name = "myfeq", paren_style = OnlyIfNecessary}
+
+
+
 
 Overload upr = ``\f U A g. Uequiv U (J: α -> bool) A f g``
 
