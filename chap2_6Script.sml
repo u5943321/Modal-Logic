@@ -1915,5 +1915,15 @@ fs[feq_def,invar4bisim_def,fsatis_def] >> metis_tac[]
 QED
 
 
+Theorem thm_2_68_half1':
+∀a x.
+            (INFINITE 𝕌(:α) /\
+            invar4bisim x (:(num -> α) -> bool) (:(num -> α) -> bool) a) ⇒
+            ∃(phi:num chap1$form). feq (:α) a (ST x phi)
+
+Proof
+rw[] >> drule thm_2_68_half1 >>  rw[feq_def] >> metis_tac[]
+QED
+
 val _ = export_theory();
 

@@ -51,6 +51,7 @@
 
 \newcommand{\jh}[3]{\href{https://github.com/HOL-Theorem-Prover/HOL/blob/bd3fc1cc8392c998068820cf999c73ea95f10e8f/examples/logic/folcompactness/#2Script.sml\#L#3}{#1}}
 
+\newcommand{\final}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/9ef1d16d8c297791ef20b9e601415b963b00b528/#2Script.sml\#L#3}{#1}}
 
 %Https://github.com/u5943321/Modal-Logic/blob/49347817c5c3a4c50c419339ce856b2f121881df/#2Script.sml\#L#3}{#1}}
 
@@ -951,7 +952,7 @@ For a function symbol denoted by $f$, if it is applied on a list of terms of len
 Given a first-order model \HOLtm{M}, we interpret formulas or terms by assigning each variable symbol an element in \HOLtm{M.Dom}. As we are using natural numbers as variable symbols, such an assignment is a function that takes a natural number. We are only interested in the case when a function does send each natural number to an element in \HOLtm{M.Dom}, such a function is called a \emph{valuation} of \HOLtm{M}. We write \HOLtm{valuation M σ} in this case, and read it as `\HOLtm{σ} is a valuation of the model \HOLtm{M}'. 
 
 Interpretation of terms and formulas are given as \HOLtm{termval} and \HOLtm{feval}. 
-If we give the function \HOLtm{termval} a model \HOLtm{M}, a valuation \HOLtm{σ} and a first-order term $t$, it will give us the element of the domain of \HOLtm{M} that $t$ is interpreted as. If we give the function \HOLtm{feval} a model \HOLtm{M}, a valuation \HOLtm{σ} and a first-order formula $\phi$, it will give us the truth value of $\phi$ in \HOLtm{M} under the valuation \HOLtm{σ}. When $\phi$ is true in \HOLtm{M} under \HOLtm{σ}, we write \HOLtm{feval M σ phi}.
+If we give the function \HOLtm{termval} a model \HOLtm{M}, a valuation \HOLtm{σ} and a first-order term $t$, it will give us the element of the domain of \HOLtm{M} that $t$ is interpreted as. If we give the function \HOLtm{feval} a model \HOLtm{M}, a valuation \HOLtm{σ} and a first-order formula $\phi$, it will give us the truth value of $\phi$ in \HOLtm{M} under the valuation \HOLtm{σ}. When $\phi$ is true in \HOLtm{M} under \HOLtm{σ}, we write \HOLtm{feval M σ phi}. We write \HOLtm{feq (:α) phi1 phi2} to the first-order formulas \HOLtm{phi1} and \HOLtm{phi2} are equivalent on $\alpha$-first-order models. 
 
 If we want to use a first-model \HOLtm{M} to interpret a first-order formula \HOLtm{phi}, the first thing to make sure is that the actual functions assigned to the function symbols appear in \HOLtm{phi} does not send a list of elements in \HOLtm{M} out of the domain of \HOLtm{M}. Therefore, a theorem about interpreting a formula \HOLtm{phi} in \HOLtm{M} should start with an assumption 
 \begin{holmath}
@@ -1053,20 +1054,17 @@ An $\mathcal L_{\tau}^1$ formula $\alpha$ with at most one free variable $x$ is 
 
 The predicate \HOLtm{invar4bisim} takes four parameters, the first one is the name of the only free variable in \HOLtm{phi} and the last one is the formula itself. For the second and third one. Recall the issue we met when defining equivalence of modal formulas as in Chapter 2, it needs to take a type as a parameter since we cannot have type variable which only appears on the right-hand side but not on the left-hand side. For the same reason, here we need to tell HOL explicitly about the type of the world set of the models which can serve as \HOLtm{M} and \HOLtm{N} in our definition. Although it is possible to prove theorems for different types $\alpha$ and $\beta$ in the above definition, we will only consider the case that $\alpha$ and $\beta$ are the same when proving things afterwards. 
 
-
 \begin{prop}
-{\upshape\holref{\cite[Theorem 2.68, easy direction]{Blackburn}}{chap2_6}{1899}}
+{\upshape\final{\cite[Theorem 2.68, easy direction]{Blackburn}}{chap2_6}{1909}}
 %[\cite{Blackburn}{Theorem 2.68}, easy direction,  \holref{\texttt{thm_2_68_half2'}}{chap2_6}{1899}]
 \label{5.6}
-Every $\mathcal L_{\tau}^1$-formula with only one variable which is equivalent to a standard translation is invariant for bisimulation.
+Every $\mathcal L_{\tau}^1$-formula with only one variable which is equivalent to a standard translation is invariant for bisimulation. 
 \begin{holmath}
   \HOLthm[showtypes,δ/a]{chap2_6.feq_thm_2_68_half2}
 \end{holmath}
 \end{prop}
-
 \begin{proof}
 By Theorem \ref{3.7} and Proposition \ref{5.5}.
-
 \end{proof}
 
 In fact, using set theory as the foundation, we can prove that every formula which is invariant under bisimulation arises as a standard translation of a modal formula, so formulas which are invariant under bisimulation coincides with standard translations. We can translate the set-theoretic proof into a simple type-theoretic proof. But the proof of the other direction requires more advanced tools, and its statement does not look the same as its mathematical statement as in set theory in HOL. This is because of the lack of expressiveness of simple type theory. We will leave the other direction of the proof to the next chapter.
@@ -1709,7 +1707,7 @@ The shifting construction gives the desired semantic behavior on first-order for
 
 \begin{prop}[\holref{\texttt{expansion_shift_feval}}{lemma2_73}{382}]\label{6.11}
 \begin{holmath}
-  \HOLthm[width=70]{prettyPrinting.ppexpansion_shift_feval}
+  \HOLthm[width=80]{prettyPrinting.ppexpansion_shift_feval}
 \end{holmath}
 \end{prop}
 
