@@ -52,6 +52,7 @@
 \newcommand{\jh}[3]{\href{https://github.com/HOL-Theorem-Prover/HOL/blob/bd3fc1cc8392c998068820cf999c73ea95f10e8f/examples/logic/folcompactness/#2Script.sml\#L#3}{#1}}
 
 \newcommand{\final}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/9ef1d16d8c297791ef20b9e601415b963b00b528/#2Script.sml\#L#3}{#1}}
+\newcommand{\ffinal}[3]{\href{Https://github.com/u5943321/Modal-Logic/blob/1eac09d4a4b44dc4376dfe2b7580e6901bc1b47e/#2Script.sml\#L#3}{#1}}
 
 %Https://github.com/u5943321/Modal-Logic/blob/49347817c5c3a4c50c419339ce856b2f121881df/#2Script.sml\#L#3}{#1}}
 
@@ -1845,12 +1846,12 @@ Under the assumptions, suppose, in order to get a contradiction, that for every 
 Now we have all the ingredient for translating the hard direction of the standard proof of \emph{Van Benthem Characterization Theorem} into HOL. 
 
 \begin{thm}
-{\upshape\holref{\cite[Theorem 2.68 (Van Benthem Characterization Theorem), hard direction]{Blackburn}}{chap2_6}{1512}}
+{\upshape\ffinal{\cite[Theorem 2.68 (Van Benthem Characterization Theorem), hard direction]{Blackburn}}{chap2_6}{1918}}
 %[Van Benthem Characterization Theorem, hard direction, \cite{Blackburn}{Theorem 2.68},  \holref{\texttt{thm_2_68_half1}}{chap2_6}{1512}]
 \label{6.18}
 For an infinite type $\alpha$, if \HOLtm{δ} is a first-order formula which is invariant for bisimulation on \HOLty{:num -> α -> bool}-first-order models, then there exists a modal formula whose standard translation is equivalent to \HOLtm{δ} on $\alpha$-first-order models. 
 \begin{holmath}
-  \HOLthm[showtypes,δ/a]{prettyPrinting.ppthm_2_68_half1}
+  \HOLthm[showtypes,δ/a]{chap2_6.thm_2_68_half1'}
 \end{holmath}
 \end{thm}
 
