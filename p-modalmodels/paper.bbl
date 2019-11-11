@@ -1,0 +1,10 @@
+\begin{thebibliography}{1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{https://doi.org/#1}
+
+\bibitem{Blackburn}
+Blackburn, P., de~Rijke, M., Venema, Y.: Modal Logic. Cambridge University
+  Press (2001)
+
+\end{thebibliography}

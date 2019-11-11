@@ -1,0 +1,232 @@
+$Turnstile$ 5 \ensuremath{\HOLTokenTurnstile}
+⊥ 1 \ensuremath{\bot}
+◇ 1 \ensuremath{\Diamond}
+□ 1 \ensuremath{\Box}
+-> 2 \ensuremath{\rightarrow}
+M 1 \ensuremath{\mathfrak{M}}
+N 1 \ensuremath{\mathfrak{N}}
+M' 1 \ensuremath{\mathfrak{M}'}
+M'' 1 \ensuremath{\mathfrak{M}''}
+M1 1 \ensuremath{\mathfrak{M}}1
+M2 1 \ensuremath{\mathfrak{M}}2
+M3 1 \ensuremath{\mathfrak{M}\sb{\mathrm{3}}}
+M3' 1 \ensuremath{\mathfrak{M}\sb{\mathrm{3}}\sp{\prime}}
+M4 1 \ensuremath{\mathfrak{M}}4
+MS 1 \ensuremath{\mathfrak{M}\sp{\sf s}}
+FMS 1 \ensuremath{\mathfrak{M}\sp{\sf s}}
+FM 1 \ensuremath{\mathfrak{M}}
+f1 1 \ensuremath{\phi\sb{1}}
+f2 1 \ensuremath{\phi\sb{2}}
+psi1 1 \ensuremath{\psi\sb{1}}
+psi2 1 \ensuremath{\psi\sb{2}}
+f3 1 \ensuremath{\phi\sb{3}}
+phi0 1 \ensuremath{\phi\sb{0}}
+phi1 1 \ensuremath{\phi\sb{1}}
+psi0 1 \ensuremath{\psi\sb{0}}
+phi' 1 \ensuremath{\phi '}
+phi2 1 \ensuremath{\phi\sb{2}}
+phi3 1 \ensuremath{\phi\sb{3}}
+phi4 1 \ensuremath{\phi\sb{4}}
+phi 1 \ensuremath{\phi}
+phis 1 \ensuremath{\phi s}
+phil1 1 \ensuremath{\phi l\sb{1}}
+phil2 1 \ensuremath{\phi l\sb{2}}
+
+fs0 1 \ensuremath{\phi s\sb{0}}
+varphi 1 \ensuremath{\varphi}
+psi 1 \ensuremath{\psi}
+cpsi 1 \ensuremath{c\psi}
+form1 1 \ensuremath{\phi\sb{1}}
+form2 1 \ensuremath{\phi\sb{2}}
+TRUE 1 \ensuremath{\top}
+− 1 \ensuremath{-}
+⦇ 1 \ensuremath{\llparenthesis}
+⦈ 1 \ensuremath{\rrparenthesis}
+↦ 1 \ensuremath{\mapsto}
+DIFF 1 \ensuremath{\setminus}
+SET_TO_LIST 4 \ensuremath{\HOLConst{toList}}
+lit_list_to_form2 5 l2f
+lit_list_to_form 5 ll2f
+DIAM 1 \ensuremath{\Diamond}
+
+Mst 1 \ensuremath{\mathfrak{M}\sb{*}}
+Nst 1 \ensuremath{\mathfrak{N}\sb{*}}
+wst 1 \ensuremath{w\sb{*}}
+vst 1 \ensuremath{v\sb{*}}
+σm 1 \ensuremath{\sigma\sb{\mathfrak{M}}}
+σn 1 \ensuremath{\sigma\sb{\mathfrak{N}}}
+(Mw) 1 \ensuremath{\sp{W}}
+(Mr) 1 \ensuremath{\sp{R}}
+
+(Mr1) 3 \ensuremath{\longrightarrow\sb{
+(Mr2) 0 }}
+(Mrr1) 3 \ensuremath{\longrightarrow\sb{
+(Mrr2) 1 \mid\sb{
+(Mrr3) 0 }}}
+(Mrrrtc1) 3 \ensuremath{\longrightarrow\sb{
+(Mrrrtc2) 1 \mid\sb{
+(Mrrrtc3) 0 }}\sp{*}}
+(Mv) 1 \ensuremath{\sp{V}}
+(forces1) 1 ,
+(forces2) 1 \ensuremath{\Vdash}
+(nforces1) 1 ,
+(nforces2) 1 \ensuremath{\not\Vdash}
+(UPM1) 1 {}^{\sf f}\Pi\sb{ 
+(UPM2) 0 }
+
+(UPMN1) 1 {}^{\sf f}\Pi\sb{ 
+(UPMN2) 0 }
+
+(meq1) 1 \equiv\sb{
+(meq2) 0 }
+
+(mfeq1) 1 {}\sp{\sf f}{\equiv}\sb{
+(mfeq2) 0 }
+
+(upr1) 1 \sim\sb{
+(upr2) 0 }\sp{ 
+(upr3) 0 }
+
+(uprr1) 1 \sim\sb{
+(uprr2) 0 }\sp{ 
+(uprr3) 0 }
+
+(uprn1) 1 \sim\sb{
+(uprn2) 0 }\sp{ 
+(uprn3) 0 }
+
+(uprrn1) 1 \sim\sb{
+(uprrn2) 0 }\sp{ 
+(uprrn3) 0 }
+
+(ptt) 1 /
+
+L1tau 2 \ensuremath{{\mathcal L}^1_\tau}
+: 1 {:}
+
+models2worlds 6 worlds
+folmodels2Doms 4 Doms
+
+(cp1) 1 \Pi\sb{j \in 
+(cp2) 0 }
+(cp3) 1 \sb{j}
+
+(disj) 1 \ensuremath{\lor}
+
+(ad) 1 \ensuremath{\land}
+
+(rst1) 0 {
+(rst2) 0 }\ensuremath{\mid}\sb{
+(rst3) 0 }
+
+
+(mdeq1) 1 ,
+(mdeq2) 1 \ensuremath{\leftrightsquigarrow}
+(mdeq3) 1 ,
+
+(gsm) 1 \ensuremath{\rightarrowtail}
+
+(hom1) 0 \overset{
+(hom2) 0 }\to
+
+
+(bisim1) 0 \overset{
+(bisim2) 0 }\leftrightarroweq
+
+(bw1) 1 ,
+(bw2) 1 \ensuremath{\leftrightarroweq}
+(bw3) 1 ,
+
+BIGUNION 1 \ensuremath{\bigcup}
+BIGINTER 1 \ensuremath{\bigcap}
+
+(nbw1) 1 ,
+(nbw2) 0 \overset{
+(nbw3) 0 }\leftrightarroweq\sb{ 
+(nbw4) 0 }
+(nbw5) 1 ,
+
+heightLE 6 \ensuremath{{\sf height}\sb{\le}}
+
+
+fV 1 \ensuremath{{}^{\sf f}{\sf VAR}}
+Fn 1 \ensuremath{{}^{\sf f}{\sf Fn}} 
+FALL 1 \ensuremath{{}^{\sf f}{\forall}}
+(prd1) 2 \ensuremath{{}^{\sf f}{\sf P} \ }
+(prd2) 1 { \ }
+(prd3) 1 {}
+fP 3 \ensuremath{{}\sp{\mathsf{f}}\mathsf{P}}
+fPred 5 \ensuremath{{}\sp{\mathsf{f}}\mathsf{Pred}}
+fFALSE 1 \ensuremath{{}^{\sf f}\bot}
+fNOT 1 \ensuremath{{^{\sf f}}{\lnot}} 
+(fdisj) 1 \ensuremath{\ {}^{\sf f} {\lor} \ }
+(fimp) 1 \ensuremath{\ {}^{\sf f} {\to} \ }
+(fad) 1 \ensuremath{\ {}^{\sf f}{\land} \ }
+fEXISTS 1 \ensuremath{ {}^{\sf f}{\exists}}
+True 1 \ensuremath{{}^{\sf f}{\top}} 
+fR 1 \ensuremath{{}^{\sf f}{\sf R}}
+
+(cs1) 0 {
+(cs2) 1 }\sb{\Diamond}(
+(cs3) 1 )
+
+(os1) 0 {
+(os2) 1 }\sp{\delta}\sb{\Diamond}(
+(os3) 1 )
+
+(univn) 1 {\mathbb N}
+
+(uer1) 0 {}\sp{ue}{
+(uer2) 1 }\sp{R}
+
+(ue1) 0 {}\sp{ue}{
+(ue2) 1 }
+
+(pf1) 1 \pi\sb{
+(pf2) 0 }\sp{
+(pf3) 0 }
+
+(sim1) 0 \underline{\overset{
+(sim2) 1 }{\to}}
+
+(fev1) 1 ,
+(fev2) 1 \ensuremath{\vDash}
+
+(bmi1) 0 \overset{
+(bmi2) 0 }\twoheadrightarrow
+
+(M3) 1 \ensuremath{\mathfrak{M}\sb{3}}
+
+(st1) 2 {\sf ST}\sb{
+(st2) 1 }
+
+(fst1) 1 ,
+(fst2) 1 \ensuremath{\vDash}
+
+(UPMM1) 1 \Pi\sb{ 
+(UPMM2) 0 }
+
+(UPMMN1) 1 \Pi\sb{ 
+(UPMMN2) 0 }
+
+(Emu1) 0 {
+(Emu2) 1 } /{\equiv\sb{(:\beta)}}
+
+SUBMODEL 6 submodel
+expansion 8 is_expansion
+
+
+
+fc 2 \ensuremath{f\sb{U}}
+gc 2 \ensuremath{g\sb{U}}
+
+
+In 3 \ensuremath{I\sp{\sf s}}
+Jn 3 \ensuremath{J\sp{\sf s}}
+Kn 3 \ensuremath{K\sp{\sf s}}
+Xn 3 \ensuremath{X\sp{\sf s}}
+Zn 3 \ensuremath{Z\sp{\sf s}}
+An 3 \ensuremath{A\sp{\sf s}}
+Sn 3 \ensuremath{S\sp{\sf s}}
+NN 1 N
+rv 1 \ensuremath{\sigma\sb{\sf rep}}

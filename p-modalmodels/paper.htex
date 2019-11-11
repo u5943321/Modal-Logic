@@ -17,7 +17,7 @@
 % focus on model theory is novel
 
 \paragraph{Contributions}
-This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn\etal~\cite{...} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
+This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
 \begin{itemize}
 \item the saturation of ultraproduct models;
 \item modal equivalence as bisimilarity between ultrafilter extensions; and
@@ -41,5 +41,8 @@ We also discuss where HOL's simple type theory lets us down: some standard resul
 \section{Van Benthem's Characterization Theorem}[3p]
 
 \section{Conclusion}[<1p]
+
+\bibliography{../honours-report/everything}
+\bibliographystyle{splncs04}
 
 \end{document}
