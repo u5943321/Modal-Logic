@@ -625,7 +625,9 @@ QED
 
 val UE'_def = Define`
   UE' M = <| frame := <| world := {u | ultrafilter u M.frame.world};
-                        rel := UE_rel M |>;
+                        rel :=  \u v.
+            (ultrafilter u M.frame.world ∧ ultrafilter v M.frame.world ∧
+            ∀X. X ∈ v ⇒ can_see M X ∈ u) |>;
             valt := \p v. (ultrafilter v M.frame.world /\
             {w | w IN M.frame.world /\  M.valt p w } IN v)|>`;
 
@@ -924,7 +926,6 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 
 Overload fPred = “\a l. Pred a l”
 
-Overload M3 = ``bounded_preimage_rooted M2 w``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix, 
