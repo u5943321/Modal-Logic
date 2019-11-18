@@ -10,9 +10,6 @@ open pairTheory;
 open quantHeuristicsTheory;
 open rich_listTheory;
 
-
-open nlistTheory
-
 val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "chap2_1";
@@ -74,28 +71,28 @@ val GENSUBMODEL_def = Define`
 
 val prop_2_6 = store_thm(
 "prop_2_6",
-``!n phi M1 M2. GENSUBMODEL M1 M2 /\ n IN M1.frame.world ==> (satis M1 n phi <=> satis M2 n phi)``,
+``!w phi M1 M2. GENSUBMODEL M1 M2 /\ w IN M1.frame.world ==> (satis M1 w phi <=> satis M2 w phi)``,
 Induct_on `phi` >> rw[satis_def]
 >- (eq_tac
    >- (rpt strip_tac
       >- fs[SUBSET_DEF,SUBMODEL_def,GENSUBMODEL_def]
       >- (fs[SUBSET_DEF,SUBMODEL_def,GENSUBMODEL_def]
-          >> `∀v. M1.valt v n ⇔ M2.valt v n` by metis_tac[]
+          >> `∀v. M1.valt v w ⇔ M2.valt v w` by metis_tac[]
           >> metis_tac[IN_DEF]))
    >- (rpt strip_tac
       >> fs[SUBMODEL_def,GENSUBMODEL_def,SUBSET_DEF]
-      >> `∀v. M1.valt v n ⇔ M2.valt v n` by metis_tac[]
+      >> `∀v. M1.valt v w ⇔ M2.valt v w` by metis_tac[]
       >> metis_tac[IN_DEF]))
 >- (eq_tac
    >- (rpt strip_tac
-      >- (`satis M1 n phi ⇔ satis M2 n phi` by metis_tac[]
+      >- (`satis M1 w phi ⇔ satis M2 w phi` by metis_tac[]
          >> metis_tac[])
-      >- (`satis M1 n phi' ⇔ satis M2 n phi'` by metis_tac[]
+      >- (`satis M1 w phi' ⇔ satis M2 w phi'` by metis_tac[]
          >> metis_tac[]))
    >- (rpt strip_tac
-      >- (`satis M1 n phi ⇔ satis M2 n phi` by metis_tac[]
+      >- (`satis M1 w phi ⇔ satis M2 w phi` by metis_tac[]
          >> metis_tac[])
-      >- (`satis M1 n phi' ⇔ satis M2 n phi'` by metis_tac[]
+      >- (`satis M1 w phi' ⇔ satis M2 w phi'` by metis_tac[]
          >> metis_tac[])))
 >- (eq_tac
    >- (rpt strip_tac
