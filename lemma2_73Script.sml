@@ -58,10 +58,6 @@ val frealizes_def = Define`
                           !σ phi. (IMAGE σ univ(:num)) SUBSET M.Dom /\ phi IN G ==> fsatis M ((x=+w)σ) phi`;
 
 
-(*
-val A_form_def = Define`A_form phi <=> FC phi ⊆ FDOM M.consts`
-*)
-
 val expansion_def = Define`
 expansion M A M' f <=> (M'.Dom = M.Dom) /\
                        (BIJ f (count (CARD A)) A) /\
