@@ -136,7 +136,7 @@ fs[modal_eq_def,tau_theory_def]
 
 val BIGCONJ_EXISTS = store_thm(
 "BIGCONJ_EXISTS",
-``!s: 'a form set. FINITE s ==> !w M. w IN M.frame.world ==> (?ff. satis M w ff <=> (!f. f IN s ==> satis M w f))``,
+``!s: form set. FINITE s ==> !w M. w IN M.frame.world ==> (?ff. satis M w ff <=> (!f. f IN s ==> satis M w f))``,
 Induct_on `FINITE s`
 >> rpt strip_tac
 >- (qexists_tac `TRUE` >> eq_tac >- (rpt strip_tac >> metis_tac[NOT_IN_EMPTY,TRUE_def,satis_def])

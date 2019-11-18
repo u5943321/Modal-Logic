@@ -281,7 +281,7 @@ Induct_on `CONJ_OF` >> rw[]
 (* basics of lit list *)
 
 val negf_def = Define`
-negf (f:'a form,T) = f /\
+negf (f: form,T) = f /\
 negf (f,F) = ¬f`;
 
 val _= export_rewrites ["negf_def"]
@@ -796,11 +796,11 @@ rw[DNF_OF_def,DISJ_OF_def]
 
 val NOT_equiv0_OPPO = store_thm(
 "NOT_equiv0_OPPO",
-``!e. ¬(equiv0 μ (¬e) e)``,
+``!e. ¬(equiv0 (μ:'b itself) (¬e) e)``,
 SPOSE_NOT_THEN ASSUME_TAC >> fs[equiv0_def,satis_def] >> rw[] >>
-`!M w. w ∈ M.frame.world ∧ ¬satis M w e ==> satis M w e` by metis_tac[] >>
-`!M w. ¬(w ∈ M.frame.world ∧ ¬satis M w e) \/ satis M w e` by metis_tac[] >>
-`!M w. ¬(w ∈ M.frame.world) \/ satis M w e` by metis_tac[] >>
+`!M w:β. w ∈ M.frame.world ∧ ¬satis M w e ==> satis M w e` by metis_tac[] >>
+`!M w:β. ¬(w ∈ M.frame.world ∧ ¬satis M w e) \/ satis M w e` by metis_tac[] >>
+`!M w:β. ¬(w ∈ M.frame.world) \/ satis M w e` by metis_tac[] >>
 `𝕌(:'b) <> {}` by metis_tac[UNIV_NOT_EMPTY] >>
 `?m. m IN 𝕌(:'b)` by metis_tac[MEMBER_NOT_EMPTY] >>
 `m IN <| frame := <| world := {m};
@@ -1582,7 +1582,7 @@ Induct_on `FINITE` >> rw[] >> Cases_on `e` >> fs[] >> Cases_on `c = {}`
 
 val NEQ_lsets_FALSE = store_thm(
   "NEQ_lsets_FALSE",
-  ``!c1 :('a form # bool) -> bool c2 fs. is_lset c1 fs /\ is_lset c2 fs /\ c1 <> c2 ==>
+  ``!c1 :(form # bool) -> bool c2 fs. is_lset c1 fs /\ is_lset c2 fs /\ c1 <> c2 ==>
                !M w. w IN M.frame.world ==> ¬(csatis M w (c1 UNION c2))``,
   rw[] >> SPOSE_NOT_THEN ASSUME_TAC >>
   fs[EXTENSION] >>
@@ -1781,12 +1781,12 @@ val FINITE_is_lset = store_thm(
 val IBC_DNF_EXISTS_case3 = store_thm(
   "IBC_DNF_EXISTS_case3",
   ``!p fs. DNF_OF p fs /\ FINITE fs /\ fs <> {} ==>
-           ?f. DNF_OF f fs /\ equiv0 μ (¬p) f``,
+           ?f. DNF_OF f fs /\ equiv0 (μ:β itself) (¬p) f``,
   rw[] >>
-  drule DNF_OF_cset >> strip_tac >>
+  drule (DNF_OF_cset |> INST_TYPE [alpha |-> ``:'b``]) >> strip_tac >>
   Cases_on `cs = {c | is_lset c fs}`
   >- (qexists_tac `FALSE` >> rw[DNF_OF_def,DISJ_OF_def] >>
-  `!M w. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w FALSE)` suffices_by metis_tac[EQ_equiv0_def] >> rw[] >>
+  `!M w:β. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w FALSE)` suffices_by metis_tac[EQ_equiv0_def] >> rw[] >>
   `dsatis M w {c | is_lset c fs}` by metis_tac[dsatis_ALL_POSSIBLE_VALUE] >>
   `satis M w p` by metis_tac[dsatis_def] >>
   `satis M w (¬p) = F` by metis_tac[satis_def] >>
@@ -1801,7 +1801,7 @@ val IBC_DNF_EXISTS_case3 = store_thm(
            (∀M w:'b. w ∈ M.frame.world ⇒ (satis M w f ⇔ dsatis M w ({c | is_lset c fs} DIFF cs))) ∧
            DNF_OF f fs` by (irule is_lset_DNF_OF_EXISTS >> fs[]) >>
   qexists_tac `f` >> rw[] >>
-  `!M w. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w f)` suffices_by metis_tac[EQ_equiv0_def] >> rw[] >>
+  `!M w:β. w IN M.frame.world ==> (satis M w (¬p) <=> satis M w f)` suffices_by metis_tac[EQ_equiv0_def] >> rw[] >>
   `satis M w p ⇔ dsatis M w cs` by metis_tac[dsatis_def] >>
   `satis M w f ⇔ dsatis M w ({c | is_lset c fs} DIFF cs)` by metis_tac[] >>
   `dsatis M w cs ⇔ ¬dsatis M w ({c | is_lset c fs} DIFF cs)` by metis_tac[dsatis_is_lset_complement] >>
