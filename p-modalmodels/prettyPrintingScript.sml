@@ -41,8 +41,8 @@ Theorem pppeval_satis_strengthen':
         (satis M w f <=> peval (\a. w IN M.valt a /\ a IN s) f)
 Proof
 rw[] >> drule peval_satis_strengthen' >> fs[INTER_DEF] >> rw[] >>
-first_x_assum drule_all >> fs[IN_DEF] >> 
-`{x | M.valt x w ∧ s x}  = (λa. M.valt a w ∧ s a)` suffices_by fs[] >> 
+first_x_assum drule_all >> fs[IN_DEF] >>
+`{x | M.valt x w ∧ s x}  = (λa. M.valt a w ∧ s a)` suffices_by fs[] >>
 rw[EXTENSION,EQ_IMP_THM]
 QED
 
@@ -132,7 +132,7 @@ Theorem pphom_def:
                 w ∈ M1.frame.world ⇒
                 f w ∈ M2.frame.world ∧
                 (∀p. w ∈ M1.valt p ⇒ f w ∈ M2.valt p)) ∧
-            (∀w v.  (w IN M1.frame.world /\ 
+            (∀w v.  (w IN M1.frame.world /\
                     v ∈ M1.frame.world /\
                     M1.frame.rel w v) ⇒
                     M2.frame.rel (f w) (f v))
@@ -250,12 +250,12 @@ Theorem ppultraproduct_rep_independence_lemma:
 ∀U I FMS σ phi rv.
             ((ultrafilter U I /\
             valuation (ultraproduct_folmodel U I FMS) σ) /\
-          
+
                 (∀v. v ∈ FV phi ⇒ rv v ∈ σ v)) ⇒
                 ({i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U ⇔
                  {i | i ∈ I ∧ feval (FMS i) (λv. rv v i) phi} ∈ U)
 Proof
-rw[] >> 
+rw[] >>
 `IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms FMS)`
   suffices_by metis_tac[ultraproduct_rep_independence_lemma] >>
 fs[IMAGE_DEF,SUBSET_DEF,valuation_def] >> fs[ultraproduct_folmodel_def] >>
@@ -264,7 +264,7 @@ QED
 
 Theorem pplemma_2_73:
 ∀U I MS.
-            (countably_incomplete U I /\ 
+            (countably_incomplete U I /\
             (∀i. i ∈ I ⇒ (MS i).frame.world ≠ ∅)) ⇒
             countably_saturated (mm2folm (ultraproduct_model U I MS))
 Proof
@@ -297,8 +297,8 @@ QED
 Theorem ppprop_2_29_strengthen:
 !s. FINITE s /\ INFINITE univ(:'b) ==> !n. FINITE (partition (equiv0 (μ:'b itself)) {f| DEG f <= n /\ prop_letters f ⊆ s})
 Proof
-rw[] >> drule prop_2_29_strengthen >> rw[] >> 
-`{f | DEG f ≤ n ∧ ∀a. VAR a ∈ subforms f ⇒ a ∈ s} = 
+rw[] >> drule prop_2_29_strengthen >> rw[] >>
+`{f | DEG f ≤ n ∧ ∀a. VAR a ∈ subforms f ⇒ a ∈ s} =
 {f | DEG f ≤ n ∧ prop_letters f ⊆ s}` suffices_by metis_tac[] >>
 rw[EXTENSION,SUBSET_DEF] >> metis_tac[prop_letters_subforms]
 QED
@@ -328,14 +328,14 @@ Theorem ppexpansion_shift_feval:
                     (feval M' σ phi <=>
                     feval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi))
 Proof
-rw[] >> irule expansion_shift_feval >> rw[] 
+rw[] >> irule expansion_shift_feval >> rw[]
 >- (fs[FC_def] >>
    qspec_then `phi` assume_tac FC_form_functions >>
    fs[SUBSET_DEF] >> first_x_assum drule >> rw[] >> Cases_on `c'` >> rw[] >>
    first_x_assum drule >> rw[]) >>
 fs[mm2folm_def,valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[]
 QED
- 
+
 
 Theorem ppthm_A_19_i:
 !t U I σ FMS. (ultrafilter U I /\
@@ -391,16 +391,16 @@ fs[wffm_def] >> fs[valuation_def] >> first_x_assum irule >> metis_tac[]
 QED
 
 Theorem ppultraproduct_comm_feval:
-  !phi U I MS σ. 
+  !phi U I MS σ.
  (ultrafilter U I /\
          form_functions phi = ∅ /\
          valuation (mm2folm (ultraproduct_model U I MS)) σ) ⇒
              (feval (mm2folm (ultraproduct_model U I MS)) σ phi ⇔
               feval (ultraproduct_folmodel U I (λi. mm2folm (MS i))) σ phi)
 Proof
-rw[] >> drule ultraproduct_comm_feval >> 
-strip_tac >> 
-rw[] >> 
+rw[] >> drule ultraproduct_comm_feval >>
+strip_tac >>
+rw[] >>
 `IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (models2worlds MS)` suffices_by metis_tac[] >>
 rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def,ultraproduct_model_def,mm2folm_def]
 QED
@@ -432,7 +432,7 @@ rw[valuation_def] >> drule ultraproduct_sat >> rw[] >>
                 IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
                 (∀n. n ∈ N ⇒ σ n = f n) ∧
                 ∀phi. phi ∈ s ⇒ feval (ultraproduct_folmodel U I' FMS) σ phi`
-suffices_by 
+suffices_by
   (rw[] >> qexists_tac `σ` >> rw[] >> fs[IMAGE_DEF,SUBSET_DEF] >>
    fs[ultraproduct_folmodel_def] >> metis_tac[]) >>
 first_x_assum irule >> rw[]
@@ -442,7 +442,7 @@ first_x_assum irule >> rw[]
                 (∀n. σ n ∈ (ultraproduct_folmodel U I' FMS).Dom) ∧
                 (∀n. n ∈ N ⇒ σ n = f n) ∧
                 ∀phi. phi ∈ ss ⇒ feval (ultraproduct_folmodel U I' FMS) σ phi`
-     suffices_by 
+     suffices_by
        (rw[] >> first_x_assum drule_all >> strip_tac >> qexists_tac `σ` >>
         rw[] >> rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def]) >>
    metis_tac[])
@@ -457,50 +457,9 @@ Theorem pppreserved_under_sim_def:
              satis M w phi) ⇒
              satis M' w' phi
 Proof
-metis_tac[preserved_under_sim_def] 
+metis_tac[preserved_under_sim_def]
 QED
 
-Theorem ppinvar4bisim_def:
- ∀x phi.
-            invar4bisim x (:α) (:β) phi ⇔
-            FV phi ⊆ {x} ∧ L1tau phi ∧
-            ∀M N v:β w:α.
-                bisim_world M N w v ⇒
-                    (fsatis (mm2folm M) (\n.w) phi ⇔
-                     fsatis (mm2folm N) (\n.v) phi)
-Proof
-rw[invar4bisim_def,Once EQ_IMP_THM] (* 2 *)
->- (`valuation (mm2folm M) (λn:num. w) ∧ valuation (mm2folm N) (λn:num. v)`
-      by fs[valuation_def,bisim_world_def,mm2folm_def] >>
-    `(fsatis (mm2folm M) (λn. w)⦇x ↦ w⦈ phi ⇔
-                 fsatis (mm2folm N) (λn. v)⦇x ↦ v⦈ phi)` by metis_tac[] >>
-    `(λn. w)⦇x ↦ w⦈ = (λn. w) /\ (λn. v)⦇x ↦ v⦈ = (λn. v)`
-       by 
-        (simp[FUN_EQ_THM] >> rw[] >>
-         Cases_on `n = x` >> fs[combinTheory.APPLY_UPDATE_THM]) >>
-    fs[]) >>
-first_x_assum drule >> rw[] >> 
-`fsatis (mm2folm M) (λn. w) phi = fsatis (mm2folm M) σm⦇x ↦ w⦈ phi /\ 
- fsatis (mm2folm N) (λn. v) phi = fsatis (mm2folm N) σn⦇x ↦ v⦈ phi`
-   suffices_by metis_tac[] >>
-strip_tac 
->- (`feval (mm2folm M) (λn. w) phi = feval (mm2folm M) σm⦇x ↦ w⦈ phi`
-        by 
-         (irule holds_valuation >> fs[SUBSET_DEF] >>
-          rw[combinTheory.APPLY_UPDATE_THM]) >>
-       `valuation (mm2folm M) (λn:num. w) /\ 
-        valuation (mm2folm M) σm⦇x ↦ w⦈`
-        by fs[valuation_def,mm2folm_def,bisim_world_def] >>
-        fs[fsatis_def]) >>
-`feval (mm2folm N) (λn. v) phi = feval (mm2folm N) σn⦇x ↦ v⦈ phi`
-        by 
-         (irule holds_valuation >> fs[SUBSET_DEF] >>
-          rw[combinTheory.APPLY_UPDATE_THM]) >>
-       `valuation (mm2folm N) (λn:num. v) /\ 
-        valuation (mm2folm N) σn⦇x ↦ v⦈`
-        by fs[valuation_def,mm2folm_def,bisim_world_def] >>
-        fs[fsatis_def]
-QED
 (*
 Theorem ppthm_2_68_half1:
 ∀a x.
@@ -550,7 +509,7 @@ QED
 Theorem pptree_height_rel_lemma:
 ∀M x w v.
         (tree M.frame x /\
-        w ∈ M.frame.world ∧ height M x M w = n /\ 
+        w ∈ M.frame.world ∧ height M x M w = n /\
         M.frame.rel w v ∧ v ∈ M.frame.world) ⇒
                     height M x M v = n + 1
 Proof
@@ -695,24 +654,24 @@ val _ = overload_on("nsatis", “λM w f. ~satis M w f”);
 val _ = app clear_overloads_on ["◇", "□"]
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Prefix 900, pp_elements = [TOK "◇"], 
+                  fixity = Prefix 900, pp_elements = [TOK "◇"],
                   term_name = "DIAM", paren_style = OnlyIfNecessary}
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Prefix 900, pp_elements = [TOK "□"], 
+                  fixity = Prefix 900, pp_elements = [TOK "□"],
                   term_name = "BOX", paren_style = OnlyIfNecessary}
 
 
-Overload UPM = ``\U MS. ultraproduct_folmodel U (J:α -> bool) MS`` 
+Overload UPM = ``\U MS. ultraproduct_folmodel U (J:α -> bool) MS``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(UPM1)", TM, TOK "(UPM2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(UPM1)", TM, TOK "(UPM2)"],
                   term_name = "UPM", paren_style = OnlyIfNecessary}
 
 
-Overload UPMN = ``\U MS. ultraproduct_folmodel U (J:num -> bool) MS`` 
+Overload UPMN = ``\U MS. ultraproduct_folmodel U (J:num -> bool) MS``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(UPMN1)", TM, TOK "(UPMN2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(UPMN1)", TM, TOK "(UPMN2)"],
                   term_name = "UPMN", paren_style = OnlyIfNecessary}
 
 
@@ -720,8 +679,8 @@ Overload myequiv = ``\f1 ty f2. equiv0 ty f1 f2``
 
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(meq1)", TM, TOK "(meq2)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(meq1)", TM, TOK "(meq2)"],
                   term_name = "myequiv", paren_style = OnlyIfNecessary}
 
 
@@ -729,8 +688,8 @@ Overload myfeq = ``\f1 ty f2. feq ty f1 f2``
 
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [HardSpace 2, TOK "(mfeq1)", TM, TOK "(mfeq2)", BreakSpace (2,0)], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [HardSpace 2, TOK "(mfeq1)", TM, TOK "(mfeq2)", BreakSpace (2,0)],
                   term_name = "myfeq", paren_style = OnlyIfNecessary}
 
 
@@ -739,136 +698,136 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 Overload upr = ``\f U A g. Uequiv U (J: α -> bool) A f g``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(upr1)", TM, TOK "(upr2)",TM, TOK "(upr3)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(upr1)", TM, TOK "(upr2)",TM, TOK "(upr3)"],
                   term_name = "upr", paren_style = OnlyIfNecessary}
 
 Overload uprr = ``\U A. Uequiv U (J: α -> bool) A``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, 
-                  pp_elements = [TOK "(uprr1)", TM, TOK "(uprr2)",TM, TOK "(uprr3)"], 
+                  fixity = Closefix,
+                  pp_elements = [TOK "(uprr1)", TM, TOK "(uprr2)",TM, TOK "(uprr3)"],
                   term_name = "uprr", paren_style = OnlyIfNecessary}
 
 Overload uprn = ``\f U A g. Uequiv U (J: num -> bool) A f g``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(uprn1)", TM, TOK "(uprn2)",TM, TOK "(uprn3)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(uprn1)", TM, TOK "(uprn2)",TM, TOK "(uprn3)"],
                   term_name = "uprn", paren_style = OnlyIfNecessary}
 
 Overload uprrn = ``\U A. Uequiv U (J: num -> bool) A``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, 
-                  pp_elements = [TOK "(uprrn1)", TM, TOK "(uprrn2)",TM, TOK "(uprrn3)"], 
+                  fixity = Closefix,
+                  pp_elements = [TOK "(uprrn1)", TM, TOK "(uprrn2)",TM, TOK "(uprrn3)"],
                   term_name = "uprrn", paren_style = OnlyIfNecessary}
 
 
 Overload pt = ``\s r.partition r s``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (LEFT, 500), 
-                  pp_elements = [TOK "(ptt)"], 
+                  fixity = Infix (LEFT, 500),
+                  pp_elements = [TOK "(ptt)"],
                   term_name = "pt", paren_style = OnlyIfNecessary}
 (*
 Overload cp = ``\J A. Cart_prod (J:α -> bool)  A``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(cp1)", TM, TOK "(cp2)", TM, TOK "(cp3)"], 
+                  fixity = Closefix, pp_elements = [TOK "(cp1)", TM, TOK "(cp2)", TM, TOK "(cp3)"],
                   term_name = "cp", paren_style = OnlyIfNecessary}
 *)
 
 Overload disj = ``\f1 f2. DISJ f1 f2``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(disj)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(disj)"],
                   term_name = "disj", paren_style = OnlyIfNecessary}
 
 Overload fdisj = ``\f1 f2. fDISJ f1 f2``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(fdisj)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(fdisj)"],
                   term_name = "fdisj", paren_style = OnlyIfNecessary}
 
 Overload fimp = ``\f1 f2. IMP (f1: folLang$form) f2``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(fimp)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(fimp)"],
                   term_name = "fimp", paren_style = OnlyIfNecessary}
 
 
 Overload ad = ``\f1 f2. AND f1 f2``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(ad)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(ad)"],
                   term_name = "ad", paren_style = OnlyIfNecessary}
 
 
 Overload fad = ``\f1 f2. fAND f1 f2``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(fad)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(fad)"],
                   term_name = "fad", paren_style = OnlyIfNecessary}
 
 
 Overload rst = ``\r s. RESTRICT r s``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(rst1)", TM, TOK "(rst2)", TM, TOK "(rst3)"], 
+                  fixity = Closefix, pp_elements = [TOK "(rst1)", TM, TOK "(rst2)", TM, TOK "(rst3)"],
                   term_name = "rst", paren_style = OnlyIfNecessary}
 
 Overload mdeq = ``\M1 w1 M2 w2. modal_eq M1 M2 w1 w2``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(mdeq1)", TM, TOK "(mdeq2)", TM, TOK "(mdeq3)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(mdeq1)", TM, TOK "(mdeq2)", TM, TOK "(mdeq3)"],
                   term_name = "mdeq", paren_style = OnlyIfNecessary}
 
 
 Overload gsm = ``\M1 M2. GENSUBMODEL M1 M2``
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(gsm)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(gsm)"],
                   term_name = "gsm", paren_style = OnlyIfNecessary}
 
 
 Overload hom = ``\M1 f M2. hom f M1 M2``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(hom1)", TM, TOK "(hom2)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(hom1)", TM, TOK "(hom2)"],
                   term_name = "hom", paren_style = OnlyIfNecessary}
 
 
 Overload bisim' = ``\M1 Z M2. bisim Z M1 M2``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(bisim1)", TM, TOK "(bisim2)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(bisim1)", TM, TOK "(bisim2)"],
                   term_name = "bisim'", paren_style = OnlyIfNecessary}
 
 
 Overload bw = ``\M1 w1 M2 w2. bisim_world M1 M2 w1 w2``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(bw1)", TM, EndInitialBlock(PP.CONSISTENT,0), TOK "(bw2)", 
-                                 BeginFinalBlock(PP.CONSISTENT,0), TM, TOK "(bw3)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(bw1)", TM, EndInitialBlock(PP.CONSISTENT,0), TOK "(bw2)",
+                                 BeginFinalBlock(PP.CONSISTENT,0), TM, TOK "(bw3)"],
                   term_name = "bw", paren_style = OnlyIfNecessary}
 
 Overload nbw = ``\M1 w1 f n M2 w2. nbisim M1 M2 f n w1 w2``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(nbw1)", TM, TOK "(nbw2)", TM, TOK "(nbw3)",TM, TOK "(nbw4)",TM, TOK "(nbw5)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(nbw1)", TM, TOK "(nbw2)", TM, TOK "(nbw3)",TM, TOK "(nbw4)",TM, TOK "(nbw5)"],
                   term_name = "nbw", paren_style = OnlyIfNecessary}
 
 Overload cs = ``\M X. can_see M (X: α -> bool)``
 Overload cs = ``\M X. can_see M (X: β -> bool)``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(cs1)", TM, TOK "(cs2)",TM, TOK"(cs3)"], 
+                  fixity = Closefix, pp_elements = [TOK "(cs1)", TM, TOK "(cs2)",TM, TOK"(cs3)"],
                   term_name = "cs", paren_style = OnlyIfNecessary}
 
 
@@ -877,33 +836,33 @@ Overload os = ``\M X. only_see M (X:α -> bool) ``
 Overload os = ``\M X. only_see M (X:β -> bool) ``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(os1)", TM, TOK "(os2)",TM, TOK "(os3)"], 
+                  fixity = Closefix, pp_elements = [TOK "(os1)", TM, TOK "(os2)",TM, TOK "(os3)"],
                   term_name = "os", paren_style = OnlyIfNecessary}
 
 Overload uer = ``\M. UE_rel M``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(uer1)", TM, TOK "(uer2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(uer1)", TM, TOK "(uer2)"],
                   term_name = "uer", paren_style = OnlyIfNecessary}
 
 Overload ue = ``\M. UE M``
 Overload ue = ``\M. UE' M``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(ue1)", TM, TOK "(ue2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(ue1)", TM, TOK "(ue2)"],
                   term_name = "ue", paren_style = OnlyIfNecessary}
 
 Overload pf = ``\w s. principle_UF w s``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(pf1)", TM, TOK "(pf2)", TM, TOK "(pf3)"], 
+                  fixity = Closefix, pp_elements = [TOK "(pf1)", TM, TOK "(pf2)", TM, TOK "(pf3)"],
                   term_name = "pf", paren_style = OnlyIfNecessary}
 
 Overload sim = ``\M1 Z M2. sim Z M1 M2``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(sim1)", TM, TOK "(sim2)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(sim1)", TM, TOK "(sim2)"],
                   term_name = "sim", paren_style = OnlyIfNecessary}
 
 Overload fev = ``\M σ f. feval M σ f``
@@ -920,23 +879,23 @@ Overload bmi = ``\M1 f M2. bounded_mor_image f M1 M2``
 
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Infix (NONASSOC, 450), 
-                  pp_elements = [TOK "(bmi1)", TM, TOK "(bmi2)"], 
+                  fixity = Infix (NONASSOC, 450),
+                  pp_elements = [TOK "(bmi1)", TM, TOK "(bmi2)"],
                   term_name = "bmi", paren_style = OnlyIfNecessary}
 
 Overload fPred = “\a l. Pred a l”
 
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, 
-                  pp_elements = [TOK "(M3)"], 
+                  fixity = Closefix,
+                  pp_elements = [TOK "(M3)"],
                   term_name = "M3", paren_style = OnlyIfNecessary}
 
 Overload st = ``\x. ST x``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, 
-                  pp_elements = [TOK "(st1)", TM, TOK "(st2)"], 
+                  fixity = Closefix,
+                  pp_elements = [TOK "(st1)", TM, TOK "(st2)"],
                   term_name = "st", paren_style = OnlyIfNecessary}
 
 
@@ -952,25 +911,23 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
 	                  term_name = "fst", paren_style = OnlyIfNecessary}
 
 
-Overload UPMM = ``\U MS. ultraproduct_model U (J:α -> bool) MS`` 
+Overload UPMM = ``\U MS. ultraproduct_model U (J:α -> bool) MS``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(UPMM1)", TM, TOK "(UPMM2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(UPMM1)", TM, TOK "(UPMM2)"],
                   term_name = "UPMM", paren_style = OnlyIfNecessary}
 
-Overload UPMMN = ``\U MS. ultraproduct_model U (J:num -> bool) MS`` 
+Overload UPMMN = ``\U MS. ultraproduct_model U (J:num -> bool) MS``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(UPMMN1)", TM, TOK "(UPMMN2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(UPMMN1)", TM, TOK "(UPMMN2)"],
                   term_name = "UPMMN", paren_style = OnlyIfNecessary}
 
-Overload Emu = ``\s. s //E μ`` 
+Overload Emu = ``\s. s //E μ``
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix, pp_elements = [TOK "(Emu1)", TM, TOK "(Emu2)"], 
+                  fixity = Closefix, pp_elements = [TOK "(Emu1)", TM, TOK "(Emu2)"],
                   term_name = "Emu", paren_style = OnlyIfNecessary}
 
 Overload univn = ``univ(:num)``
 val _ = export_theory();
-
-

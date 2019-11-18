@@ -43,7 +43,7 @@ We also discuss where HOL's simple type theory lets us down: some standard resul
 \subsection{Related Work}
 
 \section{Syntax, Semantics and the Standard Translation}[1.5p]
-In our formalization, we only consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula. We create a data type called `form' of the formulas of this modal language. 
+In our formalization, we only consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula. We create a data type called `form' of the formulas of this modal language.
 \begin{defn}
 {\upshape\cite[Definition 1.9]{Blackburn}}
 \begin{holmath}
@@ -51,7 +51,7 @@ In our formalization, we only consider the basic modal language, in which the on
 \end{holmath}
 \end{defn}
 
-A model where these formulas can be interpreted consists of a \emph{frame} and a \emph{valuation}, where \HOLtm{frame} is a set with a relation on it. 
+A model where these formulas can be interpreted consists of a \emph{frame} and a \emph{valuation}, where \HOLtm{frame} is a set with a relation on it.
 \begin{defn}
 {\upshape\cite[Definition 1.19]{Blackburn}}
 \begin{holmath}
@@ -92,10 +92,10 @@ According to the semantic interpretation of the `\HOLtm{DIAM phi}', we translate
 \begin{holmath}
   \HOLthm{chap2_4revised.prop_2_47_i0}
 \end{holmath}
-\end{prop} 
+\end{prop}
 Here \HOLtm{mm2folm} is the function that turns a modal model into a first-order model, defined as:
 \begin{holmath}
-  \HOLthm[def,w1/w,w3/v10,w4/v11,l/args]{chap2_4revised.mm2folm_def}
+  \HOLthm[def,w1/w,w3/v10,ws/v11,l/args]{chap2_4revised.mm2folm_def}
 \end{holmath}
 
 \section{Basic Results}%[2p]
@@ -115,12 +115,12 @@ The tree-like property says an satisfiable modal formula can be satisfied in a t
   \HOLthm[M1/M,M/M',phi/form,r/s,showtypes]{prettyPrinting.ppprop_2_15_corollary}
 \end{holmath}
 \end{prop}
-The world set of the tree like model constructed from \HOLtm{M} according to the standard proof of this theorem is a set of lists of worlds in \HOLtm{M1}, that is why passing to a tree-like model does not preserve the type. 
+The world set of the tree like model constructed from \HOLtm{M} according to the standard proof of this theorem is a set of lists of worlds in \HOLtm{M1}, that is why passing to a tree-like model does not preserve the type.
 
 
 
 \subsection{Bisimulation}
-The definition of bisimulation in HOL is just a direct translation of its mathematical definition: 
+The definition of bisimulation in HOL is just a direct translation of its mathematical definition:
 \begin{defn}
 {\upshape\cite[Definition 2.16 (Bisimulations)]{Blackburn}}
 \begin{holmath}
@@ -138,7 +138,7 @@ It is trivial to prove by induction that bisimilar worlds are modal equivalent. 
 \end{thm}
 
 \subsection{Finite model property}
-There are two classical approach of constructing finite models using model theory, namely via selection and via filtration. 
+There are two classical approach of constructing finite models using model theory, namely via selection and via filtration.
 \subsubsection{Selection}
 Given \HOLtm{satis M1 w1 phi}, where $\phi$ has degree $k$, we can construct \HOLtm{M2}, \HOLtm{M3}, \HOLtm{M4} and \HOLtm{M5} comsecutively, such that \HOLtm{M5} is the finite model we want, where:
 \begin{itemize}
@@ -146,38 +146,37 @@ Given \HOLtm{satis M1 w1 phi}, where $\phi$ has degree $k$, we can construct \HO
 \item \HOLtm{M3} is the restriction of \HOLtm{M2} to height $k$.
 \item \HOLtm{M4} is obtained from \HOLtm{M3} by modifying the valuation into \HOLtm{\p v. if (p IN (prop_letters phi)) then (M3.valt p v) else F}.
 \end{itemize}
-The construction of \HOLtm{M5} requires a lemma: 
+The construction of \HOLtm{M5} requires a lemma:
 \begin{lm}
 {\upshape\cite[Proposition 2.29]{Blackburn}}
 \begin{holmath}
   \HOLthm[phi/f,Φ/s,showtypes]{prettyPrinting.ppprop_2_29_strengthen}
 \end{holmath}
 \end{lm}
-We require the assumption that the universe of $\beta$ is infinite since we relies on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent. This is easy to prove using set theory. However, in simple type theory, the proof of  \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires the infiniteness of the type universe of \HOLty{:β}. 
+We require the assumption that the universe of $\beta$ is infinite since we relies on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent. This is easy to prove using set theory. However, in simple type theory, the proof of  \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires the infiniteness of the type universe of \HOLty{:β}.
 
 By the lemma above, the set
-\HOLtm[psi/f]{Δ={f | DEG f <= k /\ prop_letters f ⊆ Φ\}}$/\equiv_{(:\HOLty{:β list})}$ is finite. Let \HOLtm{Γ} be the set of modal formulas starting with a diamond and let $R$ denote \HOLtm{({ CHOICE (A ∩ Γ) | A ∈ Δ\} DIFF {∅\})}, we define \HOLtm{Sn} to be the primitive recursion function:
+\HOLtm[psi/f]{Δ={f | DEG f <= k /\ prop_letters f ⊆ Φ\}}$/\equiv_{(:\HOLty{:β list})}$ is finite. Let \HOLtm{Γ} be the set of modal formulas starting with a diamond and let $R$ denote \HOLtm{({ CHOICE (A ∩ Γ) | A ∈ Δ\} DIFF {∅\})}, we define \HOLtm{Sn} to be the primitive recursion function such that
 \begin{holmath}
- \HOLtm[alltt,width=70]{PRIM_REC {w2\}
-                  (\s0:β list set n. 
-                       {CHOICE us |
- 	              ?phi v. satis M4 v (DIAM phi) /\ 
- 	              ((DIAM phi) IN 
-                        R /\
-                       v IN s0 /\
- 		      us = { u | M4.frame.rel v u /\ u IN M4.frame.world /\
- 		                   satis M4 u phi\})\})
- }
+ \HOLtm[alltt,width=70]{Sn 0 = {w2\} /\
+   Sn (SUC n) =
+     {CHOICE us |
+        ?phi v. satis M4 v (DIAM phi) /\
+                DIAM phi IN R /\
+                v IN Sn n /\
+                us = { u | M4.frame.rel v u /\ u IN M4.frame.world /\
+                           satis M4 u phi\}\}
+}
 \end{holmath}
-Then the world set of \HOLtm{M5} is \HOLtm{BIGUNION {Sn i| i <= k\}}. We proved \HOLtm{satis M5 w2 phi} by proving 
+Then the world set of \HOLtm{M5} is \HOLtm{BIGUNION {Sn i| i <= k\}}. We proved \HOLtm{satis M5 w2 phi} by proving
 \begin{holmath}
  \HOLtm[alltt,width=70]{\n a1 a2. a1 IN M5.frame.world /\ a2 IN M4.frame.world /\
                   height M4 w2 M4 a1 = height M4 w2 M4 a2 /\
- 		 height M4 w2 M4 a1 <= k - n /\
+                 height M4 w2 M4 a1 <= k - n /\
                   (!phi. (DEG phi <= n /\ prop_letters phi ⊆ s)
                       ==> (satis M4 a1 phi <=> satis M4 a2 phi))}
 \end{holmath}
-is an \emph{n-bisimulation} relating the two copies of \HOLtm{w2} in \HOLtm{M4} and in \HOLtm{M5}. 
+is an \emph{n-bisimulation} relating the two copies of \HOLtm{w2} in \HOLtm{M4} and in \HOLtm{M5}.
 
 As we used \ref{2.15}, we change the type of the model by passing to a finite model via selection:
 \begin{thm}
@@ -195,12 +194,12 @@ Given \HOLtm{satis M1 w phi}, the finite model \HOLtm{M2} constructed by selecti
   \HOLthm[M1/M,M2/M',w1/w,w2/w',width=70]{chap2_3.thm_2_41}
 \end{holmath}
 \end{thm}
-where \HOLtm{M2} above is taken as \HOLtm{FLT M1 (subforms phi)}, and has the same type as \HOLtm{M1}. 
+where \HOLtm{M2} above is taken as \HOLtm{FLT M1 (subforms phi)}, and has the same type as \HOLtm{M1}.
 
 \section{Mechanizing Ultrafilters and Ultraproducts}[3p]
-Some results in section 2.5-2.7 relies on some theorems about ultrafilters and ultraproduct. 
+Some results in section 2.5-2.7 relies on some theorems about ultrafilters and ultraproduct.
 \subsection{ultrafilters}
-Given a non-empty set $J$, a set $L\subseteq {\mathcal P}(J)$   is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward. 
+Given a non-empty set $J$, a set $L\subseteq {\mathcal P}(J)$   is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward.
 \begin{defn}
 {\upshape\cite[Definition A.12 (Filters)]{Blackburn}}
 \begin{holmath}
@@ -227,7 +226,7 @@ A subset $A$ of the power set on $J$ has \emph{finite intersection property} if 
 As a corollary of ultrafilter theorem, a set with finite intersection property is contained in an ultrafilter.
 
 \subsection{Ultraproducts}
-The notion of ultraproducts are defined for sets, modal models, and first-order models. 
+The notion of ultraproducts are defined for sets, modal models, and first-order models.
 \subsubsection{Ultraproduct of sets}
 The ultraproduct of a family of sets $(A_j)_{j\in J}$, where $J$ is non-empty and each $A_j$ is non-empty, is defined as a quotient of the cartesian product of the family. The Cartesian product of the family  $(A_j)_{j\in J}$ is the set of functions $f$ with domain $J$ such that for all $j\in J$, $f(j)\in A_j$.
 \begin{defn}
@@ -236,7 +235,7 @@ The ultraproduct of a family of sets $(A_j)_{j\in J}$, where $J$ is non-empty an
   \HOLthm[def,j/i,J/I,An/A]{ultraproduct.Cart_prod_def}
 \end{holmath}
 \end{defn}
- 
+
 If $U$ is an ultrafilter on $J$, for two functions $f,g$ in the Cartesian product \HOLtm{Cart_prod J An}, we say $f$ and $g$ are $U$-equivalent (notation: \HOLtm{Uequiv U J An f g}) if the set \HOLtm{{j | j IN J /\ f j = g j\}} (where the values of $f$ and $g$ agree) is in $U$. The ultraproduct of  $(A_j)_{j\in J}$ modulo $U$ is the quotient of \HOLtm{Cart_prod J An} by \HOLtm{Uequiv U J An}.
 \begin{defn}
 {\upshape\cite[Definition 2.69 (Ultraproduct of Sets)]{Blackburn}}
@@ -244,12 +243,12 @@ If $U$ is an ultrafilter on $J$, for two functions $f,g$ in the Cartesian produc
   \HOLthm[def,J/I,An/A]{ultraproduct.ultraproduct_def}
 \end{holmath}
 \end{defn}
-We write \HOLtm{fc} to denote the equivalence class that $f$ belongs to. In the case where \HOLtm{An j = A} for all $j\in J$, the ultraproduct is called the ultrapower of \HOLtm{A} modulo $U$. As before, in the definition above, the family $(A_j)_{j\in J}$ is encoded as a function, and hence for $j\in J$, \HOLtm{An j} is the set $A_j$ indexed by $j$. 
+We write \HOLtm{fc} to denote the equivalence class that $f$ belongs to. In the case where \HOLtm{An j = A} for all $j\in J$, the ultraproduct is called the ultrapower of \HOLtm{A} modulo $U$. As before, in the definition above, the family $(A_j)_{j\in J}$ is encoded as a function, and hence for $j\in J$, \HOLtm{An j} is the set $A_j$ indexed by $j$.
 \subsubsection{Ultraproduct for modal models}
 Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ (notation : \HOLtm{ultraproduct_model U J MS}) is described as follows:
 
 \begin{itemize}
-  \item The world set is the ultraproduct of world sets of \HOLtm{MS} modulo $U$. 
+  \item The world set is the ultraproduct of world sets of \HOLtm{MS} modulo $U$.
 
   \item Two equivalence classes $f_U,g_U$ of functions are related in \HOLtm{ultraproduct_model U J MS} iff there exist $f_0\in f_U,g_0\in g_U$, such that \HOLtm{{j IN J | (MS j).frame.rel (f0 j) (g0 j)\}} is in $U$.
   \item A propositional letter $p$ is satisfied at $f_U$ in \HOLtm{ultraproduct_model U J MS} iff there exists $f_0\in f_U$ such that \HOLtm{{j | j IN J /\ (f0 j) IN (MS j).valt p\}} is in $U$.
@@ -266,25 +265,25 @@ Here \HOLtm{models2worlds} is the function that takes a family of models to the 
   \HOLthm[def,j/i]{ultraproduct.models2worlds_def}
 \end{holmath}
 
-As \HOLtm{Uequiv U J A} is an equivalence relation, if one element in an equivalence class satisfies the required condition, then all the elements in the equivalence class will satisfy the condition. Therefore, if we replace all the existential quantifiers with universal quantifiers in the above definition, the construction is still valid, and will give the same model as the current definition. 
+As \HOLtm{Uequiv U J A} is an equivalence relation, if one element in an equivalence class satisfies the required condition, then all the elements in the equivalence class will satisfy the condition. Therefore, if we replace all the existential quantifiers with universal quantifiers in the above definition, the construction is still valid, and will give the same model as the current definition.
 
-The critical result we will need about ultraproducts of modal models is a modal version of the fundamental theorem of ultraproducts, which is also called \L o\'s's theorem. 
+The critical result we will need about ultraproducts of modal models is a modal version of the fundamental theorem of ultraproducts, which is also called \L o\'s's theorem.
 
 \begin{thm}[\texttt{Los_modal_thm}]
 \begin{holmath}
   \HOLthm[MS/Ms,j/i,f0/f,width=75]{prettyPrinting.ppLos_modal_thm}
 \end{holmath}
 \end{thm}
-Although it is possible to derive the theorem above from \L o\'s's theorem of first-order models using standard translation. We proved it directly by induction on modal formulas in HOL. 
+Although it is possible to derive the theorem above from \L o\'s's theorem of first-order models using standard translation. We proved it directly by induction on modal formulas in HOL.
 
 \subsubsection{Ultraproduct for first-order models}
 Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ (notation : \HOLtm{ultraproduct_folmodel U (J:α -> bool) MS}) is given by:
 
 \begin{itemize}
 \item The domain is the ultraproduct of the domains of \HOLtm{MS} over $U$ on $J$.
-\item A function with its symbol denoted by the natural number $n$ will send a list \HOLtm{zs} of equivalence classes to the equivalence class of a function that sending $j\in J$ to \HOLtm{(MS j).Fun n l}, where the $k$-th member of the list $l$ is a representative of the $k$-th member (which is an equivalence class) of \HOLtm{zs}. 
+\item A function with its symbol denoted by the natural number $n$ will send a list \HOLtm{zs} of equivalence classes to the equivalence class of a function that sending $j\in J$ to \HOLtm{(MS j).Fun n l}, where the $k$-th member of the list $l$ is a representative of the $k$-th member (which is an equivalence class) of \HOLtm{zs}.
 
-\item A predicate with its symbol denoted by $p$ will hold for a list $zs$ of equivalence classes if and only if once we have a list $zr$ such that the $k$-th member is a representative of the $k$-th member of $zs$, the set of elements \HOLtm{j IN J} such that \HOLtm{(MS j). Pred p zr} is in $U$. 
+\item A predicate with its symbol denoted by $p$ will hold for a list $zs$ of equivalence classes if and only if once we have a list $zr$ such that the $k$-th member is a representative of the $k$-th member of $zs$, the set of elements \HOLtm{j IN J} such that \HOLtm{(MS j). Pred p zr} is in $U$.
 \end{itemize}
 \begin{defn}
 {\upshape\cite[Definition A.18 (Ultraproduct of First-Order Models)]{Blackburn}}
@@ -292,7 +291,7 @@ Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilte
   \HOLthm[def,J/I,j/i,zs/fs]{ultraproduct.ultraproduct_folmodel_def}
 \end{holmath}
 \end{defn}
-Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm{CHOICE fc}. The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains. 
+Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm{CHOICE fc}. The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains.
 
 The semantic behavior of ultraproduct models are characterized by \emph{\L o\'s's theorem}, whose proof can be founded in \cite{ChangKeisler1990}.
 
@@ -306,9 +305,9 @@ The semantic behavior of ultraproduct models are characterized by \emph{\L o\'s'
 
 
 \section{Ultrafilter Extensions}[2p]
-The first application of the theory of ultrafilters above is to construct the ultrafilter extension of a model, which has the nice property of being M-saturated. To define M-saturation, we give the following three definitions (the first two are called \emph{finitely satisfiable}, \emph{satisfiable}) consecutively: 
+The first application of the theory of ultrafilters above is to construct the ultrafilter extension of a model, which has the nice property of being M-saturated. To define M-saturation, we give the following three definitions (the first two are called \emph{finitely satisfiable}, \emph{satisfiable}) consecutively:
 \begin{defn}
-{\upshape\cite[Definition 2.53]{Blackburn}} 
+{\upshape\cite[Definition 2.53]{Blackburn}}
 \begin{holmath}
   \HOLthm[def]{chap2_5.fin_satisfiable_in_def}\\[3mm]
   \HOLthm[def,phi/form,w/x]{chap2_5.satisfiable_in_def}\\[3mm]
@@ -337,7 +336,7 @@ Using the ultrafilter theorem and some basic properties about ultrafilters, we d
   \HOLthm[width=60]{chap2_5.prop_2_59_i}
 \end{holmath}
 \end{prop}
-In particular, every world \HOLtm{w IN M.frame.world} is embedded as the principal filter \HOLtm{principle_UF w M.frame.world} on \HOLtm{M.frame.world} generated by \HOLtm{w} in the ultrafilter extension or \HOLtm{M}. Also, the above leads to the proof of the fact that the ultrafilter extension of every model is M-saturated. The M-saturatedness of ultrafilter extensions together with \ref{2.54} immediately gives the central result about ultrafilter extension: bisimularity of worlds in a model \HOLtm{M} can be characterized as bisimularity in \HOLtm{UE M}. 
+In particular, every world \HOLtm{w IN M.frame.world} is embedded as the principal filter \HOLtm{principle_UF w M.frame.world} on \HOLtm{M.frame.world} generated by \HOLtm{w} in the ultrafilter extension or \HOLtm{M}. Also, the above leads to the proof of the fact that the ultrafilter extension of every model is M-saturated. The M-saturatedness of ultrafilter extensions together with \ref{2.54} immediately gives the central result about ultrafilter extension: bisimularity of worlds in a model \HOLtm{M} can be characterized as bisimularity in \HOLtm{UE M}.
 \begin{thm}
 {\upshape\cite[Proposition 2.62]{Blackburn}}
 \begin{holmath}
@@ -354,10 +353,10 @@ Given a first-order model \HOLtm{M} with no information about interpretation of 
   \HOLthm[def,l/args,c/n,width=65]{lemma2_73.expansion_def}
 \end{holmath}
 \end{defn}
-If \HOLtm{M}, \HOLtm{A} and \HOLtm{f} are all fixed, then the model \HOLtm{M'} such that \HOLtm{expansion M A M' f} is unique. The only difference between a model and an expansion of it is the interpretation of function symbols. 
+If \HOLtm{M}, \HOLtm{A} and \HOLtm{f} are all fixed, then the model \HOLtm{M'} such that \HOLtm{expansion M A M' f} is unique. The only difference between a model and an expansion of it is the interpretation of function symbols.
 
-A set \HOLtm{Σ} of first-order formulas is called \emph{consistent} with a model \HOLtm{M} if for every finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a valuation of \HOLtm{M} such that all elements of \HOLtm{Σ0} are satisfied, in this case, we write \HOLtm{consistent M Σ}. A set \HOLtm{Γ} of first-order formula is an $x$-\emph{type} if for each formula in \HOLtm{Γ}, the only free variable that may contain is $x$. In this case, we write `\HOLtm{ftype x Γ}' in HOL. If \HOLtm{Γ} is an $x$-type, when evaluating formulas in \HOLtm{Γ}, the valuations will only control where the only free variable $x$ goes to. We say \HOLtm{Γ} is \emph{realized} in \HOLtm{M} if there is an element $w$ in the domain of \HOLtm{M} such that \HOLtm{feval M (\v.w) phi} for all \HOLtm{phi IN Γ}. In this case, we write `\HOLtm{frealizes M x Γ}' in HOL. 
-Let \HOLtm{M} be a model and \HOLtm{n} be a natural number. 
+A set \HOLtm{Σ} of first-order formulas is called \emph{consistent} with a model \HOLtm{M} if for every finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a valuation of \HOLtm{M} such that all elements of \HOLtm{Σ0} are satisfied, in this case, we write \HOLtm{consistent M Σ}. A set \HOLtm{Γ} of first-order formula is an $x$-\emph{type} if for each formula in \HOLtm{Γ}, the only free variable that may contain is $x$. In this case, we write `\HOLtm{ftype x Γ}' in HOL. If \HOLtm{Γ} is an $x$-type, when evaluating formulas in \HOLtm{Γ}, the valuations will only control where the only free variable $x$ goes to. We say \HOLtm{Γ} is \emph{realized} in \HOLtm{M} if there is an element $w$ in the domain of \HOLtm{M} such that \HOLtm{feval M (\v.w) phi} for all \HOLtm{phi IN Γ}. In this case, we write `\HOLtm{frealizes M x Γ}' in HOL.
+Let \HOLtm{M} be a model and \HOLtm{n} be a natural number.
 %
 For every \HOLtm{A ⊆ M.Dom}, with $|A|<n$ and for every $f:{\mathbb N}\to $ \HOLtm{M.Dom}, there is a unique \HOLtm{M'} such that  \HOLtm{expansion M A M' f}.
 %
@@ -368,7 +367,7 @@ If every such \HOLtm{M'} realizes every $x$-type \HOLtm{Γ}, then we say \HOLtm{
   \HOLthm[def,Γ/G]{prettyPrinting.ppn_saturated_def}\\[3mm]
 \end{holmath}
 \end{defn}
-We say \HOLtm{M} is countably saturated, and write \HOLtm{countably_saturated M} if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterization theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.  
+We say \HOLtm{M} is countably saturated, and write \HOLtm{countably_saturated M} if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterization theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.
 \begin{lm}\label{2.73}
 {\upshape\cite[Lemma 2.73]{Blackburn}}
 \begin{holmath}
@@ -376,7 +375,7 @@ We say \HOLtm{M} is countably saturated, and write \HOLtm{countably_saturated M}
 \end{holmath}
 \end{lm}
 Here a countably incomplete ultrafilter is an ultrafilter that contains a countably infinite family that intersects to the empty set. We proved in HOL that such ultrafilters do exists using \ref{A.14}. The above theorem is not simply a direct consequence from the \L o\'s's theorem:
-\L o\'s's theorem is about ultraproducts of first-order models, and it says nothing about expansion. But to prove \ref{2.73}, we are required to prove a statement for a model obtained by expanding a first-order model which is again obtained by viewing an ultraproduct of modal models as a first-order model. 
+\L o\'s's theorem is about ultraproducts of first-order models, and it says nothing about expansion. But to prove \ref{2.73}, we are required to prove a statement for a model obtained by expanding a first-order model which is again obtained by viewing an ultraproduct of modal models as a first-order model.
 
 To deal with this issue, the key observation is that constants are nothing more than forcing some symbols to be sent to some points in a model under every valuation, hence rather than use nullary function symbols, we fixed a set of variable letters, each corresponds to a function symbol, and only consider the valuations that sends these variable letters to fixed certain points. With this idea, we can remove all the constants in a formula, and hence change our scope from an expanded model back to the unexpanded model. To get rid of the constants $\{0,\cdots , n-1\}$, we replace every \HOLtm{VAR m} with \HOLtm{VAR (m+n)}, and replace every constant \HOLtm{Fn c []} by \HOLtm{VAR c}. This operation is done by the function \HOLtm{shift_form} which takes a natural number (the number of constants we want to remove), and a first-order formula (where the only function symbols may appear are the constants $0,\cdots, n-1$). Since $0,\cdots,n-1$ in a shifted formula are now designed to be sent to fixed places $f \ 0,\cdots,f \ (n-1)$, it does not make sense to assign these variable symbols anywhere else. Therefore, to talk about evaluation of shifted formula, the first thing is to make sure that the valuations we are considering send the variables which actually denotes constants to the right place. Hence we shift the valuations accordingly. The definition of shifting on valuation together with the semantical behaviour are displayed below:
 \begin{defn}[Shifting on valuations, \texttt{expansion_shift_feval}]\label{k1}
@@ -392,13 +391,13 @@ The shifting construction gets us out of the expansion, leaving us a model obtai
   \HOLthm[J/I,j/i]{prettyPrinting.ppultraproduct_comm_feval}
 \end{holmath}
 \end{prop}
-By \ref{k1} and \ref{k2}, proving \ref{2.73} amounts to prove: 
+By \ref{k1} and \ref{k2}, proving \ref{2.73} amounts to prove:
 \begin{lm}[Saturation of ultraproduct model, \texttt{ultraproduct_sat}]
 \begin{holmath}
   \HOLthm[J/I,j/i,C/N,Δ0/ss,Δ/s,c/n,width=60]{prettyPrinting.ppultraproduct_sat}
 \end{holmath}
 \end{lm}
-The proof of the above lemma requires rather heavy construction and can be found in \cite{ChangKeisler1990}. 
+The proof of the above lemma requires rather heavy construction and can be found in \cite{ChangKeisler1990}.
 
 
 
@@ -408,11 +407,11 @@ Note that the standard translation of any modal formula only can only contain un
 \begin{defn}
 {\upshape\cite[Definition 2.67 (Invariant for Bisimulations)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,x/n,width=65,showtypes]{prettyPrinting.ppinvar4bisim_def}
+  \HOLthm[def,x/n,width=65,showtypes]{chap2_6.invar4bisim_def'}
 \end{holmath}
 \end{defn}
 
-By the same reason as ??, the type parameters here is necessasy. Although it is possible to prove theorems for different types $\alpha$ and $\beta$ in the above definition, we will only consider the case that $\alpha$ and $\beta$ are the same when proving theorems. 
+By the same reason as ??, the type parameters here is necessasy. Although it is possible to prove theorems for different types $\alpha$ and $\beta$ in the above definition, we will only consider the case that $\alpha$ and $\beta$ are the same when proving theorems.
 
 The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula with at most one free variable $x$ is invariant under bisimulation precisely when it is equivalent to the standard translation of some modal formula at $x$. It is immediate from \ref{2.47} that every such formula which is equivalent to a standard translation is invariant for bisimulation. We cannot prove it as an `if and only if' statement, since according to the proofs in \cite{Blackburn}, we can only prove the two directions separately as:
 \begin{prop}
@@ -434,7 +433,7 @@ For the proof of the two theorems above, the first one is immediate from \ref{2.
   \HOLthm[J/I,j/i,f/fw,g/fv]{prettyPrinting.ppthm_2_74_half2}
 \end{holmath}
 \end{thm}
-The above lemma relies on \ref{2.73} and its mathematical proof can be found in \cite{Blackburn}.  
+The above lemma relies on \ref{2.73} and its mathematical proof can be found in \cite{Blackburn}.
 
 
 

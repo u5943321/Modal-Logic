@@ -1,4 +1,5 @@
 $Turnstile$ 5 \ensuremath{\HOLTokenTurnstile}
+VAR 1 \HOLConst{V}
 ⊥ 1 \ensuremath{\bot}
 ◇ 1 \ensuremath{\Diamond}
 □ 1 \ensuremath{\Box}
@@ -72,10 +73,10 @@ vst 1 \ensuremath{v\sb{*}}
 (forces2) 1 \ensuremath{\Vdash}
 (nforces1) 1 ,
 (nforces2) 1 \ensuremath{\not\Vdash}
-(UPM1) 1 {}^{\sf f}\Pi\sb{ 
+(UPM1) 1 {}^{\sf f}\Pi\sb{
 (UPM2) 0 }
 
-(UPMN1) 1 {}^{\sf f}\Pi\sb{ 
+(UPMN1) 1 {}^{\sf f}\Pi\sb{
 (UPMN2) 0 }
 
 (meq1) 1 \equiv\sb{
@@ -85,19 +86,19 @@ vst 1 \ensuremath{v\sb{*}}
 (mfeq2) 0 }
 
 (upr1) 1 \sim\sb{
-(upr2) 0 }\sp{ 
+(upr2) 0 }\sp{
 (upr3) 0 }
 
 (uprr1) 1 \sim\sb{
-(uprr2) 0 }\sp{ 
+(uprr2) 0 }\sp{
 (uprr3) 0 }
 
 (uprn1) 1 \sim\sb{
-(uprn2) 0 }\sp{ 
+(uprn2) 0 }\sp{
 (uprn3) 0 }
 
 (uprrn1) 1 \sim\sb{
-(uprrn2) 0 }\sp{ 
+(uprrn2) 0 }\sp{
 (uprrn3) 0 }
 
 (ptt) 1 /
@@ -108,7 +109,7 @@ L1tau 2 \ensuremath{{\mathcal L}^1_\tau}
 models2worlds 6 worlds
 folmodels2Doms 4 Doms
 
-(cp1) 1 \Pi\sb{j \in 
+(cp1) 1 \Pi\sb{j \in
 (cp2) 0 }
 (cp3) 1 \sb{j}
 
@@ -143,15 +144,15 @@ BIGINTER 1 \ensuremath{\bigcap}
 
 (nbw1) 1 ,
 (nbw2) 0 \overset{
-(nbw3) 0 }\leftrightarroweq\sb{ 
+(nbw3) 0 }\leftrightarroweq\sb{
 (nbw4) 0 }
 (nbw5) 1 ,
 
 heightLE 6 \ensuremath{{\sf height}\sb{\le}}
 
 
-fV 1 \ensuremath{{}^{\sf f}{\sf VAR}}
-Fn 1 \ensuremath{{}^{\sf f}{\sf Fn}} 
+fV 1 \ensuremath{{}^{\sf f}{\sf V}}
+Fn 1 \ensuremath{{}^{\sf f}{\sf Fn}}
 FALL 1 \ensuremath{{}^{\sf f}{\forall}}
 (prd1) 2 \ensuremath{{}^{\sf f}{\sf P} \ }
 (prd2) 1 { \ }
@@ -159,12 +160,12 @@ FALL 1 \ensuremath{{}^{\sf f}{\forall}}
 fP 3 \ensuremath{{}\sp{\mathsf{f}}\mathsf{P}}
 fPred 5 \ensuremath{{}\sp{\mathsf{f}}\mathsf{Pred}}
 fFALSE 1 \ensuremath{{}^{\sf f}\bot}
-fNOT 1 \ensuremath{{^{\sf f}}{\lnot}} 
+fNOT 1 \ensuremath{{^{\sf f}}{\lnot}}
 (fdisj) 1 \ensuremath{\ {}^{\sf f} {\lor} \ }
 (fimp) 1 \ensuremath{\ {}^{\sf f} {\to} \ }
 (fad) 1 \ensuremath{\ {}^{\sf f}{\land} \ }
 fEXISTS 1 \ensuremath{ {}^{\sf f}{\exists}}
-True 1 \ensuremath{{}^{\sf f}{\top}} 
+True 1 \ensuremath{{}^{\sf f}{\top}}
 fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 
 (cs1) 0 {
@@ -204,10 +205,10 @@ fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 (fst1) 1 ,
 (fst2) 1 \ensuremath{\vDash}
 
-(UPMM1) 1 \Pi\sb{ 
+(UPMM1) 1 \Pi\sb{
 (UPMM2) 0 }
 
-(UPMMN1) 1 \Pi\sb{ 
+(UPMMN1) 1 \Pi\sb{
 (UPMMN2) 0 }
 
 (Emu1) 0 {
