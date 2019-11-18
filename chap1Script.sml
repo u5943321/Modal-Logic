@@ -12,7 +12,7 @@ val _ = ParseExtras.tight_equality()
 (* definition of formula; define the box as the dual of diamond *)
 val _ = Datatype`
   form
-  = VAR 'a 
+  = VAR num
   | DISJ form form
   | FALSE
   | NOT form
@@ -83,7 +83,7 @@ val _ = Hol_datatype`
 (* definition of model *)
 val _ = Hol_datatype`
   model = <| frame: 'b frame;
-              valt: 'a -> 'b -> bool;
+              valt: num -> 'b -> bool;
             |>`;
 
 
@@ -117,7 +117,7 @@ rpt strip_tac >> eq_tac >- (rpt strip_tac >> fs[satis_def,AND_def] >> metis_tac[
 
 val satis_set_def =
   Define
-  `satis_set M w (Σ:'a form set) = !a. a IN Σ ==> satis M w a`;
+  `satis_set M w (Σ:form set) = !a. a IN Σ ==> satis M w a`;
 
 
 
@@ -147,7 +147,7 @@ val valid_class_frame_def = Define`
     valid_class C form = !f. f IN C ==> valid_frame f form`;
 
 val valid_def = Define`
-    valid (form:'v form)  =
+    valid (form:form)  =
       !f:num frame. valid_frame f form`;
 
 val logic_def = Define`
@@ -158,7 +158,7 @@ val logic_def = Define`
 (* Def 1.35 *)
 val local_semantic_conseq = Define`
     LSC Σ S form <=>
-    !(M:('a,'b) model) w.
+    !(M:'b model) w.
        M IN S /\ satis_set M w Σ ==>
        satis M w form`;
 
@@ -226,7 +226,7 @@ K_provable form <=> ?p. Kproof p /\ Kproof (p ++ [form])`;
 
 (* Def 1.42 *)
 val normal_modal_logic = Define`
-NML (S:'a form set) <=> !A B p q f form.
+NML (S: form set) <=> !A B p q f form.
                   (ptaut form ==> form IN S) /\
                   (IMP (BOX (IMP p q)) (IMP (BOX p) (BOX q))) IN S /\
 		  (IMP (DIAM p) (NOT (BOX (NOT p)))) IN S /\
@@ -464,7 +464,7 @@ val exercise_1_6_2 = store_thm(
      
 
 val (KGproof_rules, KGproof_ind, KGproof_cases) = Hol_reln`
-  KGproof (Γ:'a form set) [] /\
+  KGproof (Γ:form set) [] /\
   (!p form1 form2.
     KGproof Γ p /\ MEM (IMP form1 form2) p /\ MEM form1 p ==>
     KGproof Γ (p ++ [form2])) /\
@@ -486,7 +486,7 @@ KG_provable Γ form <=> ?p. KGproof Γ p /\ KGproof Γ (p ++ [form])`;
 
 
 val NMLG_def = Define`
-NMLG (Γ:'a form set) = BIGINTER {A | (NML A) /\ (Γ SUBSET A)}`;
+NMLG (Γ:form set) = BIGINTER {A | (NML A) /\ (Γ SUBSET A)}`;
 
 
 val NMLG_ind = save_thm(
@@ -495,7 +495,7 @@ val NMLG_ind = save_thm(
     |> SIMP_CONV (srw_ss()) [NMLG_def, normal_modal_logic]
     |> EQ_IMP_RULE |> #1
     |> UNDISCH |> SPEC_ALL |> UNDISCH
-    |> DISCH ``(phi : α form) ∈ NMLG G``
+    |> DISCH ``(phi : form) ∈ NMLG G``
     |> Q.GEN `phi`
     |> DISCH_ALL |> Q.GEN `P`)
 
