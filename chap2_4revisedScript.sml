@@ -27,17 +27,6 @@ val mm2folm_def = Define`
                               |  _ => F 
               |>`;
 
-(*
-val expansion_def = Define`
-  expansion M0 A M <=> A SUBSET M0.domain /\
-                       ?ns f. ns INTER (FDOM M0.consts) = {} /\
-		       BIJ f ns A /\
-		       FINITE A /\
-		       M = M0 with consts := FUNION M0.consts (FUN_FMAP f ns)`;
-                       
-*)
-
-
 val _ = overload_on ("fEXISTS", “folLang$Exists”);
 val _ = overload_on ("fDISJ", “folLang$Or”);
 val _ = overload_on ("fAND", “folLang$And”);
@@ -68,9 +57,6 @@ Definition fsatis_def:
   fsatis M σ fform <=> valuation M σ ∧ feval M σ fform
 End
 
-(*
-val _ = overload_on ("feval", ``holds``)
-*)
 
 
 val prop_2_47_i = store_thm(
