@@ -69,7 +69,7 @@ QED
 
 
 Theorem ppequiv0_def:
-   !f1:α chap1$form f2.  equiv0 (:β) f1 f2 <=> !M w:β. satis M w f1 <=> satis M w f2
+   !f1:chap1$form f2.  equiv0 (:β) f1 f2 <=> !M w:β. satis M w f1 <=> satis M w f2
 Proof
 rw[equiv0_def]
 QED
@@ -103,15 +103,6 @@ Proof
 metis_tac[prop_2_31_half1]
 QED
 
-Theorem ppprop_2_31_half2:
-∀M M' n (w:β) (w':'c).
-            (INFINITE 𝕌(:β) ∧ INFINITE 𝕌(:γ) ∧ FINITE 𝕌(:α) ∧
-            w ∈ M.frame.world ∧ w' ∈ M'.frame.world /\
-            (∀phi:α chap1$form. DEG phi ≤ n ⇒ (satis M w phi ⇔ satis M' w' phi))) ⇒
-            ∃f. nbisim M M' f n w w'
-Proof
-metis_tac[prop_2_31_half2]
-QED
 
 Theorem ppGENSUBMODEL_def:
 ∀M1 M2.
@@ -214,21 +205,19 @@ Theorem ppn_saturated_def:
             n_saturated M n ⇔
             ∀A M' G x f.
                 (IMAGE f 𝕌(:num) ⊆ M.Dom /\ FINITE A ∧ CARD A ≤ n ∧ A ⊆ M.Dom ∧
-                expansion M A M' f ∧
+                BIJ f (count (CARD A)) A ∧
                 (∀phi.
                      phi ∈ G ⇒ form_functions phi ⊆ {(c, 0) | c < CARD A}) ∧
                  ftype x G ∧
-                consistent M' G) ⇒
-                frealizes M' x G
+                consistent (expand M A f) G) ⇒
+                frealizes (expand M A f) x G
 Proof
 rw[n_saturated_def,SUBSET_DEF,FST,SND,EQ_IMP_THM] (* 2 *)
->- (first_x_assum irule >> rw[] >>
-   map_every qexists_tac [`A`,`f`] >> rw[] (* 2 *)
+>- (first_x_assum irule >> rw[] (* 2 *)
    >- (fs[FST] >> first_x_assum drule >> rw[] >> first_x_assum drule >> rw[] >>
       fs[FST])
    >- (first_x_assum drule >> rw[] >> first_x_assum drule >> rw[] >> fs[SND]))
 >- (first_x_assum irule >> rw[] >>
-    map_every qexists_tac [`A`,`f`] >> rw[] >>
     qexists_tac `FST x'` >> rw[] (* 2 *)
    >> first_x_assum drule >> rw[] >> first_x_assum drule >> rw[] >>
    Cases_on `x'` >> fs[FST,SND])
@@ -323,9 +312,9 @@ QED
 
 
 Theorem ppexpansion_shift_feval:
-  !M A M' f σ phi. (expansion (mm2folm M) A M' f /\ valuation (mm2folm M) σ /\
+  !M A M' f σ phi. (BIJ f (count (CARD A)) A /\ valuation (mm2folm M) σ /\
                     (form_functions phi ⊆ {(c1,0) | c1 < (CARD A)})) ==>
-                    (feval M' σ phi <=>
+                    (feval (expand (mm2folm M) A f) σ phi <=>
                     feval (mm2folm M) (shift_valuation (CARD A) σ f) (shift_form (CARD A) phi))
 Proof
 rw[] >> irule expansion_shift_feval >> rw[] 
@@ -450,7 +439,7 @@ first_x_assum irule >> rw[]
 QED
 
 Theorem pppreserved_under_sim_def:
- ∀phi:num chap1$form.
+ ∀phi:chap1$form.
          preserved_under_sim (:α) (:β) phi ⇔
          ∀M M' Z w:α w':β.
              (w ∈ M.frame.world ∧ w' ∈ M'.frame.world ∧ sim Z M M' ∧ Z w w' /\
@@ -517,7 +506,7 @@ Theorem ppthm_2_68_half1:
 ∀a x.
             (INFINITE 𝕌(:α) /\
             invar4bisim x (:(num -> α) -> bool) (:(num -> α) -> bool) a) ⇒
-            ∃(phi:num chap1$form). feq (:α) a (ST x phi)
+            ∃(phi:chap1$form). feq (:α) a (ST x phi)
 
 Proof
 rw[] >> drule thm_2_68_half1 >>  rw[feq_def] >> metis_tac[]
@@ -528,7 +517,7 @@ QED
 
 Theorem ppthm_2_78_half2:
 (INFINITE 𝕌(:β) /\
-preserved_under_sim (:(β -> bool) -> bool) (:(β -> bool) -> bool) phi) ⇒ ∃phi0:num chap1$form. equiv0 (:β) phi phi0 ∧ PE phi0
+preserved_under_sim (:(β -> bool) -> bool) (:(β -> bool) -> bool) phi) ⇒ ∃phi0:chap1$form. equiv0 (:β) phi phi0 ∧ PE phi0
 Proof
 metis_tac[thm_2_78_half2]
 QED
@@ -588,7 +577,7 @@ metis_tac[exercise_2_7_1]
 QED
 
 Theorem ppmodal_compactness_thm:
-(INFINITE 𝕌(:α) /\ (∀ss: num chap1$form -> bool.
+(INFINITE 𝕌(:α) /\ (∀ss:chap1$form -> bool.
                  FINITE ss ∧ ss ⊆ s ⇒
                  ∃M w:α. w ∈ M.frame.world ∧ ∀f. f ∈ ss ⇒ satis M w f)) ⇒
             ∃M w:α. w ∈ M.frame.world ∧ ∀f. f ∈ s ⇒ satis M w f
@@ -612,7 +601,7 @@ Theorem ppmodal_compactness_corollary:
 INFINITE 𝕌(:α) /\
         (∀M w:α.
                  w ∈ M.frame.world ⇒ (∀f. f ∈ s ⇒ satis M w f) ⇒ satis M w a) ⇒
-            ∃ss: num chap1$form -> bool.
+            ∃ss:chap1$form -> bool.
                 FINITE ss ∧ ss ⊆ s ∧
                 ∀M w:α.
                     w ∈ M.frame.world ⇒
