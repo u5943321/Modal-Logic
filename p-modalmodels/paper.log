@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  18 NOV 2019 09:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.6.17)  18 NOV 2019 11:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -276,39 +276,39 @@ Overfull \hbox (19.21507pt too wide) detected at line 215
 
 [5] [6] [7]
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 314.
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 315.
 
-Overfull \hbox (26.35728pt too wide) detected at line 318
+Overfull \hbox (26.35728pt too wide) detected at line 319
 []
  []
 
 
-Overfull \hbox (38.73051pt too wide) detected at line 342
+Overfull \hbox (4.65436pt too wide) detected at line 345
 []
  []
 
 [8]
-Overfull \hbox (10.61986pt too wide) detected at line 373
+Overfull \hbox (10.61986pt too wide) detected at line 376
 []
  []
 
 
-Overfull \hbox (12.5727pt too wide) detected at line 381
+Overfull \hbox (12.5727pt too wide) detected at line 384
 []
  []
 
 [9] [10]
-Overfull \hbox (17.26967pt too wide) detected at line 446
+Overfull \hbox (17.26967pt too wide) detected at line 449
 []
  []
 
 [11]
-Overfull \hbox (0.2214pt too wide) detected at line 475
+Overfull \hbox (0.2214pt too wide) detected at line 478
 []
  []
 
 [12]
-Overfull \hbox (10.05019pt too wide) detected at line 525
+Overfull \hbox (10.05019pt too wide) detected at line 528
 []
  []
 
@@ -351,7 +351,7 @@ sam10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/symbo
 ls/msam7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/sy
 mbols/msbm10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/stmaryr
 d/stmary10.pfb>
-Output written on paper.pdf (14 pages, 316638 bytes).
+Output written on paper.pdf (14 pages, 316805 bytes).
 PDF statistics:
  167 PDF objects out of 1000 (max. 8388607)
  120 compressed objects within 2 object streams

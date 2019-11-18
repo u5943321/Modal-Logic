@@ -1049,7 +1049,7 @@ As an interesting consequence of the `equivalence' between a modal formula and i
 %[\holref{Invariant for bisimulation}{chap2_6}{1135}]
 An $\mathcal L_{\tau}^1$ formula $\phi$ with at most one free variable $x$ is invariant for bisimulations if for all models \HOLtm{M} and \HOLtm{N} with \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world}, if there exists a bisimulation relation between \HOLtm{M} and \HOLtm{N} relating $w$ and $v$, then $\phi$ holds at \HOLtm{w} if and only if it holds at \HOLtm{v} when both \HOLtm{M} and \HOLtm{N} are viewed as first-order models.
 \begin{holmath}
-  \HOLthm[def,x/n,width=65]{prettyPrinting.ppinvar4bisim_def}
+  \HOLthm[def,x/n,width=65]{chap2_6.invar4bisim_def'}
 \end{holmath}
 \end{defn}
 
