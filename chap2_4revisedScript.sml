@@ -19,12 +19,12 @@ val _ = new_theory "chap2_4revised";
 val mm2folm_def = Define`
   mm2folm M = <| Dom := M.frame.world ;
                  Fun := \n args. CHOICE (M.frame.world);
-		 Pred := \p zs. 
+		 Pred := \p zs.
                             case zs of
                               | [w] => w IN M.frame.world /\ M.valt p w
-                              | [w1;w2] => p = 0 ∧ M.frame.rel w1 w2 ∧ 
+                              | [w1;w2] => p = 0 ∧ M.frame.rel w1 w2 ∧
                                            w1 IN M.frame.world /\ w2 IN M.frame.world
-                              |  _ => F 
+                              |  _ => F
               |>`;
 
 (*
@@ -34,7 +34,7 @@ val expansion_def = Define`
 		       BIJ f ns A /\
 		       FINITE A /\
 		       M = M0 with consts := FUNION M0.consts (FUN_FMAP f ns)`;
-                       
+
 *)
 
 
@@ -146,8 +146,8 @@ val prop_2_47_ii = store_thm(
      `fsatis (mm2folm M) ((x =+ w) (λn. w)) (ST x phi)` by metis_tac[fsatis_def] >>
      `((x =+ w) (λn. w)) x = w` by fs[APPLY_UPDATE_THM] >>
      imp_res_tac prop_2_47_i >> metis_tac[]));
-     
-  
+
+
 
 
 val ST_alt_def = Define`
@@ -186,7 +186,7 @@ val prop_2_47_i_alt = store_thm(
      >- (fs[mm2folm_def,valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
      >- (qexists_tac `v` >> rw[fAND_def,feval_def,APPLY_UPDATE_THM] (* 3 *)
         >- (fs[mm2folm_def,valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
-	>- rw[mm2folm_def,termval_def,APPLY_UPDATE_THM] 
+	>- rw[mm2folm_def,termval_def,APPLY_UPDATE_THM]
 	>- (fs[fsatis_def] >>
            `((0 =+ v) σ) 0 = v` by rw[APPLY_UPDATE_THM] >>
            `IMAGE ((0 =+ v) σ) 𝕌(:num) ⊆ M.frame.world`
@@ -203,13 +203,13 @@ val prop_2_47_i_alt = store_thm(
 	      >> rw[APPLY_UPDATE_THM] >> fs[IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]) >>
 	   `((0 =+ a) σ) 0 = a` by fs[APPLY_UPDATE_THM] >>
 	   `IMAGE ((0 =+ a) σ) 𝕌(:num) ⊆ (mm2folm M).Dom` by fs[mm2folm_def] >>
-	   first_x_assum (qspecl_then [`M`,`σ(|0|->a|)`] mp_tac) >> 
+	   first_x_assum (qspecl_then [`M`,`σ(|0|->a|)`] mp_tac) >>
            rw[APPLY_UPDATE_THM])))
   >- (rw[satis_def,feval_def,ST_alt_def,fsatis_def] >> eq_tac >> rw[] (* 4 *)
      >- (fs[mm2folm_def,valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
      >- (qexists_tac `v` >> rw[fAND_def,feval_def,APPLY_UPDATE_THM] (* 3 *)
         >- fs[mm2folm_def]
-	>- rw[mm2folm_def,termval_def,APPLY_UPDATE_THM] 
+	>- rw[mm2folm_def,termval_def,APPLY_UPDATE_THM]
         >- (fs[fsatis_def] >>
            `((1 =+ v) σ) 1= v` by rw[APPLY_UPDATE_THM] >>
            `IMAGE ((1 =+ v) σ) 𝕌(:num) ⊆ M.frame.world`
@@ -226,7 +226,7 @@ val prop_2_47_i_alt = store_thm(
 	      >> rw[APPLY_UPDATE_THM] >> fs[IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]) >>
 	   `((1 =+ a) σ) 1 = a` by fs[APPLY_UPDATE_THM] >>
 	   `IMAGE ((1 =+ a) σ) 𝕌(:num) ⊆ (mm2folm M).Dom` by fs[mm2folm_def] >>
-	   first_x_assum (qspecl_then [`M`,`σ(|1|->a|)`] mp_tac) >> 
+	   first_x_assum (qspecl_then [`M`,`σ(|1|->a|)`] mp_tac) >>
            rw[APPLY_UPDATE_THM]))));
 
 
@@ -259,13 +259,13 @@ val ST_ST_alt_fequiv = store_thm(
 
 
 
-  
+
 Theorem prop_2_49_i:
  !phi. ?fphi. ((FV fphi) ∪ (BV fphi)) SUBSET {0;1} /\
                  fequiv μ (ST 0 phi) fphi
 Proof
-  rw[] >> qexists_tac `(ST_alt 0 phi)` >> strip_tac 
-  >- (`(FV (ST_alt 0 phi) ∪ BV (ST_alt 0 phi)) SUBSET {0;1}` 
+  rw[] >> qexists_tac `(ST_alt 0 phi)` >> strip_tac
+  >- (`(FV (ST_alt 0 phi) ∪ BV (ST_alt 0 phi)) SUBSET {0;1}`
        by metis_tac[ST_alt_two_var] >>
      fs[SUBSET_DEF,UNION_DEF]) >>
   metis_tac[ST_ST_alt_fequiv]
@@ -284,14 +284,14 @@ rw[] >> drule_all thm_2_20 >> rw[] >>
 `IMAGE σm⦇x ↦ w⦈ 𝕌(:num) ⊆ M.frame.world /\
  IMAGE σn⦇x ↦ v⦈ 𝕌(:num) ⊆ N.frame.world`
   by (fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >> rw[] (* 2 *) >>
-     Cases_on `x'' = x` >> 
+     Cases_on `x'' = x` >>
      fs[combinTheory.APPLY_UPDATE_THM,bisim_world_def,mm2folm_def] >> rw[]) >>
-drule prop_2_47_i >> rw[] >> 
+drule prop_2_47_i >> rw[] >>
 first_x_assum (qspecl_then [`phi`,`x`] assume_tac) >>
 `∀phi x'.
             satis M (σm⦇x ↦ w⦈ x') phi ⇔
-            fsatis (mm2folm M) σm⦇x ↦ w⦈ (ST x' phi)` 
-  by metis_tac[prop_2_47_i] >> 
+            fsatis (mm2folm M) σm⦇x ↦ w⦈ (ST x' phi)`
+  by metis_tac[prop_2_47_i] >>
 first_x_assum (qspecl_then [`phi`,`x`] assume_tac) >>
 fs[combinTheory.APPLY_UPDATE_THM]
 QED
@@ -309,7 +309,7 @@ satis M w phi ⇔ fsatis (mm2folm M) (\n.w) (ST x phi)
 Proof
 rw[EQ_IMP_THM] (* 2 *)
 >- (`IMAGE (\n.w) 𝕌(:num) ⊆ M.frame.world`
-     by 
+     by
       (rw[IMAGE_DEF,SUBSET_DEF] >> metis_tac[satis_in_world]) >>
    drule prop_2_47_i >> rw[] >> metis_tac[]) >>
 `IMAGE (\n.w) 𝕌(:num) ⊆ M.frame.world`
@@ -324,65 +324,58 @@ satis (folm2mm M) w phi ⇔ fsatis M (\n. w) (ST x phi)
 Proof
 rw[EQ_IMP_THM] (* 2 *)
 >- (`IMAGE (\n.w) 𝕌(:num) ⊆ M.Dom`
-     by 
+     by
       (`(folm2mm M).frame.world = M.Dom` by fs[folm2mm_def] >>
        rw[IMAGE_DEF,SUBSET_DEF] >> metis_tac[satis_in_world]) >>
     drule prop_2_47_i' >> rw[fsatis_def]
     >- fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >>
-    metis_tac[]) 
+    metis_tac[])
 >- (`IMAGE (\n.w) 𝕌(:num) ⊆ M.Dom`
-      by fs[IMAGE_DEF,SUBSET_DEF,fsatis_def,valuation_def] >> 
+      by fs[IMAGE_DEF,SUBSET_DEF,fsatis_def,valuation_def] >>
     drule prop_2_47_i' >> rw[] >> fs[fsatis_def] >> metis_tac[])
 QED
 *)
 
 Theorem non_ST_exists_lemma:
-!phi x n.  x <> n ==> (?M σ:num -> num. valuation M σ /\ ¬(feval M σ (ST x phi) <=>
-                (feval M σ (Exists n (fR (fV n) (fV x))))))
+!phi x n.
+  x ≠ n ==>
+  ∃M σ:num -> num.
+    valuation M σ /\
+    (feval M σ (ST x phi) <=/=> feval M σ (Exists n (fR (fV n) (fV x))))
 Proof
-rw[] >> SPOSE_NOT_THEN ASSUME_TAC >> 
+rw[] >> SPOSE_NOT_THEN ASSUME_TAC >>
 qabbrev_tac `M = <| frame := <| world := {1;2};
                                   rel := \a b. if a = 1 /\ b = 2 then T else F|>;
                      valt := \p:num v. F |>` >>
 qabbrev_tac `N = <| frame := <| world := {2};
                                   rel := \a b. F|>;
-                     valt := \p:num v. F |>` >> 
-`bisim_world M N 2 2` by
-(rw[] >> rw[bisim_world_def,bisim_def] >>
-qexists_tac `\w1 w2. if w1 = 2 /\ w2 = 2 then T else F` >> rw[] (* 9 *)
->- rw[satis_def,Abbr`M`,Abbr`N`]
->- rw[Abbr`N`]
->- fs[Abbr`M`]
->- fs[Abbr`M`]
->- fs[Abbr`M`]
->- fs[Abbr`N`]
->- fs[Abbr`N`]
->- rw[Abbr`M`]
->- rw[Abbr`N`]) >> 
-drule thm_2_68_half2 >> rw[] >> 
+                     valt := \p:num v. F |>` >>
+‘bisim_world M N 2 2’
+  by (rw[] >> rw[bisim_world_def,bisim_def] >>
+      qexists_tac `\w1 w2. if w1 = 2 /\ w2 = 2 then T else F` >>
+      rw[satis_def,Abbr`M`,Abbr`N`]) >>
+drule thm_2_68_half2 >> rw[] >>
 map_every qexists_tac [`x`,`phi`,`\x.2`,`\x.2`] >> rw[] (* 3 *)
 >- rw[valuation_def,Abbr`M`,mm2folm_def]
 >- rw[valuation_def,Abbr`N`,mm2folm_def]
->- (`(λx. 2)⦇x ↦ 2⦈ = \x. 2` by 
-     (fs[FUN_EQ_THM] >> rw[] >> Cases_on `x' = x` >>
-     rw[combinTheory.APPLY_UPDATE_THM]) >>
-   fs[] >> 
-   `valuation (mm2folm M) (\x:num.2) /\ valuation (mm2folm N) (\x:num.2)`
-     by rw[valuation_def,Abbr`M`,mm2folm_def,Abbr`N`] >>
-   first_assum (qspecl_then [`mm2folm M`,`\x.2`] assume_tac) >> 
+>- (`valuation (mm2folm M) (\x:num.2) /\ valuation (mm2folm N) (\x:num.2)`
+      by rw[valuation_def,Abbr`M`,mm2folm_def,Abbr`N`] >>
+   first_assum (qspecl_then [`mm2folm M`,`\x.2`] assume_tac) >>
    first_x_assum (qspecl_then [`mm2folm N`,`\x.2`] assume_tac) >> rw[] >>
-   `fsatis (mm2folm M) (λx. 2) (ST x phi) /\
-    ¬(fsatis (mm2folm N) (λx. 2) (ST x phi))` suffices_by metis_tac[] >> rw[] 
-  >- (rw[fsatis_def] >> 
-     qexists_tac `1` >> rw[Abbr`M`,mm2folm_def] (* 4 same *)
-     >> rw[combinTheory.APPLY_UPDATE_THM])
-  >- (rw[fsatis_def] >> 
+   ‘fsatis (mm2folm M) (λx. 2) (ST x phi) ∧
+    ¬fsatis (mm2folm N) (λx. 2) (ST x phi)’
+      suffices_by (‘(λx.2)⦇ x ↦ 2 ⦈ = (λx. 2)’ by simp[] >> simp[])>>
+  rw[]
+  >- (rw[fsatis_def] >>
+      qexists_tac `1` >> rw[Abbr`M`,mm2folm_def] (* 4 same *) >>
+      rw[combinTheory.APPLY_UPDATE_THM])
+  >- (rw[fsatis_def] >>
      `a IN (mm2folm N).Dom ==>
         ¬(mm2folm N).Pred 0 [(λx. 2)⦇n ↦ a⦈ n; (λx. 2)⦇n ↦ a⦈ x]`
        suffices_by metis_tac[] >>
      rw[Abbr`N`,mm2folm_def]))
 QED
-    
+
 Theorem non_ST_exists:
 !phi. ?M σ:num -> num. valuation M σ /\ ¬(feval M σ (ST 1 phi) <=>
                 (feval M σ (Exists 2 (fR (fV 2) (fV 1)))))
@@ -401,9 +394,4 @@ Proof
 rw[feq_def, Excl "HOLDS"] >> MATCH_ACCEPT_TAC non_ST_exists
 QED
 
-
-
 val _ = export_theory();
-	          
-	    
-	 

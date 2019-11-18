@@ -1156,11 +1156,8 @@ rw[invar4bisim_def,Once EQ_IMP_THM] (* 2 *)
       by fs[valuation_def,bisim_world_def,mm2folm_def] >>
     `(fsatis (mm2folm M) (λn. w)⦇x ↦ w⦈ phi ⇔
                  fsatis (mm2folm N) (λn. v)⦇x ↦ v⦈ phi)` by metis_tac[] >>
-    `(λn. w)⦇x ↦ w⦈ = (λn. w) /\ (λn. v)⦇x ↦ v⦈ = (λn. v)`
-       by
-        (simp[FUN_EQ_THM] >> rw[] >>
-         Cases_on `n = x` >> fs[combinTheory.APPLY_UPDATE_THM]) >>
-    fs[]) >>
+    `(λn. w)⦇x ↦ w⦈ = (λn. w) /\ (λn. v)⦇x ↦ v⦈ = (λn. v)` by simp[] >>
+    ntac 2 (pop_assum SUBST_ALL_TAC) >> simp[]) >>
 first_x_assum drule >> rw[] >>
 `fsatis (mm2folm M) (λn. w) phi = fsatis (mm2folm M) σm⦇x ↦ w⦈ phi /\
  fsatis (mm2folm N) (λn. v) phi = fsatis (mm2folm N) σn⦇x ↦ v⦈ phi`
@@ -1307,65 +1304,6 @@ qabbrev_tac
         `∀f. f ∈ ss ⇒ feval M v f` by metis_tac[] >>
         metis_tac[])
  ) >>
-(*`entails (:α) MOC a`*)
-(*  suffices_by
-   (strip_tac >> drule (folCanonTheory.finite_entailment |> GEN_ALL) >>
-    simp[EQ_IMP_THM,FORALL_AND_THM] >> rw[] >>
-    first_x_assum (drule_then (qx_choose_then `X` strip_assume_tac)) >>
-    drule ST_BIGCONJ >> rw[] >>
-    `∀f. f ∈ X ⇒ ∃phi. f = ST x phi`
-      by
-       (rw[] >> fs[SUBSET_DEF,Abbr`MOC`] >> metis_tac[]) >>
-    first_x_assum drule >> strip_tac >> qexists_tac `psi` >>
-    rw[EQ_IMP_THM] (* 2 *)
-    >- (`!ff. ff IN MOC ==> feval M v ff`
-         by
-          (rw[Abbr`MOC`] >> fs[entails_def] >>
-           first_x_assum irule >> rw[] (* 3 *)
-           >- (simp[GSYM MEMBER_NOT_EMPTY] >>
-               fs[valuation_def] >> metis_tac[])
-           >- (simp[interpretation_def,language_def] >> rw[] >>
-               `functions {ST x phi; a} = {}`
-                by
-                 (rw[functions_def] >>
-                  `{form_functions f | f = ST x phi ∨ f = a} = {∅}`
-                    suffices_by metis_tac[] >>
-                  rw[Once EXTENSION] >>
-                  `form_functions (ST x phi) = {} /\ form_functions a = {}`
-                    by
-                     metis_tac[L1tau_def,ST_form_functions_EMPTY] >>
-                  metis_tac[]) >>
-               metis_tac[MEMBER_NOT_EMPTY])
-           >- rw[hold_def]) >>
-        `IMAGE v 𝕌(:num) ⊆ M.Dom`
-         by
-          (fs[IMAGE_DEF,SUBSET_DEF,valuation_def] >> metis_tac[]) >>
-        `∀f. f ∈ X ⇒ feval M v f` suffices_by metis_tac[] >>
-        fs[SUBSET_DEF])
-    >- (`IMAGE v 𝕌(:num) ⊆ M.Dom`
-          by (fs[valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[]) >>
-        fs[entails_def] >> first_x_assum irule >> rw[] (* 3 *)
-        >- (simp[GSYM MEMBER_NOT_EMPTY] >>
-            fs[valuation_def] >> metis_tac[])
-        >- (simp[interpretation_def,language_def] >> rw[] >>
-            `functions (a INSERT X) = {}`
-                by
-                 (rw[functions_def] >>
-                  `{form_functions f | f = a ∨ f ∈ X} = {∅}`
-                    suffices_by metis_tac[] >>
-                  rw[Once EXTENSION] >>
-                  `(!f. f IN X ==> form_functions f = {}) /\
-                   form_functions a = {}`
-                    by
-                     (rw[] (* 2 *)
-                      >- (`f' IN MOC` by fs[SUBSET_DEF] >>
-                          fs[Abbr`MOC`] >> metis_tac[ST_form_functions_EMPTY])
-                      >- metis_tac[L1tau_def]) >>
-                   metis_tac[MEMBER_NOT_EMPTY]) >>
-            metis_tac[MEMBER_NOT_EMPTY])
-        >- metis_tac[hold_def])
-   ) >>
-rw[entails_def] >> *)
 rw[] >>
 qabbrev_tac `Tx = {ST x phi |phi| feval M v (ST x phi)}` >>
 `?N σn. valuation N σn /\ (!f. (f IN Tx \/ f = a) ==> feval N σn f)`
@@ -1561,13 +1499,13 @@ first_x_assum (qspecl_then [`Mst`,`Nst`,`vst`,`wst`] assume_tac) >> rfs[] >>
 drule (corollary_A_21 |> INST_TYPE [alpha |-> ``:num``,beta |-> ``:'a``]) >>
 rw[] >>
 `(feval M v a <=> fsatis (mm2folm Mst) (\x. wst) a) /\
-fsatis (mm2folm Nst) (\x. vst) a`
+ fsatis (mm2folm Nst) (\x. vst) a`
   suffices_by
    (rw[] >>
     first_x_assum
       (qspecl_then [`(λx. wst)`,`(λx. vst)`] assume_tac) >>
-    `(λx. wst)⦇x ↦ wst⦈ = (λx. wst) /\
-     (λx. vst)⦇x ↦ vst⦈ = (λx. vst)` by fs[FUN_EQ_THM,APPLY_UPDATE_THM] >>
+    `(λx. wst)⦇x ↦ wst⦈ = (λx. wst) ∧ (λx. vst)⦇x ↦ vst⦈ = (λx. vst)`
+      by simp[] >> ntac 2 (pop_assum SUBST_ALL_TAC) >>
     rw[] >> fs[] >>
     `(fsatis (mm2folm Mst) (λx. wst) a ⇔ fsatis (mm2folm Nst) (λx. vst) a)`
       suffices_by metis_tac[] >>
@@ -1584,7 +1522,6 @@ suffices_by metis_tac[] >>
   suffices_by
    (rpt strip_tac (* 2 *)
     >- (first_x_assum (qspecl_then [`M`,`v`,`a`,`I'`,`U`] assume_tac) >>
-        (*`L1tau a` by cheat >> (*cheated!! revise goal statement*)*)
         first_x_assum drule_all >> strip_tac >>
         fs[Abbr`Mst`,Abbr`wst`,Abbr`w0`] >> rw[] >>
         fs[fsatis_def] >>
