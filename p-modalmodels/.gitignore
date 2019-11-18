@@ -1,0 +1,8 @@
+munge.exe
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+paper.pdf
