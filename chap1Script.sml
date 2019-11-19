@@ -4,10 +4,6 @@ open pred_setTheory;
 
 val _ = new_theory "chap1";
 
-val _ = ParseExtras.tight_equality()
-
-
-
 (* Def 1.9 *)
 (* definition of formula; define the box as the dual of diamond *)
 val _ = Datatype`
@@ -230,11 +226,11 @@ val normal_modal_logic = Define`
 NML (S: form set) <=> !A B p q f form.
                   (ptaut form ==> form IN S) /\
                   (IMP (BOX (IMP p q)) (IMP (BOX p) (BOX q))) IN S /\
-		  (IMP (DIAM p) (NOT (BOX (NOT p)))) IN S /\
-		  (IMP (NOT (BOX (NOT p))) (DIAM p)) IN S /\
-		  (A IN S ==> (subst f A) IN S) /\
-		  (A IN S ==> (BOX A) IN S) /\
-		  ((IMP A B) IN S /\ A IN S ==> B IN S)`;
+                  (IMP (DIAM p) (NOT (BOX (NOT p)))) IN S /\
+                  (IMP (NOT (BOX (NOT p))) (DIAM p)) IN S /\
+                  (A IN S ==> (subst f A) IN S) /\
+                  (A IN S ==> (BOX A) IN S) /\
+                  ((IMP A B) IN S /\ A IN S ==> B IN S)`;
 
 
 
@@ -402,12 +398,12 @@ val exercise_1_6_2 = store_thm(
         `ptaut (demodalize form1)` by metis_tac[] >>
         `ptaut (demodalize form2)` by metis_tac[ptaut_MP] >>
         `MEM f p \/ MEM f [form2]` by metis_tac[MEM_APPEND]
-	>- metis_tac[]
-	>- (`f = form2` by metis_tac[MEM] >> rw[]))
+        >- metis_tac[]
+        >- (`f = form2` by metis_tac[MEM] >> rw[]))
     >- (* instantiation *)
        (fs[MEM_APPEND] >>
         simp[ptaut_def,propform_demodalize,Once demodalize_subst,
-	     peval_demodalize_subst_eq] >>
+             peval_demodalize_subst_eq] >>
         fs[ptaut_def])
     >- (`MEM f p \/ MEM f [BOX form]` by metis_tac[MEM_APPEND] >-
     metis_tac[] >>
@@ -523,8 +519,8 @@ val exercise_1_6_6_d2 = store_thm(
  >- (fs[KG_provable_def] >> qexists_tac `p ++ [A -> B] ++ p' ++ [A]`
     >> rpt strip_tac >- metis_tac[APPEND_ASSOC,KGproof_APPEND]
                      >- (`KGproof Γ (p ⧺ [A -> B] ⧺ p' ⧺ [A])` by
-		     metis_tac[APPEND_ASSOC,KGproof_APPEND]
-		        >> metis_tac[MEM,MEM_APPEND,KGproof_rules]))
+                     metis_tac[APPEND_ASSOC,KGproof_APPEND]
+                        >> metis_tac[MEM,MEM_APPEND,KGproof_rules]))
  >- (rw[SUBSET_DEF] >> qexists_tac `[]` >> metis_tac[KGproof_rules])
 );
 

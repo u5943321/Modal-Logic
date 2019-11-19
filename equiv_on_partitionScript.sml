@@ -9,8 +9,6 @@ open pairTheory;
 
 open nlistTheory;
 
-val _ = ParseExtras.tight_equality()
-
 val _ = new_theory "equiv_on_partition";
 
 val partition_eq_EMPTY = store_thm(
@@ -115,37 +113,37 @@ val FINITE_partition_SUBSET = store_thm(
   ``!R s. R equiv_on s ==> FINITE (partition R s) ==> !a. a ⊆ s ==> FINITE (partition R a)``,
   rw[partition_def] >>
   `?f. INJ f {t | ∃x. x ∈ a ∧ t = {y | y ∈ a ∧ R x y}} {t | ∃x. x ∈ s ∧ t = {y | y ∈ s ∧ R x y}}` suffices_by metis_tac[FINITE_INJ] >>
-  qexists_tac `\p. {y | y IN s /\ ?r. r IN p /\ R r y}`	>> rw[INJ_DEF]
+  qexists_tac `\p. {y | y IN s /\ ?r. r IN p /\ R r y}` >> rw[INJ_DEF]
   >- (qexists_tac `x` >> rw[]
      >- fs[SUBSET_DEF]
      >- (rw[Once EXTENSION] >> eq_tac >> rw[]
         >- (`x IN s` by metis_tac[SUBSET_DEF] >>
-	   `r IN s` by metis_tac[SUBSET_DEF] >>
-	   `∀x y z. x ∈ s ∧ y ∈ s ∧ z ∈ s ∧ R x y ∧ R y z ⇒ R x z` by fs[equiv_on_def] >> metis_tac[])
-	>- (qexists_tac `x` >> rw[] >>
-	   `x IN s` by metis_tac[SUBSET_DEF] >>
-	   fs[equiv_on_def])))
+           `r IN s` by metis_tac[SUBSET_DEF] >>
+           `∀x y z. x ∈ s ∧ y ∈ s ∧ z ∈ s ∧ R x y ∧ R y z ⇒ R x z` by fs[equiv_on_def] >> metis_tac[])
+        >- (qexists_tac `x` >> rw[] >>
+           `x IN s` by metis_tac[SUBSET_DEF] >>
+           fs[equiv_on_def])))
   >- (rw[Once EXTENSION] >> eq_tac >> rw[]
      >- (`{y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x y} ∧ R r y} =
          {y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x' y} ∧ R r y} ==> R x' x''` suffices_by metis_tac[] >>
         simp[Once EXTENSION,EQ_IMP_THM] >> rw[] >>
-	`x'' IN s` by fs[SUBSET_DEF] >>
-	`R x'' x''` by fs[equiv_on_def] >>
-	`∃r. (r ∈ a ∧ R x' r) ∧ R r x''` by metis_tac[] >>
-	fs[equiv_on_def] >>
-	`r IN s` by fs[SUBSET_DEF] >>
-	`x' IN s` by fs[SUBSET_DEF] >>
-	metis_tac[])
+        `x'' IN s` by fs[SUBSET_DEF] >>
+        `R x'' x''` by fs[equiv_on_def] >>
+        `∃r. (r ∈ a ∧ R x' r) ∧ R r x''` by metis_tac[] >>
+        fs[equiv_on_def] >>
+        `r IN s` by fs[SUBSET_DEF] >>
+        `x' IN s` by fs[SUBSET_DEF] >>
+        metis_tac[])
      >- (`{y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x y} ∧ R r y} =
          {y | y ∈ s ∧ ∃r. r ∈ {y | y ∈ a ∧ R x' y} ∧ R r y} ==> R x x''` suffices_by metis_tac[] >>
         simp[Once EXTENSION,EQ_IMP_THM] >> rw[] >>
-	`x'' IN s` by fs[SUBSET_DEF] >>
-	`R x'' x''` by fs[equiv_on_def] >>
-	`∃r. (r ∈ a ∧ R x r) ∧ R r x''` by metis_tac[] >>
-	fs[equiv_on_def] >>
-	`r IN s` by fs[SUBSET_DEF] >>
-	`x' IN s` by fs[SUBSET_DEF] >>
-	`x IN s` by fs[SUBSET_DEF] >> metis_tac[])));
+        `x'' IN s` by fs[SUBSET_DEF] >>
+        `R x'' x''` by fs[equiv_on_def] >>
+        `∃r. (r ∈ a ∧ R x r) ∧ R r x''` by metis_tac[] >>
+        fs[equiv_on_def] >>
+        `r IN s` by fs[SUBSET_DEF] >>
+        `x' IN s` by fs[SUBSET_DEF] >>
+        `x IN s` by fs[SUBSET_DEF] >> metis_tac[])));
 
 val CHOICE_BIJ_partition = store_thm(
     "CHOICE_BIJ_partition",

@@ -17,7 +17,6 @@ open equiv_on_partitionTheory;
 open ultraproductTheory;
 open ultrafilterTheory;
 
-val _ = ParseExtras.tight_equality()
 val _ = new_theory "lemma2_73";
 
 
@@ -1122,7 +1121,7 @@ first_x_assum drule >> rw[] >>
                by fs[expand_def] >>
               fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
           >- (fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]))
-      >- (`feval (expand (mm2folm (ultraproduct_model U I' MS)) A f) σ phi <=> 
+      >- (`feval (expand (mm2folm (ultraproduct_model U I' MS)) A f) σ phi <=>
            feval (expand (mm2folm (ultraproduct_model U I' MS)) A f) σ'⦇x ↦ σ x⦈ phi` suffices_by metis_tac[] >>
           irule holds_valuation >>
           `FV phi ⊆ {x}` by (fs[SUBSET_DEF] >> metis_tac[]) >>

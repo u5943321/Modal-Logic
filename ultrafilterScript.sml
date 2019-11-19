@@ -9,8 +9,6 @@ open pairTheory;
 open prim_recTheory;
 
 
-val _ = ParseExtras.tight_equality()
-
 val _ = new_theory "ultrafilter";
 
 (* ultrafilters *)
@@ -387,13 +385,13 @@ qabbrev_tac `s = { g | proper_filter g w /\ f ⊆ g }` >>
                 (simp[range_def] >> qexists_tac `f` >> rw[]
                  (* is proper filter *)
                  >- (irule UNION_proper_proper >> rw[]
-	             >- (fs[chain_def] >> metis_tac[])
+                     >- (fs[chain_def] >> metis_tac[])
                      >- (fs[chain_def] >> metis_tac[])
                      >- metis_tac[proper_filter_def,filter_def])
                 (* contain f *)
                  >- (fs[chain_def,Abbr`s`] >> rw[SUBSET_DEF] >>
                     `?a. a IN t` by metis_tac[MEMBER_NOT_EMPTY] >> qexists_tac `a` >> rw[] >>
-	        	metis_tac[SUBSET_DEF]))
+                        metis_tac[SUBSET_DEF]))
              (* indeed upper bound *)
              >- (`y IN t ==> proper_filter (BIGUNION t) w ∧ proper_filter y w ∧
                              f ⊆ y ∧ y ⊆ BIGUNION t` suffices_by metis_tac[] >>

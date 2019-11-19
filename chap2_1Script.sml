@@ -6,11 +6,9 @@ open relationTheory;
 open listTheory;
 open arithmeticTheory;
 open set_relationTheory;
-open pairTheory; 
+open pairTheory;
 open quantHeuristicsTheory;
 open rich_listTheory;
-
-val _ = ParseExtras.tight_equality()
 
 val _ = new_theory "chap2_1";
 
@@ -20,9 +18,9 @@ val irule = fn th => irule th >> rpt conj_tac
 val DU_def = Define`
   DU (f, dom) = <| frame := <| world := {w | (FST w) IN dom /\ (SND w) IN (f (FST w)).frame.world};
                                  rel := \w1 w2. FST w1 = FST w2 /\
-				                (FST w1) IN dom /\
-				                (f (FST w1)).frame.rel (SND w1) (SND w2) |>;
-				valt := \v w. (f (FST w)).valt v (SND w) |>`;
+                                                (FST w1) IN dom /\
+                                                (f (FST w1)).frame.rel (SND w1) (SND w2) |>;
+                                valt := \v w. (f (FST w)).valt v (SND w) |>`;
 
 val prop_2_3 = store_thm(
   "prop_2_3",
@@ -40,7 +38,7 @@ val prop_2_3 = store_thm(
      >- fs[DU_def]
      >- (`FST (FST w,v) = FST w` by fs[] >>
         `SND (FST w,v) = v` by fs[] >>
-	metis_tac[]))
+        metis_tac[]))
   >- fs[DU_def]
   >- (qexists_tac `SND v` >> rw[]
      >- fs[DU_def]
@@ -48,8 +46,8 @@ val prop_2_3 = store_thm(
      >- (`FST v = FST w` by fs[DU_def] >> metis_tac[])));
 
 
-val M_union_def = Define` 
-M_union M1 M2 = DU ((λn. if n = 0 then M1 else M2), {x | x = 0 \/ x = 1})`; 
+val M_union_def = Define`
+M_union M1 M2 = DU ((λn. if n = 0 then M1 else M2), {x | x = 0 \/ x = 1})`;
 
 
 
@@ -59,7 +57,7 @@ val SUBMODEL_def = Define`
                          (!w1. w1 IN M1.frame.world ==>
                          (!v. M1.valt v w1 <=> M2.valt v w1) /\
                          (!w2. w2 IN M1.frame.world ==> (M1.frame.rel w1 w2 <=> M2.frame.rel w1 w2)))`;
-                         
+
 
 
 val GENSUBMODEL_def = Define`
@@ -113,7 +111,7 @@ Induct_on `phi` >> rw[satis_def]
 );
 
 
-      
+
 val hom_def = Define`
 hom f M1 M2 <=> (!w. w IN M1.frame.world ==> ((f w) IN M2.frame.world /\ (!p. w IN M1.valt p ==> (f w) IN M2.valt p) /\
                                             (!u. u IN M1.frame.world ==> (M1.frame.rel w u ==> M2.frame.rel (f w) (f u)))))`;
@@ -173,8 +171,8 @@ Induct_on `form` >> rw[satis_def]
       >> qexists_tac `x`
       >> metis_tac[strong_hom_def,IN_DEF])
      ));
-      
-      
+
+
 
 val prop_2_9 = store_thm(
 "prop_2_9",
@@ -371,14 +369,14 @@ Cases_on `t0 = t1` >-
 
 
 (* tree-like model lemma *)
-                                
+
 
 
 val rooted_model_def = Define`
 !M x M'. rooted_model M x M' <=> x IN M'.frame.world /\
                                  (!a. a IN M.frame.world <=> (a IN M'.frame.world /\ (RTC (RESTRICT M'.frame.rel M'.frame.world)) x a)) /\
                                  (!n1 n2. n1 IN M.frame.world /\ n2 IN M.frame.world ==>
-				   (M.frame.rel n1 n2 <=> (RESTRICT M'.frame.rel M'.frame.world) n1 n2)) /\
+                                   (M.frame.rel n1 n2 <=> (RESTRICT M'.frame.rel M'.frame.world) n1 n2)) /\
                                  (!v n. M.valt v n <=> M'.valt v n)`;
 
 
@@ -387,17 +385,17 @@ val tree_like_model_def = Define`
 !M. tree_like_model M <=> ?x. tree M.frame x`;
 
 
- 
+
 
 val bounded_preimage_rooted_def = Define`
   bounded_preimage_rooted M x =
   <| frame := <| world := {l | HD l = x /\
                                LENGTH l > 0 /\
-			       (!m. m < LENGTH l - 1 ==>
-			            RESTRICT M.frame.rel M.frame.world (EL m l) (EL (m + 1) l))};
-		 rel := \l1 l2. (LENGTH l1) + 1 = LENGTH l2 /\
-		                (RESTRICT M.frame.rel M.frame.world) (LAST l1) (LAST l2) /\
-		                (!m. m < LENGTH l1 ==> EL m l1 = EL m l2) |>;
+                               (!m. m < LENGTH l - 1 ==>
+                                    RESTRICT M.frame.rel M.frame.world (EL m l) (EL (m + 1) l))};
+                 rel := \l1 l2. (LENGTH l1) + 1 = LENGTH l2 /\
+                                (RESTRICT M.frame.rel M.frame.world) (LAST l1) (LAST l2) /\
+                                (!m. m < LENGTH l1 ==> EL m l1 = EL m l2) |>;
      valt := \v n. M.valt v (LAST n) |>`;
 
 
@@ -409,103 +407,103 @@ val prop_2_15_subgoal_1 = store_thm(
   rw[bounded_mor_def] (* 4 *)
      >- (fs[bounded_preimage_rooted_def,RESTRICT_def] >>
         `LENGTH w <> 0`
-	    by (SPOSE_NOT_THEN ASSUME_TAC >>
-	       `w = []` by fs[LENGTH_NIL_SYM] >> fs[HD]) >>
+            by (SPOSE_NOT_THEN ASSUME_TAC >>
+               `w = []` by fs[LENGTH_NIL_SYM] >> fs[HD]) >>
         `LAST w = EL (PRE (LENGTH w)) w` by fs[LAST_EL] >>
-	Cases_on `LENGTH w < 2` (* 2 *)
-	>- (`LENGTH w = 1` by fs[] >> fs[rooted_model_def])
-	>- (`LENGTH w - 2 < LENGTH w - 1` by fs[] >>
-	   `EL ((LENGTH w - 2) + 1) w IN M.frame.world` by fs[] >>
-	   `(LENGTH w - 2) + 1 = PRE (LENGTH w)` by fs[] >> fs[]))
+        Cases_on `LENGTH w < 2` (* 2 *)
+        >- (`LENGTH w = 1` by fs[] >> fs[rooted_model_def])
+        >- (`LENGTH w - 2 < LENGTH w - 1` by fs[] >>
+           `EL ((LENGTH w - 2) + 1) w IN M.frame.world` by fs[] >>
+           `(LENGTH w - 2) + 1 = PRE (LENGTH w)` by fs[] >> fs[]))
      >- (fs[satis_def,bounded_preimage_rooted_def] >>
         `LAST w IN M.frame.world` suffices_by metis_tac[IN_DEF] >>
-	`LENGTH w <> 0`
-	    by (SPOSE_NOT_THEN ASSUME_TAC >>
-	       `w = []` by fs[LENGTH_NIL_SYM] >> fs[HD]) >>
+        `LENGTH w <> 0`
+            by (SPOSE_NOT_THEN ASSUME_TAC >>
+               `w = []` by fs[LENGTH_NIL_SYM] >> fs[HD]) >>
         `LAST w = EL (PRE (LENGTH w)) w` by fs[LAST_EL] >>
-	Cases_on `LENGTH w < 2` (* 2 *)
-	>- (`LENGTH w = 1` by fs[] >> fs[rooted_model_def])
-	>- (`LENGTH w - 2 < LENGTH w - 1` by fs[] >>
-	   fs[RESTRICT_def] >>
-	   `EL ((LENGTH w - 2) + 1) w IN M.frame.world` by fs[] >>
-	   `(LENGTH w - 2) + 1 = PRE (LENGTH w)` by fs[] >> fs[]))
+        Cases_on `LENGTH w < 2` (* 2 *)
+        >- (`LENGTH w = 1` by fs[] >> fs[rooted_model_def])
+        >- (`LENGTH w - 2 < LENGTH w - 1` by fs[] >>
+           fs[RESTRICT_def] >>
+           `EL ((LENGTH w - 2) + 1) w IN M.frame.world` by fs[] >>
+           `(LENGTH w - 2) + 1 = PRE (LENGTH w)` by fs[] >> fs[]))
      >- fs[bounded_preimage_rooted_def,RESTRICT_def]
      >- (qexists_tac `w ++ [v']` >> rw[] (* 2 *)
         >- (fs[bounded_preimage_rooted_def] >> rw[] (* 2 *)
-	   >- (Cases_on `w`
-	      >- fs[LENGTH]
-	      >- fs[HD])
-	   >- (fs[RESTRICT_def] >> rw[] (* 3 *)
-	      >- (`w ++ [v'] = SNOC v' w` by fs[] >>
-	         `EL m (w ++ [v']) = EL m w` by rw[EL_SNOC] >>
-	         fs[] >>
-	         Cases_on `m < LENGTH w - 1` (* 2 *)
-	         >- (`m + 1 < LENGTH w` by fs[] >>
-	            `w ++ [v'] = SNOC v' w` by fs[] >>
-	            `EL (m + 1) (w ++ [v']) = EL (m + 1) w` by rw[EL_SNOC] >>
-		    fs[])
-	         >- (`m = LENGTH w - 1` by fs[] >>
-	            `LENGTH w <> 0` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
-		    `w <> []` by fs[] >>
-		    `LAST w = EL (PRE (LENGTH w)) w` by fs[LAST_EL] >>
-		    `PRE (LENGTH w) = LENGTH w - 1` by fs[] >>
-		    `LAST (w ++ [v']) = v'` by fs[] >>
-		    `w ++ [v'] <> []` by fs[] >>
-		    `LAST (w ++ [v']) = EL (PRE (LENGTH (w ++ [v']))) (w ++ [v'])` by metis_tac[LAST_EL] >>
-		    `LENGTH (w ++ [v']) = LENGTH w + 1` by fs[] >>
-		    `LENGTH w = m + 1` by fs[] >>
-		    `LENGTH w + 1 = m + 2` by fs[] >>
-		    `PRE (LENGTH (w ++ [v'])) = m + 1` by fs[] >>
-		    `PRE (LENGTH w) = m` by fs[] >>
-		    `EL m w = LAST w` by fs[] >>
-		    `EL (m + 1) (w ++ [v']) = v'` by fs[] >> fs[]))
-	      >- (Cases_on `m < LENGTH w - 1` (* 2 *)
-	         >- (`SNOC v' w = w ++ [v']` by fs[] >>
-		    `EL m (w ++ [v']) = EL m w` by metis_tac[EL_SNOC] >> fs[])
-		 >- (`SNOC v' w = w ++ [v']` by fs[] >>
-		    `EL m (w ++ [v']) = EL m w` by metis_tac[EL_SNOC] >> fs[] >>
-		    Cases_on `LENGTH w = 1`
-		    >- (`m = 0` by fs[] >>
-		       `EL m w = HD w` by fs[] >>
-		       fs[rooted_model_def])
-		    >- (`m  = LENGTH w - 1` by fs[] >>
-		       `LENGTH w > 1` by fs[] >>
-		       `LENGTH w - 2 < LENGTH w - 1` by fs[] >>
-		       `EL ((LENGTH w - 2) + 1) w IN M.frame.world` by fs[] >>
-		       `LENGTH w - 2 + 1 = LENGTH w - 1` by fs[] >> fs[])))
-	      >- (Cases_on `m < LENGTH w - 2` (* 2 *)
-	         >- (`m + 1 < LENGTH (w ++ [v'])` by fs[] >>
-		    `w ++ [v'] = SNOC v' w` by fs[] >>
-		    `EL (m + 1) (w ++ [v']) = EL (m + 1) w` by rw[EL_SNOC] >>
-		    `m < LENGTH w - 1` by fs[] >> fs[])
-		 >- (Cases_on `m < LENGTH w - 1` (* 2 *)
-		    >- (`m + 1 < LENGTH w` by fs[] >>
-		       `w ++ [v'] = SNOC v' w` by fs[] >>
-		       `EL (m + 1) (w ⧺ [v']) = EL (m + 1) w` by rw[EL_SNOC] >>
-		       fs[])
-		    >- (`m = LENGTH w - 1` by fs[] >>
-		       `m + 1 = LENGTH w` by fs[] >>
-		       `LENGTH w = PRE (LENGTH (w ++ [v']))` by fs[] >>
-		       `w ++ [v'] <> []` by fs[] >>
-		       `LAST (w ++ [v']) = EL (PRE (LENGTH (w ++ [v']))) (w ++ [v'])` by metis_tac[LAST_EL] >>
-		       `LAST (w ++ [v']) = v'` by fs[] >>
-		       metis_tac[])))))
+           >- (Cases_on `w`
+              >- fs[LENGTH]
+              >- fs[HD])
+           >- (fs[RESTRICT_def] >> rw[] (* 3 *)
+              >- (`w ++ [v'] = SNOC v' w` by fs[] >>
+                 `EL m (w ++ [v']) = EL m w` by rw[EL_SNOC] >>
+                 fs[] >>
+                 Cases_on `m < LENGTH w - 1` (* 2 *)
+                 >- (`m + 1 < LENGTH w` by fs[] >>
+                    `w ++ [v'] = SNOC v' w` by fs[] >>
+                    `EL (m + 1) (w ++ [v']) = EL (m + 1) w` by rw[EL_SNOC] >>
+                    fs[])
+                 >- (`m = LENGTH w - 1` by fs[] >>
+                    `LENGTH w <> 0` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
+                    `w <> []` by fs[] >>
+                    `LAST w = EL (PRE (LENGTH w)) w` by fs[LAST_EL] >>
+                    `PRE (LENGTH w) = LENGTH w - 1` by fs[] >>
+                    `LAST (w ++ [v']) = v'` by fs[] >>
+                    `w ++ [v'] <> []` by fs[] >>
+                    `LAST (w ++ [v']) = EL (PRE (LENGTH (w ++ [v']))) (w ++ [v'])` by metis_tac[LAST_EL] >>
+                    `LENGTH (w ++ [v']) = LENGTH w + 1` by fs[] >>
+                    `LENGTH w = m + 1` by fs[] >>
+                    `LENGTH w + 1 = m + 2` by fs[] >>
+                    `PRE (LENGTH (w ++ [v'])) = m + 1` by fs[] >>
+                    `PRE (LENGTH w) = m` by fs[] >>
+                    `EL m w = LAST w` by fs[] >>
+                    `EL (m + 1) (w ++ [v']) = v'` by fs[] >> fs[]))
+              >- (Cases_on `m < LENGTH w - 1` (* 2 *)
+                 >- (`SNOC v' w = w ++ [v']` by fs[] >>
+                    `EL m (w ++ [v']) = EL m w` by metis_tac[EL_SNOC] >> fs[])
+                 >- (`SNOC v' w = w ++ [v']` by fs[] >>
+                    `EL m (w ++ [v']) = EL m w` by metis_tac[EL_SNOC] >> fs[] >>
+                    Cases_on `LENGTH w = 1`
+                    >- (`m = 0` by fs[] >>
+                       `EL m w = HD w` by fs[] >>
+                       fs[rooted_model_def])
+                    >- (`m  = LENGTH w - 1` by fs[] >>
+                       `LENGTH w > 1` by fs[] >>
+                       `LENGTH w - 2 < LENGTH w - 1` by fs[] >>
+                       `EL ((LENGTH w - 2) + 1) w IN M.frame.world` by fs[] >>
+                       `LENGTH w - 2 + 1 = LENGTH w - 1` by fs[] >> fs[])))
+              >- (Cases_on `m < LENGTH w - 2` (* 2 *)
+                 >- (`m + 1 < LENGTH (w ++ [v'])` by fs[] >>
+                    `w ++ [v'] = SNOC v' w` by fs[] >>
+                    `EL (m + 1) (w ++ [v']) = EL (m + 1) w` by rw[EL_SNOC] >>
+                    `m < LENGTH w - 1` by fs[] >> fs[])
+                 >- (Cases_on `m < LENGTH w - 1` (* 2 *)
+                    >- (`m + 1 < LENGTH w` by fs[] >>
+                       `w ++ [v'] = SNOC v' w` by fs[] >>
+                       `EL (m + 1) (w ⧺ [v']) = EL (m + 1) w` by rw[EL_SNOC] >>
+                       fs[])
+                    >- (`m = LENGTH w - 1` by fs[] >>
+                       `m + 1 = LENGTH w` by fs[] >>
+                       `LENGTH w = PRE (LENGTH (w ++ [v']))` by fs[] >>
+                       `w ++ [v'] <> []` by fs[] >>
+                       `LAST (w ++ [v']) = EL (PRE (LENGTH (w ++ [v']))) (w ++ [v'])` by metis_tac[LAST_EL] >>
+                       `LAST (w ++ [v']) = v'` by fs[] >>
+                       metis_tac[])))))
         >- (fs[bounded_preimage_rooted_def] >> rw[] (* 2 *)
-	   >- (`(LAST w) IN M.frame.world` suffices_by metis_tac[RESTRICT_def] >>
-	      Cases_on `LENGTH w = 1` (* 2 *)
-	      >- (`?x. w = [x]` by fs[LIST_LENGTH_1] >>
-	         `HD w = x` by fs[] >>
-		 `LAST w = x` by fs[] >>
-		 fs[rooted_model_def])
-	      >- (fs[RESTRICT_def] >>
-	         `LENGTH w > 1` by fs[] >>
-	         `LENGTH w - 2 < LENGTH w - 1` by fs[] >>
-		 `(EL ((LENGTH w - 2) + 1) w) IN M.frame.world` by metis_tac[] >>
-		 `LENGTH w - 2 + 1 = PRE (LENGTH w)` by fs[] >>
-		 `w <> []`
-		     by (SPOSE_NOT_THEN ASSUME_TAC >> fs[LENGTH]) >>
-		 rw[LAST_EL] >> metis_tac[]))
-	    >- (`w ++ [v'] = SNOC v' w` by fs[] >> metis_tac[EL_SNOC]))));
+           >- (`(LAST w) IN M.frame.world` suffices_by metis_tac[RESTRICT_def] >>
+              Cases_on `LENGTH w = 1` (* 2 *)
+              >- (`?x. w = [x]` by fs[LIST_LENGTH_1] >>
+                 `HD w = x` by fs[] >>
+                 `LAST w = x` by fs[] >>
+                 fs[rooted_model_def])
+              >- (fs[RESTRICT_def] >>
+                 `LENGTH w > 1` by fs[] >>
+                 `LENGTH w - 2 < LENGTH w - 1` by fs[] >>
+                 `(EL ((LENGTH w - 2) + 1) w) IN M.frame.world` by metis_tac[] >>
+                 `LENGTH w - 2 + 1 = PRE (LENGTH w)` by fs[] >>
+                 `w <> []`
+                     by (SPOSE_NOT_THEN ASSUME_TAC >> fs[LENGTH]) >>
+                 rw[LAST_EL] >> metis_tac[]))
+            >- (`w ++ [v'] = SNOC v' w` by fs[] >> metis_tac[EL_SNOC]))));
 
 
 val LAST_in_world = store_thm(
@@ -537,56 +535,56 @@ val prop_2_15_subgoal_2 = store_thm(
         `x' ∈ M'.frame.world ∧
          (RESTRICT M'.frame.rel M'.frame.world)^* x x'` by metis_tac[] >>
         `!x' a. (RESTRICT M'.frame.rel M'.frame.world)^* x' a ==> a IN M'.frame.world /\ x' = x ==>
-	∃y. y ∈ (bounded_preimage_rooted M x).frame.world ∧ LAST y = a` suffices_by metis_tac[] >>
-	ho_match_mp_tac RTC_INDUCT_RIGHT1 >> rw[] (* 2 *)
-	>- (qexists_tac `[x]` >> rw[] >>
-	   rw[bounded_preimage_rooted_def])
-        >- (`rooted_model M x M'` by rw[rooted_model_def] >> 
-	   `a IN M'.frame.world` by fs[RESTRICT_def] >>
-	   `∃y. y ∈ (bounded_preimage_rooted M x).frame.world ∧ LAST y = a` by metis_tac[] >>
-	   qexists_tac `y ++ [a']` >> rw[] >>
-	   rw[bounded_preimage_rooted_def] (* 2 *)
-	   >- (`HD y = x` by fs[bounded_preimage_rooted_def] >>
-	      `y <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[bounded_preimage_rooted_def]) >>
-	      `HD y = HD (y ++ [a'])` by (Cases_on `y` >- fs[] >- (fs[HD] >> fs[])) >> fs[])
-	   >- (`HD y = x ∧ LENGTH y > 0 ∧
+        ∃y. y ∈ (bounded_preimage_rooted M x).frame.world ∧ LAST y = a` suffices_by metis_tac[] >>
+        ho_match_mp_tac RTC_INDUCT_RIGHT1 >> rw[] (* 2 *)
+        >- (qexists_tac `[x]` >> rw[] >>
+           rw[bounded_preimage_rooted_def])
+        >- (`rooted_model M x M'` by rw[rooted_model_def] >>
+           `a IN M'.frame.world` by fs[RESTRICT_def] >>
+           `∃y. y ∈ (bounded_preimage_rooted M x).frame.world ∧ LAST y = a` by metis_tac[] >>
+           qexists_tac `y ++ [a']` >> rw[] >>
+           rw[bounded_preimage_rooted_def] (* 2 *)
+           >- (`HD y = x` by fs[bounded_preimage_rooted_def] >>
+              `y <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[bounded_preimage_rooted_def]) >>
+              `HD y = HD (y ++ [a'])` by (Cases_on `y` >- fs[] >- (fs[HD] >> fs[])) >> fs[])
+           >- (`HD y = x ∧ LENGTH y > 0 ∧
                ∀m.
                  m < LENGTH y − 1 ⇒
                  RESTRICT M.frame.rel M.frame.world (EL m y)
                    (EL (m + 1) y)` by fs[bounded_preimage_rooted_def] >>
-	      Cases_on `m < LENGTH y - 1`
-	      >- (`y ++ [a'] = SNOC a' y` by fs[] >>
-	         `EL m (y ++ [a']) = EL m y` by rw[EL_SNOC] >>
-		 `m + 1 < LENGTH y` by fs[] >>
-		 `EL (m + 1) (y ++ [a']) = EL (m + 1) y` by rw[EL_SNOC] >>
-		 metis_tac[])
-	      >- (`m = LENGTH y - 1` by fs[] >>
-	         `y ++ [a'] = SNOC a' y` by fs[] >>
-	         `EL m (y ++ [a']) = EL m y` by rw[EL_SNOC] >>
-		 `y <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[bounded_preimage_rooted_def]) >>
-		 `LAST y = EL (PRE (LENGTH y)) y` by rw[LAST_EL] >>
-		 `PRE (LENGTH y) = m` by fs[] >>
-		 `LENGTH (y ++ [a']) = m + 2` by fs[] >>
-		 `PRE (LENGTH (y ++ [a'])) = m + 1` by fs[] >>
-		 `y ++ [a'] <> []` by fs[] >>
-		 `LAST (y ++ [a']) = EL (PRE (LENGTH (y ++ [a']))) (y ++ [a'])` by metis_tac[LAST_EL] >>
-		 `LAST (y ++ [a']) = a'` by (Cases_on `y` >> fs[]) >>
-		 `EL m (y ++ [a']) = LAST y` by rw[] >>
-		 `EL (m + 1) (y ++ [a']) = a'` by metis_tac[] >>
-		 `RESTRICT M.frame.rel M.frame.world (LAST y) a'` suffices_by metis_tac[] >> 
-		 rw[RESTRICT_def] (* 3 *)
-		 >- (`(LAST y) IN M.frame.world /\ a' IN M.frame.world` suffices_by metis_tac[] >>
-		    `(LAST y) IN M.frame.world`
-		        suffices_by (rw[] >>
-			`(EL (LENGTH y − 1) y) = LAST y` by rw[] >>
-			metis_tac[RTC_CASES2]) >>
-		    metis_tac[LAST_in_world])
-		 >- (`(LAST y) IN M.frame.world` by metis_tac[LAST_in_world] >>
-		    `(RESTRICT M'.frame.rel M'.frame.world)^* (HD y) (LAST y)` suffices_by rw[] >>
-		    metis_tac[])
-		 >- (`(RESTRICT M'.frame.rel M'.frame.world)^* (HD y) (LAST y)`
-		        by (`(LAST y) IN M.frame.world` by metis_tac[LAST_in_world] >> metis_tac[]) >>
-	            metis_tac[RTC_CASES2]))))));
+              Cases_on `m < LENGTH y - 1`
+              >- (`y ++ [a'] = SNOC a' y` by fs[] >>
+                 `EL m (y ++ [a']) = EL m y` by rw[EL_SNOC] >>
+                 `m + 1 < LENGTH y` by fs[] >>
+                 `EL (m + 1) (y ++ [a']) = EL (m + 1) y` by rw[EL_SNOC] >>
+                 metis_tac[])
+              >- (`m = LENGTH y - 1` by fs[] >>
+                 `y ++ [a'] = SNOC a' y` by fs[] >>
+                 `EL m (y ++ [a']) = EL m y` by rw[EL_SNOC] >>
+                 `y <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[bounded_preimage_rooted_def]) >>
+                 `LAST y = EL (PRE (LENGTH y)) y` by rw[LAST_EL] >>
+                 `PRE (LENGTH y) = m` by fs[] >>
+                 `LENGTH (y ++ [a']) = m + 2` by fs[] >>
+                 `PRE (LENGTH (y ++ [a'])) = m + 1` by fs[] >>
+                 `y ++ [a'] <> []` by fs[] >>
+                 `LAST (y ++ [a']) = EL (PRE (LENGTH (y ++ [a']))) (y ++ [a'])` by metis_tac[LAST_EL] >>
+                 `LAST (y ++ [a']) = a'` by (Cases_on `y` >> fs[]) >>
+                 `EL m (y ++ [a']) = LAST y` by rw[] >>
+                 `EL (m + 1) (y ++ [a']) = a'` by metis_tac[] >>
+                 `RESTRICT M.frame.rel M.frame.world (LAST y) a'` suffices_by metis_tac[] >>
+                 rw[RESTRICT_def] (* 3 *)
+                 >- (`(LAST y) IN M.frame.world /\ a' IN M.frame.world` suffices_by metis_tac[] >>
+                    `(LAST y) IN M.frame.world`
+                        suffices_by (rw[] >>
+                        `(EL (LENGTH y − 1) y) = LAST y` by rw[] >>
+                        metis_tac[RTC_CASES2]) >>
+                    metis_tac[LAST_in_world])
+                 >- (`(LAST y) IN M.frame.world` by metis_tac[LAST_in_world] >>
+                    `(RESTRICT M'.frame.rel M'.frame.world)^* (HD y) (LAST y)` suffices_by rw[] >>
+                    metis_tac[])
+                 >- (`(RESTRICT M'.frame.rel M'.frame.world)^* (HD y) (LAST y)`
+                        by (`(LAST y) IN M.frame.world` by metis_tac[LAST_in_world] >> metis_tac[]) >>
+                    metis_tac[RTC_CASES2]))))));
 
 val FRONT_in_world = store_thm(
   "FRONT_in_world",
@@ -604,18 +602,18 @@ val FRONT_in_world = store_thm(
      `m < LENGTH t - 1` by fs[] >>
      Cases_on `t` >- fs[]
                   >- (`¬(NULL (h :: t'))` by fs[NULL] >>
-		     qabbrev_tac `t = h :: t'` >>
+                     qabbrev_tac `t = h :: t'` >>
                      `EL m (FRONT t) = EL m t` by fs[EL_FRONT] >>
-		     `m + 1 < LENGTH (FRONT t)` by fs[] >>
-		     `EL (m + 1) (FRONT t) = EL (m + 1) t` by fs[EL_FRONT] >>
-		     metis_tac[])));
-		     
+                     `m + 1 < LENGTH (FRONT t)` by fs[] >>
+                     `EL (m + 1) (FRONT t) = EL (m + 1) t` by fs[EL_FRONT] >>
+                     metis_tac[])));
+
 
 val prop_2_15_subgoal_4 = store_thm(
   "prop_2_15_subgoal_4",
   ``rooted_model M x M' /\ t ∈ (bounded_preimage_rooted M x).frame.world ==>
         (RESTRICT (bounded_preimage_rooted M x).frame.rel (bounded_preimage_rooted M x).frame.world)^* [x] t``,
-  rw[] >>  
+  rw[] >>
   completeInduct_on `LENGTH t` >> rw[] >>
   `t = [] \/ ?x l. t = SNOC x l` by metis_tac[SNOC_CASES] (* 2 *)
   >- fs[bounded_preimage_rooted_def]
@@ -624,34 +622,34 @@ val prop_2_15_subgoal_4 = store_thm(
      Cases_on `LENGTH t > 1` (* 2 *)
      >- (`(FRONT t) IN (bounded_preimage_rooted M x).frame.world` by metis_tac[FRONT_in_world] >>
         `(RESTRICT (bounded_preimage_rooted M x).frame.rel
-               (bounded_preimage_rooted M x).frame.world)^* [x] (FRONT t)` by metis_tac[] >> 
-	`(RESTRICT (bounded_preimage_rooted M x).frame.rel
+               (bounded_preimage_rooted M x).frame.world)^* [x] (FRONT t)` by metis_tac[] >>
+        `(RESTRICT (bounded_preimage_rooted M x).frame.rel
                (bounded_preimage_rooted M x).frame.world) (FRONT t) t` suffices_by metis_tac[RTC_CASES2] >>
-	`(bounded_preimage_rooted M x).frame.rel (FRONT t) t` suffices_by metis_tac[RESTRICT_def] >>
-	rw[bounded_preimage_rooted_def] (* 2 *)
-	>- (fs[bounded_preimage_rooted_def] >>
-	   `LENGTH l - 1 < LENGTH l` by fs[] >>
-	   `EL (LENGTH l - 1) (SNOC x' l) = LAST l /\
-	   EL ((LENGTH l - 1) + 1) (SNOC x' l) = x'` suffices_by metis_tac[] >> rw[] (* 2 *)
-	   >- (`SNOC x' l = l ++ [x']` by fs[] >>
-	      `EL (LENGTH l − 1) (SNOC x' l) = EL (LENGTH l − 1) l` by rw[EL_APPEND1] >>
-	      `l <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
-	      `PRE (LENGTH l) = LENGTH l - 1` by fs[] >>
-	      `EL (LENGTH l - 1) l = LAST l` by rw[LAST_EL] >> fs[])
-	   >-  (`SNOC x' l = l ++ [x']` by fs[] >>
-	       `PRE (LENGTH (l ++ [x'])) = LENGTH l` by fs[] >>
-	       `l ++ [x'] <> []` by fs[] >>
-	       `EL (LENGTH l) (l ++ [x']) = LAST (l ++ [x'])` by metis_tac[LAST_EL] >>
-	       `LAST (l ++ [x']) = x'` by fs[] >> metis_tac[]))
-	>- (`SNOC x' l = l ++ [x']` by fs[] >> metis_tac[EL_APPEND1]))
+        `(bounded_preimage_rooted M x).frame.rel (FRONT t) t` suffices_by metis_tac[RESTRICT_def] >>
+        rw[bounded_preimage_rooted_def] (* 2 *)
+        >- (fs[bounded_preimage_rooted_def] >>
+           `LENGTH l - 1 < LENGTH l` by fs[] >>
+           `EL (LENGTH l - 1) (SNOC x' l) = LAST l /\
+           EL ((LENGTH l - 1) + 1) (SNOC x' l) = x'` suffices_by metis_tac[] >> rw[] (* 2 *)
+           >- (`SNOC x' l = l ++ [x']` by fs[] >>
+              `EL (LENGTH l − 1) (SNOC x' l) = EL (LENGTH l − 1) l` by rw[EL_APPEND1] >>
+              `l <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
+              `PRE (LENGTH l) = LENGTH l - 1` by fs[] >>
+              `EL (LENGTH l - 1) l = LAST l` by rw[LAST_EL] >> fs[])
+           >-  (`SNOC x' l = l ++ [x']` by fs[] >>
+               `PRE (LENGTH (l ++ [x'])) = LENGTH l` by fs[] >>
+               `l ++ [x'] <> []` by fs[] >>
+               `EL (LENGTH l) (l ++ [x']) = LAST (l ++ [x'])` by metis_tac[LAST_EL] >>
+               `LAST (l ++ [x']) = x'` by fs[] >> metis_tac[]))
+        >- (`SNOC x' l = l ++ [x']` by fs[] >> metis_tac[EL_APPEND1]))
      >- (`LENGTH t > 0` by fs[bounded_preimage_rooted_def] >>
         `LENGTH t <= 1` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
         `LENGTH t <> 0` by fs[] >>
         `LENGTH t = 1` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
-	`?a. t = [a]` by fs[LIST_LENGTH_1] >>
-	`HD t = x` by fs[bounded_preimage_rooted_def] >>
-	`HD [a] = a` by fs[HD] >>
-	`x = a` by rw[] >> fs[])));
+        `?a. t = [a]` by fs[LIST_LENGTH_1] >>
+        `HD t = x` by fs[bounded_preimage_rooted_def] >>
+        `HD [a] = a` by fs[HD] >>
+        `x = a` by rw[] >> fs[])));
 
 
 val prop_2_15_subgoal_5 = store_thm(
@@ -676,18 +674,18 @@ val FRONT_rel = store_thm(
      `EL (LENGTH l - 1) (SNOC x' l) = LAST l /\
      EL ((LENGTH l - 1) + 1) (SNOC x' l) = x'` suffices_by metis_tac[] >> rw[] (* 2 *)
      >- (`SNOC x' l = l ++ [x']` by fs[] >>
-	`EL (LENGTH l − 1) (SNOC x' l) = EL (LENGTH l − 1) l` by rw[EL_APPEND1] >>
-	`l <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
-	`PRE (LENGTH l) = LENGTH l - 1` by fs[] >>
-	`EL (LENGTH l - 1) l = LAST l` by rw[LAST_EL] >> fs[])
+        `EL (LENGTH l − 1) (SNOC x' l) = EL (LENGTH l − 1) l` by rw[EL_APPEND1] >>
+        `l <> []` by (SPOSE_NOT_THEN ASSUME_TAC >> fs[]) >>
+        `PRE (LENGTH l) = LENGTH l - 1` by fs[] >>
+        `EL (LENGTH l - 1) l = LAST l` by rw[LAST_EL] >> fs[])
      >-  (`SNOC x' l = l ++ [x']` by fs[] >>
-	 `PRE (LENGTH (l ++ [x'])) = LENGTH l` by fs[] >>
-	 `l ++ [x'] <> []` by fs[] >>
-	 `EL (LENGTH l) (l ++ [x']) = LAST (l ++ [x'])` by metis_tac[LAST_EL] >>
-	 `LAST (l ++ [x']) = x'` by fs[] >> metis_tac[]))
+         `PRE (LENGTH (l ++ [x'])) = LENGTH l` by fs[] >>
+         `l ++ [x'] <> []` by fs[] >>
+         `EL (LENGTH l) (l ++ [x']) = LAST (l ++ [x'])` by metis_tac[LAST_EL] >>
+         `LAST (l ++ [x']) = x'` by fs[] >> metis_tac[]))
   >- (`SNOC x' l = l ++ [x']` by fs[] >> metis_tac[EL_APPEND1]));
-  
-  
+
+
 
 val prop_2_15_subgoal_6 = store_thm(
   "prop_2_15_subgoal_6",
@@ -697,64 +695,64 @@ val prop_2_15_subgoal_6 = store_thm(
   >- (qexists_tac `FRONT t` >> rw[] (* 2 *)
      >- (`LENGTH t > 1`
             by (SPOSE_NOT_THEN ASSUME_TAC >> `LENGTH t <= 1` by fs[] >>
-	       `LENGTH t > 0` by fs[bounded_preimage_rooted_def] >>
-	       `LENGTH t = 1` by fs[] >>
-	       `?x. t = [x]` by fs[LIST_LENGTH_1] >>
-	       `HD t = x` by fs[bounded_preimage_rooted_def] >>
-	       `HD [x'] = x'` by fs[HD] >>
-	       `x = x'` by metis_tac[] >> metis_tac[]) >>
+               `LENGTH t > 0` by fs[bounded_preimage_rooted_def] >>
+               `LENGTH t = 1` by fs[] >>
+               `?x. t = [x]` by fs[LIST_LENGTH_1] >>
+               `HD t = x` by fs[bounded_preimage_rooted_def] >>
+               `HD [x'] = x'` by fs[HD] >>
+               `x = x'` by metis_tac[] >> metis_tac[]) >>
         metis_tac[FRONT_in_world])
      >- (`LENGTH t > 1`
             by (SPOSE_NOT_THEN ASSUME_TAC >> `LENGTH t <= 1` by fs[] >>
-	       `LENGTH t > 0` by fs[bounded_preimage_rooted_def] >>
-	       `LENGTH t = 1` by fs[] >>
-	       `?x. t = [x]` by fs[LIST_LENGTH_1] >>
-	       `HD t = x` by fs[bounded_preimage_rooted_def] >>
-	       `HD [x'] = x'` by fs[HD] >>
-	       `x = x'` by metis_tac[] >> metis_tac[]) >>
-	metis_tac[FRONT_rel]))
+               `LENGTH t > 0` by fs[bounded_preimage_rooted_def] >>
+               `LENGTH t = 1` by fs[] >>
+               `?x. t = [x]` by fs[LIST_LENGTH_1] >>
+               `HD t = x` by fs[bounded_preimage_rooted_def] >>
+               `HD [x'] = x'` by fs[HD] >>
+               `x = x'` by metis_tac[] >> metis_tac[]) >>
+        metis_tac[FRONT_rel]))
   >- (`t0 = FRONT t /\ t0' = FRONT t` suffices_by metis_tac[] >>
       rw[] (* 2 *)
       >- (irule LIST_EQ (* 2 *)
          >- (rw[] >>
-	    `LENGTH t0 + 1 = LENGTH t` by fs[bounded_preimage_rooted_def] >>
-	    `EL x' t0 = EL x' t` by fs[bounded_preimage_rooted_def] >>
-	    `EL x' (FRONT t) = EL x' t` suffices_by metis_tac[] >>
-	    irule EL_FRONT (* 2 *)
-	    >- (Cases_on `t`
-	       >- fs[bounded_preimage_rooted_def]
-	       >- fs[NULL])
-	    >- (`LENGTH t0 = LENGTH (FRONT t)` suffices_by metis_tac[] >>
-	       `LENGTH (FRONT t) = LENGTH t - 1` suffices_by fs[] >>
-	       Cases_on `t = []` >- fs[bounded_preimage_rooted_def]
-	                         >- rw[LENGTH_FRONT]))
+            `LENGTH t0 + 1 = LENGTH t` by fs[bounded_preimage_rooted_def] >>
+            `EL x' t0 = EL x' t` by fs[bounded_preimage_rooted_def] >>
+            `EL x' (FRONT t) = EL x' t` suffices_by metis_tac[] >>
+            irule EL_FRONT (* 2 *)
+            >- (Cases_on `t`
+               >- fs[bounded_preimage_rooted_def]
+               >- fs[NULL])
+            >- (`LENGTH t0 = LENGTH (FRONT t)` suffices_by metis_tac[] >>
+               `LENGTH (FRONT t) = LENGTH t - 1` suffices_by fs[] >>
+               Cases_on `t = []` >- fs[bounded_preimage_rooted_def]
+                                 >- rw[LENGTH_FRONT]))
          >- (`LENGTH t0 + 1 = LENGTH t` by fs[bounded_preimage_rooted_def] >>
-	    `LENGTH (FRONT t) = LENGTH t - 1` suffices_by fs[] >>
-	    Cases_on `t = []` >- fs[bounded_preimage_rooted_def]
-	                      >- rw[LENGTH_FRONT]))
+            `LENGTH (FRONT t) = LENGTH t - 1` suffices_by fs[] >>
+            Cases_on `t = []` >- fs[bounded_preimage_rooted_def]
+                              >- rw[LENGTH_FRONT]))
       >- (irule LIST_EQ (* 2 *)
          >- (rw[] >>
-	    `LENGTH t0' + 1 = LENGTH t` by fs[bounded_preimage_rooted_def] >>
-	    `EL x' t0' = EL x' t` by fs[bounded_preimage_rooted_def] >>
-	    `EL x' (FRONT t) = EL x' t` suffices_by metis_tac[] >>
-	    irule EL_FRONT (* 2 *)
-	    >- (Cases_on `t`
-	       >- fs[bounded_preimage_rooted_def]
-	       >- fs[NULL])
-	    >- (`LENGTH t0' = LENGTH (FRONT t)` suffices_by metis_tac[] >>
-	       `LENGTH (FRONT t) = LENGTH t - 1` suffices_by fs[] >>
-	       Cases_on `t = []` >- fs[bounded_preimage_rooted_def]
-	                         >- rw[LENGTH_FRONT]))
+            `LENGTH t0' + 1 = LENGTH t` by fs[bounded_preimage_rooted_def] >>
+            `EL x' t0' = EL x' t` by fs[bounded_preimage_rooted_def] >>
+            `EL x' (FRONT t) = EL x' t` suffices_by metis_tac[] >>
+            irule EL_FRONT (* 2 *)
+            >- (Cases_on `t`
+               >- fs[bounded_preimage_rooted_def]
+               >- fs[NULL])
+            >- (`LENGTH t0' = LENGTH (FRONT t)` suffices_by metis_tac[] >>
+               `LENGTH (FRONT t) = LENGTH t - 1` suffices_by fs[] >>
+               Cases_on `t = []` >- fs[bounded_preimage_rooted_def]
+                                 >- rw[LENGTH_FRONT]))
          >- (`LENGTH t0' + 1 = LENGTH t` by fs[bounded_preimage_rooted_def] >>
-	    `LENGTH (FRONT t) = LENGTH t - 1` suffices_by fs[] >>
-	    Cases_on `t = []` >- fs[bounded_preimage_rooted_def]
-	                      >- rw[LENGTH_FRONT]))));
-            
-	    
-	    
-	 
-	
-                
+            `LENGTH (FRONT t) = LENGTH t - 1` suffices_by fs[] >>
+            Cases_on `t = []` >- fs[bounded_preimage_rooted_def]
+                              >- rw[LENGTH_FRONT]))));
+
+
+
+
+
+
 val prop_2_15_strengthen = store_thm(
   "prop_2_15_strengthen",
   ``!M x:'b M'. rooted_model M x M' ==>
@@ -762,14 +760,14 @@ val prop_2_15_strengthen = store_thm(
   rpt strip_tac >>
   map_every qexists_tac [`bounded_preimage_rooted M x`,`LAST`,`[x]`] >>
   rw[tree_def,bounded_mor_image_def] (* 6 *)
-  >- metis_tac[prop_2_15_subgoal_1]	   
+  >- metis_tac[prop_2_15_subgoal_1]
   >- metis_tac[prop_2_15_subgoal_2]
   >- fs[bounded_preimage_rooted_def]
   >- metis_tac[prop_2_15_subgoal_4]
   >- metis_tac[prop_2_15_subgoal_5]
   >- metis_tac[prop_2_15_subgoal_6]);
 
-	   
+
 
 val point_GENSUBMODEL_def = Define`
   point_GENSUBMODEL M w =
@@ -824,11 +822,10 @@ val prop_2_15_corollary = store_thm(
   qexists_tac `MODEL` >> rw[] >> qexists_tac `s` >> rw[] >>
   fs[bounded_mor_image_def] >>
   `s IN MODEL.frame.world` by metis_tac[tree_def] >> metis_tac[prop_2_14]);
-  
-  
+
+
 
 
 
 
 val _ = export_theory();
-

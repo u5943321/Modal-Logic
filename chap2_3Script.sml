@@ -13,8 +13,6 @@ open prim_recTheory;
 open listTheory pairTheory;
 
 
-val _ = ParseExtras.tight_equality()
-
 val _ = new_theory "chap2_3";
 
 val irule = fn th => irule th >> rpt conj_tac
@@ -2419,36 +2417,36 @@ rw[EQ_IMP_THM] >> fs[modal_eq_def,tau_theory_def,EXTENSION]
 Theorem example_2_23:
 ?M N w:num#num v:num#num. modal_eq M N w v /\ ¬(bisim_world M N w v)
 Proof
-qabbrev_tac 
-`M = 
+qabbrev_tac
+`M =
    <| frame := <| world := {(0,0)} ∪ {(n1,n2) | n2 <= n1 /\ n1 <> 0 /\ n2 <> 0};
-                   rel := \p1 p2. (p1 = (0,0) /\ SND p2 = 1) \/ 
+                   rel := \p1 p2. (p1 = (0,0) /\ SND p2 = 1) \/
                                   (FST p1 = FST p2 /\ SND p2 = SND p1 + 1)
                 |>;
        valt := \p v. F |>` >>
-qabbrev_tac 
-`N = 
+qabbrev_tac
+`N =
    <| frame := <| world := {(0,n)| T} ∪ {(n1,n2) | n2 <= n1 /\ n1 <> 0 /\ n2 <> 0};
-                   rel := \p1 p2. (p1 = (0,0) /\ SND p2 = 1) \/ 
+                   rel := \p1 p2. (p1 = (0,0) /\ SND p2 = 1) \/
                                   (FST p1 = FST p2 /\ SND p2 = SND p1 + 1)
                 |>;
        valt := \p v. F |>` >>
 map_every qexists_tac [`M`,`N`,`(0,0)`,`(0,0)`] >> rw[] (* 2 *)
->- (simp[modal_eq_tau'] >> 
+>- (simp[modal_eq_tau'] >>
    `!n. ?f. nbisim M N f n (0,0) (0,0)`
      by
       (rw[] >>
-       qexists_tac 
-        `\m p1 p2. 
+       qexists_tac
+        `\m p1 p2.
             (SND p1 <= n-m /\ SND p2 <= n-m /\
              ((p1 = p2) \/
               (?k. p1 = (n,k) /\ p2 = (0,k))))` >> rw[nbisim_def](*8*)
-       >- simp[satis_def,Abbr`M`,Abbr`N`] 
-       >- simp[satis_def,Abbr`M`,Abbr`N`] 
-       >- simp[satis_def,Abbr`M`,Abbr`N`] 
-       >- simp[satis_def,Abbr`M`,Abbr`N`] 
+       >- simp[satis_def,Abbr`M`,Abbr`N`]
+       >- simp[satis_def,Abbr`M`,Abbr`N`]
+       >- simp[satis_def,Abbr`M`,Abbr`N`]
+       >- simp[satis_def,Abbr`M`,Abbr`N`]
        >- (qexists_tac `p1'` >> rw[] (* 4 *)
-          >- fs[Abbr`M`,Abbr`N`] 
+          >- fs[Abbr`M`,Abbr`N`]
           >- (fs[Abbr`N`,Abbr`M`] (* 16 all same *)
               >> Cases_on `p1'` >> Cases_on `p1` >> fs[SND,FST])
           >- (fs[Abbr`M`] (* 2 same *) >>
@@ -2459,7 +2457,7 @@ map_every qexists_tac [`M`,`N`,`(0,0)`,`(0,0)`] >> rw[] (* 2 *)
           qexists_tac `(0,k+1)` >> rw[] (* 2 same *) >>
           fs[Abbr`N`])
        >- (Cases_on `p1` >> Cases_on `q = 0` >> rw[] (*2*)
-          >- (`r = 0` by fs[Abbr`M`] >> rw[] >> Cases_on `p2'` >> 
+          >- (`r = 0` by fs[Abbr`M`] >> rw[] >> Cases_on `p2'` >>
               Cases_on `q = 0` >> rw[] (* 4 *)
               >- (`r = 1` by fs[Abbr`N`] >> rw[] >>
                   qexists_tac `(n,1)` >> rw[Abbr`M`])
@@ -2467,14 +2465,14 @@ map_every qexists_tac [`M`,`N`,`(0,0)`,`(0,0)`] >> rw[] (* 2 *)
               >- (`r = 1` by fs[Abbr`N`] >> fs[Abbr`M`])
               >- (`r = 1` by fs[Abbr`N`] >> fs[])
               )
-          >- (Cases_on `p2'` >> 
+          >- (Cases_on `p2'` >>
              `q = q' ∧ r' = r + 1` by fs[Abbr`N`,FST,SND] >> rw[Abbr`M`] >>
              fs[Abbr`N`]))
        >- (Cases_on `p2'` >> rw[FST,SND] >> Cases_on `q = 0` >> rw[] (* 4 *)
-          >- (`r = k + 1` by fs[Abbr`N`] >> rw[] >> 
+          >- (`r = k + 1` by fs[Abbr`N`] >> rw[] >>
               qexists_tac `(n,k+1)` >> rw[Abbr`M`])
           >- fs[Abbr`M`,Abbr`N`]
-          >- (`k = 0` by fs[Abbr`N`] >> rw[] >> 
+          >- (`k = 0` by fs[Abbr`N`] >> rw[] >>
              `n = 0` by fs[Abbr`M`] >> fs[])
           >- (`r <= 1 /\ 1 <= n - m` suffices_by fs[] >>
              fs[Abbr`N`]))) >>
@@ -2483,36 +2481,36 @@ rw[] >> `∃f. nbisim M N f (DEG form) (0,0) (0,0)` by metis_tac[] >>
 irule prop_2_31_half1 >> qexists_tac `DEG form` >> fs[])
 (*thankfully have proved modal equivalence...*)
 >- (SPOSE_NOT_THEN ASSUME_TAC >> fs[bisim_world_def,bisim_def] >>
-   `(0,1) IN N.frame.world` by fs[Abbr`N`] >> 
-   `N.frame.rel (0,0) (0,1)` by fs[Abbr`N`] >> 
-   `?v0. v0 IN M.frame.world /\ Z v0 (0,1) /\ M.frame.rel (0,0) v0` 
+   `(0,1) IN N.frame.world` by fs[Abbr`N`] >>
+   `N.frame.rel (0,0) (0,1)` by fs[Abbr`N`] >>
+   `?v0. v0 IN M.frame.world /\ Z v0 (0,1) /\ M.frame.rel (0,0) v0`
      by metis_tac[] >>
-   Cases_on `v0` >> 
-   `q <> 0` by fs[Abbr`M`] >> `r = 1` by fs[Abbr`M`] >> fs[] >> 
+   Cases_on `v0` >>
+   `q <> 0` by fs[Abbr`M`] >> `r = 1` by fs[Abbr`M`] >> fs[] >>
    `!n. n <= q-1 ==> 1 <= n ==> Z (q,n) (0,n) ==> Z (q,n+1) (0,n+1)`
-     by 
-      (rw[] >> 
+     by
+      (rw[] >>
        `N.frame.rel (0,n) (0,n +1)` by fs[Abbr`N`] >>
        `(0,n) IN N.frame.world /\ (0,n + 1) IN N.frame.world` by fs[Abbr`N`] >>
-       `(q,n) IN M.frame.world` by fs[Abbr`M`] >> 
+       `(q,n) IN M.frame.world` by fs[Abbr`M`] >>
        `∀v'.
                 v' ∈ N.frame.world ∧ N.frame.rel (0,n) v' ⇒
                 ∃v. v ∈ M.frame.world ∧ Z v v' ∧ M.frame.rel (q,n) v`
-       by metis_tac[] >> 
+       by metis_tac[] >>
        first_x_assum drule >> rw[] >>
-       Cases_on `v` >> rw[] >> 
+       Cases_on `v` >> rw[] >>
        `(λp1 p2.
                         p1 = (0,0) ∧ SND p2 = 1 ∨
                         FST p1 = FST p2 ∧ SND p2 = SND p1 + 1) (q,n) (q',r)`
-       by fs[Abbr`M`] >> 
+       by fs[Abbr`M`] >>
        `q = q' /\ r = n + 1` by fs[] >> rw[]) >>
    `!n. n <= q ==> 1 <= n ==> Z (q,n) (0,n)`
      by
-      (Induct_on `n` >> rw[] >> Cases_on `n = 0` >> rw[] >> 
+      (Induct_on `n` >> rw[] >> Cases_on `n = 0` >> rw[] >>
        simp[arithmeticTheory.ADD1]) >>
    `Z (q,q) (0,q)` by fs[] >>
    `(0,q) IN N.frame.world /\ (0,q+1) IN N.frame.world /\
-     N.frame.rel (0,q) (0,q+1)` by fs[Abbr`N`] >> 
+     N.frame.rel (0,q) (0,q+1)` by fs[Abbr`N`] >>
    `(q,q) IN M.frame.world` by fs[Abbr`M`] >>
    `∃v. v ∈ M.frame.world ∧ Z v (0,q+1) ∧ M.frame.rel (q,q) v` by metis_tac[] >>
    Cases_on `v` >> fs[Abbr`M`,FST,SND])
@@ -2521,4 +2519,3 @@ QED
 
 
 val _ = export_theory();
- 

@@ -8,8 +8,6 @@ open arithmeticTheory;
 open set_relationTheory;
 open pairTheory;
 
-val _ = ParseExtras.tight_equality()
-
 val _ = new_theory "IBCDNFrevised";
 
 (* Basics of equiv *)
@@ -1557,26 +1555,26 @@ Induct_on `FINITE` >> rw[] >> Cases_on `e` >> fs[] >> Cases_on `c = {}`
      Cases_on `r` >> rw[]
      >- (qexists_tac `AND q f` >> rw[]
         >- (eq_tac >> rw[]
-	   >- (fs[satis_AND] >> rw[csatis_def,lsatis_def]
-	      >- metis_tac[lsatis_def]
-	      >- (`csatis M w c` by metis_tac[] >> metis_tac[csatis_def]))
-	   >- (fs[satis_AND] >>
-	       `{(q,T)} SUBSET ((q,T) INSERT c)` by fs[] >>
-	       `csatis M w {(q,T)}` by metis_tac[csatis_SUBSET] >>
-	       fs[csatis_def,lsatis_def]))
+           >- (fs[satis_AND] >> rw[csatis_def,lsatis_def]
+              >- metis_tac[lsatis_def]
+              >- (`csatis M w c` by metis_tac[] >> metis_tac[csatis_def]))
+           >- (fs[satis_AND] >>
+               `{(q,T)} SUBSET ((q,T) INSERT c)` by fs[] >>
+               `csatis M w {(q,T)}` by metis_tac[csatis_SUBSET] >>
+               fs[csatis_def,lsatis_def]))
         >- (`(q INSERT IMAGE FST c) DELETE q = IMAGE FST c` by (fs[EXTENSION,DELETE_DEF,INSERT_DEF] >> metis_tac[]) >>
-	   `q IN (q INSERT IMAGE FST c)` by fs[] >> metis_tac[CONJ_OF_cases]))
+           `q IN (q INSERT IMAGE FST c)` by fs[] >> metis_tac[CONJ_OF_cases]))
      >- (qexists_tac `AND (¬q) f` >> rw[]
         >- (eq_tac >> rw[]
-	   >- (fs[satis_AND] >> rw[csatis_def,lsatis_def]
-	      >- metis_tac[lsatis_def,satis_def]
-	      >- (`csatis M w c` by metis_tac[] >> metis_tac[csatis_def]))
-	   >- (fs[satis_AND] >>
-	       `{(q,F)} SUBSET ((q,F) INSERT c)` by fs[] >>
-	       `csatis M w {(q,F)}` by metis_tac[csatis_SUBSET] >>
-	       fs[csatis_def,lsatis_def,satis_def]))
+           >- (fs[satis_AND] >> rw[csatis_def,lsatis_def]
+              >- metis_tac[lsatis_def,satis_def]
+              >- (`csatis M w c` by metis_tac[] >> metis_tac[csatis_def]))
+           >- (fs[satis_AND] >>
+               `{(q,F)} SUBSET ((q,F) INSERT c)` by fs[] >>
+               `csatis M w {(q,F)}` by metis_tac[csatis_SUBSET] >>
+               fs[csatis_def,lsatis_def,satis_def]))
         >- (`(q INSERT IMAGE FST c) DELETE q = IMAGE FST c` by (fs[EXTENSION,DELETE_DEF,INSERT_DEF] >> metis_tac[]) >>
-	   `q IN (q INSERT IMAGE FST c)` by fs[] >> metis_tac[CONJ_OF_cases])))));
+           `q IN (q INSERT IMAGE FST c)` by fs[] >> metis_tac[CONJ_OF_cases])))));
 
 
 
@@ -1592,54 +1590,54 @@ val NEQ_lsets_FALSE = store_thm(
           (fs[is_lset_def,EXTENSION,IMAGE_DEF] >>
           `FST (q,T) = q` by fs[FST] >>
           `q IN fs` by metis_tac[] >>
-	  `(∃x'. q = FST x' ∧ x' ∈ c2) ⇔ q ∈ fs` by metis_tac[] >>
+          `(∃x'. q = FST x' ∧ x' ∈ c2) ⇔ q ∈ fs` by metis_tac[] >>
           `(∃x'. q = FST x' ∧ x' ∈ c2)` by metis_tac[] >>
-	  Cases_on `x'` >> `q' = q` by fs[FST] >> Cases_on `r` (* 2 *)
+          Cases_on `x'` >> `q' = q` by fs[FST] >> Cases_on `r` (* 2 *)
           >> metis_tac[]) >>
-	fs[csatis_def] >>
-	`lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
-	metis_tac[lsatis_def,satis_def])
+        fs[csatis_def] >>
+        `lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
+        metis_tac[lsatis_def,satis_def])
      >- (`(q,T) IN c2` by
           (fs[is_lset_def,EXTENSION,IMAGE_DEF] >>
           `FST (q,F) = q` by fs[FST] >>
           `q IN fs` by metis_tac[] >>
-	  `(∃x'. q = FST x' ∧ x' ∈ c2) ⇔ q ∈ fs` by metis_tac[] >>
+          `(∃x'. q = FST x' ∧ x' ∈ c2) ⇔ q ∈ fs` by metis_tac[] >>
           `(∃x'. q = FST x' ∧ x' ∈ c2)` by metis_tac[] >>
-	  Cases_on `x'` >> `q' = q` by fs[FST] >> Cases_on `r` (* 2 *)
+          Cases_on `x'` >> `q' = q` by fs[FST] >> Cases_on `r` (* 2 *)
           >> metis_tac[]) >>
-	fs[csatis_def] >>
-	`lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
-	metis_tac[lsatis_def,satis_def]))
+        fs[csatis_def] >>
+        `lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
+        metis_tac[lsatis_def,satis_def]))
   >-  (Cases_on `x'` >> Cases_on `r` (* 2 *)
      >- (`(q,F) IN c1` by
           (fs[is_lset_def,EXTENSION,IMAGE_DEF] >>
           `FST (q,T) = q` by fs[FST] >>
           `q IN fs` by metis_tac[] >>
-	  `(∃x'. q = FST x' ∧ x' ∈ c1) ⇔ q ∈ fs` by metis_tac[] >>
+          `(∃x'. q = FST x' ∧ x' ∈ c1) ⇔ q ∈ fs` by metis_tac[] >>
           `(∃x'. q = FST x' ∧ x' ∈ c1)` by metis_tac[] >>
-	  Cases_on `x'` >> `q' = q` by fs[FST] >> Cases_on `r` (* 2 *)
+          Cases_on `x'` >> `q' = q` by fs[FST] >> Cases_on `r` (* 2 *)
           >> metis_tac[]) >>
-	fs[csatis_def] >>
-	`lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
-	metis_tac[lsatis_def,satis_def])
+        fs[csatis_def] >>
+        `lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
+        metis_tac[lsatis_def,satis_def])
      >- (`(q,T) IN c1` by
           (fs[is_lset_def,EXTENSION,IMAGE_DEF] >>
           `FST (q,F) = q` by fs[FST] >>
           `q IN fs` by metis_tac[] >>
-	  `(∃x'. q = FST x' ∧ x' ∈ c1) ⇔ q ∈ fs` by metis_tac[] >>
+          `(∃x'. q = FST x' ∧ x' ∈ c1) ⇔ q ∈ fs` by metis_tac[] >>
           `(∃x'. q = FST x' ∧ x' ∈ c1)` by metis_tac[] >>
-	  Cases_on `x'` >> `q' = q` by fs[FST] >> Cases_on `r` (* 2 *)
+          Cases_on `x'` >> `q' = q` by fs[FST] >> Cases_on `r` (* 2 *)
           >> metis_tac[]) >>
-	fs[csatis_def] >>
-	`lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
-	metis_tac[lsatis_def,satis_def])));
+        fs[csatis_def] >>
+        `lsatis M w (q,T) /\ lsatis M w (q,F)` by metis_tac[] >>
+        metis_tac[lsatis_def,satis_def])));
 
 
 val equiv0_negation_satis = store_thm(
     "equiv0_negation_satis",
     ``!f1 f2. equiv0 (μ:'b itself) f1 ¬f2 <=>
               (!M w:'b. w IN M.frame.world ==>
-	            (satis M w f1 <=> satis M w ¬f2))``,
+                    (satis M w f1 <=> satis M w ¬f2))``,
     rw[equiv0_def,satis_def] >> metis_tac[satis_in_world]);
 
 
@@ -1653,29 +1651,29 @@ val dsatis_ALL_POSSIBLE_VALUE = store_thm(
        fs[dsatis_def] >> Cases_on `satis M w e`
        >- (qexists_tac `(e,T) INSERT c` >> rw[]
           >- (fs[is_lset_def] >> `(e,T) NOTIN c` suffices_by fs[] >> SPOSE_NOT_THEN ASSUME_TAC >>
-	     `FST (e,T) = e` by fs[FST] >>
-	     `e IN fs` by metis_tac[IMAGE_IN])
+             `FST (e,T) = e` by fs[FST] >>
+             `e IN fs` by metis_tac[IMAGE_IN])
           >- (fs[csatis_def] >> metis_tac[lsatis_def]))
        >- (qexists_tac `(e,F) INSERT c` >> rw[]
           >- (fs[is_lset_def] >> `(e,F) NOTIN c` suffices_by fs[] >> SPOSE_NOT_THEN ASSUME_TAC >>
-	     `FST (e,F) = e` by fs[FST] >>
-	     `e IN fs` by metis_tac[IMAGE_IN])
+             `FST (e,F) = e` by fs[FST] >>
+             `e IN fs` by metis_tac[IMAGE_IN])
           >- (fs[csatis_def] >> metis_tac[lsatis_def])))
      >- (`fs = {}` by fs[] >> `e INSERT fs = {e}` by fs[] >> rw[] >> fs[dsatis_def] >>
         Cases_on `satis M w e`
-	>- (qexists_tac `{(e,T)}` >> rw[]
-	   >- fs[is_lset_def]
-	   >- (fs[csatis_def] >> metis_tac[lsatis_def]))
+        >- (qexists_tac `{(e,T)}` >> rw[]
+           >- fs[is_lset_def]
+           >- (fs[csatis_def] >> metis_tac[lsatis_def]))
         >- (qexists_tac `{(e,F)}` >> rw[]
-	   >- fs[is_lset_def]
-	   >- (fs[csatis_def] >> metis_tac[lsatis_def]))));
+           >- fs[is_lset_def]
+           >- (fs[csatis_def] >> metis_tac[lsatis_def]))));
 
 val dsatis_is_lset_complement = store_thm(
     "dsatis_is_lset_complement",
     ``!cs fs. FINITE fs /\ fs <> {} /\
              (!c. c IN cs ==> is_lset c fs) ==>
           (!M w. w IN M.frame.world ==>
-	         (dsatis M w cs <=> ¬(dsatis M w ({c | is_lset c fs} DIFF cs))))``,
+                 (dsatis M w cs <=> ¬(dsatis M w ({c | is_lset c fs} DIFF cs))))``,
    rw[] >> eq_tac >> rw[]
    >- (fs[dsatis_def] >>
       `∀c'. (is_lset c' fs /\ c' NOTIN cs) ==> ¬csatis M w c'` suffices_by metis_tac[] >>
@@ -1701,8 +1699,8 @@ val is_lset_DNF_OF_EXISTS = store_thm(
   ``!s. FINITE s ==>
             !fs. FINITE fs /\ fs <> {} ==> (!c. c IN s ==> is_lset c fs) ==>
             ?f.
-	       (!M w. w IN M.frame.world ==> (satis M w f <=> dsatis M w s)) /\
-	       DNF_OF f fs``,
+               (!M w. w IN M.frame.world ==> (satis M w f <=> dsatis M w s)) /\
+               DNF_OF f fs``,
    Induct_on `FINITE s` >> rw[]
    >- (qexists_tac `FALSE` >> rw[]
       >- metis_tac[NOT_IN_EMPTY,satis_def,dsatis_def]
@@ -1719,45 +1717,45 @@ val is_lset_DNF_OF_EXISTS = store_thm(
       `f = FALSE \/ DISJ_OF0 f {c | CONJ_OF c fs}` by metis_tac[DNF_OF_def,DISJ_OF_def]
       >- (qexists_tac `f'` >> rw[] (* 2 *)
          >- (`(satis M w ⊥ ⇔ dsatis M w s)` by metis_tac[] >>
-	    `¬(dsatis M w s)` by metis_tac[satis_def] >>
-	    rw[dsatis_def] >>
-	    `!c. c IN s ==> ¬(csatis M w c)` by metis_tac[dsatis_def] >>
-	    metis_tac[])
-	 >- (rw[DNF_OF_def,DISJ_OF_def] >>
-	    fs[Once DISJ_OF0_cases]))
+            `¬(dsatis M w s)` by metis_tac[satis_def] >>
+            rw[dsatis_def] >>
+            `!c. c IN s ==> ¬(csatis M w c)` by metis_tac[dsatis_def] >>
+            metis_tac[])
+         >- (rw[DNF_OF_def,DISJ_OF_def] >>
+            fs[Once DISJ_OF0_cases]))
       >- (Cases_on `equiv0 μ f' FALSE`
         >- (qexists_tac `f` >> rw[] >> fs[dsatis_def] >> eq_tac >> rw[]
-	    >- metis_tac[]
-	    >- (`satis M w f'` by metis_tac[] >>
-	       `satis M w FALSE` by metis_tac[equiv0_def] >>
-	       metis_tac[satis_def])
-	    >- metis_tac[])
-	>- (qexists_tac `DISJ f' f` >> rw[]
+            >- metis_tac[]
+            >- (`satis M w f'` by metis_tac[] >>
+               `satis M w FALSE` by metis_tac[equiv0_def] >>
+               metis_tac[satis_def])
+            >- metis_tac[])
+        >- (qexists_tac `DISJ f' f` >> rw[]
          >- (eq_tac >> rw[]
-	    >- (`satis M w f' \/ satis M w f` by metis_tac[satis_def] (* 2 *)
-	       >- (`csatis M w e` by metis_tac[] >>
-	          fs[dsatis_def] >> qexists_tac `e` >> metis_tac[])
-	       >- (`dsatis M w s` by metis_tac[] >>
-	          fs[dsatis_def] >> qexists_tac `c` >> metis_tac[]))
+            >- (`satis M w f' \/ satis M w f` by metis_tac[satis_def] (* 2 *)
+               >- (`csatis M w e` by metis_tac[] >>
+                  fs[dsatis_def] >> qexists_tac `e` >> metis_tac[])
+               >- (`dsatis M w s` by metis_tac[] >>
+                  fs[dsatis_def] >> qexists_tac `c` >> metis_tac[]))
             >- (fs[dsatis_def]
-	       >> metis_tac[satis_def]))
-	 >- (rw[DNF_OF_def,DISJ_OF_def,Once DISJ_OF0_cases] >>
-	    `DISJ_OF0 f ({c | CONJ_OF c fs} DELETE f')` suffices_by metis_tac[] >>
-	    SPOSE_NOT_THEN ASSUME_TAC >>
-	    `f' IN {c | CONJ_OF c fs}` by fs[] >>
-	    `?p. DISJ_OF p ({c | CONJ_OF c fs} DELETE f') /\ equiv0 μ f (DISJ f' p)` by metis_tac[DISJ_OF0_split] >>
-	    `∀M w. w IN M.frame.world ==> (satis M w f ⇔ satis M w (DISJ f' p))` by metis_tac[equiv0_def] >>
-	    `?M w. w IN M.frame.world /\ (satis M w f' /\ ¬(satis M w f))` suffices_by metis_tac[satis_def] >>
-	    `?M w. w IN M.frame.world /\ csatis M w e /\ ¬(dsatis M w s)` suffices_by metis_tac[] >>
-	    `?M w. satis M w f'` by metis_tac[satis_model_world_EXISTS] >>
-	    map_every qexists_tac [`M`, `w`] >>
-	    `w IN M.frame.world` by metis_tac[satis_in_world] >>
-	    `csatis M w e` by metis_tac[] >> rw[]
-	    >> SPOSE_NOT_THEN ASSUME_TAC >>
-	       fs[dsatis_def] >>
-	       `csatis M w (c UNION e)` by (fs[csatis_def] >> metis_tac[]) >>
-	       `is_lset c fs` by metis_tac[] >>
-	       `c <> e` by (SPOSE_NOT_THEN ASSUME_TAC >> metis_tac[]) >> metis_tac[NEQ_lsets_FALSE])))));
+               >> metis_tac[satis_def]))
+         >- (rw[DNF_OF_def,DISJ_OF_def,Once DISJ_OF0_cases] >>
+            `DISJ_OF0 f ({c | CONJ_OF c fs} DELETE f')` suffices_by metis_tac[] >>
+            SPOSE_NOT_THEN ASSUME_TAC >>
+            `f' IN {c | CONJ_OF c fs}` by fs[] >>
+            `?p. DISJ_OF p ({c | CONJ_OF c fs} DELETE f') /\ equiv0 μ f (DISJ f' p)` by metis_tac[DISJ_OF0_split] >>
+            `∀M w. w IN M.frame.world ==> (satis M w f ⇔ satis M w (DISJ f' p))` by metis_tac[equiv0_def] >>
+            `?M w. w IN M.frame.world /\ (satis M w f' /\ ¬(satis M w f))` suffices_by metis_tac[satis_def] >>
+            `?M w. w IN M.frame.world /\ csatis M w e /\ ¬(dsatis M w s)` suffices_by metis_tac[] >>
+            `?M w. satis M w f'` by metis_tac[satis_model_world_EXISTS] >>
+            map_every qexists_tac [`M`, `w`] >>
+            `w IN M.frame.world` by metis_tac[satis_in_world] >>
+            `csatis M w e` by metis_tac[] >> rw[]
+            >> SPOSE_NOT_THEN ASSUME_TAC >>
+               fs[dsatis_def] >>
+               `csatis M w (c UNION e)` by (fs[csatis_def] >> metis_tac[]) >>
+               `is_lset c fs` by metis_tac[] >>
+               `c <> e` by (SPOSE_NOT_THEN ASSUME_TAC >> metis_tac[]) >> metis_tac[NEQ_lsets_FALSE])))));
 
 val EQ_equiv0_def = store_thm(
     "EQ_equiv0_def",

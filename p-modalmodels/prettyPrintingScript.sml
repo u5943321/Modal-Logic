@@ -53,7 +53,7 @@ Theorem pprooted_model_def:
 !M x M'. rooted_model M x M' <=> x IN M'.frame.world /\
                                  (!a. a IN M.frame.world <=> (a IN M'.frame.world /\ (RTC (RESTRICT M'.frame.rel M'.frame.world)) x a)) /\
                                  (!w1 w2. w1 IN M.frame.world /\ w2 IN M.frame.world ==>
-				   (M.frame.rel w1 w2 <=> (RESTRICT M'.frame.rel M'.frame.world) w1 w2)) /\
+                                   (M.frame.rel w1 w2 <=> (RESTRICT M'.frame.rel M'.frame.world) w1 w2)) /\
                                  (!p w. M.valt p w <=> M'.valt p w)
 Proof
 rw[rooted_model_def,IN_DEF]
@@ -628,15 +628,15 @@ val _ = overload_on("equiv", “equiv0”);
 
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-	                  fixity = Infix(NONASSOC, 450),
-	                  pp_elements = [TOK "(forces1)", TM,
-	                                 TOK "(forces2)", BreakSpace (1,2)],
-	                  term_name = "satis", paren_style = OnlyIfNecessary}
+                          fixity = Infix(NONASSOC, 450),
+                          pp_elements = [TOK "(forces1)", TM,
+                                         TOK "(forces2)", BreakSpace (1,2)],
+                          term_name = "satis", paren_style = OnlyIfNecessary}
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-	          fixity = Infix(NONASSOC, 450),
-	          pp_elements = [TOK "(nforces1)", TM,
-	                         TOK "(nforces2)", BreakSpace (1,2)],
-	          term_name = "nsatis", paren_style = OnlyIfNecessary}
+                  fixity = Infix(NONASSOC, 450),
+                  pp_elements = [TOK "(nforces1)", TM,
+                                 TOK "(nforces2)", BreakSpace (1,2)],
+                  term_name = "nsatis", paren_style = OnlyIfNecessary}
 
 val _ = overload_on("nsatis", “λM w f. ~satis M w f”);
 
@@ -859,10 +859,10 @@ Overload fev = ``\M σ f. feval M σ f``
 
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-	                  fixity = Infix(NONASSOC, 450),
-	                  pp_elements = [TOK "(fev1)", TM,
-	                                 TOK "(fev2)", BreakSpace (1,2)],
-	                  term_name = "fev", paren_style = OnlyIfNecessary}
+                          fixity = Infix(NONASSOC, 450),
+                          pp_elements = [TOK "(fev1)", TM,
+                                         TOK "(fev2)", BreakSpace (1,2)],
+                          term_name = "fev", paren_style = OnlyIfNecessary}
 
 Overload bmi = ``\M1 f M2. bounded_mor_image f M1 M2``
 
@@ -894,10 +894,10 @@ Overload fst = ``\M σ f. fsatis M σ f``
 
 
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-	                  fixity = Infix(NONASSOC, 450),
-	                  pp_elements = [TOK "(fst1)", TM,
-	                                 TOK "(fst2)", BreakSpace (1,2)],
-	                  term_name = "fst", paren_style = OnlyIfNecessary}
+                          fixity = Infix(NONASSOC, 450),
+                          pp_elements = [TOK "(fst1)", TM,
+                                         TOK "(fst2)", BreakSpace (1,2)],
+                          term_name = "fst", paren_style = OnlyIfNecessary}
 
 
 Overload UPMM = ``\U MS. ultraproduct_model U (J:α -> bool) MS``
