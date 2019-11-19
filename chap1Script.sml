@@ -50,6 +50,7 @@ val _ = overload_on ("□", ``BOX``);
 val _ = overload_on ("◇", ``DIAM``);
 val _ = overload_on ("⊥", ``FALSE``);
 val _ = overload_on ("~", ``NOT``);
+Overload "¬" = ``NOT``
 
 
 (* Def 1.18 *)
