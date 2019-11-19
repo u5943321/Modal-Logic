@@ -43,7 +43,8 @@ We also discuss where HOL's simple type theory lets us down: some standard resul
 \subsection{Related Work}
 
 \section{Syntax, Semantics and the Standard Translation}[1.5p]
-In our formalization, we only consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula. We create a data type called `form' of the formulas of this modal language.
+In our formalization, we only consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
+We define a data type called `form' to represent the formulas of this modal language.
 \begin{defn}
 {\upshape\cite[Definition 1.9]{Blackburn}}
 \begin{holmath}
@@ -51,7 +52,7 @@ In our formalization, we only consider the basic modal language, in which the on
 \end{holmath}
 \end{defn}
 
-A model where these formulas can be interpreted consists of a \emph{frame} and a \emph{valuation}, where \HOLtm{frame} is a set with a relation on it.
+A model where these formulas can be interpreted consists of a \emph{frame} and a \emph{valuation}, where a \HOLty{:β frame} is a \HOLty{:β}-set with a relation on it, and a model adds valuations for the variables present at each world:
 \begin{defn}
 {\upshape\cite[Definition 1.19]{Blackburn}}
 \begin{holmath}
@@ -59,7 +60,11 @@ A model where these formulas can be interpreted consists of a \emph{frame} and a
   \HOLthm{chap1.datatype_model}
 \end{holmath}
 \end{defn}
-In the rest of the paper, the field \HOLtm{M}$.\sf valt$ of a model \HOLtm{M} will be called the \emph{valuation}, and \HOLtm{M.frame.world}, \HOLtm{M.frame.rel} and \HOLtm{M.valt} are used to denote the world set, the relation, and the valuation of \HOLtm{M} respectively.  When we say a $(\HOLty{:α},\HOLty{:β})$-model, we mean a model for $\alpha$-formulas with a $\beta$-set as its underlying set. The interpretation of $\alpha$-modal formulas on an $(\HOLty{:α},\HOLty{:β})$-model is given by the predicate \emph{satisfaction}. We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOLtm{M}'.
+In the rest of the paper, the field \HOLtm{M}$.\sf valt$ of a model \HOLtm{M} will be called the \emph{valuation}, and \HOLtm{M.frame.world}, \HOLtm{M.frame.rel} and \HOLtm{M.valt} are used to denote the world set, the relation, and the valuation of \HOLtm{M} respectively.
+%
+The interpretation of $\alpha$-modal formulas on an $(\HOLty{:α},\HOLty{:β})$-model is given by the predicate \emph{satisfaction}.
+%
+We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOLtm{M}'.
 \begin{defn}
 {\upshape\cite[Definition 1.20]{Blackburn}}
 \begin{holmath}
@@ -68,16 +73,22 @@ In the rest of the paper, the field \HOLtm{M}$.\sf valt$ of a model \HOLtm{M} wi
 \end{array}
 \end{holmath}
 \end{defn}
+By requiring \HOLtm{w ∈ M.frame.world} in the first 3 clauses above, we ensure that models' world sets must be non-empty if they are to satisfy any formulas.
+
 If \HOLtm{phi1}, \HOLtm{phi2} are \HOLtm{α}-formulas, we say they are \emph{equivalent} if for every $(\alpha,\beta)$-model \HOLtm{M} and every world \HOLtm{w} in it, we have \HOLtm{satis  M w phi1 <=> satis M w phi2}.
 \begin{defn}[Equivalence]
 \begin{holmath}
-  \HOLthm[def,showtypes,(:'b)/μ,width=70]{prettyPrinting.ppequiv0_def}\\[3mm]
+ \HOLthm[def,showtypes,(:'b)/μ,width=70]{prettyPrinting.ppequiv0_def}\\[3mm]
 \end{holmath}
 \end{defn}
-We cannot omit the type parameter \HOLtm{(:β)} in the definition, since then there will be a type, namely the type of the underlying set of the models we are talking about, that only appears on the right-hand side but not on the left-hand side of the definition, which is not allowed in HOL. Also, we are not allowed to quantify over types, so it is also impossible to define the equivalence to be \HOLtm{!μ. equiv μ phi1 phi2}, where $\mu$ denotes a type. Therefore, this definition is not encoding the equivalence in mathematical sense precisely: when we mention equivalence of formulas in usual mathematical language, we are implicitly referring to the class of all models, but the constraint here bans us from talking about all models of all possible types at once.
+We cannot omit the type parameter \HOLtm{(:β)} in the definition, as there would otherwise be a type, namely the type of the underlying set of the models we are talking about, that only appears on the right-hand side but not on the left-hand side of the definition.
+HOL forbids such definitions for soundness reasons.
+%
+Also, HOL does not permit quantification over types, so it is impossible to write \HOLtm{!μ. equiv μ phi1 phi2}, with $\mu$ a type.
+Therefore, this definition is not exactly encoding the equivalence in the usual sense: when we mention equivalence of formulas in usual mathematical language, we are implicitly referring to the class of all models, but the constraint here bans us from talking about all models of all possible types at once.
 
-
-A modal formula can be translated into a first-order formula via the \emph{standard translation}. A translated formula has at most one free variable. For a modal formula \HOLtm{phi}, \HOLtm{ST x phi} is the standard translation of \HOLtm{phi} using \HOLtm{x} as the only free variable.
+A modal formula can be translated into a first-order formula via the \emph{standard translation}.
+For a modal formula \HOLtm{phi}, \HOLtm{ST x phi} is the standard translation of \HOLtm{phi} using \HOLtm{x} as the only free variable that may occur:
 \begin{defn}
 {\upshape\cite[Definition 2.45 (Standard Translation)]{Blackburn}}
 \begin{holmath}
@@ -86,7 +97,9 @@ A modal formula can be translated into a first-order formula via the \emph{stand
 \end{array}
 \end{holmath}
 \end{defn}
-According to the semantic interpretation of the `\HOLtm{DIAM phi}', we translate \HOLtm{DIAM phi} into the existential formula. To make sure that we use a fresh variable symbol that is not the same as the variable $x$ which is marking the current state, we use $x+1$ as our new variable symbol. The standard translation gives a first-order reformulation of satisfaction of modal formulas:
+As one would expect, we translate \HOLtm{DIAM phi} into an existential formula.
+To ensure we use a fresh variable, we use $x+1$ as our new variable symbol in this clause.
+The standard translation gives a first-order reformulation of satisfaction of modal formulas:
 \begin{prop}\label{2.47}
 {\upshape\cite[Theorem 2.47 (i)]{Blackburn}}
 \begin{holmath}
@@ -142,7 +155,7 @@ There are two classical approach of constructing finite models using model theor
 \subsubsection{Selection}
 Given \HOLtm{satis M1 w1 phi}, where $\phi$ has degree $k$, we can construct \HOLtm{M2}, \HOLtm{M3}, \HOLtm{M4} and \HOLtm{M5} comsecutively, such that \HOLtm{M5} is the finite model we want, where:
 \begin{itemize}
-\item \HOLtm{M2} is the tree-like model obtained from \ref{2.15} with root \HOLtm{w2} such that \HOLtm{satis M2 w2 phi}.
+\item \HOLtm{M2} is the tree-like model obtained from Proposition~\ref{2.15} with root \HOLtm{w2} such that \HOLtm{satis M2 w2 phi}.
 \item \HOLtm{M3} is the restriction of \HOLtm{M2} to height $k$.
 \item \HOLtm{M4} is obtained from \HOLtm{M3} by modifying the valuation into \HOLtm{\p v. if (p IN (prop_letters phi)) then (M3.valt p v) else F}.
 \end{itemize}
@@ -198,8 +211,8 @@ where \HOLtm{M2} above is taken as \HOLtm{FLT M1 (subforms phi)}, and has the sa
 
 \section{Mechanizing Ultrafilters and Ultraproducts}[3p]
 Some results in section 2.5-2.7 relies on some theorems about ultrafilters and ultraproduct.
-\subsection{ultrafilters}
-Given a non-empty set $J$, a set $L\subseteq {\mathcal P}(J)$   is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward.
+\subsection{Ultrafilters}
+Given a non-empty set $J$, a set \HOLtm{L SUBSET POW J} is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward.
 \begin{defn}
 {\upshape\cite[Definition A.12 (Filters)]{Blackburn}}
 \begin{holmath}
@@ -277,7 +290,7 @@ The critical result we will need about ultraproducts of modal models is a modal 
 Although it is possible to derive the theorem above from \L o\'s's theorem of first-order models using standard translation. We proved it directly by induction on modal formulas in HOL.
 
 \subsubsection{Ultraproduct for first-order models}
-Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ (notation : \HOLtm{ultraproduct_folmodel U (J:α -> bool) MS}) is given by:
+Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ (notation: \HOLtm{ultraproduct_folmodel U (J:α -> bool) MS}) is given by:
 
 \begin{itemize}
 \item The domain is the ultraproduct of the domains of \HOLtm{MS} over $U$ on $J$.
