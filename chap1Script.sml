@@ -49,7 +49,7 @@ val TRUE_def =
 val _ = overload_on ("□", ``BOX``);
 val _ = overload_on ("◇", ``DIAM``);
 val _ = overload_on ("⊥", ``FALSE``);
-val _ = overload_on ("~", ``NOT``);
+val _ = overload_on ("¬", ``NOT``);
 
 
 (* Def 1.18 *)
