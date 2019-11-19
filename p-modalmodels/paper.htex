@@ -1,5 +1,6 @@
 \documentclass{llncs}
 \usepackage{holtexbasic}
+\usepackage{upgreek}
 \usepackage{stmaryrd}
 \newtheorem{thm}{Theorem}[chapter]
 \newtheorem{defn}{Definition}[chapter]
@@ -62,7 +63,7 @@ A model where these formulas can be interpreted consists of a \emph{frame} and a
 \end{defn}
 In the rest of the paper, the field \HOLtm{M}$.\sf valt$ of a model \HOLtm{M} will be called the \emph{valuation}, and \HOLtm{M.frame.world}, \HOLtm{M.frame.rel} and \HOLtm{M.valt} are used to denote the world set, the relation, and the valuation of \HOLtm{M} respectively.
 %
-The interpretation of $\alpha$-modal formulas on an $(\HOLty{:α},\HOLty{:β})$-model is given by the predicate \emph{satisfaction}.
+The interpretation of modal formulas on a model is given by the predicate \emph{satisfaction}.
 %
 We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOLtm{M}'.
 \begin{defn}
@@ -75,10 +76,10 @@ We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOL
 \end{defn}
 By requiring \HOLtm{w ∈ M.frame.world} in the first 3 clauses above, we ensure that models' world sets must be non-empty if they are to satisfy any formulas.
 
-If \HOLtm{phi1}, \HOLtm{phi2} are \HOLtm{α}-formulas, we say they are \emph{equivalent} if for every $(\alpha,\beta)$-model \HOLtm{M} and every world \HOLtm{w} in it, we have \HOLtm{satis  M w phi1 <=> satis M w phi2}.
+If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivalent} if for every \HOLty{:β model} \HOLtm{M} and every world \HOLtm{w} in it, we have \HOLtm{satis  M w phi1 <=> satis M w phi2}.
 \begin{defn}[Equivalence]
 \begin{holmath}
- \HOLthm[def,showtypes,(:'b)/μ,width=70]{prettyPrinting.ppequiv0_def}\\[3mm]
+ \HOLthm[def,showtypes,(:'b)/μ,width=60]{prettyPrinting.ppequiv0_def}\\[3mm]
 \end{holmath}
 \end{defn}
 We cannot omit the type parameter \HOLtm{(:β)} in the definition, as there would otherwise be a type, namely the type of the underlying set of the models we are talking about, that only appears on the right-hand side but not on the left-hand side of the definition.
@@ -166,10 +167,12 @@ The construction of \HOLtm{M5} requires a lemma:
   \HOLthm[phi/f,Φ/s,showtypes]{prettyPrinting.ppprop_2_29_strengthen}
 \end{holmath}
 \end{lm}
-We require the assumption that the universe of $\beta$ is infinite since we relies on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent. This is easy to prove using set theory. However, in simple type theory, the proof of  \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires the infiniteness of the type universe of \HOLty{:β}.
+We require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
+This would be easy to prove in set theory.
+However, in simple type theory, the proof of \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires us (in the left-to-right direction) to be able to construct a model with a new world inserted, something only sure to be possible if the \HOLty{:β} universe is infinite.
 
-By the lemma above, the set
-\HOLtm[psi/f]{Δ={f | DEG f <= k /\ prop_letters f ⊆ Φ\}}$/\equiv_{(:\HOLty{:β list})}$ is finite. Let \HOLtm{Γ} be the set of modal formulas starting with a diamond and let $R$ denote \HOLtm{({ CHOICE (A ∩ Γ) | A ∈ Δ\} DIFF {∅\})}, we define \HOLtm{Sn} to be the primitive recursion function such that
+By the lemma above, the set \HOLtm[psi/f]{Δ={f | DEG f <= k /\ prop_letters f ⊆ Φ\}}$/\equiv_{(:\HOLty{:β list})}$ is finite.
+Let \HOLtm{Γ} be the set of modal formulas starting with a diamond and let $R$ denote \HOLtm{({ CHOICE (A ∩ Γ) | A ∈ Δ\} DIFF {∅\})}, we define \HOLtm{Sn} to be the primitive recursion function such that
 \begin{holmath}
  \HOLtm[alltt,width=70]{Sn 0 = {w2\} /\
    Sn (SUC n) =
@@ -181,7 +184,8 @@ By the lemma above, the set
                            satis M4 u phi\}\}
 }
 \end{holmath}
-Then the world set of \HOLtm{M5} is \HOLtm{BIGUNION {Sn i| i <= k\}}. We proved \HOLtm{satis M5 w2 phi} by proving
+Then the world set of \HOLtm{M5} is \HOLtm{BIGUNION {Sn i| i <= k\}}.
+We then prove \HOLtm{satis M5 w2 phi} by showing
 \begin{holmath}
  \HOLtm[alltt,width=70]{\n a1 a2. a1 IN M5.frame.world /\ a2 IN M4.frame.world /\
                   height M4 w2 M4 a1 = height M4 w2 M4 a2 /\
@@ -210,7 +214,7 @@ Given \HOLtm{satis M1 w phi}, the finite model \HOLtm{M2} constructed by selecti
 where \HOLtm{M2} above is taken as \HOLtm{FLT M1 (subforms phi)}, and has the same type as \HOLtm{M1}.
 
 \section{Mechanizing Ultrafilters and Ultraproducts}[3p]
-Some results in section 2.5-2.7 relies on some theorems about ultrafilters and ultraproduct.
+A number of results in \cite[\S2.5--\S2.7]{Blackburn} rely on theorems about ultrafilters and ultraproducts.
 \subsection{Ultrafilters}
 Given a non-empty set $J$, a set \HOLtm{L SUBSET POW J} is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward.
 \begin{defn}
@@ -258,7 +262,7 @@ If $U$ is an ultrafilter on $J$, for two functions $f,g$ in the Cartesian produc
 \end{defn}
 We write \HOLtm{fc} to denote the equivalence class that $f$ belongs to. In the case where \HOLtm{An j = A} for all $j\in J$, the ultraproduct is called the ultrapower of \HOLtm{A} modulo $U$. As before, in the definition above, the family $(A_j)_{j\in J}$ is encoded as a function, and hence for $j\in J$, \HOLtm{An j} is the set $A_j$ indexed by $j$.
 \subsubsection{Ultraproduct for modal models}
-Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ (notation : \HOLtm{ultraproduct_model U J MS}) is described as follows:
+Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ (notation: \HOLtm{ultraproduct_model U J MS}) is described as follows:
 
 \begin{itemize}
   \item The world set is the ultraproduct of world sets of \HOLtm{MS} modulo $U$.

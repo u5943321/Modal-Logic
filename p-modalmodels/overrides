@@ -73,10 +73,10 @@ vst 1 \ensuremath{v\sb{*}}
 (forces2) 1 \ensuremath{\Vdash}
 (nforces1) 1 ,
 (nforces2) 1 \ensuremath{\not\Vdash}
-(UPM1) 1 {}^{\sf f}\Pi\sb{
+(UPM1) 1 {}^{\sf f}\Uppi\sb{
 (UPM2) 0 }
 
-(UPMN1) 1 {}^{\sf f}\Pi\sb{
+(UPMN1) 1 {}^{\sf f}\Uppi\sb{
 (UPMN2) 0 }
 
 (meq1) 1 \equiv\sb{
@@ -205,7 +205,7 @@ fR 1 \ensuremath{{}^{\sf f}{\sf R}}
 (fst1) 1 ,
 (fst2) 1 \ensuremath{\vDash}
 
-(UPMM1) 1 \Pi\sb{
+(UPMM1) 1 \Uppi\sb{
 (UPMM2) 0 }
 
 (UPMMN1) 1 \Pi\sb{
