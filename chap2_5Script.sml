@@ -321,10 +321,10 @@ val prop_2_59_i = store_thm(
   >- (rw[satis_def,EQ_IMP_THM]
      >- fs[UE_def]
      >- (fs[UE_def] >> 
-        `M.valt a ∩ M.frame.world = {w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ w ∈ M.valt a}`
+        `M.valt n ∩ M.frame.world = {w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ w ∈ M.valt n}`
 	    by (rw[EXTENSION] >> metis_tac[]) >> rw[])
      >- (fs[UE_def] >> 
-        `M.valt a ∩ M.frame.world = {w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ w ∈ M.valt a}`
+        `M.valt n ∩ M.frame.world = {w | w ∈ M.frame.world ∧ w ∈ M.frame.world ∧ w ∈ M.valt n}`
 	    by (rw[EXTENSION] >> metis_tac[]) >> fs[]))
   >- (rw[satis_def] >>
      `{w | w ∈ M.frame.world ∧ (satis M w phi ∨ satis M w phi')} =
@@ -503,7 +503,7 @@ val only_see_whole_world = store_thm(
 
 val prop_2_61 = store_thm(
   "prop_2_61",
-  ``!M. M_sat (UE M)``,
+  ``!M:'b model. M_sat (UE M)``,
   rw[] >> Cases_on `M.frame.world = {}`
 >- (rw[M_sat_def] >> fs[UE_def,ultrafilter_def] >> fs[proper_filter_def,filter_def])
 >- (rw[M_sat_def,fin_satisfiable_in_def,satisfiable_in_def]

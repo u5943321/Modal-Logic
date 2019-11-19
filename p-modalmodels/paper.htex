@@ -200,11 +200,11 @@ As we used \ref{2.15}, we change the type of the model by passing to a finite mo
 \end{thm}
 
 \subsubsection{Filtration}
-Given \HOLtm{satis M1 w phi}, the finite model \HOLtm{M2} constructed by selection is the filtration of \HOLtm{M1} by the set of subformulas of \HOLtm{phi}. In HOL, we write \HOLtm{FLT M Σ} for the filtration of the model \HOLtm{M} via the set \HOLtm{Σ}. The formalization is almost a direct translation of the mathematical proof in \cite{Blackburn}. For the only difference: the world set of the filtrated model using the standard proof is a set of equivalence classes of worlds. To make the type of the finite model same as the model we start with, instead of taking the set of equivalence classes as the world set, we pick only one representative from each equivalence class. Hence we can prove:
+Given \HOLtm{satis M1 w phi}, the finite model \HOLtm{M2} constructed by selection is the filtration of \HOLtm{M1} by the set of subformulas of \HOLtm{phi}. In HOL, we write \HOLtm{FLT M Σ} for the filtration of the model \HOLtm{M} via the set \HOLtm{Σ}. The formalization is almost a direct translation of the mathematical proof in Blackburn \emph{et al}~\cite{Blackburn}. For the only difference: the world set of the filtrated model using the standard proof is a set of equivalence classes of worlds. To make the type of the finite model same as the model we start with, instead of taking the set of equivalence classes as the world set, we pick only one representative from each equivalence class. Hence we can prove:
 \begin{thm}
 {\upshape\cite[Theorem 2.41 (Finite model property, via filtration)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=70]{chap2_3.thm_2_41}
+  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=70,showtypes]{chap2_3.thm_2_41}
 \end{holmath}
 \end{thm}
 where \HOLtm{M2} above is taken as \HOLtm{FLT M1 (subforms phi)}, and has the same type as \HOLtm{M1}.
@@ -301,7 +301,7 @@ Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilte
 \begin{defn}
 {\upshape\cite[Definition A.18 (Ultraproduct of First-Order Models)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,J/I,j/i,zs/fs]{ultraproduct.ultraproduct_folmodel_def}
+  \HOLthm[def,J/I,j/i,zs/fs,width=70]{ultraproduct.ultraproduct_folmodel_def}
 \end{holmath}
 \end{defn}
 Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm{CHOICE fc}. The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains.
@@ -363,7 +363,7 @@ Given a first-order model \HOLtm{M} with no information about interpretation of 
 \begin{defn}
 {\upshape\cite[Definition A.9 (Expansion)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,l/args,c/n,width=65]{lemma2_73.expansion_def}
+  \HOLthm[def,l/args,c/n,width=65]{lemma2_73.expand_def}
 \end{holmath}
 \end{defn}
 If \HOLtm{M}, \HOLtm{A} and \HOLtm{f} are all fixed, then the model \HOLtm{M'} such that \HOLtm{expansion M A M' f} is unique. The only difference between a model and an expansion of it is the interpretation of function symbols.

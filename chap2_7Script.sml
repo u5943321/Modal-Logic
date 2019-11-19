@@ -205,7 +205,7 @@ QED
 
 Theorem modal_compactness_thm:
 INFINITE (univ (:α)) ==> 
-!s:num chap1$form -> bool. 
+!s:chap1$form -> bool. 
   (!ss. FINITE ss /\ ss ⊆ s ==> 
       ?M w:α. w IN M.frame.world /\ (!f. f IN ss ==> satis M w f)) ==>
   ?M w:α. w IN M.frame.world /\ (!f. f IN s ==> satis M w f)
@@ -216,7 +216,7 @@ qabbrev_tac `A = {ST x f | f IN s}` >>
      ?M:α folModels$model σ. valuation M σ /\
                    (!ff. ff IN ss ==> feval M σ ff)`
   by (rw[] >> 
-      drule (FINITE_SUBSET_IMAGE_lemma |> INST_TYPE [alpha |-> ``:num chap1$form``])>> 
+      drule (FINITE_SUBSET_IMAGE_lemma |> INST_TYPE [alpha |-> ``:chap1$form``])>> 
       strip_tac >>
       first_x_assum (qspecl_then [`s`, `ST x`] assume_tac) >> 
       `A = IMAGE (ST x) s` 
@@ -278,7 +278,7 @@ Theorem modal_compactness_corollary:
 INFINITE (univ (:α)) ==> 
 !s a. 
   (!M w:α. w IN M.frame.world ==>
-      (!f:num chap1$form. f IN s ==> satis M w f) ==> satis M w a) ==>
+      (!f:chap1$form. f IN s ==> satis M w f) ==> satis M w a) ==>
    ?ss. FINITE ss /\ ss ⊆ s /\
         (!M w:α. w IN M.frame.world ==>
            (!f. f IN ss ==> satis M w f) ==> satis M w a)
@@ -362,7 +362,7 @@ QED
 
 
 Theorem exercise_2_7_1:
-!M M' w w'. 
+!M M' w:β w':γ. 
    (M_sat M /\ M_sat M' /\ w IN M.frame.world /\ w' IN M'.frame.world)
      ==> 
      (!phi. PE phi ==> 
@@ -398,7 +398,7 @@ QED
 
 Theorem thm_2_78_half2:
 INFINITE (univ (:β)) ==>
- !phi:num chap1$form (ν:((β -> bool) -> bool) itself) (μ:β itself). preserved_under_sim ν ν phi ==> 
+ !phi:chap1$form (ν:((β -> bool) -> bool) itself) (μ:β itself). preserved_under_sim ν ν phi ==> 
      (?phi0. equiv0 μ phi phi0 /\ PE phi0)
 Proof 
 rw[] >> 
@@ -410,7 +410,7 @@ qabbrev_tac `PEC = {psi | PE psi /\
   suffices_by
    (rw[] >> 
     drule_all (modal_compactness_corollary |> INST_TYPE [alpha |-> ``:'b``]) >> 
-    rw[] >> drule PE_BIGCONJ >> rw[] >>
+    rw[] >> drule (PE_BIGCONJ |> INST_TYPE [alpha |-> ``:'b``])>> rw[] >>
     `!f. f IN ss ==> PE f` by fs[SUBSET_DEF,Abbr`PEC`] >>
     first_x_assum drule_all >> rw[] >> qexists_tac `ff` >>
     rw[EQ_equiv0_def,EQ_IMP_THM] >> fs[Abbr`PEC`,SUBSET_DEF]
@@ -437,7 +437,7 @@ qabbrev_tac `Γ = {NOT psi | PE psi /\ satis M w (NOT psi)}` >>
       by
        (rw[] >> fs[Abbr`ss0`,IMAGE_DEF] >>
         fs[SUBSET_DEF,Abbr`Γ`] >> first_x_assum drule_all >> rw[] >> fs[]) >>
-    drule PE_BIGDISJ >> strip_tac >> 
+    drule (PE_BIGDISJ|> INST_TYPE [alpha |-> ``:'b``]) >> strip_tac >> 
     (*`ss0 <> {}` by metis_tac[IMAGE_EQ_EMPTY] >> strip_tac >>*)
     first_x_assum drule_all >> strip_tac >> 
     `ff IN PEC` 

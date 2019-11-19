@@ -201,8 +201,8 @@ val Los_modal_thm = store_thm(
 >- 
 (fs[satis_def,ultraproduct_world,ultraproduct_valt] >> eq_tac >> rw[] (* 2 *)
 >- (qexists_tac `f` >> rw[] >> fs[] >>
-        `{i | i IN J /\ f i IN (Ms i).frame.world /\ f i IN (Ms i).valt a} =
-	{i | i IN J /\ f i IN (Ms i).valt a}` suffices_by metis_tac[] >>
+        `{i | i IN J /\ f i IN (Ms i).frame.world /\ f i IN (Ms i).valt n} =
+	{i | i IN J /\ f i IN (Ms i).valt n}` suffices_by metis_tac[] >>
 	simp[EXTENSION] >> rw[] >> eq_tac >> rw[] >>
 	`(!i. i IN J ==> (Ms i).frame.world <> {}) /\
          ?x.
@@ -218,7 +218,7 @@ val Los_modal_thm = store_thm(
        fc = {y | (!i. i IN J ==> y i IN (Ms i).frame.world) /\ {i | i IN J /\ x i = y i} IN U}`
      by metis_tac[ultraproduct_world] >>
    fs[] >> qexists_tac `f` >> rw[] >>
-   `{i | i IN J /\ f i IN (Ms i).frame.world /\ f i IN (Ms i).valt a} = {i | i IN J /\ f i IN (Ms i).valt a}`
+   `{i | i IN J /\ f i IN (Ms i).frame.world /\ f i IN (Ms i).valt n} = {i | i IN J /\ f i IN (Ms i).valt n}`
      by rw[EXTENSION,EQ_IMP_THM] >>
    metis_tac[]))
 (*-----------------------------block 2 `` \/ case``------------------------------------- *)
@@ -625,10 +625,10 @@ Theorem termval_IN_Dom:
 Proof 
   rw[] >> Cases_on `t` >> fs[] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[]
 QED
-
+(*
 val _ = temp_overload_on ("fm2D", ``folmodels2Doms``);
 val _ = temp_overload_on ("upfm", ``ultraproduct_folmodel``);
-
+*)
 Theorem thm_A_19_i:
   !t U I. ultrafilter U I ==>
           !σ FMS. IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==>

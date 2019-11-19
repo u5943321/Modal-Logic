@@ -12,13 +12,13 @@ val _ = ParseExtras.tight_equality()
 (* definition of formula; define the box as the dual of diamond *)
 val _ = Datatype`
   form
-  = VAR 'a 
+  = VAR num
   | DISJ form form
   | FALSE
   | NOT form
   | DIAM form`;
-  
-val BOX_def = 
+
+val BOX_def =
   Define
     `BOX form = NOT (DIAM (NOT form))`;
 
@@ -84,7 +84,7 @@ val _ = Hol_datatype`
 (* definition of model *)
 val _ = Hol_datatype`
   model = <| frame: 'b frame;
-              valt: 'a -> 'b -> bool;
+              valt: num -> 'b -> bool;
             |>`;
 
 
@@ -95,7 +95,7 @@ val _ = Hol_datatype`
 val satis_def =
   Define
   `(satis M w (VAR p) <=> w IN M.frame.world /\ w IN M.valt p)
-  /\ (satis M w FALSE <=> w IN M.frame.world /\ F) 
+  /\ (satis M w FALSE <=> w IN M.frame.world /\ F)
   /\ (satis M w (NOT form) <=> w IN M.frame.world /\ ¬ satis M w form)
   /\ (satis M w (DISJ form1 form2) <=> satis M w form1 \/ satis M w form2)
   /\ (satis M w (DIAM form) <=> w IN M.frame.world /\ ?v. M.frame.rel w v /\ v IN M.frame.world /\ satis M v form)`;
@@ -118,7 +118,7 @@ rpt strip_tac >> eq_tac >- (rpt strip_tac >> fs[satis_def,AND_def] >> metis_tac[
 
 val satis_set_def =
   Define
-  `satis_set M w (Σ:'a form set) = !a. a IN Σ ==> satis M w a`;
+  `satis_set M w (Σ:form set) = !a. a IN Σ ==> satis M w a`;
 
 
 
@@ -148,7 +148,7 @@ val valid_class_frame_def = Define`
     valid_class C form = !f. f IN C ==> valid_frame f form`;
 
 val valid_def = Define`
-    valid (form:'v form)  =
+    valid (form:form)  =
       !f:num frame. valid_frame f form`;
 
 val logic_def = Define`
@@ -159,7 +159,7 @@ val logic_def = Define`
 (* Def 1.35 *)
 val local_semantic_conseq = Define`
     LSC Σ S form <=>
-    !(M:('a,'b) model) w.
+    !(M:'b model) w.
        M IN S /\ satis_set M w Σ ==>
        satis M w form`;
 
@@ -216,7 +216,7 @@ val (Kproof_rules, Kproof_ind, Kproof_cases) = Hol_reln`
   (!p form. Kproof p ==> Kproof (p ++ [IMP (DIAM form) (NOT (BOX (NOT form)))])) /\
   (!p form. Kproof p ==> Kproof (p ++ [IMP (NOT (BOX (NOT form))) (DIAM form)])) /\
   (!p f. Kproof p /\ ptaut f ==> Kproof (p ++ [f]))
-`;    
+`;
 
 val K_provable_def = Define`
 K_provable form <=> ?p. Kproof p /\ Kproof (p ++ [form])`;
@@ -227,7 +227,7 @@ K_provable form <=> ?p. Kproof p /\ Kproof (p ++ [form])`;
 
 (* Def 1.42 *)
 val normal_modal_logic = Define`
-NML (S:'a form set) <=> !A B p q f form.
+NML (S: form set) <=> !A B p q f form.
                   (ptaut form ==> form IN S) /\
                   (IMP (BOX (IMP p q)) (IMP (BOX p) (BOX q))) IN S /\
 		  (IMP (DIAM p) (NOT (BOX (NOT p)))) IN S /\
@@ -282,7 +282,7 @@ val demodalize_IMP = store_thm(
     ``!f1 f2. demodalize (f1 -> f2) = (demodalize f1 -> demodalize f2)``,
     rw[demodalize_def, IMP_def]);
 
-    
+
 
 
 
@@ -291,18 +291,18 @@ val demodalize_IMP = store_thm(
 
 val peval_demodalize_subst_eq = store_thm(
     "peval_demodalize_subst_eq",
-    ``!f σ form. propform form ==> (peval σ (demodalize (subst f form)) <=> peval (peval σ o demodalize o f) form)``, 
+    ``!f σ form. propform form ==> (peval σ (demodalize (subst f form)) <=> peval (peval σ o demodalize o f) form)``,
     Induct_on `form` >> simp[demodalize_def]);
-    
-    
-    
+
+
+
 val demodalize_subst = store_thm(
     "demodalize_subst",
     ``!form f. demodalize (subst f form) = demodalize (subst f (demodalize form))``,
     Induct_on `form` >>
     fs[demodalize_def,subst_def]);
 
-			  
+
 
 val ptaut_not_not = store_thm(
     "ptaut_not_not",
@@ -449,23 +449,23 @@ val exercise_1_6_2 = store_thm(
     `ptaut (demodalize (¬□ (¬form) -> ◇ form))` by fs[demodalize_def,IMP_def,BOX_def] >> metis_tac[])
 
      >- (fs[MEM_APPEND] >> metis_tac[ptaut_demodalize]));
-    
 
-    
-    
-    
-    
+
+
+
+
+
 
 
 
 (* THE FOLLOWING IS FOR 1.6.6! *)
 
 
-                      
-     
+
+
 
 val (KGproof_rules, KGproof_ind, KGproof_cases) = Hol_reln`
-  KGproof (Γ:'a form set) [] /\
+  KGproof (Γ:form set) [] /\
   (!p form1 form2.
     KGproof Γ p /\ MEM (IMP form1 form2) p /\ MEM form1 p ==>
     KGproof Γ (p ++ [form2])) /\
@@ -477,7 +477,7 @@ val (KGproof_rules, KGproof_ind, KGproof_cases) = Hol_reln`
   (!p form. KGproof Γ p ==> KGproof Γ (p ++ [IMP (NOT (BOX (NOT form))) (DIAM form)])) /\
   (!p form. KGproof Γ p /\ ptaut form ==> KGproof Γ (p ++ [form])) /\
   (!p form. KGproof Γ p /\ form IN Γ ==> KGproof Γ (p ++ [form]))
-`;    
+`;
 
 
 
@@ -487,7 +487,7 @@ KG_provable Γ form <=> ?p. KGproof Γ p /\ KGproof Γ (p ++ [form])`;
 
 
 val NMLG_def = Define`
-NMLG (Γ:'a form set) = BIGINTER {A | (NML A) /\ (Γ SUBSET A)}`;
+NMLG (Γ:form set) = BIGINTER {A | (NML A) /\ (Γ SUBSET A)}`;
 
 
 val NMLG_ind = save_thm(
@@ -496,7 +496,7 @@ val NMLG_ind = save_thm(
     |> SIMP_CONV (srw_ss()) [NMLG_def, normal_modal_logic]
     |> EQ_IMP_RULE |> #1
     |> UNDISCH |> SPEC_ALL |> UNDISCH
-    |> DISCH ``(phi : α form) ∈ NMLG G``
+    |> DISCH ``(phi : form) ∈ NMLG G``
     |> Q.GEN `phi`
     |> DISCH_ALL |> Q.GEN `P`)
 
@@ -613,7 +613,7 @@ val KG_provable_G = store_thm(
 
 val prop_letters_def = Define`
   (prop_letters (VAR p) = {p}) /\
-  (prop_letters FALSE = {}) /\ 
+  (prop_letters FALSE = {}) /\
   (prop_letters (DISJ f1 f2) = (prop_letters f1) ∪ (prop_letters f2)) /\
   (prop_letters (NOT f) = prop_letters f) /\
   (prop_letters (DIAM f) = prop_letters f)`
@@ -623,7 +623,7 @@ Theorem exercise_1_3_1:
 !phi M1 M2.
    M1.frame = M2.frame ==>
    (!p. p IN (prop_letters phi) ==> M1.valt p = M2.valt p) ==>
-   (!w. w IN M1.frame.world ==> (satis M1 w phi <=> satis M2 w phi))      
+   (!w. w IN M1.frame.world ==> (satis M1 w phi <=> satis M2 w phi))
 Proof
 Induct_on `phi` >> rw[satis_def] (* 4 *)
 >- fs[prop_letters_def] >>
@@ -638,4 +638,3 @@ Induct_on `x` >> rw[subst_def]
 QED
 
 val _ = export_theory();
-
