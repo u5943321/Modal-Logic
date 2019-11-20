@@ -4,6 +4,7 @@ open chap1Theory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory 
 
 val _ = new_theory "prettyPrinting";
 
+
 (* val _ = remove_termtok { tok = " *)
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   paren_style = OnlyIfNecessary,
@@ -31,6 +32,33 @@ Theorem ppprop_2_9:
             modal_eq M M' w (f w)
 Proof
 rw[] >> drule prop_2_9 >> rw[]
+QED
+
+val Fun_component_def = Define`
+  Fun_component FMS n fs i = (FMS i).Fun n (MAP (λfc. CHOICE fc i) fs)`;
+
+
+val Pred_component_def = Define`
+  Pred_component FMS p zs i = (FMS i).Pred p (MAP (λfc. CHOICE fc i) zs)`;
+
+
+Theorem ppultraproduct_folmodel_def:
+ ∀U I FMS.
+            ultraproduct_folmodel U I FMS =
+            <|Dom := ultraproduct U I (folmodels2Doms FMS);
+              Fun :=
+                (λn fs.
+                     {y |
+                      (∀i. i ∈ I ⇒ y i ∈ (FMS i).Dom) ∧
+                      {i |
+                       i ∈ I ∧
+                       y i = Fun_component FMS n fs i} ∈ U});
+              Pred :=
+                (λp zs.
+                     {i | i ∈ I ∧ Pred_component FMS p zs i} ∈
+                     U)|>
+Proof
+rw[ultraproduct_folmodel_def,Fun_component_def,Pred_component_def]
 QED
 
 

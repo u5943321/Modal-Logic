@@ -87,7 +87,9 @@ HOL forbids such definitions for soundness reasons.
 Also, HOL does not permit quantification over types, so it is impossible to write \HOLtm{!μ. equiv μ phi1 phi2}, with $\mu$ a type.
 Therefore, this definition is not exactly encoding the equivalence in the usual sense: when we mention equivalence of formulas in usual mathematical language, we are implicitly referring to the class of all models, but the constraint here bans us from talking about all models of all possible types at once.
 
-A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalize this translation, we take the work in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the laft upper corner. If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} when \HOLtm{σ} is a function to the domain of \HOLtm{M}, we write \HOLtm{feval M σ phi}. 
+A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalize this translation, we take the work in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A model of first order formula is a set with interpretation of function symbols and predicate symbols. For a first order model \HOLtm{M}, a valution \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}. 
+%
+If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning elements in the domain of \HOLtm{M} to the free variables of \HOLtm{phi}, we write \HOLtm{feval M σ phi}. 
 
 
 For a modal formula \HOLtm{phi}, \HOLtm{ST x phi} is the standard translation of \HOLtm{phi} using \HOLtm{x} as the only free variable that may occur:
@@ -286,17 +288,23 @@ Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilte
 
 \begin{itemize}
 \item The domain is the ultraproduct of the domains of \HOLtm{MS} over $U$ on $J$.
-\item A function with its symbol denoted by the natural number $n$ will send a list \HOLtm{zs} of equivalence classes to the equivalence class of a function that sending $j\in J$ to \HOLtm{(MS j).Fun n l}, where the $k$-th member of the list $l$ is a representative of the $k$-th member (which is an equivalence class) of \HOLtm{zs}.
+\item A function with its symbol denoted by the natural number $n$ will send a list \HOLtm{zs} of equivalence classes to the equivalence class of a function that sending $j\in J$ to \HOLtm{(MS j).Fun n l}, where the $k$-th member of the list $l$ is a representative of the $k$-th member (which is an equivalence class) of \HOLtm{zs}. 
 
 \item A predicate with its symbol denoted by $p$ will hold for a list $zs$ of equivalence classes if and only if once we have a list $zr$ such that the $k$-th member is a representative of the $k$-th member of $zs$, the set of elements \HOLtm{j IN J} such that \HOLtm{(MS j). Pred p zr} is in $U$.
 \end{itemize}
 \begin{definition}
 {\upshape\cite[Definition A.18 (Ultraproduct of First-Order Models)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,J/I,j/i,zs/fs,width=70]{ultraproduct.ultraproduct_folmodel_def}
+  \HOLthm[def,J/I,j/i,zs/fs,width=70]{prettyPrinting.ppultraproduct_folmodel_def}
 \end{holmath}
 \end{definition}
-Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm{CHOICE fc}. The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains.
+Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm{CHOICE fc}. Therefore, as described above, the functions \HOLtm{Fun_component} and \HOLtm{Pred_component} are:
+\begin{holmath}
+ \HOLthm[def]{prettyPrinting.Fun_component_def}\\[3mm]
+ \HOLthm[def]{prettyPrinting.Pred_component_def}
+\end{holmath}
+
+The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains.
 
 The semantic behavior of ultraproduct models is characterized by \emph{\los's theorem}, whose proof can be found in Chang and Keisler~\cite{ChangKeisler1990}.
 
