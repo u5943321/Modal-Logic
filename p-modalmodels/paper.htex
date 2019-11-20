@@ -18,11 +18,13 @@
 \renewcommand{\HOLKeyword}[1]{\texttt{\upshape #1}}
 \renewcommand{\HOLTokenBar}{\mbox{$|$}}
 \renewcommand{\BreakableUnderscore}{-}
+\newcommand{\los}{\L{}o\'s}
 \begin{document}
 
 \title{Mechanised Modal Model Theory}
 
-\author{Yiming Xu and Michael Norrish}
+\author{Yiming Xu\inst{1} \and Michael Norrish\inst{2,1}\orcidID{0000-0003-1163-8467}}
+\institute{Australian National University \and \email{michael.norrish@data61.csiro.au}\\Data61, CSIRO}
 
 %\begin{abstract}
 %\end{abstract}
@@ -290,14 +292,14 @@ Here \HOLtm{models2worlds} is the function that takes a family of models to the 
 
 As \HOLtm{Uequiv U J A} is an equivalence relation, if one element in an equivalence class satisfies the required condition, then all the elements in the equivalence class will satisfy the condition. Therefore, if we replace all the existential quantifiers with universal quantifiers in the above definition, the construction is still valid, and will give the same model as the current definition.
 
-The critical result we will need about ultraproducts of modal models is a modal version of the fundamental theorem of ultraproducts, which is also called \L o\'s's theorem.
+The critical result we will need about ultraproducts of modal models is a modal version of the fundamental theorem of ultraproducts, also known as \los's theorem.
 
 \begin{thm}[\texttt{Los_modal_thm}]
 \begin{holmath}
   \HOLthm[MS/Ms,j/i,f0/f,width=75]{prettyPrinting.ppLos_modal_thm}
 \end{holmath}
 \end{thm}
-Though it is possible to derive this result from \L{}o\'s's theorem of first-order models using the standard translation, our proof is direct, by structural induction on \HOLtm{ϕ}.
+Though it is possible to derive this result from \los's theorem of first-order models using the standard translation, our proof is direct, by structural induction on \HOLtm{ϕ}.
 
 \subsubsection{Ultraproducts for first-order models}
 Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ (notation: \HOLtm{ultraproduct_folmodel U (J:α -> bool) MS}) is given by:
@@ -316,10 +318,10 @@ Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilte
 \end{defn}
 Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm{CHOICE fc}. The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains.
 
-The semantic behavior of ultraproduct models are characterized by \emph{\L o\'s's theorem}, whose proof can be founded in \cite{ChangKeisler1990}.
+The semantic behavior of ultraproduct models is characterized by \emph{\los's theorem}, whose proof can be found in Chang and Keisler~\cite{ChangKeisler1990}.
 
 \begin{thm}
-{\upshape\cite[Theorem A.19 (\L o\'s's theorem)]{Blackburn}}
+{\upshape\cite[Theorem A.19 (\los's theorem)]{Blackburn}}
 \begin{holmath}
   \HOLthm[J/I,j/i,v/n]{prettyPrinting.ppthm_A_19_i} \\[3mm]
   \HOLthm[J/I,j/i,v/x,width=65]{prettyPrinting.ppthm_A_19_ii}
@@ -401,8 +403,8 @@ We say \HOLtm{M} is countably saturated, and write \HOLtm{countably_saturated M}
   \HOLthm[J/I,j/i]{prettyPrinting.pplemma_2_73}
 \end{holmath}
 \end{lm}
-Here a countably incomplete ultrafilter is an ultrafilter that contains a countably infinite family that intersects to the empty set. We proved in HOL that such ultrafilters do exists using \ref{A.14}. The above theorem is not simply a direct consequence from the \L o\'s's theorem:
-\L o\'s's theorem is about ultraproducts of first-order models, and it says nothing about expansion. But to prove \ref{2.73}, we are required to prove a statement for a model obtained by expanding a first-order model which is again obtained by viewing an ultraproduct of modal models as a first-order model.
+Here a countably incomplete ultrafilter is an ultrafilter that contains a countably infinite family that intersects to the empty set. We proved in HOL that such ultrafilters do exists using \ref{A.14}. The above theorem is not simply a direct consequence of \los's theorem:
+that result is about ultraproducts of first-order models, and it says nothing about expansion. But to prove \ref{2.73}, we are required to prove a statement for a model obtained by expanding a first-order model which is again obtained by viewing an ultraproduct of modal models as a first-order model.
 
 To deal with this issue, the key observation is that constants are nothing more than forcing some symbols to be sent to some points in a model under every valuation, hence rather than use nullary function symbols, we fixed a set of variable letters, each corresponds to a function symbol, and only consider the valuations that sends these variable letters to fixed certain points. With this idea, we can remove all the constants in a formula, and hence change our scope from an expanded model back to the unexpanded model. To get rid of the constants $\{0,\cdots , n-1\}$, we replace every \HOLtm{VAR m} with \HOLtm{VAR (m+n)}, and replace every constant \HOLtm{Fn c []} by \HOLtm{VAR c}. This operation is done by the function \HOLtm{shift_form} which takes a natural number (the number of constants we want to remove), and a first-order formula (where the only function symbols may appear are the constants $0,\cdots, n-1$). Since $0,\cdots,n-1$ in a shifted formula are now designed to be sent to fixed places $f \ 0,\cdots,f \ (n-1)$, it does not make sense to assign these variable symbols anywhere else. Therefore, to talk about evaluation of shifted formula, the first thing is to make sure that the valuations we are considering send the variables which actually denotes constants to the right place. Hence we shift the valuations accordingly. The definition of shifting on valuation together with the semantical behaviour are displayed below:
 \begin{defn}[Shifting on valuations, \texttt{expansion_shift_feval}]\label{k1}
@@ -412,7 +414,7 @@ To deal with this issue, the key observation is that constants are nothing more 
 \end{holmath}
 \end{defn}
 
-The shifting construction gets us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first-order model. To apply \L o\'s's theorem on such a model, we prove by induction that:
+The shifting construction gets us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first-order model. To apply \los's theorem on such a model, we prove by induction that:
 \begin{prop}[\texttt{ultraproduct_comm_feval}]\label{k2}
 \begin{holmath}
   \HOLthm[J/I,j/i]{prettyPrinting.ppultraproduct_comm_feval}
@@ -464,7 +466,7 @@ The above lemma relies on \ref{2.73} and its mathematical proof can be found in 
 
 
 
-\section{Conclusion}[<1p]
+\section{Conclusion}[$<$1p]
 
 \bibliography{../honours-report/everything}
 \bibliographystyle{splncs04}
