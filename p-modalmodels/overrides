@@ -232,3 +232,6 @@ An 3 \ensuremath{A\sp{\sf s}}
 Sn 3 \ensuremath{S\sp{\sf s}}
 NN 1 N
 rv 1 \ensuremath{\sigma\sb{\sf rep}}
+(lnil) 2 \ensuremath{[\,]}
+M_sat 4 m_sat
+POW 1 \ensuremath{\mathscr P}

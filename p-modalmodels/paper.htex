@@ -1,4 +1,5 @@
 \documentclass{llncs}
+\usepackage[mathscr]{euscript}
 \usepackage{holtexbasic}
 \usepackage{upgreek}
 \usepackage{stmaryrd}
@@ -16,6 +17,7 @@
 \newcommand{\holthmenv}[1]{\begin{array}[t]{l}#1\end{array}}
 \renewcommand{\HOLKeyword}[1]{\texttt{\upshape #1}}
 \renewcommand{\HOLTokenBar}{\mbox{$|$}}
+\renewcommand{\BreakableUnderscore}{-}
 \begin{document}
 
 \title{Mechanised Modal Model Theory}
@@ -33,7 +35,7 @@
 % focus on model theory is novel
 
 \paragraph{Contributions}
-This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
+This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al.}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
 \begin{itemize}
 \item the saturation of ultraproduct models;
 \item modal equivalence as bisimilarity between ultrafilter extensions; and
@@ -113,28 +115,30 @@ Here \HOLtm{mm2folm} is the function that turns a modal model into a first-order
 \end{holmath}
 
 \section{Basic Results}%[2p]
-We discuss some highlights of formalized results in section 2.1-2.3 in \cite{Blackburn} below.
+We discuss some highlights of formalized results from Blackburn~\emph{at al.}~\cite[\S2.1--\S2.3]{Blackburn} below.
 \subsection{Tree-like property}
-A tree-like model is a model whose underlying frame is a tree. If $H$ is a tree with root $r$, we write \HOLtm{tree H r} in HOL:
+A tree-like model is a model whose underlying frame is a tree.
+If $H$, a frame, is also a tree with root $r$, we write \HOLtm{tree H r}:
 \begin{defn}
 {\upshape\cite[Definition 1.7]{Blackburn}}
 \begin{holmath}
    \HOLthm[def,H/S,w/t,w/r0,w0/t0]{chap2_1.tree_def}
 \end{holmath}
 \end{defn}
-The tree-like property says an satisfiable modal formula can be satisfied in a tree-like model. It is proved in HOL as:
+The tree-like property says an satisfiable modal formula can be satisfied in a tree-like model:
 \begin{prop}
 {\upshape\cite[Proposition 2.15]{Blackburn}}\label{2.15}
 \begin{holmath}
   \HOLthm[M1/M,M/M',phi/form,r/s,showtypes]{prettyPrinting.ppprop_2_15_corollary}
 \end{holmath}
 \end{prop}
-The world set of the tree like model constructed from \HOLtm{M} according to the standard proof of this theorem is a set of lists of worlds in \HOLtm{M1}, that is why passing to a tree-like model does not preserve the type.
+The world set of the tree-like model constructed from \HOLtm{M} is a set of lists of worlds in \HOLtm{M1} (such lists are effectively paths from the root to various positions within the tree).
+Thus, passing to a tree-like model does not preserve the model type.
 
 
 
 \subsection{Bisimulation}
-The definition of bisimulation in HOL is just a direct translation of its mathematical definition:
+Though apparently verbose, the definition of bisimulation in HOL is straightforward:
 \begin{defn}
 {\upshape\cite[Definition 2.16 (Bisimulations)]{Blackburn}}
 \begin{holmath}
@@ -204,7 +208,7 @@ As we used \ref{2.15}, we change the type of the model by passing to a finite mo
 \end{thm}
 
 \subsubsection{Filtration}
-Given \HOLtm{satis M1 w phi}, the finite model \HOLtm{M2} constructed by selection is the filtration of \HOLtm{M1} by the set of subformulas of \HOLtm{phi}. In HOL, we write \HOLtm{FLT M Σ} for the filtration of the model \HOLtm{M} via the set \HOLtm{Σ}. The formalization is almost a direct translation of the mathematical proof in Blackburn \emph{et al}~\cite{Blackburn}. For the only difference: the world set of the filtrated model using the standard proof is a set of equivalence classes of worlds. To make the type of the finite model same as the model we start with, instead of taking the set of equivalence classes as the world set, we pick only one representative from each equivalence class. Hence we can prove:
+Given \HOLtm{satis M1 w phi}, the finite model \HOLtm{M2} constructed by selection is the filtration of \HOLtm{M1} by the set of subformulas of \HOLtm{phi}. In HOL, we write \HOLtm{FLT M Σ} for the filtration of the model \HOLtm{M} via the set \HOLtm{Σ}. The formalization is almost a direct translation of the mathematical proof in Blackburn \emph{et al.}~\cite{Blackburn}. For the only difference: the world set of the filtrated model using the standard proof is a set of equivalence classes of worlds. To make the type of the finite model same as the model we start with, instead of taking the set of equivalence classes as the world set, we pick only one representative from each equivalence class. Hence we can prove:
 \begin{thm}
 {\upshape\cite[Theorem 2.41 (Finite model property, via filtration)]{Blackburn}}
 \begin{holmath}
@@ -214,7 +218,7 @@ Given \HOLtm{satis M1 w phi}, the finite model \HOLtm{M2} constructed by selecti
 where \HOLtm{M2} above is taken as \HOLtm{FLT M1 (subforms phi)}, and has the same type as \HOLtm{M1}.
 
 \section{Mechanizing Ultrafilters and Ultraproducts}[3p]
-A number of results in \cite[\S2.5--\S2.7]{Blackburn} rely on theorems about ultrafilters and ultraproducts.
+A number of results in Blackburn~\emph{et al.}~\cite[\S2.5--\S2.7]{Blackburn} rely on theorems about ultrafilters and ultraproducts.
 \subsection{Ultrafilters}
 Given a non-empty set $J$, a set \HOLtm{L SUBSET POW J} is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward.
 \begin{defn}
@@ -226,13 +230,15 @@ Given a non-empty set $J$, a set \HOLtm{L SUBSET POW J} is a \emph{filter} if it
 We call $L$ a \emph{proper filter} if $L$ is not the whole power set. An \emph{ultrafilter} is a filter $U$ such that for every $X\subseteq J$, exactly one of $X$ or $J\setminus X$ is in $U$.
 
 
-The ultrafilter theorem, which says every proper filter is contained in an ultrafilter, is proved as follows:
+The ultrafilter theorem states that every proper filter is contained in an ultrafilter:
 \begin{thm}
 {\upshape\cite[Fact A.14, first half]{Blackburn}}\label{A.14}
 \begin{holmath}
   \HOLthm[L/f,J/w]{ultrafilter.ultrafilter_theorem}
 \end{holmath}
 \end{thm}
+(The proof uses Zorn's Lemma.)
+
 A subset $A$ of the power set on $J$ has \emph{finite intersection property} if once we take the intersection of a finite, nonempty family in $A$, the resultant set is nonempty.
 \begin{defn}
 {\upshape\cite[Definition A.13 (Finite Intersection Property)]{Blackburn}}
@@ -291,9 +297,9 @@ The critical result we will need about ultraproducts of modal models is a modal 
   \HOLthm[MS/Ms,j/i,f0/f,width=75]{prettyPrinting.ppLos_modal_thm}
 \end{holmath}
 \end{thm}
-Although it is possible to derive the theorem above from \L o\'s's theorem of first-order models using standard translation. We proved it directly by induction on modal formulas in HOL.
+Though it is possible to derive this result from \L{}o\'s's theorem of first-order models using the standard translation, our proof is direct, by structural induction on \HOLtm{ϕ}.
 
-\subsubsection{Ultraproduct for first-order models}
+\subsubsection{Ultraproducts for first-order models}
 Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ (notation: \HOLtm{ultraproduct_folmodel U (J:α -> bool) MS}) is given by:
 
 \begin{itemize}
@@ -322,7 +328,8 @@ The semantic behavior of ultraproduct models are characterized by \emph{\L o\'s'
 
 
 \section{Ultrafilter Extensions}[2p]
-The first application of the theory of ultrafilters above is to construct the ultrafilter extension of a model, which has the nice property of being M-saturated. To define M-saturation, we give the following three definitions (the first two are called \emph{finitely satisfiable}, \emph{satisfiable}) consecutively:
+The first application of the theory of ultrafilters above is to construct the ultrafilter extension of a model, which has the nice property of being \emph{modally saturated} (m-saturated hereafter).
+To define m-saturation, we give the following three definitions (the first two are called \emph{finitely satisfiable}, \emph{satisfiable}) consecutively:
 \begin{defn}
 {\upshape\cite[Definition 2.53]{Blackburn}}
 \begin{holmath}
@@ -331,7 +338,7 @@ The first application of the theory of ultrafilters above is to construct the ul
   \HOLthm[def]{prettyPrinting.ppM_sat_def}
 \end{holmath}
 \end{defn}
-For M-saturated models, bisimulation and modal equivalence coincides:
+For m-saturated models, bisimulation and modal equivalence coincides:
 \begin{prop}\label{2.54}
 {\upshape\cite[Proposition 2.54]{Blackburn}}
 \begin{holmath}
@@ -363,14 +370,17 @@ In particular, every world \HOLtm{w IN M.frame.world} is embedded as the princip
 
 \section{Countably Saturatedness of Ultrapower Models}[2p]
 
-Given a first-order model \HOLtm{M} with no information about interpretation of function symbols, we can expand the model \HOLtm{M} by adding the interpretation of some function symbols. For our propose, we are only interested in adding the interpretation of finitely many nullary function symbols, which are also called \emph{constants}.  We write \HOLtm{expansion M A M' f} to mean that \HOLtm{M'} is the result of adding each element in $A$ to \HOLtm{M} as a new constant. Further, the function $f$ is a bijection between $\{0,\cdots,n-1\}$ and $A$, which is assumed to be finite, so that each nullary function symbol $c$ will be interpreted as \HOLtm{f c} in \HOLtm{M'}.
+Given a first-order model \HOLtm{M} with no information about interpretation of function symbols, we can expand the model \HOLtm{M} by adding the interpretation of some function symbols.
+For our propose, we are only interested in adding the interpretation of finitely many nullary function symbols, which are also called \emph{constants}.
+We write \HOLtm{expand M A f} to denote the model that is the result of adding each element in $A$ to \HOLtm{M} as a new constant.
+Further, the function $f$ is a bijection between $\{0,\cdots,n-1\}$ and $A$, which is assumed to be finite, so that each nullary function symbol $c$ will be interpreted as \HOLtm{f c} in \HOLtm{M'}.
 \begin{defn}
 {\upshape\cite[Definition A.9 (Expansion)]{Blackburn}}
 \begin{holmath}
   \HOLthm[def,l/args,c/n,width=65]{lemma2_73.expand_def}
 \end{holmath}
 \end{defn}
-If \HOLtm{M}, \HOLtm{A} and \HOLtm{f} are all fixed, then the model \HOLtm{M'} such that \HOLtm{expansion M A M' f} is unique. The only difference between a model and an expansion of it is the interpretation of function symbols.
+As is apparent from the definition, the only difference between a model and its expansion is the interpretation of function symbols.
 
 A set \HOLtm{Σ} of first-order formulas is called \emph{consistent} with a model \HOLtm{M} if for every finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a valuation of \HOLtm{M} such that all elements of \HOLtm{Σ0} are satisfied, in this case, we write \HOLtm{consistent M Σ}. A set \HOLtm{Γ} of first-order formula is an $x$-\emph{type} if for each formula in \HOLtm{Γ}, the only free variable that may contain is $x$. In this case, we write `\HOLtm{ftype x Γ}' in HOL. If \HOLtm{Γ} is an $x$-type, when evaluating formulas in \HOLtm{Γ}, the valuations will only control where the only free variable $x$ goes to. We say \HOLtm{Γ} is \emph{realized} in \HOLtm{M} if there is an element $w$ in the domain of \HOLtm{M} such that \HOLtm{feval M (\v.w) phi} for all \HOLtm{phi IN Γ}. In this case, we write `\HOLtm{frealizes M x Γ}' in HOL.
 Let \HOLtm{M} be a model and \HOLtm{n} be a natural number.
