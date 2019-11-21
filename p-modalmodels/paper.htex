@@ -114,6 +114,8 @@ Here \HOLtm{mm2folm} is the function that turns a modal model into a first-order
 \begin{holmath}
   \HOLthm[def,w1/w,w3/v10,ws/v11,l/args]{chap2_4revised.mm2folm_def}
 \end{holmath}
+That is, the model obtained by convertering a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, no information for function symbols, interpretation for one binary predicate symbol $0$ corresponds to \HOLtm{M.frame.rel}, and interpretations for propositional letters $p$ correspond to satisfaction of propositional letters. 
+
 
 \section{Basic Results}%[2p]
 We discuss some highlights of formalized results from Blackburn~\emph{at al.}~\cite[\S2.1--\S2.3]{Blackburn} below.
@@ -306,8 +308,7 @@ Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm
 
 The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains.
 
-The semantic behavior of ultraproduct models is characterized by \emph{\los's theorem}, whose proof can be found in Chang and Keisler~\cite{ChangKeisler1990}.
-
+The semantic behavior of ultraproduct models is characterized by \emph{\los's theorem}: For the ultraproduct of a family \HOLtm{MS} of first-order models over an ultrafilter \HOLtm{U} on $J$, a formula \HOLtm{phi} is satisfied under a valuation \HOLtm{σ} if and only if the set indexing the models \HOLtm{MS j} in the family where \HOLtm{phi} is true under the valuation \HOLtm{(\v. (CHOICE (σ v)) j)} is in the ultrafilter $U$.
 \begin{theorem}
 {\upshape\cite[Theorem A.19 (\los's theorem)]{Blackburn}}
 \begin{holmath}
@@ -359,10 +360,10 @@ In particular, every world \HOLtm{w IN M.frame.world} is embedded as the princip
 \end{theorem}
 
 
-\section{Countably Saturatedness of Ultrapower Models}[2p]
+\section{Countable Saturatedness of Ultrapower Models}[2p]
 
-Given a first-order model \HOLtm{M} with no information about interpretation of function symbols, we can expand the model \HOLtm{M} by adding the interpretation of some function symbols.
-For our propose, we are only interested in adding the interpretation of finitely many nullary function symbols, which are also called \emph{constants}.
+Given a first-order model \HOLtm{M} with no information about interpretation of its function symbols, we can expand the model \HOLtm{M} by adding an interpretation of some function symbols.
+For our purpose, we are only interested in adding the interpretation of finitely many nullary function symbols, also called \emph{constants}.
 We write \HOLtm{expand M A f} to denote the model that is the result of adding each element in $A$ to \HOLtm{M} as a new constant.
 Further, the function $f$ is a bijection between $\{0,\cdots,n-1\}$ and $A$, which is assumed to be finite, so that each nullary function symbol $c$ will be interpreted as \HOLtm{f c} in \HOLtm{M'}.
 \begin{definition}
@@ -385,17 +386,17 @@ If every such \HOLtm{M'} realizes every $x$-type \HOLtm{Γ}, then we say \HOLtm{
   \HOLthm[def,Γ/G]{prettyPrinting.ppn_saturated_def}\\[3mm]
 \end{holmath}
 \end{definition}
-We say \HOLtm{M} is countably saturated, and write \HOLtm{countably_saturated M} if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterization theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.
+We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterization theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.
 \begin{lemma}\label{2.73}
 {\upshape\cite[Lemma 2.73]{Blackburn}}
 \begin{holmath}
   \HOLthm[J/I,j/i]{prettyPrinting.pplemma_2_73}
 \end{holmath}
 \end{lemma}
-Here a countably incomplete ultrafilter is an ultrafilter that contains a countably infinite family that intersects to the empty set. We proved in HOL that such ultrafilters do exists using Theorem \ref{A.14}. The above theorem is not simply a direct consequence of \los's theorem:
-that result is about ultraproducts of first-order models, and it says nothing about expansion. But to prove Lemma \ref{2.73}, we are required to prove a statement for a model obtained by expanding a first-order model which is again obtained by viewing an ultraproduct of modal models as a first-order model.
+Here a countably incomplete ultrafilter is an ultrafilter that contains a countably infinite family that intersects to the empty set. We prove in HOL that such ultrafilters do exist using Theorem \ref{A.14}. The above theorem is not simply a direct consequence of \los's theorem:
+that result is about ultraproducts of first-order models, and it says nothing about expansion. But to prove Lemma \ref{2.73}, we must prove a statement for an expanded first-order model, and this first order model is itself obtained by converting a ultraproduct of modal models.
 
-To deal with this issue, the key observation is that constants are nothing more than forcing some symbols to be sent to some points in a model under every valuation, hence rather than use nullary function symbols, we fixed a set of variable letters, each corresponds to a function symbol, and only consider the valuations that sends these variable letters to fixed certain points. With this idea, we can remove all the constants in a formula, and hence change our scope from an expanded model back to the unexpanded model. To get rid of the constants $\{0,\cdots , n-1\}$, we replace every \HOLtm{VAR m} with \HOLtm{VAR (m+n)}, and replace every constant \HOLtm{Fn c []} by \HOLtm{VAR c}. This operation is done by the function \HOLtm{shift_form} which takes a natural number (the number of constants we want to remove), and a first-order formula (where the only function symbols may appear are the constants $0,\cdots, n-1$). Since $0,\cdots,n-1$ in a shifted formula are now designed to be sent to fixed places $f \ 0,\cdots,f \ (n-1)$, it does not make sense to assign these variable symbols anywhere else. Therefore, to talk about evaluation of shifted formula, the first thing is to make sure that the valuations we are considering send the variables which actually denotes constants to the right place. Hence we shift the valuations accordingly. The definition of shifting on valuation together with the semantical behaviour are displayed below:
+To deal with this issue, the key observation is that constants are nothing more than forcing some symbols to be sent to some points in a model under every valuation, hence rather than use nullary function symbols, we fix a set of variable letters, each corresponding to a function symbol, and only consider the valuations that send these variable letters to certain fixed points. With this idea, we can remove all the constants in a formula, and hence change our scope from an expanded model back to the unexpanded model. To get rid of the constants $\{0,\cdots , n-1\}$, we replace every \HOLtm{VAR m} with \HOLtm{VAR (m+n)}, and replace every constant \HOLtm{Fn c []} by \HOLtm{VAR c}. This operation is done by the function \HOLtm{shift_form} which takes a natural number (the number of constants we want to remove), and a first-order formula (where the only function symbols may appear are the constants $0,\cdots, n-1$). Since $0,\cdots,n-1$ in a shifted formula are now designed to be sent to fixed places $f \ 0,\cdots,f \ (n-1)$, it does not make sense to assign these variable symbols anywhere else. Therefore, to talk about evaluation of shifted formula, the first thing is to make sure that the valuations we are considering send the variables which actually denotes constants to the right place. Hence we shift the valuations accordingly. The definition of shifting on valuation together with the semantical behaviour are displayed below:
 \begin{definition}[Shifting construction]\label{k1}
 \begin{holmath}
   \HOLthm[def,v/m]{lemma2_73.shift_valuation_def}\\[2mm]
@@ -415,7 +416,7 @@ Using the shifting construction and Proposition \ref{k2}, we can prove Lemma \re
 
 
 \section{Van Benthem's Characterization Theorem}[2p]
-Note that the standard translation of any modal formula only can only contain unary predicate symbols which corresponds to propositional letters, one binary predicate symbol which corresponds to the relation, and no function symbol. A first-order formula which only use these symbols is called an ${\mathcal L}_{\tau}^1$-formula. An ${\mathcal L}_{\tau}^1$-formula which contains only one free variable is called \emph{invariant under bisimulation} if for all models \HOLtm{M} and \HOLtm{N} with \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world}, if there exists a bisimulation relation between \HOLtm{M} and \HOLtm{N} relating $w$ and $v$, then $\phi$ holds at \HOLtm{w} if and only if it holds at \HOLtm{v} when both \HOLtm{M} and \HOLtm{N} are viewed as first-order models.
+Note that the standard translation of any modal formula can only contain unary predicate symbols which corresponds to propositional letters, one binary predicate symbol which corresponds to the relation, and no function symbols. A first-order formula which only use these symbols is called an ${\mathcal L}_{\tau}^1$-formula. An ${\mathcal L}_{\tau}^1$-formula which contains only one free variable is called \emph{invariant under bisimulation} if for all models \HOLtm{M} and \HOLtm{N} with \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world}, if there exists a bisimulation relation between \HOLtm{M} and \HOLtm{N} relating $w$ and $v$, then $\phi$ holds at \HOLtm{w} if and only if it holds at \HOLtm{v} when both \HOLtm{M} and \HOLtm{N} are viewed as first-order models.
 \begin{definition}
 {\upshape\cite[Definition 2.67 (Invariant for Bisimulations)]{Blackburn}}
 \begin{holmath}
@@ -436,7 +437,8 @@ The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula w
 
 which cannot be put together into a double implication. To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more then one free variable, by the second theorem above, if \HOLtm{phi} is invariant under bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds, then $\phi$ is equivalent to a standard translation on model with $\alpha$-worlds. However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-world. But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. If the type universe of \HOLty{:(num -> α) -> bool} is small enough to be embedded into $\alpha$, then we will also done. However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds. If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterization theorem.
 
-For the proof of the two theorems above, the first one is immediate from \ref{2.47}, and the second one requires another critical lemma:
+For the proof of the two theorems above, the first one is immediate from \ref{2.47}, and the second one requires another critical lemma on `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models':
+If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}. 
 
 \begin{theorem}
 {\upshape\cite[Theorem 2.74, one direction]{Blackburn}}
