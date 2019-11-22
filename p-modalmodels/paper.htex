@@ -87,9 +87,9 @@ HOL forbids such definitions for soundness reasons.
 Also, HOL does not permit quantification over types, so it is impossible to write \HOLtm{!μ. equiv μ phi1 phi2}, with $\mu$ a type.
 Therefore, this definition is not exactly encoding the equivalence in the usual sense: when we mention equivalence of formulas in usual mathematical language, we are implicitly referring to the class of all models, but the constraint here bans us from talking about all models of all possible types at once.
 
-A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalize this translation, we take the work in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A model of first order formula is a set with interpretation of function symbols and predicate symbols. For a first order model \HOLtm{M}, a valution \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}. 
+A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalize this translation, we take the work in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A model of first order formula is a set with interpretation of function symbols and predicate symbols. For a first order model \HOLtm{M}, a valution \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
 %
-If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning elements in the domain of \HOLtm{M} to the free variables of \HOLtm{phi}, we write \HOLtm{feval M σ phi}. 
+If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning elements in the domain of \HOLtm{M} to the free variables of \HOLtm{phi}, we write \HOLtm{feval M σ phi}.
 
 
 For a modal formula \HOLtm{phi}, \HOLtm{ST x phi} is the standard translation of \HOLtm{phi} using \HOLtm{x} as the only free variable that may occur:
@@ -114,7 +114,7 @@ Here \HOLtm{mm2folm} is the function that turns a modal model into a first-order
 \begin{holmath}
   \HOLthm[def,w1/w,w3/v10,ws/v11,l/args]{chap2_4revised.mm2folm_def}
 \end{holmath}
-That is, the model obtained by convertering a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, no information for function symbols, interpretation for one binary predicate symbol $0$ corresponds to \HOLtm{M.frame.rel}, and interpretations for propositional letters $p$ correspond to satisfaction of propositional letters. 
+That is, the model obtained by convertering a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, no information for function symbols, interpretation for one binary predicate symbol $0$ corresponds to \HOLtm{M.frame.rel}, and interpretations for propositional letters $p$ correspond to satisfaction of propositional letters.
 
 
 \section{Basic Results}%[2p]
@@ -220,7 +220,6 @@ The ultrafilter theorem states that every proper filter is contained in an ultra
   \HOLthm[L/f,J/w]{ultrafilter.ultrafilter_theorem}
 \end{holmath}
 \end{theorem}
-
 (The proof uses Zorn's Lemma.)
 
 A subset $A$ of the power set on $J$ has \emph{finite intersection property} if once we take the intersection of a finite, nonempty family in $A$, the resultant set is nonempty.
@@ -235,7 +234,7 @@ As a corollary of ultrafilter theorem, a set with finite intersection property i
 \subsection{Ultraproducts}
 The notion of ultraproducts are defined for sets, modal models, and first-order models.
 \subsubsection{Ultraproduct of sets}
-A family of sets indexed by \HOLtm{J} is a function \HOLtm{An} in HOL. For \HOLtm{j IN J}, \HOLtm{An j} is the set indexed by \HOLtm{j}. %%(DSSS?) 
+A family of sets indexed by \HOLtm{J} is a function \HOLtm{An} in HOL. For \HOLtm{j IN J}, \HOLtm{An j} is the set indexed by \HOLtm{j}. %%(DSSS?)
 Given a family \HOLtm{An} indexed by a non-empty set \HOLtm{J} such that each \HOLtm{An j} is non-empty, the ultraproduct of \HOLtm{An} is defined as a quotient of the cartesian product of the family. %%(removing math notations)
 \begin{definition}
 {\upshape\cite[Page 495 (Cartesian product)]{Blackburn}}
@@ -267,8 +266,7 @@ Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ 
   \HOLthm[def,J/I,j/i,fc/fu,gc/gu,f0/f,g0/g,width=65]{ultraproduct.ultraproduct_model_def}
 \end{holmath}
 \end{definition}
-
-Here \HOLtm{models2worlds} is the function that takes a family of models to the family of their world sets:
+Here, \HOLtm{models2worlds} is the function that takes a family of models to the family of their world sets:
 \begin{holmath}
   \HOLthm[def,j/i]{ultraproduct.models2worlds_def}
 \end{holmath}
@@ -290,7 +288,7 @@ Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilte
 
 \begin{itemize}
 \item The domain is the ultraproduct of the domains of \HOLtm{MS} over $U$ on $J$.
-\item A function with its symbol denoted by the natural number $n$ will send a list \HOLtm{zs} of equivalence classes to the equivalence class of a function that sending $j\in J$ to \HOLtm{(MS j).Fun n l}, where the $k$-th member of the list $l$ is a representative of the $k$-th member (which is an equivalence class) of \HOLtm{zs}. 
+\item A function with its symbol denoted by the natural number $n$ will send a list \HOLtm{zs} of equivalence classes to the equivalence class of a function that sending $j\in J$ to \HOLtm{(MS j).Fun n l}, where the $k$-th member of the list $l$ is a representative of the $k$-th member (which is an equivalence class) of \HOLtm{zs}.
 
 \item A predicate with its symbol denoted by $p$ will hold for a list $zs$ of equivalence classes if and only if once we have a list $zr$ such that the $k$-th member is a representative of the $k$-th member of $zs$, the set of elements \HOLtm{j IN J} such that \HOLtm{(MS j). Pred p zr} is in $U$.
 \end{itemize}
@@ -438,7 +436,7 @@ The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula w
 which cannot be put together into a double implication. To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more then one free variable, by the second theorem above, if \HOLtm{phi} is invariant under bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds, then $\phi$ is equivalent to a standard translation on model with $\alpha$-worlds. However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-world. But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. If the type universe of \HOLty{:(num -> α) -> bool} is small enough to be embedded into $\alpha$, then we will also done. However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds. If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterization theorem.
 
 For the proof of the two theorems above, the first one is immediate from \ref{2.47}, and the second one requires another critical lemma on `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models':
-If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}. 
+If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}.
 
 \begin{theorem}
 {\upshape\cite[Theorem 2.74, one direction]{Blackburn}}
