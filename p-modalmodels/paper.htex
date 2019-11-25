@@ -43,7 +43,7 @@ We also discuss where HOL's simple type theory lets us down: some standard resul
 \subsection{Related Work}
 
 \section{Syntax, Semantics and the Standard Translation}[1.5p]
-In our formalization, we only consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
+In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
 We define a data type called `form' to represent the formulas of this modal language.
 \begin{definition}
 {\upshape\cite[Definition 1.9]{Blackburn}}
@@ -73,12 +73,14 @@ We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOL
 \end{array}
 \end{holmath}
 \end{definition}
-By requiring \HOLtm{w ∈ M.frame.world} in the first 3 clauses above, we ensure that models' world sets must be non-empty if they are to satisfy any formulas. Two worlds \HOLtm{w1 IN M.frame.world} and \HOLtm{w2 IN M.frame.world} are \emph{modal equivalent} if they satisfies the same set of modal formulas, in that case, we write \HOLtm{modal_eq M1 M2 w1 w2}. %%(1)
+By requiring \HOLtm{w ∈ M.frame.world} in the clauses above, we ensure that models' world sets must be non-empty if they are to satisfy any formulas. 
 
+Two worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are \emph{modal equivalent} if they satisfy the same set of modal formulas. %%(1)
 If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivalent} if for every \HOLty{:β model} \HOLtm{M} and every world \HOLtm{w} in it, we have \HOLtm{satis  M w phi1 <=> satis M w phi2}.
-\begin{definition}[Equivalence]
+\begin{definition}[Notions of equivalence]
 \begin{holmath}
- \HOLthm[def,showtypes,(:'b)/μ,width=60]{prettyPrinting.ppequiv0_def}\\[3mm]
+ \HOLthm[def,phi/form]{chap2_3.modal_eq_tau'}\\[3mm]
+ \HOLthm[def,showtypes,(:'b)/μ,width=60]{prettyPrinting.ppequiv0_def}
 \end{holmath}
 \end{definition}
 We cannot omit the type parameter \HOLtm{(:β)} in the definition, as there would otherwise be a type, namely the type of the underlying set of the models we are talking about, that only appears on the right-hand side but not on the left-hand side of the definition.
@@ -87,9 +89,9 @@ HOL forbids such definitions for soundness reasons.
 Also, HOL does not permit quantification over types, so it is impossible to write \HOLtm{!μ. equiv μ phi1 phi2}, with $\mu$ a type.
 Therefore, this definition is not exactly encoding the equivalence in the usual sense: when we mention equivalence of formulas in usual mathematical language, we are implicitly referring to the class of all models, but the constraint here bans us from talking about all models of all possible types at once.
 
-A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalize this translation, we take the work in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A model of first order formula is a set with interpretation of function symbols and predicate symbols. For a first order model \HOLtm{M}, a valution \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
+A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalize this translation, we take the work of Harrison in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A first order model \HOLtm{M:'a folModels$model} is a set \HOLtm{M.Dom} with interpretation of function symbols \HOLtm{M.Fun} and predicate symbols \HOLtm{M.Pred}. A valuation \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
 %
-If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning elements in the domain of \HOLtm{M} to the free variables of \HOLtm{phi}, we write \HOLtm{feval M σ phi}.
+If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning free variables of \HOLtm{phi} elements in the domain of \HOLtm{M}, we write \HOLtm{feval M σ phi}.
 
 
 For a modal formula \HOLtm{phi}, \HOLtm{ST x phi} is the standard translation of \HOLtm{phi} using \HOLtm{x} as the only free variable that may occur:
@@ -114,7 +116,7 @@ Here \HOLtm{mm2folm} is the function that turns a modal model into a first-order
 \begin{holmath}
   \HOLthm[def,w1/w,w3/v10,ws/v11,l/args]{chap2_4revised.mm2folm_def}
 \end{holmath}
-That is, the model obtained by convertering a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, no information for function symbols, interpretation for one binary predicate symbol $0$ corresponds to \HOLtm{M.frame.rel}, and interpretations for propositional letters $p$ correspond to satisfaction of propositional letters.
+That is, the model obtained by convertering a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, maps every term \HOLtm{Fn f l} into an arbitary world, each propositional letter maps to distinct predicates on worlds, and there is one binary predicate encoding the frame relation.
 
 
 \section{Basic Results}%[2p]
@@ -136,20 +138,21 @@ The tree-like property says an satisfiable modal formula can be satisfied in a t
 \end{holmath}
 \end{proposition}
 The world set of the tree-like model constructed from \HOLtm{M} is a set of lists of worlds in \HOLtm{M1} (such lists are effectively paths from the root to various positions within the tree).
+%
 Thus, passing to a tree-like model does not preserve the model type.
-
+%
+The tree-like lemma is used to prove the finite model property via selection afterwards. 
 
 
 \subsection{Bisimulation}
-Though apparently verbose, the definition of bisimulation in HOL is straightforward:
+Though apparently verbose, the definition of bisimulation in HOL is straightforward. 
 \begin{definition}
 {\upshape\cite[Definition 2.16 (Bisimulations)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,M1/M,M2/M',w1/w,w2/w',v1/v,v2/v',p/a,width=65]{chap2_2.bisim_def}
+  \HOLthm[def,M1/M,M2/M',w1/w,w2/w',v1/v,v2/v',p/a,width=65]{chap2_2.bisim_def}\\[3mm]
+  \HOLthm[def]{chap2_2.bisim_world_def}
 \end{holmath}
 \end{definition}
-
-When there exists some bisimulation relation \HOLtm{Z} relating worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world}, we write \HOLtm{bisim_world M1 M2 w1 w2}. %%(1)
 It is trivial to prove by induction that bisimilar worlds are modal equivalent. As the most significant theorem on the basic theory of bisimulations, we proved the Hennessy-Milner theorem as, which says modal equivalence and bisimulation on \emph{image finite} models are the same thing. An image-finite model is a model where every world can only be related to finitely many worlds. The Hennessy-Milner Theorem in HOL looks like:
 
 \begin{theorem}
@@ -159,10 +162,10 @@ It is trivial to prove by induction that bisimilar worlds are modal equivalent. 
 \end{holmath}
 \end{theorem}
 
+Bisimulation is an interesting topic in modal logic. Three other significant theorems on bisimulations (including an approximation of Van Benthem Characterization theorem) are to be discussed later. 
 
 \subsection{Finite model property}
-There are two classical approach of constructing finite models using model theory, namely via selection and via filtration.
-\subsubsection{Selection}
+There are two classical approaches to constructing finite models using model theory, namely via selection and via filtration. The complicated one is the former:
 Given \HOLtm{satis M1 w1 phi}, where $\phi$ has degree $k$, we can construct \HOLtm{M2}, \HOLtm{M3}, \HOLtm{M4} and \HOLtm{M5} comsecutively, such that \HOLtm{M5} is the finite model we want, where:
 \begin{itemize}
 \item \HOLtm{M2} is the tree-like model obtained from Proposition~\ref{2.15} with root \HOLtm{w2} such that \HOLtm{satis M2 w2 phi}.
@@ -188,17 +191,9 @@ As the construction used Proposition \ref{2.15}, we change the type of the model
 \end{holmath}
 \end{theorem}
 
+The filtration approach is also formalised. The advantage of filtration is that we can make the finite model we get to be of the same type as the model we start with. 
 
-\subsubsection{Filtration}
-Given \HOLtm{satis M1 w phi}, the finite model \HOLtm{M2} constructed by selection is the filtration of \HOLtm{M1} by the set of subformulas of \HOLtm{phi}. In HOL, we write \HOLtm{FLT M Σ} for the filtration of the model \HOLtm{M} via the set \HOLtm{Σ}. The formalization is almost a direct translation of the mathematical proof in Blackburn \emph{et al.}~\cite{Blackburn}. For the only difference: the world set of the filtrated model using the standard proof is a set of equivalence classes of worlds. To make the type of the finite model same as the model we start with, instead of taking the set of equivalence classes as the world set, we pick only one representative from each equivalence class. Hence we can prove:
-\begin{theorem}
-{\upshape\cite[Theorem 2.41 (Finite model property, via filtration)]{Blackburn}}
-\begin{holmath}
-  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=70,showtypes]{chap2_3.thm_2_41}
-\end{holmath}
-\end{theorem}
-
-where \HOLtm{M2} above is taken as \HOLtm{FLT M1 (subforms phi)}, and has the same type as \HOLtm{M1}.
+All the results proved above can be captured using \HOLty{:num} models everywhere. 
 
 \section{Mechanizing Ultrafilters and Ultraproducts}[3p]
 A number of results in Blackburn~\emph{et al.}~\cite[\S2.5--\S2.7]{Blackburn} rely on theorems about ultrafilters and ultraproducts.
@@ -210,7 +205,7 @@ Given a non-empty set $J$, a set \HOLtm{L SUBSET POW J} is a \emph{filter} if it
   \HOLthm[def,L/FLT,J/W,width=60]{ultrafilter.filter_def}
 \end{holmath}
 \end{definition}
-We call $L$ a \emph{proper filter} if $L$ is not the whole power set. An \emph{ultrafilter} is a filter $U$ such that for every $X\subseteq J$, exactly one of $X$ or $J\setminus X$ is in $U$.
+We call $L$ a \emph{proper filter} if $L$ is not the whole power set. An \emph{ultrafilter} is a filter $U$ such that for every $X\subseteq J$, exactly one of $X$ or $J\setminus X$ is in $U$. Intuitively, subsets \HOLtm{X ⊆ J} in an ultrafilter \HOLtm{U} are considered as `large' subsets of \HOLtm{J}. 
 
 
 The ultrafilter theorem states that every proper filter is contained in an ultrafilter:
@@ -232,7 +227,7 @@ A subset $A$ of the power set on $J$ has \emph{finite intersection property} if 
 As a corollary of ultrafilter theorem, a set with finite intersection property is contained in an ultrafilter.
 
 \subsection{Ultraproducts}
-The notion of ultraproducts are defined for sets, modal models, and first-order models.
+The notion of ultraproducts is defined for sets, modal models, and first-order models.
 \subsubsection{Ultraproduct of sets}
 A family of sets indexed by \HOLtm{J} is a function \HOLtm{An} in HOL. For \HOLtm{j IN J}, \HOLtm{An j} is the set indexed by \HOLtm{j}. %%(DSSS?)
 Given a family \HOLtm{An} indexed by a non-empty set \HOLtm{J} such that each \HOLtm{An j} is non-empty, the ultraproduct of \HOLtm{An} is defined as a quotient of the cartesian product of the family. %%(removing math notations)
@@ -263,24 +258,22 @@ Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ 
 \begin{definition}
 {\upshape\cite[Definition 2.70 (Ultraproduct of Modal Models)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,J/I,j/i,fc/fu,gc/gu,f0/f,g0/g,width=65]{ultraproduct.ultraproduct_model_def}
+  \HOLthm[def,J/I,j/i,fc/fu,gc/gu,f0/f,g0/g,width=65]{prettyPrinting.ppultraproduct_model_def}
 \end{holmath}
 \end{definition}
-Here, \HOLtm{models2worlds} is the function that takes a family of models to the family of their world sets:
-\begin{holmath}
-  \HOLthm[def,j/i]{ultraproduct.models2worlds_def}
-\end{holmath}
+
 
 As \HOLtm{Uequiv U J A} is an equivalence relation, if one element in an equivalence class satisfies the required condition, then all the elements in the equivalence class will satisfy the condition. Therefore, if we replace all the existential quantifiers with universal quantifiers in the above definition, the construction is still valid, and will give the same model as the current definition.
 
-The critical result we will need about ultraproducts of modal models is a modal version of the fundamental theorem of ultraproducts, also known as \los's theorem.
+The critical result we need about ultraproducts of modal models is a modal version of the fundamental theorem of ultraproducts, also known as \los's theorem.
 
 \begin{theorem}[\los's theorem, Modal version]
 \begin{holmath}
-  \HOLthm[MS/Ms,j/i,f0/f,width=75]{prettyPrinting.ppLos_modal_thm}
+  \HOLthm[MS/Ms,j/i,f0/f,width=65]{prettyPrinting.ppLos_modal_thm}
 \end{holmath}
 \end{theorem}
-
+According to the intuition of ultrafilters, this means the ultraproduct of a family of modal models satisfies a modal formula if and only if `most of' models in the family satisfies the formula.
+%
 Though it is possible to derive this result from \los's theorem of first-order models using the standard translation, our proof is direct, by structural induction on \HOLtm{ϕ}.
 
 \subsubsection{Ultraproducts for first-order models}
@@ -306,14 +299,14 @@ Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm
 
 The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains.
 
-The semantic behavior of ultraproduct models is characterized by \emph{\los's theorem}: For the ultraproduct of a family \HOLtm{MS} of first-order models over an ultrafilter \HOLtm{U} on $J$, a formula \HOLtm{phi} is satisfied under a valuation \HOLtm{σ} if and only if the set indexing the models \HOLtm{MS j} in the family where \HOLtm{phi} is true under the valuation \HOLtm{(\v. (CHOICE (σ v)) j)} is in the ultrafilter $U$.
+The semantic behavior of ultraproduct models is characterized by \los's theorem: for the ultraproduct of a family \HOLtm{MS} of first-order models over an ultrafilter \HOLtm{U} on $J$, a formula \HOLtm{phi} is satisfied under a valuation \HOLtm{σ} if and only if the set indexing the models \HOLtm{MS j} in the family where \HOLtm{phi} is true under the valuation \HOLtm{(\v. (CHOICE (σ v)) j)} is in the ultrafilter $U$.
 \begin{theorem}
 {\upshape\cite[Theorem A.19 (\los's theorem)]{Blackburn}}
 \begin{holmath}
   \HOLthm[J/I,j/i,v/x,width=65]{prettyPrinting.ppthm_A_19_ii}
 \end{holmath}
 \end{theorem}
-
+where \HOLtm{wffm M} means the functions of \HOLtm{M} never maps a list out of the domain of \HOLtm{M}. 
 
 
 \section{Ultrafilter Extensions}[2p]
@@ -322,8 +315,8 @@ To define m-saturation, we give the following three definitions (the first two a
 \begin{definition}
 {\upshape\cite[Definition 2.53]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def]{chap2_5.fin_satisfiable_in_def}\\[3mm]
   \HOLthm[def,phi/form,w/x]{chap2_5.satisfiable_in_def}\\[3mm]
+  \HOLthm[def]{chap2_5.fin_satisfiable_in_def}\\[3mm]
   \HOLthm[def]{prettyPrinting.ppM_sat_def}
 \end{holmath}
 \end{definition}

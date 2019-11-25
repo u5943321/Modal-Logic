@@ -45,7 +45,7 @@ val Pred_component_def = Define`
 Theorem ppultraproduct_folmodel_def:
  ∀U I FMS.
             ultraproduct_folmodel U I FMS =
-            <|Dom := ultraproduct U I (folmodels2Doms FMS);
+            <|Dom := ultraproduct U I (\i. (FMS i).Dom);
               Fun :=
                 (λn fs.
                      {y |
@@ -58,10 +58,24 @@ Theorem ppultraproduct_folmodel_def:
                      {i | i ∈ I ∧ Pred_component FMS p zs i} ∈
                      U)|>
 Proof
-rw[ultraproduct_folmodel_def,Fun_component_def,Pred_component_def]
+rw[ultraproduct_folmodel_def,Fun_component_def,Pred_component_def,folmodels2Doms_def]
 QED
 
-
+Theorem ppultraproduct_model_def:
+∀U I MS.
+            ultraproduct_model U I MS =
+            <|frame :=
+                <|world := ultraproduct U I (\i. (MS i).frame.world);
+                  rel :=
+                    (λfu gu.
+                         ∃f g.
+                             f ∈ fu ∧ g ∈ gu ∧
+                             {i | i ∈ I ∧ (MS i).frame.rel (f i) (g i)} ∈ U)|>;
+              valt :=
+                (λp fu. ∃f. f ∈ fu ∧ {i | i ∈ I ∧ f i ∈ (MS i).valt p} ∈ U)|>
+Proof
+rw[ultraproduct_model_def,models2worlds_def]
+QED
 
 Theorem pppeval_satis_strengthen':
 !f M w. propform f /\ (prop_letters f ⊆ s) /\
@@ -947,4 +961,12 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   term_name = "Emu", paren_style = OnlyIfNecessary}
 
 Overload univn = ``univ(:num)``
+
+Overload FM = ``(M:'a folModels$model)``
+Overload FM = ``(M:'b folModels$model)``
+
+Overload MM = ``M:'a chap1$model``
+Overload MM = ``M:'b chap1$model``
+
+
 val _ = export_theory();
