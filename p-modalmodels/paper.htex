@@ -26,10 +26,20 @@
 
 \maketitle
 
-\section{Introduction}[1p]
+\section{Introduction [1p]}
 
 % stress that previous work tends to focus on proof theory, e.g. tableaux
 % focus on model theory is novel
+The theory of modal logic has long been a fruitful area when it comes to mechanisation. 
+The proof systems are appealing, and the applications in model-checking are of clear real-world interest. 
+It helps also that the subject domain (proof calculi and automata) are well-suited to ``standard'' theorem-proving technology (rule inductions and interesting data types).
+
+There has been much less work on the model theory behind modal logic; indeed even in first order logic, most developments concern themselves only with model theory inasmuch as it is required to show completeness of an accompanying proof system. 
+As our experience demonstrates, it is also clear that modern theorem-proving systems are not necessarily so well-suited to the mathematics behind model theory. 
+Harrison~\cite{Harrison} complained in 1998 that the very notion of validity is awkward to capture in HOL, and our own work shows up further failings in simple type theory. 
+
+Nonetheless, there is much interesting mathematics to be found even in the early chapters of a standard text such as Blackburn~\emph{et al.}~\cite{Blackburn}. 
+The fact that mechanizing only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanization of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground.
 
 \paragraph{Contributions}
 This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al.}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
