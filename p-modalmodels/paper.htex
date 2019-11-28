@@ -34,7 +34,7 @@
 \paragraph{Contributions}
 This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al.}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
 \begin{itemize}
-\item the saturation of ultraproduct models;
+\item Two versions of \los's  theorem the saturation of ultraproduct models;
 \item modal equivalence as bisimilarity between ultrafilter extensions; and
 \item a close approximation of van Benthem's Characterization Theorem.
 \end{itemize}
@@ -374,7 +374,7 @@ If every such \HOLtm{M'} realizes every $x$-type \HOLtm{Γ}, then we say \HOLtm{
 \begin{definition}
 {\upshape\cite[Definition 2.63 ($n$-Saturated)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,Γ/G]{prettyPrinting.ppn_saturated_def}\\[3mm]
+  \HOLthm[def,Γ/G,FM/M]{prettyPrinting.ppn_saturated_def}\\[3mm]
 \end{holmath}
 \end{definition}
 We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterization theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.

@@ -245,7 +245,7 @@ QED
 Theorem ppn_saturated_def:
 ∀M n.
             n_saturated M n ⇔
-            ∀A M' G x f.
+            ∀A G x f.
                 (IMAGE f 𝕌(:num) ⊆ M.Dom /\ FINITE A ∧ CARD A ≤ n ∧ A ⊆ M.Dom ∧
                 BIJ f (count (CARD A)) A ∧
                 (∀phi.
