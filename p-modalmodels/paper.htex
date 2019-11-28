@@ -50,8 +50,6 @@ This paper presents the first mechanised proofs of a number of basic results fro
 \end{itemize}
 We also discuss where HOL's simple type theory lets us down: some standard results (including the best possible statement of van Benthem's Characterization Theorem) seem impossible to prove in our setting.
 
-\subsection{Related Work}
-
 \section{Syntax, Semantics and the Standard Translation}[1.5p]
 In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
 We define a data type called `form' to represent the formulas of this modal language.
@@ -170,6 +168,7 @@ It is trivial to prove by induction that bisimilar worlds are modal equivalent. 
 \begin{holmath}
   \HOLthm[M1/M,M2/M',w1/w,w2/w',width=70]{chap2_2.thm_2_24}
 \end{holmath}
+\label{hennessy-milner}
 \end{theorem}
 
 Bisimulation is an interesting topic in modal logic. Three other significant theorems on bisimulations (including an approximation of Van Benthem Characterization theorem) are to be discussed later.
@@ -453,7 +452,19 @@ The above lemma relies on Lemma \ref{2.73} and its mathematical proof can be fou
 
 
 
-\section{Conclusion}[$<$1p]
+\section{Conclusion [$<$1p]}
+
+\subsection{Related Work}
+We believe that we are the first to mechanize the bulk of the results in this paper. 
+We \emph{have} built on Harrison's mechanization of foundational results about first order model theory~\cite{Harrison}, in particular compactness. 
+The connections between modal logic and process algebra are well-understood and there has been a great deal of mechanised work on the operational theory of such (co-)algebraic systems, starting at least as far back as Nesi~\cite{Nesi96}. 
+Our proof of the Hennessy-Milner theorem~(Theorem~\ref{hennessy-milner}) is a gesture in this direction, but van Benthem's theorem is much deeper and uses bisimulations as a tool to understanding the connection between modal and first order logics, rather than as a connection to process algebras.
+
+Mechanised work with ultrafilters began with Fleuriot's use of them to mechanise non-standard analysis~\cite{Fleuriot2001}.
+We are unaware of any previous use of ultraproducts or ultrapowers.
+
+
+
 
 \bibliography{../honours-report/everything}
 \bibliographystyle{splncs04}
