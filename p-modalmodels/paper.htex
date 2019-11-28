@@ -50,7 +50,7 @@ This paper presents the first mechanised proofs of a number of basic results fro
 \end{itemize}
 We also discuss where HOL's simple type theory lets us down: some standard results (including the best possible statement of van Benthem's Characterization Theorem) seem impossible to prove in our setting.
 
-\section{Syntax, Semantics and the Standard Translation}[1.5p]
+\section{Syntax, Semantics and the Standard Translation[1.5p]}
 In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
 We define a data type called `form' to represent the formulas of this modal language.
 \begin{definition}
@@ -83,8 +83,9 @@ We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOL
 \end{definition}
 By requiring \HOLtm{w ∈ M.frame.world} in the clauses above, we ensure that models' world sets must be non-empty if they are to satisfy any formulas.
 
-Two worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are \emph{modal equivalent} if they satisfy the same set of modal formulas. %%(1)
-If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivalent} if for every \HOLty{:β model} \HOLtm{M} and every world \HOLtm{w} in it, we have \HOLtm{satis  M w phi1 <=> satis M w phi2}.
+Two worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are \emph{modal equivalent} (written \HOLtm{modal_eq M1 M2 w1 w2}) if they satisfy the same set of modal formulas. 
+%%(1)
+If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivalent} over \HOLty{:β} models (written \HOLtm{equiv0 (:β) phi1 phi2}) if they are satisfied in the same worlds in every model:
 \begin{definition}[Notions of equivalence]
 \begin{holmath}
  \HOLthm[def,phi/form]{chap2_3.modal_eq_tau'}\\[3mm]
@@ -281,7 +282,7 @@ The critical result we need about ultraproducts of modal models is a modal versi
   \HOLthm[MS/Ms,j/i,f0/f,width=65]{prettyPrinting.ppLos_modal_thm}
 \end{holmath}
 \end{theorem}
-According to the intuition of ultrafilters, this means the ultraproduct of a family of modal models satisfies a modal formula if and only if `most of' models in the family satisfies the formula.
+According to our intuition about ultrafilters, we can gloss this theorem to mean that the ultraproduct of a family of modal models satisfies a modal formula if and only if `most of' the models in the family satisfy the formula.
 %
 Though it is possible to derive this result from \los's theorem of first-order models using the standard translation, our proof is direct, by structural induction on \HOLtm{ϕ}.
 
@@ -290,9 +291,9 @@ Given a family \HOLtm{MS} of first-order models indexed by $J$ and an ultrafilte
 
 \begin{itemize}
 \item The domain is the ultraproduct of the domains of \HOLtm{MS} over $U$ on $J$.
-\item A function with its symbol denoted by the natural number $n$ will send a list \HOLtm{zs} of equivalence classes to the equivalence class of a function that sending $j\in J$ to \HOLtm{(MS j).Fun n l}, where the $k$-th member of the list $l$ is a representative of the $k$-th member (which is an equivalence class) of \HOLtm{zs}.
+\item A function named by symbol (natural number) $n$ sends a list \HOLtm{zs} of equivalence classes to the equivalence class of a function that sends $j\in J$ to \HOLtm{(MS j).Fun n l}, where the $k$-th member of the list $l$ is a representative of the $k$-th member (which is an equivalence class) of \HOLtm{zs}.
 
-\item A predicate with its symbol denoted by $p$ will hold for a list $zs$ of equivalence classes if and only if once we have a list $zr$ such that the $k$-th member is a representative of the $k$-th member of $zs$, the set of elements \HOLtm{j IN J} such that \HOLtm{(MS j). Pred p zr} is in $U$.
+\item A predicate named by symbol $p$ will hold for a list \HOLtm{zs} of equivalence classes if and only if when we have a list \HOLtm{zr}, where $k$-th member is a representative of the $k$-th member of $zs$, the set of elements \HOLtm{j IN J} such that \HOLtm{(MS j). Pred p zr} is in $U$.
 \end{itemize}
 \begin{definition}
 {\upshape\cite[Definition A.18 (Ultraproduct of First-Order Models)]{Blackburn}}
@@ -306,8 +307,6 @@ Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm
  \HOLthm[def]{prettyPrinting.Pred_component_def}
 \end{holmath}
 
-The function \HOLtm{folmodels2Doms} takes a family of first-order models to the family of their domains.
-
 The semantic behavior of ultraproduct models is characterized by \los's theorem: for the ultraproduct of a family \HOLtm{MS} of first-order models over an ultrafilter \HOLtm{U} on $J$, a formula \HOLtm{phi} is satisfied under a valuation \HOLtm{σ} if and only if the set indexing the models \HOLtm{MS j} in the family where \HOLtm{phi} is true under the valuation \HOLtm{(\v. (CHOICE (σ v)) j)} is in the ultrafilter $U$.
 \begin{theorem}
 {\upshape\cite[Theorem A.19 (\los's theorem)]{Blackburn}}
@@ -315,7 +314,7 @@ The semantic behavior of ultraproduct models is characterized by \los's theorem:
   \HOLthm[J/I,j/i,v/x,width=65]{prettyPrinting.ppthm_A_19_ii}
 \end{holmath}
 \end{theorem}
-where \HOLtm{wffm M} means the functions of \HOLtm{M} never maps a list out of the domain of \HOLtm{M}.
+where \HOLtm{wffm M} means the functions of \HOLtm{M} never map a list out of the domain of \HOLtm{M}.
 
 
 \section{Ultrafilter Extensions}[2p]
