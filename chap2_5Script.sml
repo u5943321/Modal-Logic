@@ -46,8 +46,12 @@ val fin_satisfiable_in_def = Define`
 fin_satisfiable_in Σ X M <=> (!S. S SUBSET Σ /\ FINITE S ==> satisfiable_in S X M)`;
 
 val M_sat_def = Define`
-M_sat M <=> !w Σ. w IN M.frame.world ==>
-(fin_satisfiable_in Σ {v | v IN M.frame.world /\ M.frame.rel w v} M ==> satisfiable_in Σ {v | v IN M.frame.world /\ M.frame.rel w v} M)`;
+M_sat M ⇔
+            ∀w Σ.
+                (w ∈ M.frame.world /\
+                fin_satisfiable_in Σ
+                  {v | v ∈ M.frame.world ∧ M.frame.rel w v} M) ⇒
+                satisfiable_in Σ {v | v ∈ M.frame.world ∧ M.frame.rel w v} M`;
 
 val modal_eq_tau = store_thm(
 "modal_eq_tau",
@@ -134,8 +138,8 @@ qexists_tac `λn1 n2. (!form. satis M n1 form <=> satis M' n2 form)` >> rw[]
 val prop_2_54_DIST_TYPE = store_thm(
 "prop_2_54_DIST_TYPE",
 ``∀M M' w:'b w':'c.
-        M_sat M ∧ M_sat M' ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world ⇒
-        modal_eq M M' w w' ⇒
+        (M_sat M ∧ M_sat M' ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world /\
+        modal_eq M M' w w') ⇒
         bisim_world M M' w w'``,
 rw[bisim_world_def,bisim_def] >>
 qexists_tac `λn1 n2. (!form. satis M n1 form <=> satis M' n2 form)` >> rw[]

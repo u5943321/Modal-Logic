@@ -1041,14 +1041,6 @@ Induct_on `n`
        >- rw[])
 QED
 
-(*
-
-val prop_2_29 = store_thm(
-"prop_2_29",
-``INFINITE univ(:'b) /\ FINITE univ (:'a) ==> !n. FINITE (partition (equiv0 (μ:'b itself)) {f:chap1$form | DEG f <= n})``,
-rw[] >> drule (prop_2_29_strengthen |> INST_TYPE [alpha |-> ``:'b``]) >> rw[]);
-
-*)
 
 (* n-bisimulation *)
 
@@ -1809,6 +1801,17 @@ Theorem prop_letters_subforms:
    (p IN (prop_letters phi)) <=> (VAR p) IN (subforms phi)
 Proof
 Induct_on `phi` >> rw[prop_letters_def,subforms_def]
+QED
+
+(*prettier version of 2.29 in terms of propositional letters*)
+
+Theorem prop_2_29_prop_letters:
+!s. FINITE s /\ INFINITE univ(:'b) ==> !n. FINITE (partition (equiv0 (μ:'b itself)) {f| DEG f <= n /\ prop_letters f ⊆ s})
+Proof
+rw[] >> drule prop_2_29_strengthen >> rw[] >>
+`{f | DEG f ≤ n ∧ ∀a. VAR a ∈ subforms f ⇒ a ∈ s} =
+{f | DEG f ≤ n ∧ prop_letters f ⊆ s}` suffices_by metis_tac[] >>
+rw[EXTENSION,SUBSET_DEF] >> metis_tac[prop_letters_subforms]
 QED
 
 

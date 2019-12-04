@@ -4,7 +4,7 @@ open chap1Theory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory 
 
 val _ = new_theory "prettyPrinting";
 
-(* equiv0 2.15 2.29 ultraproduct_model_def ppLos_modal_thm ppultraproduct_folmodel_def thm_A_19_ii M_sat_def prop_2_54_DIST_TYPE n_saturated_def lemma_2_73 expansion_shift_feval ultraproduct_comm_feval thm_2_74_half2 *)
+(* equiv0 2.29 ultraproduct_model_def ppLos_modal_thm ppultraproduct_folmodel_def thm_A_19_ii M_sat_def prop_2_54_DIST_TYPE n_saturated_def lemma_2_73 expansion_shift_feval ultraproduct_comm_fevalomit it thm_2_74_half2 *)
 (* val _ = remove_termtok { tok = " *)
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   paren_style = OnlyIfNecessary,

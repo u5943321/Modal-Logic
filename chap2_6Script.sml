@@ -363,14 +363,12 @@ qabbrev_tac `MA = <| Dom := (mm2folm M).Dom;
       >- (`FV (ST x x''') SUBSET {x}` by metis_tac[ST_FV_singleton] >>
           `x'' IN {x}` by metis_tac[SUBSET_DEF] >> fs[])) >>
 `frealizes MA x Σ'`
-  by (rw[] >> first_x_assum irule >> rw[]
+  by (rw[] >> first_x_assum irule >> rw[] (* 3 *)
       (*map_every qexists_tac [`{w}`,`\n.w`,`1`] >> rw[]*) (* 4 *)
       >- (Cases_on `phi = fR (Fn 0 []) (fV x)` (* 2 *)
           >- fs[form_functions_def,FST] >>
-          fs[Abbr`Σ'`] >> metis_tac[ST_form_functions_EMPTY,MEMBER_NOT_EMPTY])
-      >- (Cases_on `phi = fR (Fn 0 []) (fV x)` (* 2 *)
-          >- fs[form_functions_def,FST] >>
-          fs[Abbr`Σ'`] >> metis_tac[ST_form_functions_EMPTY,MEMBER_NOT_EMPTY])
+          fs[Abbr`Σ'`] >> 
+          metis_tac[ST_form_functions_EMPTY,MEMBER_NOT_EMPTY,SUBSET_DEF])
       >- rw[SUBSET_DEF,mm2folm_def,IMAGE_DEF]
       >- rw[BIJ_DEF,INJ_DEF,SURJ_DEF]
      ) >>
@@ -444,8 +442,8 @@ QED
 
 
 Theorem thm_2_74_half2:
-  !(M: α chap1$model) N w v. w IN M.frame.world /\ v IN N.frame.world ==>
-            (!phi. satis M w phi <=> satis N v phi) ==>
+  !(M: α chap1$model) N w v. (w IN M.frame.world /\ v IN N.frame.world /\
+            (!phi. satis M w phi <=> satis N v phi)) ==>
              ?U (I:num -> bool). ultrafilter U I /\
                bisim_world (ultraproduct_model U I (\i. M)) (ultraproduct_model U I (\i. N))
                            {fw | Uequiv U I (models2worlds (\i. M)) (λi. w) fw}
@@ -930,8 +928,6 @@ irule holds_valuation >> rw[] >>
 rw[EXTENSION,EQ_IMP_THM] >> metis_tac[Uequiv_SYM]
 QED
 
-val wffm = Define`
-wffm M <=> (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)`
 
 
 Theorem mm2folm_folm2mm_Pred0:
@@ -1827,7 +1823,7 @@ Proof
 rw[countably_saturated_def,expand_def,consistent_def,ftype_def,frealizes_def,n_saturated_def] >>
 qabbrev_tac `M= <|Dom:= univ(:num); Fun:= \f l. (CHOICE univ(:num)) ;
                         Pred := \n v. ?x. v = [x] /\ n < x|>` >>
-map_every qexists_tac [`0`,`{}`,`{fP n (fV a) | n | T}`,`a`,`\v.0`] >> rw[]
+map_every qexists_tac [`0`,`{}`,`{fP n (fV a) | n | T}`,`a`,`\v.0`] >> rw[] (* 4 *)
 >- fs[Abbr`M`]
 >- (fs[FV_def,FVT_def,SUBSET_DEF] >> rw[] >> fs[FV_def])
 >- (rw[] >>

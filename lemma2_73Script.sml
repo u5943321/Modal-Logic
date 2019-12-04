@@ -79,15 +79,15 @@ val consistent_def = Define`
       !G0. FINITE G0 /\ G0 ⊆ G ==> ?σ. IMAGE σ univ(:num) SUBSET M.Dom /\ !phi. phi ∈ G0 ==> fsatis M σ phi `;
 
 val n_saturated_def = Define`
-  n_saturated M n <=>
-     !A G x f.
-        (IMAGE f (univ(:num)) ⊆ M.Dom) /\
-        (FINITE A /\ CARD A <= n /\ A SUBSET M.Dom /\ (BIJ f (count (CARD A)) A) /\
-         (!phi. phi IN G ==> !c. c IN (form_functions phi) ==>
-                               (FST c) IN (count (CARD A)) /\ SND c = 0) /\
-        ftype x G /\ consistent (expand M A f) G)
-         ==>
-        frealizes (expand M A f) x G`;
+  n_saturated M n ⇔
+            ∀A G x f.
+                (IMAGE f 𝕌(:num) ⊆ M.Dom /\ FINITE A ∧ CARD A ≤ n ∧ A ⊆ M.Dom ∧
+                BIJ f (count (CARD A)) A ∧
+                (∀phi.
+                     phi ∈ G ⇒ form_functions phi ⊆ {(c, 0) | c < CARD A}) ∧
+                 ftype x G ∧
+                consistent (expand M A f) G) ⇒
+                frealizes (expand M A f) x G`;
 
 val countably_saturated_def = Define`
   countably_saturated M <=> !n. n_saturated M n`;
@@ -652,7 +652,14 @@ Proof
 rw[] >> Cases_on `FINITE s` (* 2 *)
 >- (first_x_assum irule >> rw[SUBSET_DEF]) >>
 drule countably_incomplete_chain >> rw[] >>
-fs[countably_incomplete_def] >> drule thm_A_19_ii >> rw[] >>
+fs[countably_incomplete_def] >>
+`!phi σ FMS. IMAGE σ (univ(:num)) ⊆ ultraproduct U (In 0) (folmodels2Doms FMS) ==>
+             (!i ff ll. i IN (In 0) ==> (FMS i).Fun ff ll IN (FMS i).Dom) ==>
+                  (feval (ultraproduct_folmodel U (In 0) FMS) σ phi <=>
+                  {i | i IN (In 0) /\ feval (FMS i) (\x. (CHOICE (σ x)) i) phi} IN U)`
+  by 
+   (drule thm_A_19_ii >> rw[] >> first_x_assum irule >> 
+    fs[wffm_def,valuation_def,IMAGE_DEF,SUBSET_DEF,ultraproduct_folmodel_def] >>    metis_tac[]) >>
 `?enum. BIJ enum (univ(:num)) s` by metis_tac[countable_INFINITE_form_set] >>
 (* cheated! need Godel numbering*)
 (*first suffices start, change the goal into feval each formula*)
@@ -1100,8 +1107,8 @@ QED
 
 Theorem lemma_2_73:
   !U I MS.
-        (!i. i IN I ==> (MS i).frame.world <> {}) ==>
-         countably_incomplete U I ==>
+        ((!i. i IN I ==> (MS i).frame.world <> {}) /\
+         countably_incomplete U I) ==>
              countably_saturated (mm2folm (ultraproduct_model U I MS))
 Proof
 rw[countably_saturated_def,n_saturated_def,
@@ -1131,7 +1138,12 @@ first_x_assum irule >>
 `(mm2folm (ultraproduct_model U I' MS)).Dom = (expand (mm2folm (ultraproduct_model U I' MS)) A f).Dom`
   by fs[expand_def] >> rw[] >>
 fs[fsatis_def] (* 3 *)
->- (qexists_tac `x` >> rw[] >- metis_tac[] >- metis_tac[] >- (fs[SUBSET_DEF] >> metis_tac[]))
+>- (qexists_tac `x` >> rw[] (* 3 *)
+    >- (fs[SUBSET_DEF] >>
+       `∃k. c = (k,0) ∧ k < CARD A` by metis_tac[] >> fs[])
+    >- (fs[SUBSET_DEF] >>
+       `∃k. c = (k,0) ∧ k < CARD A` by metis_tac[] >> fs[])
+    >- (fs[SUBSET_DEF] >> metis_tac[]))
 >- metis_tac[]
 >- fs[IMAGE_DEF,SUBSET_DEF,expand_def,mm2folm_def,ultraproduct_model_def]
 QED

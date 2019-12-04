@@ -21,8 +21,11 @@
 \author{Yiming Xu\inst{1} \and Michael Norrish\inst{2,1}\orcidID{0000-0003-1163-8467}}
 \institute{Australian National University \and \email{michael.norrish@data61.csiro.au}\\Data61, CSIRO}
 
-%\begin{abstract}
-%\end{abstract}
+%equiv0_def prop_2_15_corollary 2.29 ultraproduct_model_def
+
+\begin{abstract}
+In this paper, we discuss the formalisation of propositional modal model theory. We stress on the usage of models: previously, there does exist work on formalisation of modal logic, but they are almost all centered at proof systems, which are syntactical, hence our work is indeed original. We follow ``the'' standard textbook \cite{Blackburn} on this domain, and have formalised every result in the first two chapters of the book once it can be captured by the HOL settings. In particular, to formalize Van Benthem characterisation theorem, we formalised the construction of ultraproducts in HOL. Our construction successfully captured the desired saturation property of ultraproduct models on countably incomplete ultrafilters. Some pieces of our work are related to formalised first-order logic, which is done by \cite{Harrison} in 1998. In particular, we use his formalised compactness theorem.
+\end{abstract}
 
 \maketitle
 
@@ -89,7 +92,7 @@ If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivale
 \begin{definition}[Notions of equivalence]
 \begin{holmath}
  \HOLthm[def,phi/form]{chap2_3.modal_eq_tau'}\\[3mm]
- \HOLthm[def,showtypes,(:'b)/μ,width=60]{prettyPrinting.ppequiv0_def}
+ \HOLthm[def,showtypes,(:'b)/μ,width=60]{IBCDNFrevised.equiv0_def}
 \end{holmath}
 \end{definition}
 We cannot omit the type parameter \HOLtm{(:β)} in the definition, as there would otherwise be a type, namely the type of the underlying set of the models we are talking about, that only appears on the right-hand side but not on the left-hand side of the definition.
@@ -143,7 +146,7 @@ The tree-like property says an satisfiable modal formula can be satisfied in a t
 \begin{proposition}
 {\upshape\cite[Proposition 2.15]{Blackburn}}\label{2.15}
 \begin{holmath}
-  \HOLthm[M1/M,M/M',phi/form,r/s,showtypes]{prettyPrinting.ppprop_2_15_corollary}
+  \HOLthm[M'/MODEL,phi/form,r/s,showtypes]{chap2_1.prop_2_15_corollary}
 \end{holmath}
 \end{proposition}
 The world set of the tree-like model constructed from \HOLtm{M} is a set of lists of worlds in \HOLtm{M1} (such lists are effectively paths from the root to various positions within the tree).
@@ -186,7 +189,7 @@ The construction of \HOLtm{M5} requires a lemma:
 \begin{lemma}
 {\upshape\cite[Proposition 2.29]{Blackburn}}
 \begin{holmath}
-  \HOLthm[phi/f,Φ/s,showtypes]{prettyPrinting.ppprop_2_29_strengthen}
+  \HOLthm[phi/f,Φ/s,showtypes]{chap2_3.prop_2_29_prop_letters}
 \end{holmath}
 \end{lemma}
 We require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.

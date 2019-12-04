@@ -189,12 +189,17 @@ val ultrapower_valt_well_defined = store_thm(
      rw[INTER_DEF,SUBSET_DEF] >> metis_tac[]));
 
 
-val Los_modal_thm = store_thm(
-  "Los_modal_thm",
-  ``!U J Ms. ultrafilter U J ==>
+Theorem Los_modal_thm:
+  ∀U J Ms phi fc.
+            (ultrafilter U J /\
+                fc ∈ (ultraproduct_model U J Ms).frame.world) ⇒
+                (satis (ultraproduct_model U J Ms) fc phi ⇔
+                 ∃f. f ∈ fc ∧ {i | i ∈ J ∧ satis (Ms i) (f i) phi} ∈ U)
+Proof
+`!U J Ms. ultrafilter U J ==>
              !phi fc. fc IN (ultraproduct_model U J Ms).frame.world ==>
                       (satis (ultraproduct_model U J Ms) fc phi <=>
-                      ?f. f IN fc /\ {i | i IN J /\ satis (Ms i) (f i) phi} IN U)``,
+                      ?f. f IN fc /\ {i | i IN J /\ satis (Ms i) (f i) phi} IN U)` suffices_by metis_tac[] >> 
   strip_tac >> strip_tac >> strip_tac  >> strip_tac >> Induct_on `phi` >> rw[] (* 5 *)
 (*-----------------------------block 1 `` VAR case``------------------------------------- *)
 >-
@@ -482,7 +487,8 @@ val Los_modal_thm = store_thm(
                    {v | (Ms i).frame.rel (f i) v /\ v IN (Ms i).frame.world /\ satis (Ms i) v phi}`
                      by metis_tac[CHOICE_DEF] >> fs[])
                 >- (rw[] >> metis_tac[CHOICE_DEF,ultraproduct_world]))
-             >- metis_tac[ultrafilter_def,proper_filter_def,filter_def]) >> metis_tac[]))));
+             >- metis_tac[ultrafilter_def,proper_filter_def,filter_def]) >> metis_tac[])))
+QED
 
 
 
@@ -555,6 +561,9 @@ val ultraproduct_folmodel_def = Define`
                                (y i) = (FMS i).Fun n (MAP (\fc. (CHOICE fc) i)fs)} IN U
                      };
        Pred := \p zs. {i | i IN I /\ (FMS i).Pred p (MAP (\fc. (CHOICE fc) i) zs)} IN U |>`;
+
+val wffm_def = Define`
+wffm M <=> (∀n0 l0. M.Fun n0 l0 ∈ M.Dom)`
 
 Theorem thm_A_19_i_V_l3:
   !U I A m eqc. ultrafilter U I ==>  (m IN eqc /\ eqc IN (ultraproduct U I A)) ==>
@@ -983,12 +992,21 @@ QED
 
 
 Theorem thm_A_19_ii:
-   !U I phi. ultrafilter U I ==>
-      !σ FMS. IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==>
-             (!i ff ll. i IN I ==> (FMS i).Fun ff ll IN (FMS i).Dom) ==>
+!U I phi σ FMS. (ultrafilter U I /\
+                 (valuation (ultraproduct_folmodel U I FMS) σ) /\
+                 (!i. i IN I ==> wffm (FMS i))) ==>
                   (feval (ultraproduct_folmodel U I FMS) σ phi <=>
                   {i | i IN I /\ feval (FMS i) (\x. (CHOICE (σ x)) i) phi} IN U)
 Proof
+  `!U I phi. ultrafilter U I ==>
+      !σ FMS. IMAGE σ (univ(:num)) ⊆ ultraproduct U I (folmodels2Doms FMS) ==>
+             (!i ff ll. i IN I ==> (FMS i).Fun ff ll IN (FMS i).Dom) ==>
+                  (feval (ultraproduct_folmodel U I FMS) σ phi <=>
+                 {i | i IN I /\ feval (FMS i) (\x. (CHOICE (σ x)) i) phi} IN U)`
+    suffices_by 
+      (rw[] >> first_x_assum irule >>
+ fs[IMAGE_DEF,valuation_def,wffm_def,SUBSET_DEF,ultraproduct_folmodel_def] >>
+metis_tac[]) >> 
 Induct_on `phi` (* 4 *)
 >- (rw[feval_def] >> metis_tac[EMPTY_NOTIN_ultrafilter])
 >- (rw[] >> Cases_on `l = []`
@@ -1572,7 +1590,11 @@ rw[] >> drule thm_A_19_ii >> rw[] >> drule ultraproduct_rep_independence_lemma >
     qexists_tac `\i. σ x'` >> rw[] (* 2 *)
     >- (rw[Cart_prod_def,folmodels2Doms_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
     >- (rw[EXTENSION,Uequiv_SYM] >> rw[EQ_IMP_THM,Uequiv_def])) >>
-first_x_assum drule >> rw[] >>
+ `valuation (ultraproduct_folmodel U I' FMS) 
+  (λx. {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)})`
+  by (fs[IMAGE_DEF,SUBSET_DEF,valuation_def,ultraproduct_folmodel_def] >> metis_tac[]) >>
+ `∀i. i ∈ I' ⇒ wffm (FMS i)` by 
+   (rw[wffm_def] >> metis_tac[]) >>
 first_x_assum drule >> rw[] >>
 first_x_assum drule >> rw[] >>
 first_x_assum (qspec_then `phi` assume_tac) >>
@@ -1658,6 +1680,11 @@ first_x_assum
 `IMAGE (λv. {g | Uequiv U I' (folmodels2Doms FMS) g (rv v)}) 𝕌(:num) ⊆
         ultraproduct U I' (folmodels2Doms FMS)`
  by metis_tac[rep_give_wf_valuation] >>
+`valuation (ultraproduct_folmodel U I' FMS) 
+  (λv. {g | Uequiv U I' (folmodels2Doms FMS) g (rv v)})`
+  by (fs[IMAGE_DEF,SUBSET_DEF,valuation_def,ultraproduct_folmodel_def] >> metis_tac[]) >>
+ `∀i. i ∈ I' ⇒ wffm (FMS i)` by 
+   (rw[wffm_def] >> metis_tac[]) >>
 first_x_assum drule >> rw[] >>
 first_x_assum drule >> rw[] >>
 first_x_assum (qspecl_then [`phi`,`rv`] assume_tac) >>
