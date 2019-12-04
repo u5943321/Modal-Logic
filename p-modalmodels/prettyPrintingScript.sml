@@ -4,7 +4,7 @@ open chap1Theory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory 
 
 val _ = new_theory "prettyPrinting";
 
-(* equiv0 2.15 2.29 ultraproduct_model_def ppLos_modal_thm ppultraproduct_folmodel_def thm_A_19_ii M_sat_def prop_2_54_DIST_TYPE n_saturated_def lemma_2_73 expansion_shift_feval ultraproduct_comm_feval thm_2_74_half2 *)
+(* equiv0 2.29 ultraproduct_model_def ppLos_modal_thm ppultraproduct_folmodel_def thm_A_19_ii M_sat_def prop_2_54_DIST_TYPE n_saturated_def lemma_2_73 expansion_shift_feval ultraproduct_comm_fevalomit it thm_2_74_half2 *)
 (* val _ = remove_termtok { tok = " *)
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   paren_style = OnlyIfNecessary,
@@ -12,27 +12,6 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   term_name = "==>",
                   pp_elements = [HardSpace 1, TOK "⇒", BreakSpace(1,2)]}
 
-
-Theorem ppFINITE_BIGCONJ = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] chap2_2Theory.FINITE_BIGCONJ
-
-Theorem ppthm_2_74_half2 = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] chap2_6Theory.thm_2_74_half2
-
-Theorem ppPE_BIGCONJ = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] chap2_7Theory.PE_BIGCONJ
-
-Theorem ppPE_BIGDISJ = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] chap2_7Theory.PE_BIGDISJ
-
-Theorem ppultraproduct_sat'' = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] lemma2_73Theory.ultraproduct_sat''
-
-Theorem ppexercise_1_3_1 = REWRITE_RULE [GSYM CONJ_ASSOC, AND_IMP_INTRO] chap1Theory.exercise_1_3_1
-
-Theorem ppprop_2_9:
-∀M M' w w' f form.
-            strong_hom f M M' ∧ w ∈ M.frame.world ∧
-            SURJ f M.frame.world M'.frame.world ⇒
-            modal_eq M M' w (f w)
-Proof
-rw[] >> drule prop_2_9 >> rw[]
-QED
 
 val Fun_component_def = Define`
   Fun_component FMS n fs i = (FMS i).Fun n (MAP (λfc. CHOICE fc i) fs)`;
@@ -77,38 +56,6 @@ Proof
 rw[ultraproduct_model_def,models2worlds_def]
 QED
 
-Theorem pppeval_satis_strengthen':
-!f M w. propform f /\ (prop_letters f ⊆ s) /\
-        w IN M.frame.world ==>
-        (satis M w f <=> peval (\a. w IN M.valt a /\ a IN s) f)
-Proof
-rw[] >> drule peval_satis_strengthen' >> fs[INTER_DEF] >> rw[] >>
-first_x_assum drule_all >> fs[IN_DEF] >>
-`{x | M.valt x w ∧ s x}  = (λa. M.valt a w ∧ s a)` suffices_by fs[] >>
-rw[EXTENSION,EQ_IMP_THM]
-QED
-
-
-
-
-Theorem pprooted_model_def:
-!M x M'. rooted_model M x M' <=> x IN M'.frame.world /\
-                                 (!a. a IN M.frame.world <=> (a IN M'.frame.world /\ (RTC (RESTRICT M'.frame.rel M'.frame.world)) x a)) /\
-                                 (!w1 w2. w1 IN M.frame.world /\ w2 IN M.frame.world ==>
-                                   (M.frame.rel w1 w2 <=> (RESTRICT M'.frame.rel M'.frame.world) w1 w2)) /\
-                                 (!p w. M.valt p w <=> M'.valt p w)
-Proof
-rw[rooted_model_def,IN_DEF]
-QED
-
-Theorem ppprop_2_15_corollary:
-!M (w:'b) form. satis M w form ==>
-  ?M' (s:'b list). tree M'.frame s /\ satis M' s form
-Proof
-rw[] >> drule prop_2_15_corollary >> metis_tac[]
-QED
-
-
 
 Theorem ppequiv0_def:
    !f1:chap1$form f2.  equiv0 (:β) f1 f2 <=> !M w:β. satis M w f1 <=> satis M w f2
@@ -116,191 +63,6 @@ Proof
 rw[equiv0_def]
 QED
 
-Theorem ppequiv0_DIAM:
- ∀f g μ. INFINITE 𝕌(:α) ⇒ (equiv0 (:α) (◇ f) (◇ g) ⇔ equiv0 (:α) f g)
-Proof
-rw[equiv0_DIAM]
-QED
-
-Theorem ppSUBMODEL_def:
-∀M1 M2.
-            SUBMODEL M1 M2 ⇔
-            M1.frame.world ⊆ M2.frame.world ∧
-            (∀w1 w2.
-                    (w1 ∈ M1.frame.world /\ w2 IN M1.frame.world) ⇒
-                    (M1.frame.rel w1 w2 ⇔ M2.frame.rel w1 w2)) /\
-            (∀w1.
-                w1 ∈ M1.frame.world ⇒
-                (∀v. M1.valt v w1 ⇔ M2.valt v w1))
-Proof
-rw[SUBMODEL_def] >> fs[IN_DEF] >> metis_tac[]
-QED
-
-
-Theorem ppprop_2_31_half1:
-∀M M' n w w' f.
-             (nbisim M M' f n w w' /\
-             DEG phi ≤ n) ⇒ (satis M w phi ⇔ satis M' w' phi)
-Proof
-metis_tac[prop_2_31_half1]
-QED
-
-
-Theorem ppGENSUBMODEL_def:
-∀M1 M2.
-            GENSUBMODEL M1 M2 ⇔
-            SUBMODEL M1 M2 ∧
-            ∀w1 w2.
-                (w1 ∈ M1.frame.world /\
-                w2 ∈ M2.frame.world ∧ M2.frame.rel w1 w2) ⇒
-                    w2 ∈ M1.frame.world
-Proof
-rw[GENSUBMODEL_def] >> fs[IN_DEF] >> metis_tac[]
-QED
-
-Theorem pphom_def:
-∀f M1 M2.
-            hom f M1 M2 ⇔
-            (∀w.
-                w ∈ M1.frame.world ⇒
-                f w ∈ M2.frame.world ∧
-                (∀p. w ∈ M1.valt p ⇒ f w ∈ M2.valt p)) ∧
-            (∀w v.  (w IN M1.frame.world /\
-                    v ∈ M1.frame.world /\
-                    M1.frame.rel w v) ⇒
-                    M2.frame.rel (f w) (f v))
-Proof
-rw[hom_def] >> metis_tac[]
-QED
-
-Theorem ppstrong_hom_def:
-∀f M1 M2.
-            strong_hom f M1 M2 ⇔
-            (∀w.
-                w ∈ M1.frame.world ⇒
-                f w ∈ M2.frame.world ∧
-                (∀p. w ∈ M1.valt p ⇔ f w ∈ M2.valt p)) ∧
-            (∀w v. (w IN M1.frame.world /\
-                  v ∈ M1.frame.world) ⇒
-                  (M1.frame.rel w v ⇔ M2.frame.rel (f w) (f v)))
-Proof
-rw[strong_hom_def] >> metis_tac[]
-QED
-
-Theorem ppsubforms_def:
-(∀a. subforms (VAR a) = {VAR a}) ∧ subforms ⊥ = {⊥} ∧
-        (∀f. subforms (¬f) = {¬f} ∪ subforms f) ∧
-        (∀f1 f2.
-             subforms (DISJ f1 f2) =
-             {DISJ f1 f2} ∪ subforms f1 ∪ subforms f2) ∧
-        ∀f. subforms (◇ f) = {◇ f} ∪ subforms f
-Proof
-rw[subforms_def,Once UNION_DEF,Once INSERT_DEF,EXTENSION,EQ_IMP_THM] >>
-metis_tac[]
-QED
-
-
-Theorem ppM_sat_def:
-∀M.
-            M_sat M ⇔
-            ∀w Σ.
-                (w ∈ M.frame.world /\
-                fin_satisfiable_in Σ
-                  {v | v ∈ M.frame.world ∧ M.frame.rel w v} M) ⇒
-                satisfiable_in Σ {v | v ∈ M.frame.world ∧ M.frame.rel w v} M
-Proof
-rw[M_sat_def] >> metis_tac[]
-QED
-
-Theorem ppprop_2_54_DIST_TYPE:
-∀M M' w w'.
-            (M_sat M ∧ M_sat M' ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world /\
-            modal_eq M M' w w') ⇒
-            bisim_world M M' w w'
-Proof
-rw[] >> metis_tac[prop_2_54_DIST_TYPE]
-QED
-
-Theorem ppcan_see_UNION:
-can_see M (X ∪ Y) = (can_see M X) ∪ (can_see M Y)
-Proof
-rw[can_see_def,EXTENSION,EQ_IMP_THM] (* 6 *)
->> metis_tac[]
-QED
-
-Theorem ppexercise_2_5_5:
-∀M u v.
-       UE_rel M u v ⇔ (ultrafilter u M.frame.world ∧ ultrafilter v M.frame.world /\ {Y | only_see M Y ∈ u ∧ Y ⊆ M.frame.world} ⊆ v)
-Proof
-rw[EQ_IMP_THM] (* 4 *)
->- fs[UE_rel_def]
->- fs[UE_rel_def]
->- (`ultrafilter u M.frame.world /\ ultrafilter v M.frame.world`
-     by metis_tac[UE_rel_def] >>
-    metis_tac[exercise_2_5_5])
->- metis_tac[exercise_2_5_5]
-QED
-
-
-Theorem ppn_saturated_def:
-∀M n.
-            n_saturated M n ⇔
-            ∀A G x f.
-                (IMAGE f 𝕌(:num) ⊆ M.Dom /\ FINITE A ∧ CARD A ≤ n ∧ A ⊆ M.Dom ∧
-                BIJ f (count (CARD A)) A ∧
-                (∀phi.
-                     phi ∈ G ⇒ form_functions phi ⊆ {(c, 0) | c < CARD A}) ∧
-                 ftype x G ∧
-                consistent (expand M A f) G) ⇒
-                frealizes (expand M A f) x G
-Proof
-rw[n_saturated_def,SUBSET_DEF,FST,SND,EQ_IMP_THM] (* 2 *)
->- (first_x_assum irule >> rw[] (* 2 *)
-   >- (fs[FST] >> first_x_assum drule >> rw[] >> first_x_assum drule >> rw[] >>
-      fs[FST])
-   >- (first_x_assum drule >> rw[] >> first_x_assum drule >> rw[] >> fs[SND]))
->- (first_x_assum irule >> rw[] >>
-    qexists_tac `FST x'` >> rw[] (* 2 *)
-   >> first_x_assum drule >> rw[] >> first_x_assum drule >> rw[] >>
-   Cases_on `x'` >> fs[FST,SND])
-QED
-
-Theorem ppthm_2_65_corollary:
-∀M M' w w'.
-         countably_saturated (mm2folm M) ∧ countably_saturated (mm2folm M') ∧
-         w ∈ M.frame.world ∧ w' ∈ M'.frame.world ⇒
-         (modal_eq M M' w w' <=>
-         bisim_world M M' w w')
-Proof
-rw[EQ_IMP_THM] (* 2 *)
->- metis_tac[thm_2_65_corollary]
->- (rw[modal_eq_tau] >> metis_tac[thm_2_20,modal_eq_tau])
-QED
-
-Theorem ppultraproduct_rep_independence_lemma:
-∀U I FMS σ phi rv.
-            ((ultrafilter U I /\
-            valuation (ultraproduct_folmodel U I FMS) σ) /\
-
-                (∀v. v ∈ FV phi ⇒ rv v ∈ σ v)) ⇒
-                ({i | i ∈ I ∧ feval (FMS i) (λx. CHOICE (σ x) i) phi} ∈ U ⇔
-                 {i | i ∈ I ∧ feval (FMS i) (λv. rv v i) phi} ∈ U)
-Proof
-rw[] >>
-`IMAGE σ 𝕌(:num) ⊆ ultraproduct U I' (folmodels2Doms FMS)`
-  suffices_by metis_tac[ultraproduct_rep_independence_lemma] >>
-fs[IMAGE_DEF,SUBSET_DEF,valuation_def] >> fs[ultraproduct_folmodel_def] >>
-metis_tac[]
-QED
-
-Theorem pplemma_2_73:
-∀U I MS.
-            (countably_incomplete U I /\
-            (∀i. i ∈ I ⇒ (MS i).frame.world ≠ ∅)) ⇒
-            countably_saturated (mm2folm (ultraproduct_model U I MS))
-Proof
-metis_tac[lemma_2_73]
-QED
 
 Theorem ppcompactness_thm_L1tau:
 !A. (INFINITE 𝕌(:α) /\
@@ -324,35 +86,6 @@ Proof
 rw[] >> drule compactness_corollary_L1tau >> rw[]
 QED
 
-
-Theorem ppprop_2_29_strengthen:
-!s. FINITE s /\ INFINITE univ(:'b) ==> !n. FINITE (partition (equiv0 (μ:'b itself)) {f| DEG f <= n /\ prop_letters f ⊆ s})
-Proof
-rw[] >> drule prop_2_29_strengthen >> rw[] >>
-`{f | DEG f ≤ n ∧ ∀a. VAR a ∈ subforms f ⇒ a ∈ s} =
-{f | DEG f ≤ n ∧ prop_letters f ⊆ s}` suffices_by metis_tac[] >>
-rw[EXTENSION,SUBSET_DEF] >> metis_tac[prop_letters_subforms]
-QED
-
-Theorem ppprop_2_47_i:
-!M w:'b phi (σ:num -> 'b) x:num. valuation (mm2folm M) σ
-                       ==> (satis M (σ x) phi <=> fsatis (mm2folm M) σ (ST x phi))
-Proof
-rw[] >>
-`IMAGE σ 𝕌(:num) ⊆ M.frame.world` suffices_by metis_tac[prop_2_47_i] >>
-fs[valuation_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]
-QED
-
-Theorem ppprop_2_47_i':
- !M w:'b phi σ x. valuation M σ
-                       ==> (satis (folm2mm M) (σ x) phi <=> feval M σ (ST x phi))
-Proof
-rw[] >>
-`IMAGE σ 𝕌(:num) ⊆ M.Dom` suffices_by metis_tac[prop_2_47_i'] >>
-fs[valuation_def,IMAGE_DEF,SUBSET_DEF,mm2folm_def] >> metis_tac[]
-QED
-
-
 Theorem ppexpansion_shift_feval:
   !M A M' f σ phi. (BIJ f (count (CARD A)) A /\ valuation (mm2folm M) σ /\
                     (form_functions phi ⊆ {(c1,0) | c1 < (CARD A)})) ==>
@@ -368,18 +101,6 @@ fs[mm2folm_def,valuation_def,IMAGE_DEF,SUBSET_DEF] >> metis_tac[]
 QED
 
 
-Theorem ppthm_A_19_i:
-!t U I σ FMS. (ultrafilter U I /\
-               (valuation (ultraproduct_folmodel U I FMS) σ /\
-                   (!i. i IN I ==> wffm (FMS i)))) ==>
-          termval (ultraproduct_folmodel U I FMS) σ t =
-          {f | Uequiv U I (folmodels2Doms FMS) f
-               (\i. termval (FMS i) (\n. CHOICE (σ n) i) t)}
-Proof
-rw[] >> drule thm_A_19_i >> rw[] >> first_x_assum irule >>
- fs[IMAGE_DEF,valuation_def,wffm_def,SUBSET_DEF,ultraproduct_folmodel_def] >>
-metis_tac[]
-QED
 
 
 Theorem ppthm_A_19_ii:
@@ -392,33 +113,6 @@ Proof
 rw[] >> drule thm_A_19_ii >> rw[] >> first_x_assum irule >>
  fs[IMAGE_DEF,valuation_def,wffm_def,SUBSET_DEF,ultraproduct_folmodel_def] >>
 metis_tac[]
-QED
-
-Theorem ppultraproduct_suffices_rep:
-!U I FMS rv phi.
-  (ultrafilter U I /\
-   (∀i. i IN I ==> wffm (FMS i)) /\
-   (!i. valuation (FMS i) (\v. rv v i)) /\
-   {i | i IN I /\ feval (FMS i) (\v. rv v i) phi} IN U) ==>
-     feval (ultraproduct_folmodel U I FMS)
-           (\v. {g | Uequiv U I (folmodels2Doms FMS) g (rv v)}) phi
-Proof
-rw[] >> drule ultraproduct_suffices_rep >> rw[] >> first_x_assum irule >>
-fs[valuation_def,wffm_def] >> metis_tac[]
-QED
-
-
-
-Theorem ppcorollary_A_21:
- !U I FMS FM σ phi.
-   (ultrafilter U I /\
-    (!i. i IN I ==> FMS i = FM) /\ wffm FM /\ valuation FM σ) ==>
-     (feval FM σ phi <=>
-            feval (ultraproduct_folmodel U I FMS)
-            (\x. {g | Uequiv U I (folmodels2Doms FMS) g (\i. σ x)}) phi)
-Proof
-rw[] >> drule corollary_A_21 >> rw[valuation_def,IMAGE_DEF,SUBSET_DEF] >>
-fs[wffm_def] >> fs[valuation_def] >> first_x_assum irule >> metis_tac[]
 QED
 
 Theorem ppultraproduct_comm_feval:
@@ -436,146 +130,7 @@ rw[] >>
 rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def,ultraproduct_model_def,mm2folm_def]
 QED
 
-Theorem ppprop_2_31_half1:
-∀M M' n w w' f.
-            (nbisim M M' f n w w' /\
-            DEG phi ≤ n) ⇒ (satis M w phi ⇔ satis M' w' phi)
-Proof
-metis_tac[prop_2_31_half1]
-QED
 
-Theorem ppultraproduct_sat:
-!U I FMS x f s.
-   (countably_incomplete U I /\
-    valuation (ultraproduct_folmodel U I FMS) f /\
-    (∀i. i ∈ I ⇒ wffm (FMS i)) /\
-   (!phi. phi IN s ==> L1tau phi /\ (FV phi) DIFF N ⊆ {x}) /\
-       (!ss. (FINITE ss /\ ss ⊆ s) ==>
-          ?σ. (valuation (ultraproduct_folmodel U I FMS) σ) /\
-              (!n. n IN N ==> σ n = f n) /\
-              (!phi. phi IN ss ==> feval (ultraproduct_folmodel U I FMS) σ phi))) ==>
-       (?σ. valuation (ultraproduct_folmodel U I FMS) σ /\
-            (!n. n IN N ==> σ n = f n)  /\
-            (!phi. phi IN s ==> feval (ultraproduct_folmodel U I FMS) σ phi))
-Proof
-rw[valuation_def] >> drule ultraproduct_sat >> rw[] >>
-`∃σ.
-                IMAGE σ 𝕌(:num) ⊆ (ultraproduct_folmodel U I' FMS).Dom ∧
-                (∀n. n ∈ N ⇒ σ n = f n) ∧
-                ∀phi. phi ∈ s ⇒ feval (ultraproduct_folmodel U I' FMS) σ phi`
-suffices_by
-  (rw[] >> qexists_tac `σ` >> rw[] >> fs[IMAGE_DEF,SUBSET_DEF] >>
-   fs[ultraproduct_folmodel_def] >> metis_tac[]) >>
-first_x_assum irule >> rw[]
->- fs[wffm_def]
->- (qexists_tac `x` >> fs[L1tau_def])
->- (`∃σ.
-                (∀n. σ n ∈ (ultraproduct_folmodel U I' FMS).Dom) ∧
-                (∀n. n ∈ N ⇒ σ n = f n) ∧
-                ∀phi. phi ∈ ss ⇒ feval (ultraproduct_folmodel U I' FMS) σ phi`
-     suffices_by
-       (rw[] >> first_x_assum drule_all >> strip_tac >> qexists_tac `σ` >>
-        rw[] >> rw[IMAGE_DEF,SUBSET_DEF] >> fs[valuation_def]) >>
-   metis_tac[])
->- (rw[IMAGE_DEF,SUBSET_DEF] >> fs[ultraproduct_folmodel_def])
-QED
-
-Theorem pppreserved_under_sim_def:
- ∀phi:chap1$form.
-         preserved_under_sim (:α) (:β) phi ⇔
-         ∀M M' Z w:α w':β.
-             (w ∈ M.frame.world ∧ w' ∈ M'.frame.world ∧ sim Z M M' ∧ Z w w' /\
-             satis M w phi) ⇒
-             satis M' w' phi
-Proof
-metis_tac[preserved_under_sim_def]
-QED
-
-(*
-Theorem ppthm_2_68_half1:
-∀a x.
-            (INFINITE 𝕌(:α) /\
-            invar4bisim x (:(num -> α) -> bool) (:(num -> α) -> bool) a) ⇒
-            ∃(phi:num chap1$form). ∀M v:num -> α. valuation M v ⇒ (feval M v a ⇔ feval M v (ST x phi))
-
-Proof
-rw[] >> drule thm_2_68_half1 >>  metis_tac[]
-QED
-*)
-
-Theorem ppthm_2_68_half1:
-∀a x.
-            (INFINITE 𝕌(:α) /\
-            invar4bisim x (:(num -> α) -> bool) (:(num -> α) -> bool) a) ⇒
-            ∃(phi:chap1$form). feq (:α) a (ST x phi)
-
-Proof
-rw[] >> drule thm_2_68_half1 >>  rw[feq_def] >> metis_tac[]
-QED
-
-
-
-
-Theorem ppthm_2_78_half2:
-(INFINITE 𝕌(:β) /\
-preserved_under_sim (:(β -> bool) -> bool) (:(β -> bool) -> bool) phi) ⇒ ∃phi0:chap1$form. equiv0 (:β) phi phi0 ∧ PE phi0
-Proof
-metis_tac[thm_2_78_half2]
-QED
-
-
-Theorem ppL1tau_mm2folm_folm2mm_comm_feval:
- (L1tau f/\ valuation M v) ⇒
-                (feval (mm2folm (folm2mm M)) v f ⇔ feval M v f)
-Proof
-metis_tac[L1tau_mm2folm_folm2mm_comm_feval]
-QED
-
-Theorem pptree_no_loop:
-∀s r t0 t. (tree s r /\ (RESTRICT s.rel s.world)⁺ t0 t) ⇒ t0 ≠ t
-Proof
-metis_tac[tree_no_loop]
-QED
-
-Theorem pptree_height_rel_lemma:
-∀M x w v.
-        (tree M.frame x /\
-        w ∈ M.frame.world ∧ height M x M w = n /\
-        M.frame.rel w v ∧ v ∈ M.frame.world) ⇒
-                    height M x M v = n + 1
-Proof
-metis_tac[tree_height_rel_lemma]
-QED
-
-Theorem pplemma_2_33:
-∀M x M' k w.
-            (rooted_model M x M'/\ w ∈ (hrestriction M x M' k).frame.world) ⇒
-                ∃f.
-                    nbisim (hrestriction M x M' k) M f (k − height M x M' w)
-                      w w
-Proof
-metis_tac[lemma_2_33]
-QED
-
-
-Theorem ppLos_modal_thm:
-∀U J Ms phi fc.
-            (ultrafilter U J /\
-                fc ∈ (ultraproduct_model U J Ms).frame.world) ⇒
-                (satis (ultraproduct_model U J Ms) fc phi ⇔
-                 ∃f. f ∈ fc ∧ {i | i ∈ J ∧ satis (Ms i) (f i) phi} ∈ U)
-Proof
-metis_tac[Los_modal_thm]
-QED
-
-Theorem ppexercise_2_7_1:
-∀M M' w w'.
-            (M_sat M ∧ M_sat M' ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world /\
-             (∀phi. PE phi ⇒ satis M w phi ⇒ satis M' w' phi)) ⇒
-            ∃Z. sim Z M M' ∧ Z w w'
-Proof
-metis_tac[exercise_2_7_1]
-QED
 
 Theorem ppmodal_compactness_thm:
 (INFINITE 𝕌(:α) /\ (∀ss:chap1$form -> bool.
@@ -587,16 +142,6 @@ metis_tac[modal_compactness_thm]
 QED
 
 
-Theorem pphrestriction_def:
-∀M x M' n.
-            hrestriction M x M' n =
-            <|frame :=
-                <|world := {w | w ∈ M.frame.world ∧ height M x M' w ≤ n};
-                  rel := M.frame.rel|>;
-              valt := M.valt|>
-Proof
-rw[hrestriction_def,FUN_EQ_THM]
-QED
 
 Theorem ppmodal_compactness_corollary:
 INFINITE 𝕌(:α) /\
@@ -620,32 +165,6 @@ val UE'_def = Define`
             ∀X. X ∈ v ⇒ can_see M X ∈ u) |>;
             valt := \p v. (ultrafilter v M.frame.world /\
             {w | w IN M.frame.world /\  M.valt p w } IN v)|>`;
-
-
-Theorem ppultraproduct_comm_feval':
-∀phi U I MS σ.
-         (ultrafilter U I /\
-         L1tau phi /\
-         (∀i. i ∈ I ⇒ wffm (MS i)) /\
-          IMAGE σ 𝕌(:num) ⊆ ultraproduct U I (folmodels2Doms MS)) ⇒
-             (feval (ultraproduct_folmodel U I MS) σ phi ⇔
-              feval (mm2folm (ultraproduct_model U I (λi. folm2mm (MS i)))) σ
-                phi)
-Proof
-rw[] >> irule ultraproduct_comm_feval' >> rw[] >> fs[wffm_def]
-QED
-
-Theorem ppL1tau_ultraproduct_mm2folm_folm2mm_comm_feval:
-L1tau a ∧ FV a ⊆ {x} ∧ ultrafilter U I ∧ valuation M σ ⇒
-            (feval M σ a ⇔
-             feval (mm2folm (ultraproduct_model U I (λi. folm2mm M)))
-               (λv.
-                    {fw |
-                     Uequiv U I (models2worlds (λi. folm2mm M)) (λi. σ v) fw})
-               a)
-Proof
-metis_tac[L1tau_ultraproduct_mm2folm_folm2mm_comm_feval]
-QED
 
 val _ = overload_on("Mw", “λM. M.frame.world”);
 

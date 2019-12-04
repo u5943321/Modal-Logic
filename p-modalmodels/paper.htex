@@ -282,7 +282,7 @@ The critical result we need about ultraproducts of modal models is a modal versi
 
 \begin{theorem}[\los's theorem, Modal version]
 \begin{holmath}
-  \HOLthm[MS/Ms,j/i,f0/f,width=65]{prettyPrinting.ppLos_modal_thm}
+  \HOLthm[MS/Ms,j/i,f0/f,width=65]{ultraproduct.Los_modal_thm}
 \end{holmath}
 \end{theorem}
 According to our intuition about ultrafilters, we can gloss this theorem to mean that the ultraproduct of a family of modal models satisfies a modal formula if and only if `most of' the models in the family satisfy the formula.
@@ -314,7 +314,7 @@ The semantic behavior of ultraproduct models is characterized by \los's theorem:
 \begin{theorem}
 {\upshape\cite[Theorem A.19 (\los's theorem)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[J/I,j/i,v/x,width=65]{prettyPrinting.ppthm_A_19_ii}
+  \HOLthm[J/I,j/i,v/x,width=65]{ultraproduct.thm_A_19_ii}
 \end{holmath}
 \end{theorem}
 where \HOLtm{wffm M} means the functions of \HOLtm{M} never map a list out of the domain of \HOLtm{M}.
@@ -328,14 +328,14 @@ To define m-saturation, we give the following three definitions (the first two a
 \begin{holmath}
   \HOLthm[def,phi/form,w/x]{chap2_5.satisfiable_in_def}\\[3mm]
   \HOLthm[def]{chap2_5.fin_satisfiable_in_def}\\[3mm]
-  \HOLthm[def]{prettyPrinting.ppM_sat_def}
+  \HOLthm[def]{chap2_5.M_sat_def}
 \end{holmath}
 \end{definition}
 For m-saturated models, bisimulation and modal equivalence coincides:
 \begin{proposition}\label{2.54}
 {\upshape\cite[Proposition 2.54]{Blackburn}}
 \begin{holmath}
-  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=60]{prettyPrinting.ppprop_2_54_DIST_TYPE}
+  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=60]{chap2_5.prop_2_54_DIST_TYPE}
 \end{holmath}
 \end{proposition}
 Given a model \HOLtm{M}, its ultrafilter extension \HOLtm{UE M} is defined as:
@@ -385,14 +385,14 @@ If every such \HOLtm{M'} realizes every $x$-type \HOLtm{Γ}, then we say \HOLtm{
 \begin{definition}
 {\upshape\cite[Definition 2.63 ($n$-Saturated)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,Γ/G,FM/M]{prettyPrinting.ppn_saturated_def}\\[3mm]
+  \HOLthm[def,Γ/G,FM/M]{lemma2_73.n_saturated_def}\\[3mm]
 \end{holmath}
 \end{definition}
 We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterization theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.
 \begin{lemma}\label{2.73}
 {\upshape\cite[Lemma 2.73]{Blackburn}}
 \begin{holmath}
-  \HOLthm[J/I,j/i]{prettyPrinting.pplemma_2_73}
+  \HOLthm[J/I,j/i]{lemma2_73.lemma_2_73}
 \end{holmath}
 \end{lemma}
 Here a countably incomplete ultrafilter is an ultrafilter that contains a countably infinite family that intersects to the empty set. We prove in HOL that such ultrafilters do exist using Theorem \ref{A.14}. The above theorem is not simply a direct consequence of \los's theorem:
@@ -446,7 +446,7 @@ If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are moda
 {\upshape\cite[Theorem 2.74, one direction]{Blackburn}}
 \label{2.74}
 \begin{holmath}
-  \HOLthm[J/I,j/i,f/fw,g/fv]{prettyPrinting.ppthm_2_74_half2}
+  \HOLthm[J/I,j/i,f/fw,g/fv]{chap2_6.thm_2_74_half2}
 \end{holmath}
 \end{theorem}
 
