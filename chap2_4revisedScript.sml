@@ -6,7 +6,7 @@ open relationTheory;
 open arithmeticTheory;
 open set_relationTheory;
 open finite_mapTheory;
-open chap1Theory chap2_2Theory chap2_5Theory;
+open chap1Theory chap2_1Theory chap2_2Theory;
 
 open folModelsTheory;
 open folLangTheory;

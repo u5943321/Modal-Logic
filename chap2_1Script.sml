@@ -142,7 +142,12 @@ val tau_theory_def = Define`
 val modal_eq_def = Define`
 !M M' w w'. modal_eq M M' w w'<=> (tau_theory M w = tau_theory M' w')`;
 
-
+val modal_eq_tau = store_thm(
+"modal_eq_tau",
+``!M M' w w'. modal_eq M M' w w' <=> (!form. satis M w form <=> satis M' w' form)``,
+rw[EQ_IMP_THM] >> fs[modal_eq_def,tau_theory_def,EXTENSION]
+>- metis_tac[]
+>- rw[EQ_IMP_THM])
 
 val tau_theory_model_def = Define`
 !M. tau_theory_model M = {form | !w. w IN M.frame.world ==> satis M w form}`;

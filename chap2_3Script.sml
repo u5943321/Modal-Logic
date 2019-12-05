@@ -2410,12 +2410,7 @@ rw[] >> drule peval_satis_strengthen >> strip_tac >> first_x_assum irule (* 2 *)
 rw[]
 QED
 
-val modal_eq_tau' = store_thm(
-"modal_eq_tau'",
-``!M M' w w'. modal_eq M M' w w' <=> (!form. satis M w form <=> satis M' w' form)``,
-rw[EQ_IMP_THM] >> fs[modal_eq_def,tau_theory_def,EXTENSION]
->- metis_tac[]
->- rw[EQ_IMP_THM])
+
 
 Theorem example_2_23:
 ?M N w:num#num v:num#num. modal_eq M N w v /\ ¬(bisim_world M N w v)
@@ -2435,7 +2430,7 @@ qabbrev_tac
                 |>;
        valt := \p v. F |>` >>
 map_every qexists_tac [`M`,`N`,`(0,0)`,`(0,0)`] >> rw[] (* 2 *)
->- (simp[modal_eq_tau'] >>
+>- (simp[modal_eq_tau] >>
    `!n. ?f. nbisim M N f n (0,0) (0,0)`
      by
       (rw[] >>

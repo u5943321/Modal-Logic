@@ -406,13 +406,9 @@ To deal with this issue, the key observation is that constants are nothing more 
 \end{holmath}
 \end{definition}
 
-The shifting construction gets us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first-order model. To apply \los's theorem on such a model, we prove by induction that:
-\begin{proposition}\label{k2}
-\begin{holmath}
-  \HOLthm[J/I,j/i]{prettyPrinting.ppultraproduct_comm_feval}
-\end{holmath}
-\end{proposition}
-Using the shifting construction and Proposition \ref{k2}, we can prove Lemma \ref{2.37} using the proof in \cite{ChangKeisler1990}.
+The shifting construction gets us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first-order model. To apply \los's theorem on such a model, we prove that `taking the ultraproduct first-order model commutes with the convertion from modal to a first-order model on certain formulas', in the sense that the resulting models satisfies the same first-order formulas without function symbols. 
+
+After these two steps as described above, we can prove Lemma \ref{2.37} using the proof in \cite{ChangKeisler1990}.
 
 
 
