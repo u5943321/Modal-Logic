@@ -91,7 +91,7 @@ Two worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are \em
 If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivalent} over \HOLty{:β} models (written \HOLtm{equiv0 (:β) phi1 phi2}) if they are satisfied in the same worlds in every model:
 \begin{definition}[Notions of equivalence]
 \begin{holmath}
- \HOLthm[def,phi/form]{chap2_3.modal_eq_tau'}\\[3mm]
+ \HOLthm[def,phi/form]{chap2_1.modal_eq_tau}\\[3mm]
  \HOLthm[def,showtypes,(:'b)/μ,width=60]{IBCDNFrevised.equiv0_def}
 \end{holmath}
 \end{definition}
