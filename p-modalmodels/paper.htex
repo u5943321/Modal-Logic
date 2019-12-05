@@ -23,11 +23,16 @@
 
 %equiv0_def prop_2_15_corollary 2.29 ultraproduct_model_def
 
+\maketitle
 \begin{abstract}
-In this paper, we discuss the formalisation of propositional modal model theory. We stress on the usage of models: previously, there does exist work on formalisation of modal logic, but they are almost all centered at proof systems, which are syntactical, hence our work is indeed original. We follow ``the'' standard textbook \cite{Blackburn} on this domain, and have formalised every result in the first two chapters of the book once it can be captured by the HOL settings. In particular, to formalize Van Benthem characterisation theorem, we formalised the construction of ultraproducts in HOL. Our construction successfully captured the desired saturation property of ultraproduct models on countably incomplete ultrafilters. Some pieces of our work are related to formalised first-order logic, which is done by \cite{Harrison} in 1998. In particular, we use his formalised compactness theorem.
+In this paper, we discuss the formalisation of some fundamental propositional modal model theory. 
+The focus on models is novel: previous work in formalisations of modal logic have centered on proof systems and applications in model-checking. 
+We have formalised a number of fundamental results from the first two chapters of a standard textbook (Blackburn \emph{et al.}~\cite{Blackburn}).
+Among others, one important result, the Van Benthem characterisation theorem, characterizes the connection between modal logic and first order logic.
+This latter captures the desired saturation property of ultraproduct models on countably incomplete ultrafilters. 
+The first-order side of the connection is built on Harrison's earlier work~\cite{Harrison} on first-order model theory, in particular his proof of compactness.
 \end{abstract}
 
-\maketitle
 
 \section{Introduction [1p]}
 
@@ -49,9 +54,9 @@ This paper presents the first mechanised proofs of a number of basic results fro
 \begin{itemize}
 \item Two versions of \los's  theorem the saturation of ultraproduct models;
 \item modal equivalence as bisimilarity between ultrafilter extensions; and
-\item a close approximation of van Benthem's Characterization Theorem.
+\item a close approximation of Van Benthem's Characterization Theorem.
 \end{itemize}
-We also discuss where HOL's simple type theory lets us down: some standard results (including the best possible statement of van Benthem's Characterization Theorem) seem impossible to prove in our setting.
+We also discuss where HOL's simple type theory lets us down: some standard results (including the best possible statement of Van Benthem's Characterization Theorem) seem impossible to prove in our setting.
 
 \section{Syntax, Semantics and the Standard Translation[1.5p]}
 In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
@@ -92,7 +97,7 @@ If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivale
 \begin{definition}[Notions of equivalence]
 \begin{holmath}
  \HOLthm[def,phi/form]{chap2_1.modal_eq_tau}\\[3mm]
- \HOLthm[def,showtypes,(:'b)/μ,width=60]{IBCDNFrevised.equiv0_def}
+ \HOLthm[def,showtypes,width=60]{IBCDNFrevised.equiv0_thm}
 \end{holmath}
 \end{definition}
 We cannot omit the type parameter \HOLtm{(:β)} in the definition, as there would otherwise be a type, namely the type of the underlying set of the models we are talking about, that only appears on the right-hand side but not on the left-hand side of the definition.
@@ -456,7 +461,7 @@ The above lemma relies on Lemma \ref{2.73} and its mathematical proof can be fou
 We believe that we are the first to mechanize the bulk of the results in this paper. 
 We \emph{have} built on Harrison's mechanization of foundational results about first order model theory~\cite{Harrison}, in particular compactness. 
 The connections between modal logic and process algebra are well-understood and there has been a great deal of mechanised work on the operational theory of such (co-)algebraic systems, starting at least as far back as Nesi~\cite{Nesi96}. 
-Our proof of the Hennessy-Milner theorem~(Theorem~\ref{hennessy-milner}) is a gesture in this direction, but van Benthem's theorem is much deeper and uses bisimulations as a tool to understanding the connection between modal and first order logics, rather than as a connection to process algebras.
+Our proof of the Hennessy-Milner theorem~(Theorem~\ref{hennessy-milner}) is a gesture in this direction, but Van Benthem's theorem is much deeper and uses bisimulations as a tool to understanding the connection between modal and first order logics, rather than as a connection to process algebras.
 
 Mechanised work with ultrafilters began with Fleuriot's use of them to mechanise non-standard analysis~\cite{Fleuriot2001}.
 We are unaware of any previous use of ultraproducts or ultrapowers.
