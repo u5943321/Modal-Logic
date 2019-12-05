@@ -15,6 +15,7 @@ val _ = new_theory "IBCDNFrevised";
 val equiv0_def = Define`
      equiv0 (tyi: μ itself) f1 f2 <=> !M w:μ. satis M w f1 <=> satis M w f2`;
 
+Theorem equiv0_thm = equiv0_def |> INST_TYPE [“:μ” |-> beta] |> SPEC “(:β)”
 
 val equiv0_equiv_on = store_thm(
   "equiv0_equiv_on",
