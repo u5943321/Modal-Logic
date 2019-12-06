@@ -53,12 +53,7 @@ M_sat M ⇔
                   {v | v ∈ M.frame.world ∧ M.frame.rel w v} M) ⇒
                 satisfiable_in Σ {v | v ∈ M.frame.world ∧ M.frame.rel w v} M`;
 
-val modal_eq_tau = store_thm(
-"modal_eq_tau",
-``!M M' w w'. modal_eq M M' w w' <=> (!form. satis M w form <=> satis M' w' form)``,
-rw[EQ_IMP_THM] >> fs[modal_eq_def,tau_theory_def,EXTENSION]
->- metis_tac[]
->- rw[EQ_IMP_THM])
+
 
 val BIGCONJ_EXISTS_2 = store_thm(
 "BIGCONJ_EXISTS_2",
