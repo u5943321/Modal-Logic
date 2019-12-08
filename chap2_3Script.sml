@@ -1831,6 +1831,27 @@ Proof
 Induct_on `phi` >> rw[prop_letters_def]
 QED
 
+Theorem BIGCONJ_prop_letters_DEG:
+∀s.
+         FINITE s ⇒
+         ∀n s0.
+             (∀f. f ∈ s ⇒ DEG f ≤ n) ∧
+             (∀f. f ∈ s ⇒ prop_letters f ⊆ s0) ⇒
+             ∃ff.
+                 DEG ff ≤ n ∧ prop_letters ff ⊆ s0 ∧
+                 ∀w M.
+                     w ∈ M.frame.world ⇒
+                     (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)
+Proof
+Induct_on `FINITE` >> rw[]
+>- (qexists_tac `TRUE` >> rw[TRUE_def,satis_def,DEG_def,prop_letters_def]) >>
+`(∀f. f ∈ s ⇒ DEG f ≤ n) ∧
+ (∀f. f ∈ s ⇒ prop_letters f ⊆ s0)` by metis_tac[] >>
+first_x_assum drule_all >> strip_tac >>
+qexists_tac `AND e ff` >> 
+rw[AND_def,satis_AND,DEG_def,prop_letters_def] >> metis_tac[]
+QED 
+
 Theorem thm_2_34:
 !M1 w1:'b phi: chap1$form.
      satis M1 w1 phi ==>

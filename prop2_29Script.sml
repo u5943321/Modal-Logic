@@ -12,7 +12,6 @@ open pairTheory;
 
 val _ = new_theory "prop2_29";
 
-
 val (IBC_rules, IBC_ind, IBC_cases) = Hol_reln`
 (!f1 f2 s.
 IBC f1 s /\ IBC f2 s ==> IBC (DISJ f1 f2) s) /\
@@ -793,7 +792,28 @@ rw[] (* 2 *)
       rw[EXTENSION,EQ_IMP_THM] (* 2 same *)
       >> metis_tac[equiv0_DIAM]))
 QED
+(*
+(*move to chap2_3 later*)
 
-
-
+Theorem BIGCONJ_prop_letters_DEG:
+∀s.
+         FINITE s ⇒
+         ∀n s0.
+             (∀f. f ∈ s ⇒ DEG f ≤ n) ∧
+             (∀f. f ∈ s ⇒ prop_letters f ⊆ s0) ⇒
+             ∃ff.
+                 DEG ff ≤ n ∧ prop_letters ff ⊆ s0 ∧
+                 ∀w M.
+                     w ∈ M.frame.world ⇒
+                     (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)
+Proof
+Induct_on `FINITE` >> rw[]
+>- (qexists_tac `TRUE` >> rw[TRUE_def,satis_def,DEG_def,prop_letters_def]) >>
+`(∀f. f ∈ s ⇒ DEG f ≤ n) ∧
+ (∀f. f ∈ s ⇒ prop_letters f ⊆ s0)` by metis_tac[] >>
+first_x_assum drule_all >> strip_tac >>
+qexists_tac `AND e ff` >> 
+rw[AND_def,satis_AND,DEG_def,prop_letters_def] >> metis_tac[]
+QED 
+*)
 val _ = export_theory();
