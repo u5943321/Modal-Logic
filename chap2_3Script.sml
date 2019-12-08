@@ -747,7 +747,7 @@ Induct_on `x` >> rw[DEG_def]
    >- metis_tac[IBC_cases]
    >- fs[subforms_def])
 >- fs[Once IBC_cases,subforms_def]);
-
+ 
 
 val IBC_EMPTY_lemma = store_thm(
   "IBC_EMPTY_lemma",
@@ -1823,6 +1823,13 @@ rw[rooted_model_def]
 QED
 
 
+(*move to chap 1 later*)
+
+Theorem prop_letters_FINITE:
+!phi. FINITE (prop_letters phi)
+Proof
+Induct_on `phi` >> rw[prop_letters_def]
+QED
 
 Theorem thm_2_34:
 !M1 w1:'b phi: chap1$form.
@@ -1833,14 +1840,17 @@ Theorem thm_2_34:
 Proof
 rw[] >>
 qabbrev_tac `k = DEG phi` >>
-`∃M2 w2:'b list. tree M2.frame w2 ∧ satis M2 w2 phi` by metis_tac[prop_2_15_corollary] >>
+`∃M2 w2:'b list. tree M2.frame w2 ∧ satis M2 w2 phi` 
+  by metis_tac[prop_2_15_corollary] >>
 qabbrev_tac `M3 = hrestriction M2 w2 M2 k` >>
 `rooted_model M2 w2 M2` by metis_tac[tree_like_model_rooted] >>
 `w2 IN M3.frame.world`
-  by (fs[Abbr`M3`,hrestriction_def] >> rw[] >- metis_tac[satis_in_world]
-      >- (`height M2 w2 M2 w2 = 0` by metis_tac[root_height_0] >> fs[])) >>
+  by 
+   (fs[Abbr`M3`,hrestriction_def] >> rw[] >- metis_tac[satis_in_world]
+    >- (`height M2 w2 M2 w2 = 0` by metis_tac[root_height_0] >> fs[])) >>
 `∃f. nbisim M3 M2 f (k − height M2 w2 M2 w2) w2 w2`
-      by (fs[Abbr`M3`] >> irule lemma_2_33 (* 2 *) >> fs[]) >>
+  by
+   (fs[Abbr`M3`] >> irule lemma_2_33 (* 2 *) >> fs[]) >>
 `DEG phi <= k` by fs[Abbr`k`] >>
 `height M2 w2 M2 w2 = 0` by metis_tac[root_height_0] >> fs[] >>
 `satis M3 w2 phi` by metis_tac[prop_2_31_half1] >>
@@ -1849,21 +1859,20 @@ qabbrev_tac
    <| frame := <| world := M3.frame.world ;
                     rel := M3.frame.rel ;
                 |>;
-       valt := \p v. if ((VAR p) IN (subforms phi)) then (M3.valt p v) else F |>` >>
+       valt := \p v. if (p IN prop_letters phi) 
+                        then (M3.valt p v) 
+                     else F |>` >>
 `satis M3' w2 phi`
   by
    (`satis M3 w2 phi <=> satis M3' w2 phi` suffices_by metis_tac[] >>
-    irule exercise_1_3_1 >> rw[] (*3*)
-    >- (`(VAR p) IN (subforms phi)` by metis_tac[prop_letters_subforms](*cheated, need a lemma,fixed*) >>
-        fs[Abbr`M3'`] >> rw[FUN_EQ_THM]) >>
+    irule exercise_1_3_1 >> rw[] (* 2 *)
+    >- rw[Abbr`M3'`,FUN_EQ_THM]
+    >- fs[Abbr`M3'`,frame_component_equality]) >>
     fs[Abbr`M3'`,frame_component_equality]) >>
   (* done with the first paragraph *)
-qabbrev_tac `s = {a | (VAR a) IN subforms phi}` >>
+qabbrev_tac `s = prop_letters phi` >>
 `FINITE s`
-  by (fs[Abbr`s`] >>
-      `FINITE (subforms phi)` by metis_tac[subforms_FINITE] >>
-      `INJ VAR {a | VAR a ∈ subforms phi} (subforms phi)` suffices_by metis_tac[FINITE_INJ] >>
-      rw[INJ_DEF]) >>
+  by metis_tac[Abbr`s`,prop_letters_FINITE] >>
   (*`FINITE univ(:'a)` by metis_tac[] >> *)
 `INFINITE univ(:'b list)` by metis_tac[INFINITE_LIST_UNIV] >>
 FREEZE_THEN drule

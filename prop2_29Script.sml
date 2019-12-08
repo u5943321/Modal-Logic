@@ -1,5 +1,6 @@
 open HolKernel Parse boolLib bossLib;
 open chap1Theory;
+open chap2_1Theory;
 open numpairTheory;
 open pred_setTheory;
 open relationTheory;
@@ -618,99 +619,124 @@ val NOT_equiv0_VAR_DIAM = store_thm(
     >> rw[satis_def]);
 
 
-val EQ_equiv0_def = store_thm(
-    "EQ_equiv0_def",
-    ``!f g. equiv0 (:β) f g <=> !M w:'b. w IN M.frame.world ==> (satis M w f <=> satis M w g)``,
-    rw[equiv0_def] >> eq_tac >> rw[] >>
-    Cases_on `w IN M.frame.world`
-    >- metis_tac[]
-    >- (`satis M w f = F` by metis_tac[satis_in_world] >>
-       `satis M w g = F` by metis_tac[satis_in_world] >> metis_tac[]));
+Theorem EQ_equiv0_def:
+!f g. equiv0 (:β) f g <=> 
+      !M w:'b. w IN M.frame.world ==> (satis M w f <=> satis M w g)
+Proof
+rw[equiv0_def] >> eq_tac >> rw[] >>
+ Cases_on `w IN M.frame.world`
+>- metis_tac[]
+>- (`satis M w f = F` by metis_tac[satis_in_world] >>
+    `satis M w g = F` by metis_tac[satis_in_world] >> metis_tac[])
+QED
 
 
-val equiv0_DIAM_lemma = store_thm(
-  "equiv0_DIAM_lemma",
-  ``!f g. INFINITE univ(:β) ==>
-        ¬(equiv0 (:β) f g) ==> ¬(equiv0 (:β) (DIAM f) (DIAM g))``,
-  rw[EQ_equiv0_def] >>
-  `∃f:'b -> 'b. (∀x y. f x = f y ⇒ x = y) ∧ ∃y. ∀x. f x ≠ y` by metis_tac[INFINITE_UNIV] >>
-  `(satis M w f /\ ¬satis M w g) \/ (¬satis M w f /\ satis M w g)` by metis_tac[] (* 2 *)
-  >- (qexists_tac `<| frame := <| world := y INSERT (IMAGE f' M.frame.world);
-                                    rel := λn1 n2. (?m1 m2. m1 IN M.frame.world /\ m2 IN M.frame.world /\
-                                           M.frame.rel m1 m2 /\ f' m1 = n1 /\ f' m2 = n2) \/
-                                           (n1 = y /\ n2 = f' w) |>;
-                       valt := \a b. (?c. f' c = b /\ M.valt a c) |>` >>
-     qmatch_abbrev_tac `?w'. w' IN M'.frame.world /\ (satis M' w' (DIAM f) ⇎ satis M' w' (DIAM g))` >>
-     qexists_tac `y` >> rw[] (* 2 *)
+Theorem equiv0_DIAM_lemma:
+!f g. INFINITE univ(:β) ==>
+      ¬(equiv0 (:β) f g) ==> ¬(equiv0 (:β) (DIAM f) (DIAM g))
+Proof
+rw[EQ_equiv0_def] >>
+`∃f:'b -> 'b. (∀x y. f x = f y ⇒ x = y) ∧ 
+     ∃y. ∀x. f x ≠ y` 
+  by metis_tac[INFINITE_UNIV] >>
+`(satis M w f /\ ¬satis M w g) \/ 
+ (¬satis M w f /\ satis M w g)` by metis_tac[] (* 2 *)
+>- (qexists_tac 
+    `<| frame := <| world := y INSERT (IMAGE f' M.frame.world);
+                    rel := λn1 n2. 
+                        (?m1 m2. m1 IN M.frame.world /\ m2 IN M.frame.world /\
+                            M.frame.rel m1 m2 /\ f' m1 = n1 /\ f' m2 = n2) \/
+                        (n1 = y /\ n2 = f' w) |>;
+         valt := \a b. (?c. f' c = b /\ M.valt a c) |>` >>
+    qmatch_abbrev_tac 
+    `?w'. w' IN M'.frame.world /\ 
+          (satis M' w' (DIAM f) ⇎ satis M' w' (DIAM g))` >>
+    qexists_tac `y` >> rw[] (* 2 *)
     >- fs[Abbr`M'`]
-    >- (`satis M' y (DIAM f) /\ ¬satis M' y (DIAM g)` suffices_by metis_tac[] >> rw[satis_def] (* 3 *)
+    >- (`satis M' y (DIAM f) /\ ¬satis M' y (DIAM g)` 
+          suffices_by metis_tac[] >> rw[satis_def] (* 3 *)
        >- fs[Abbr`M'`]
        >- (qexists_tac `f' w` >>
           `bounded_mor f' M M'`
-              by (rw[bounded_mor_def] (* 4 *)
-                  >- fs[Abbr`M'`]
-                  >- (fs[Abbr`M'`] >> rw[satis_def] >> fs[IN_DEF] >> rw[EQ_IMP_THM] >> metis_tac[])
-                  >- (fs[Abbr`M'`] >> metis_tac[])
-                  >- (fs[Abbr`M'`] (* 4 *) >> metis_tac[])) >>
+            by 
+             (rw[bounded_mor_def] (* 4 *)
+              >- fs[Abbr`M'`]
+              >- (fs[Abbr`M'`] >> rw[satis_def] >> 
+                  fs[IN_DEF] >> rw[EQ_IMP_THM] >> metis_tac[])
+              >- (fs[Abbr`M'`] >> metis_tac[])
+              >- (fs[Abbr`M'`] (* 4 *) >> metis_tac[])) >>
           `satis M w f <=> satis M' (f' w) f` by fs[prop_2_14] >>
           fs[Abbr`M'`])
-       >- (`!v. M'.frame.rel y v /\ v IN M'.frame.world ==> ¬satis M' v g` suffices_by metis_tac[] >> rw[] >>
-          `bounded_mor f' M M'`
-              by (rw[bounded_mor_def] (* 4 *)
-                  >- fs[Abbr`M'`]
-                  >- (fs[Abbr`M'`] >> rw[satis_def] >> fs[IN_DEF] >> rw[EQ_IMP_THM] >> metis_tac[])
-                  >- (fs[Abbr`M'`] >> metis_tac[])
-                  >- (fs[Abbr`M'`] (* 4 *) >> metis_tac[])) >>
-          fs[Abbr`M'`] (* 4 *)
-          >- metis_tac[]
-          >- metis_tac[]
-          >- metis_tac[]
-          >- (qmatch_abbrev_tac `¬satis M' (f' x) g` >> rw[] >>
+       >- (`!v. M'.frame.rel y v /\ v IN M'.frame.world ==> 
+                ¬satis M' v g` suffices_by metis_tac[] >> 
+           rw[] >>
+           `bounded_mor f' M M'`
+             by 
+              (rw[bounded_mor_def] (* 4 *)
+               >- fs[Abbr`M'`]
+               >- (fs[Abbr`M'`] >> rw[satis_def] >> fs[IN_DEF] >> 
+                   rw[EQ_IMP_THM] >> metis_tac[])
+               >- (fs[Abbr`M'`] >> metis_tac[])
+               >- (fs[Abbr`M'`] (* 4 *) >> metis_tac[])) >>
+           fs[Abbr`M'`] (* 4 *)
+           >- metis_tac[]
+           >- metis_tac[]
+           >- metis_tac[]
+           >- (qmatch_abbrev_tac `¬satis M' (f' x) g` >> rw[] >>
              metis_tac[prop_2_14]))))
-  >- (qexists_tac `<| frame := <| world := y INSERT (IMAGE f' M.frame.world);
-                                    rel := λn1 n2. (?m1 m2. m1 IN M.frame.world /\ m2 IN M.frame.world /\
-                                           M.frame.rel m1 m2 /\ f' m1 = n1 /\ f' m2 = n2) \/
-                                           (n1 = y /\ n2 = f' w) |>;
-                       valt := \a b. (?c. f' c = b /\ M.valt a c) |>` >>
-     qmatch_abbrev_tac `?w'. w' IN M'.frame.world /\ (satis M' w' (DIAM f) ⇎ satis M' w' (DIAM g))` >>
-     qexists_tac `y` >> rw[] (* 2 *)
+>- (qexists_tac 
+    `<| frame := <| world := y INSERT (IMAGE f' M.frame.world);
+                      rel := λn1 n2. 
+                         (?m1 m2. m1 IN M.frame.world /\ m2 IN M.frame.world /\
+                              M.frame.rel m1 m2 /\ f' m1 = n1 /\ f' m2 = n2) \/
+                                  (n1 = y /\ n2 = f' w) |>;
+         valt := \a b. (?c. f' c = b /\ M.valt a c) |>` >>
+    qmatch_abbrev_tac 
+    `?w'. w' IN M'.frame.world /\ 
+          (satis M' w' (DIAM f) ⇎ satis M' w' (DIAM g))` >>
+    qexists_tac `y` >> rw[] (* 2 *)
     >- fs[Abbr`M'`]
-    >- (`¬satis M' y (DIAM f) /\ satis M' y (DIAM g)` suffices_by metis_tac[] >> rw[satis_def] (* 3 *)
-       >- (`!v. M'.frame.rel y v /\ v IN M'.frame.world ==> ¬satis M' v f` suffices_by metis_tac[] >> rw[] >>
-          `bounded_mor f' M M'`
+    >- (`¬satis M' y (DIAM f) /\ satis M' y (DIAM g)` 
+          suffices_by metis_tac[] >>
+        rw[satis_def] (* 3 *)
+        >- (`!v. M'.frame.rel y v /\ v IN M'.frame.world ==> ¬satis M' v f` 
+             suffices_by metis_tac[] >> rw[] >>
+            `bounded_mor f' M M'`
+              by (rw[bounded_mor_def] (* 4 *)
+                  >- fs[Abbr`M'`]
+                  >- (fs[Abbr`M'`] >> rw[satis_def] >> fs[IN_DEF] >> 
+                      rw[EQ_IMP_THM] >> metis_tac[])
+                  >- (fs[Abbr`M'`] >> metis_tac[])
+                  >- (fs[Abbr`M'`] (* 4 *) >> metis_tac[])) >>
+            fs[Abbr`M'`] (* 4 *)
+            >- metis_tac[]
+            >- metis_tac[]
+            >- metis_tac[]
+            >- (qmatch_abbrev_tac `¬satis M' (f' x) f` >> rw[] >>
+                metis_tac[prop_2_14]))
+        >- fs[Abbr`M'`]
+        >- (qexists_tac `f' w` >>
+            `bounded_mor f' M M'`
               by (rw[bounded_mor_def] (* 4 *)
                   >- fs[Abbr`M'`]
                   >- (fs[Abbr`M'`] >> rw[satis_def] >> fs[IN_DEF] >> rw[EQ_IMP_THM] >> metis_tac[])
                   >- (fs[Abbr`M'`] >> metis_tac[])
                   >- (fs[Abbr`M'`] (* 4 *) >> metis_tac[])) >>
-          fs[Abbr`M'`] (* 4 *)
-          >- metis_tac[]
-          >- metis_tac[]
-          >- metis_tac[]
-          >- (qmatch_abbrev_tac `¬satis M' (f' x) f` >> rw[] >>
-             metis_tac[prop_2_14]))
-       >- fs[Abbr`M'`]
-       >- (qexists_tac `f' w` >>
-          `bounded_mor f' M M'`
-              by (rw[bounded_mor_def] (* 4 *)
-                  >- fs[Abbr`M'`]
-                  >- (fs[Abbr`M'`] >> rw[satis_def] >> fs[IN_DEF] >> rw[EQ_IMP_THM] >> metis_tac[])
-                  >- (fs[Abbr`M'`] >> metis_tac[])
-                  >- (fs[Abbr`M'`] (* 4 *) >> metis_tac[])) >>
-          `satis M w g <=> satis M' (f' w) g` by fs[prop_2_14] >>
-          fs[Abbr`M'`]))));
+            `satis M w g <=> satis M' (f' w) g` by fs[prop_2_14] >>
+            fs[Abbr`M'`])))
+QED
 
 
 
 
-val equiv0_DIAM = store_thm(
-    "equiv0_DIAM",
-    ``!f g. INFINITE univ(:'b) ==> 
-      (equiv0 (:β) (DIAM f) (DIAM g) <=> equiv0 (:β) f g)``,
-    rw[EQ_IMP_THM]
-    >- (SPOSE_NOT_THEN ASSUME_TAC >> metis_tac[equiv0_DIAM_lemma])
-    >- fs[equiv0_def,satis_def]);
-
+Theorem equiv0_DIAM:
+!f g. INFINITE univ(:'b) ==> 
+      (equiv0 (:β) (DIAM f) (DIAM g) <=> equiv0 (:β) f g)
+Proof
+rw[EQ_IMP_THM]
+>- (SPOSE_NOT_THEN ASSUME_TAC >> metis_tac[equiv0_DIAM_lemma])
+>- fs[equiv0_def,satis_def]
+QED
 
 
 
