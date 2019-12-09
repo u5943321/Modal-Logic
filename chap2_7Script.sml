@@ -10,10 +10,10 @@ open chap2_2Theory;
 open chap2_4revisedTheory;
 open chap2_5Theory;
 open chap2_6Theory;
+open prop2_29Theory;
 open ultraproductTheory;
 open lemma2_73Theory;
 open equiv_on_partitionTheory;
-open IBCDNFrevisedTheory;
 open prim_recTheory;
 open listTheory;
 open finite_mapTheory;
@@ -61,8 +61,8 @@ val thm_2_78_half1_lemma = store_thm(
 
 val thm_2_78_half1 = store_thm(
   "thm_2_78_half1",
-  ``!phi phi0 μ ν. (PE phi0 /\ equiv0 μ phi phi0 /\ equiv0 ν phi phi0) ==> preserved_under_sim μ ν phi``,
-  rw[] >> `preserved_under_sim μ ν phi0` by metis_tac[thm_2_78_half1_lemma] >>
+  ``!phi phi0. (PE phi0 /\ equiv0 (:β) phi phi0 /\ equiv0 (:γ) phi phi0) ==> preserved_under_sim (:β) (:γ) phi``,
+  rw[] >> `preserved_under_sim (:β) (:γ) phi0` by metis_tac[thm_2_78_half1_lemma] >>
   fs[preserved_under_sim_def] >> rw[] >> fs[equiv0_def] >> `satis M w phi0` by metis_tac[] >> metis_tac[]);
 
 
@@ -396,8 +396,9 @@ QED
 
 Theorem thm_2_78_half2:
 INFINITE (univ (:β)) ==>
- !phi:chap1$form (ν:((β -> bool) -> bool) itself) (μ:β itself). preserved_under_sim ν ν phi ==>
-     (?phi0. equiv0 μ phi phi0 /\ PE phi0)
+ !phi:chap1$form. 
+   preserved_under_sim (:(β -> bool) -> bool) (:(β -> bool) -> bool) phi ==>
+     (?phi0. equiv0 (:β) phi phi0 /\ PE phi0)
 Proof
 rw[] >>
 qabbrev_tac `PEC = {psi | PE psi /\

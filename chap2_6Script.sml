@@ -10,7 +10,6 @@ open chap2_2Theory;
 open chap2_4revisedTheory;
 open chap2_5Theory;
 open equiv_on_partitionTheory;
-open IBCDNFrevisedTheory;
 open prim_recTheory;
 open listTheory;
 open rich_listTheory;
