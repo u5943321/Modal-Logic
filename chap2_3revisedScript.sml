@@ -1734,26 +1734,26 @@ val proper_cluster_def = Define`
 (*end of FMP via filtration *)
 
 (*there only remains a little proposition, which is not used anywhere else, and is ugly in HOL settings*)
-(*
 
-
-val BIGCONJ_EXISTS_DEG = store_thm(
-  "BIGCONJ_EXISTS_DEG",
-  ``∀s.
-     FINITE s ⇒
-     !n. (!f:form. f IN s ==> DEG f <= n) ==>
-     ?ff. DEG ff <= n /\
+Theorem BIGCONJ_EXISTS_DEG:
+∀s.
+    FINITE s ==> FINITE s' ⇒
+     !n. (!f:form. f IN s ==> (DEG f <= n /\ prop_letters f ⊆ s')) ==>
+     ?ff. DEG ff <= n /\ prop_letters ff ⊆ s' /\
      (∀w:'b M.
         w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f)) /\
      (∀w:'c M.
-        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f))``,
+        w ∈ M.frame.world ⇒ (satis M w ff ⇔ ∀f. f ∈ s ⇒ satis M w f))
+Proof
   Induct_on `FINITE` >> rw[]
-  >- (qexists_tac `TRUE` >> rw[TRUE_def,satis_def,DEG_def])
-  >- (`∀f. f ∈ s ⇒ DEG f ≤ n` by metis_tac[] >>
-     first_x_assum drule >> rw[] >>
-     qexists_tac `AND e ff` >> rw[DEG_def,satis_def,AND_def] >> eq_tac >> rw[]
-     >- rw[]
-     >> metis_tac[]));
+  >- (qexists_tac `TRUE` >> rw[TRUE_def,satis_def,DEG_def,prop_letters_def])
+  >- (`∀f. f ∈ s ⇒ DEG f ≤ n /\ prop_letters f ⊆ s'` by metis_tac[] >>
+      last_x_assum drule >> rw[] >> `∀f. f ∈ s ⇒ DEG f ≤ n` by metis_tac[] >>
+      first_x_assum drule >> rw[] >>
+     qexists_tac `AND e ff` >> rw[DEG_def,satis_def,AND_def] (* 3 *)
+     >- rw[prop_letters_def]
+     >> metis_tac[])
+QED
 
 
 val equiv0_INFINITE_UNIV = store_thm(
@@ -1874,118 +1874,145 @@ val equiv0_equal_for_INFINITE_UNIV = store_thm(
   metis_tac[]);
 
 Theorem prop_2_31_half2:
-  ``!M M' n w:'b w':'c.
-  (INFINITE univ(:'b) /\ INFINITE univ(:'c) /\ FINITE univ (:'a) /\
-  w IN M.frame.world /\ w' IN M'.frame.world)
-  ==> (!(phi: form). DEG phi <= n ==> (satis M w phi <=> satis M' w' phi))
-      ==> ?f. nbisim M M' f n w w'``,
-  rpt strip_tac >>
-  rw[nbisim_def] >>
-  qexists_tac `λn n1 n2. (!(phi: form). DEG phi <= n ==> (satis M n1 phi <=> satis M' n2 phi))` >> rw[] >>
-  `equiv0 (:'b) = equiv0 (:'c)` by metis_tac[equiv0_equal_for_INFINITE_UNIV]
-  >- metis_tac[DEG_def]
-  >- (SPOSE_NOT_THEN ASSUME_TAC >>
-     `∀u'.
-          u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
-          (?form. DEG form <= i /\ satis M u form /\ ¬satis M' u' form)`
-        by (rw[satis_def] >>
-           `∃phi. DEG phi ≤ i ∧ (satis M u phi ⇎ satis M' u' phi)` by metis_tac[] >>
-           Cases_on `satis M u phi` >- (qexists_tac `phi` >> metis_tac[])
-                                    >- (qexists_tac `NOT phi` >> rw[]
-                                                                >- metis_tac[DEG_def]
-                                                                >> metis_tac[satis_def])) >>
-
-    qabbrev_tac `
-      s = {f | DEG f <= i /\ ?u'. u' IN M'.frame.world /\
+  !M M' n w:'b w':'c s.
+  (INFINITE univ(:'b) /\ INFINITE univ(:'c) /\ 
+  w IN M.frame.world /\ w' IN M'.frame.world /\ FINITE s /\ 
+  (!v p. v IN M.frame.world /\ M.valt p v ==> p IN s) /\ 
+  (!v p. v IN M'.frame.world /\ M'.valt p v ==> p IN s))
+  ==> (!phi. (DEG phi <= n /\ prop_letters phi ⊆ s) ==> (satis M w phi <=> satis M' w' phi))
+      ==> ?f. nbisim M M' f n w w'
+Proof
+rpt strip_tac >>
+rw[nbisim_def] >>
+qexists_tac 
+  `λn n1 n2. (!(phi: form). (DEG phi <= n /\ prop_letters phi ⊆ s) ==> 
+        (satis M n1 phi <=> satis M' n2 phi))` >> rw[] >>
+`equiv0 (:'b) = equiv0 (:'c)` by metis_tac[equiv0_equal_for_INFINITE_UNIV]
+>- (Cases_on `p IN s` >> rw[] (* 2 *)
+   >- (first_x_assum irule >> fs[DEG_def,prop_letters_def])
+   >- (rw[satis_def] >> fs[IN_DEF] >> metis_tac[]))
+>- (SPOSE_NOT_THEN ASSUME_TAC >>
+    `∀u'.
+       u' ∈ M'.frame.world /\ M'.frame.rel v' u' ==>
+        (?form. DEG form <= i ∧ prop_letters form ⊆ s 
+                /\ satis M u form /\ ¬satis M' u' form)`
+      by 
+       (rw[satis_def] >>
+        `∃phi. DEG phi ≤ i ∧ prop_letters phi ⊆ s /\ 
+           (satis M u phi ⇎ satis M' u' phi)` 
+          by metis_tac[] >>
+        Cases_on `satis M u phi`
+        >- (qexists_tac `phi` >> metis_tac[])
+        >- (qexists_tac `NOT phi` >> rw[] (* 4 *)
+            >- metis_tac[DEG_def]
+            >- fs[prop_letters_def]
+            >> metis_tac[satis_def])) >>
+    qabbrev_tac 
+    `s0 = {f | DEG f <= i /\ prop_letters f ⊆ s /\ ?u'. u' IN M'.frame.world /\
                M'.frame.rel v' u' /\ satis M u f /\ ¬satis M' u' f}` >>
-   `s ⊆ {f| DEG f <= i}` by (fs[Abbr`s`,SUBSET_DEF]) >>
-   `(equiv0 (μ:'c itself)) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
-   `FINITE (partition (equiv0 μ) s)`
-       by (`(equiv0 μ) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
-          `equiv0 (:'c) = equiv0 (:'b)` by metis_tac[equiv0_equal_for_INFINITE_UNIV] >>
-          metis_tac[prop_2_29,FINITE_partition_SUBSET]) >>
-   `FINITE (IMAGE CHOICE (s//E μ))` by metis_tac[IMAGE_FINITE] >>
-   `(equiv0 μ) equiv_on s` by metis_tac[equiv0_equiv_on] >>
-   `!p. p IN (s//E μ) ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
-   `!p. p IN (s//E μ) ==> (CHOICE p) IN p` by metis_tac[CHOICE_DEF] >>
-   `!f. f IN (IMAGE CHOICE (s//E μ)) ==> DEG f <= i`
+    `s0 ⊆ {f| DEG f <= i /\ prop_letters f ⊆ s}` by (fs[Abbr`s0`,SUBSET_DEF]) >>
+    `(equiv0 (:'c)) equiv_on {f | DEG f ≤ i /\ prop_letters f ⊆ s}` 
+     by metis_tac[equiv0_equiv_on] >>
+    `FINITE (partition (equiv0 (:γ)) s0)`
+       by (`(equiv0 (:'c)) equiv_on {f | DEG f ≤ i /\ prop_letters f ⊆ s}` 
+             by metis_tac[equiv0_equiv_on] >> 
+           `equiv0 (:'c) = equiv0 (:'b)` 
+             by metis_tac[equiv0_equal_for_INFINITE_UNIV] >>
+          metis_tac[prop_2_29_prop_letters,FINITE_partition_SUBSET]) >>
+   `FINITE (IMAGE CHOICE (s0//E (:β)))` by metis_tac[IMAGE_FINITE] >>
+   `(equiv0 (:β)) equiv_on s0` by metis_tac[equiv0_equiv_on] >>
+   `!p. p IN (s0//E (:β)) ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
+   `!p. p IN (s0//E (:β)) ==> (CHOICE p) IN p` by metis_tac[CHOICE_DEF] >>
+   `!f. f IN (IMAGE CHOICE (s0//E (:β))) ==> DEG f <= i /\ prop_letters f ⊆ s`
      by (dsimp[] >> rw[] >> `(CHOICE x) IN x` by metis_tac[] >>
-         `x SUBSET s` by fs[partition_def,SUBSET_DEF] >>
-         `(CHOICE x) IN s` by metis_tac[SUBSET_DEF, partition_def] >>
-         fs[Abbr`s`]) >>
+         `x SUBSET s0` by fs[partition_def,SUBSET_DEF] >>
+         `(CHOICE x) IN s0` by metis_tac[SUBSET_DEF, partition_def] >>
+         fs[Abbr`s0`]) >>
    imp_res_tac BIGCONJ_EXISTS_DEG >>
-   `∀f. f ∈ IMAGE CHOICE (s//E μ) ⇒ satis M u f`
+   `∀f. f ∈ IMAGE CHOICE (s0//E (:β)) ⇒ satis M u f`
      by (rw[] >>
         `(CHOICE x) IN x` by metis_tac[] >>
-        fs[partition_def,Abbr`s`] >> rw[] >> fs[]) >>
+        fs[partition_def,Abbr`s0`] >> rw[] >> fs[]) >>
    `satis M u ff` by metis_tac[] >>
    `satis M v (DIAM ff)` by metis_tac[satis_def] >>
-   `DEG (DIAM ff) <= i + 1` by fs[DEG_def] >>
+   `DEG (DIAM ff) <= i + 1 /\ prop_letters (DIAM ff) ⊆ s`
+     by fs[DEG_def,prop_letters_def] >>
    `¬satis M' v' (DIAM ff)` suffices_by metis_tac[] >>
    `∀u'. M'.frame.rel v' u' /\ u' ∈ M'.frame.world ==> ¬satis M' u' ff`
       suffices_by metis_tac[satis_def] >>
    rw[partition_def,PULL_EXISTS] >>
-   `∃form. DEG form ≤ i ∧ satis M u form ∧ ¬satis M' u' form` by metis_tac[] >>
-   `form IN s` by (fs[Abbr`s`] >> qexists_tac `u'` >> rw[]) >>
+   `∃form. DEG form ≤ i ∧ prop_letters form ⊆ s /\
+           satis M u form ∧ ¬satis M' u' form` by metis_tac[] >>
+   `form IN s0` by (fs[Abbr`s0`] >> qexists_tac `u'` >> rw[]) >>
    rw[] >>
-   `equiv0 μ form form` by metis_tac[equiv0_REFL] >> `form IN {y | y ∈ s ∧ equiv0 μ form y}` by fs[] >>
-   `{y | y ∈ s ∧ equiv0 μ form y} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
-   `(CHOICE {y | y ∈ s ∧ equiv0 μ form y}) IN {y | y ∈ s ∧ equiv0 μ form y}` by metis_tac[CHOICE_DEF] >>
+   `equiv0 (:β) form form` by metis_tac[equiv0_REFL] >> 
+   `form IN {y | y ∈ s0 ∧ equiv0 (:β) form y}` by fs[] >>
+   `{y | y ∈ s0 ∧ equiv0 (:β) form y} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
+   `(CHOICE {y | y ∈ s0 ∧ equiv0 (:β) form y}) IN {y | y ∈ s0 ∧ equiv0 (:β) form y}` by metis_tac[CHOICE_DEF] >>
    fs[] >>
-   `¬satis M' u' (CHOICE {y | y ∈ s ∧ equiv0 μ form y})` by metis_tac[equiv0_def] >>
-   `{y | y ∈ s ∧ equiv0 μ form y} IN (s//E μ)`
+   `¬satis M' u' (CHOICE {y | y ∈ s0 ∧ equiv0 (:β) form y})` by metis_tac[equiv0_def] >>
+   `{y | y ∈ s0 ∧ equiv0 (:β) form y} IN (s0//E (:β))`
        by (rw[partition_def] >> qexists_tac `form` >> rw[]) >> metis_tac[])
->- (SPOSE_NOT_THEN ASSUME_TAC >>
-     `∀u.
+>- (SPOSE_NOT_THEN ASSUME_TAC >> 
+    `∀u.
           u ∈ M.frame.world /\ M.frame.rel v u ==>
-          (?form. DEG form <= i /\ satis M' u' form /\ ¬satis M u form)`
+          (?form. DEG form <= i /\ prop_letters form ⊆ s /\ satis M' u' form /\ ¬satis M u form)`
         by (rw[satis_def] >>
-           `∃phi. DEG phi ≤ i ∧ (satis M' u' phi ⇎ satis M u phi)` by metis_tac[] >>
-           Cases_on `satis M' u' phi` >- (qexists_tac `phi` >> metis_tac[])
-                                    >- (qexists_tac `NOT phi` >> rw[]
-                                                                >- metis_tac[DEG_def]
-                                                                >> metis_tac[satis_def])) >>
-   qabbrev_tac `s = {f | DEG f <= i /\ ?u. u IN M.frame.world /\
-               M.frame.rel v u /\ satis M' u' f /\ ¬satis M u f}` >>
-   `s ⊆ {f| DEG f <= i}` by (fs[Abbr`s`,SUBSET_DEF]) >>
-   `(equiv0 (μ:'b itself)) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
-   `FINITE (partition (equiv0 μ) s)`
-       by (`(equiv0 μ) equiv_on {f | DEG f ≤ i}` by metis_tac[equiv0_equiv_on] >>
-          `equiv0 (:'c) = equiv0 (:'b)` by metis_tac[equiv0_equal_for_INFINITE_UNIV] >>
-          metis_tac[prop_2_29,FINITE_partition_SUBSET]) >>
-   `FINITE (IMAGE CHOICE (s//E μ))` by metis_tac[IMAGE_FINITE] >>
-   `(equiv0 μ) equiv_on s` by metis_tac[equiv0_equiv_on] >>
-   `!p. p IN (s//E μ) ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
-   `!p. p IN (s//E μ) ==> (CHOICE p) IN p` by metis_tac[CHOICE_DEF] >>
-   `!f. f IN (IMAGE CHOICE (s//E μ)) ==> DEG f <= i`
-     by (dsimp[] >> rw[] >> `(CHOICE x) IN x` by metis_tac[] >>
-         `x SUBSET s` by fs[partition_def,SUBSET_DEF] >>
-         `(CHOICE x) IN s` by metis_tac[SUBSET_DEF, partition_def] >>
-         fs[Abbr`s`]) >>
+           `∃phi. DEG phi ≤ i ∧ prop_letters phi ⊆ s /\
+            (satis M' u' phi ⇎ satis M u phi)` by metis_tac[] >>
+           Cases_on `satis M' u' phi`
+           >- (qexists_tac `phi` >> metis_tac[])
+           >- (qexists_tac `NOT phi` >> rw[] (* 4 *)
+               >- metis_tac[DEG_def]
+               >- metis_tac[prop_letters_def]
+               >> metis_tac[satis_def])) >>
+   qabbrev_tac `s0 = {f | DEG f <= i /\ prop_letters f ⊆ s /\ 
+                          ?u. u IN M.frame.world /\
+                          M.frame.rel v u /\ satis M' u' f /\ ¬satis M u f}` >>
+   `s0 ⊆ {f| DEG f <= i /\ prop_letters f ⊆ s}` by (fs[Abbr`s0`,SUBSET_DEF]) >>
+   `(equiv0 (:'b)) equiv_on {f | DEG f ≤ i /\ prop_letters f ⊆ s}` 
+     by metis_tac[equiv0_equiv_on] >>
+   `FINITE (partition (equiv0 (:β)) s0)`
+       by (`(equiv0 (:β)) equiv_on {f | DEG f ≤ i /\ prop_letters f ⊆ s}` 
+             by metis_tac[equiv0_equiv_on] >>
+          `equiv0 (:'c) = equiv0 (:'b)` 
+             by metis_tac[equiv0_equal_for_INFINITE_UNIV] >>
+          metis_tac[prop_2_29_prop_letters,FINITE_partition_SUBSET]) >>
+   `FINITE (IMAGE CHOICE (s0//E (:β)))` by metis_tac[IMAGE_FINITE] >>
+   `(equiv0 (:β)) equiv_on s0` by metis_tac[equiv0_equiv_on] >>
+   `!p. p IN (s0//E (:β)) ==> p <> {}` by metis_tac[EMPTY_NOT_IN_partition] >>
+   `!p. p IN (s0//E (:β)) ==> (CHOICE p) IN p` by metis_tac[CHOICE_DEF] >>
+   `!f. f IN (IMAGE CHOICE (s0//E (:β))) ==> DEG f <= i /\ prop_letters f ⊆ s`
+     by (dsimp[] >> rw[] >> 
+        `(CHOICE x) IN x` by metis_tac[] >>
+         `x SUBSET s0` by fs[partition_def,SUBSET_DEF] >>
+         `(CHOICE x) IN s0` by metis_tac[SUBSET_DEF, partition_def] >>
+         fs[Abbr`s0`]) >>
    imp_res_tac BIGCONJ_EXISTS_DEG >>
-   `∀f. f ∈ IMAGE CHOICE (s//E μ) ⇒ satis M' u' f`
+   `∀f. f ∈ IMAGE CHOICE (s0//E (:β)) ⇒ satis M' u' f`
      by (rw[] >>
         `(CHOICE x) IN x` by metis_tac[] >>
-        fs[partition_def,Abbr`s`] >> rw[] >> fs[]) >>
+        fs[partition_def,Abbr`s0`] >> rw[] >> fs[]) >>
    `satis M' u' ff` by metis_tac[] >>
    `satis M' v' (DIAM ff)` by metis_tac[satis_def] >>
    `DEG (DIAM ff) <= i + 1` by fs[DEG_def] >>
+   `prop_letters (DIAM ff) ⊆ s` by fs[prop_letters_def] >>
    `¬satis M v (DIAM ff)` suffices_by metis_tac[] >>
    `∀u. M.frame.rel v u /\ u ∈ M.frame.world ==> ¬satis M u ff`
       suffices_by metis_tac[satis_def] >>
    rw[partition_def,PULL_EXISTS] >>
-   `∃form. DEG form ≤ i ∧ satis M' u' form ∧ ¬satis M u form` by metis_tac[] >>
-   `form IN s` by (fs[Abbr`s`] >> qexists_tac `u` >> rw[]) >>
+   `∃form. DEG form ≤ i ∧ prop_letters form ⊆ s /\ satis M' u' form ∧ ¬satis M u form` by metis_tac[] >>
+   `form IN s0` by (fs[Abbr`s0`] >> qexists_tac `u` >> rw[]) >>
    rw[] >>
-   `equiv0 μ form form` by metis_tac[equiv0_REFL] >> `form IN {y | y ∈ s ∧ equiv0 μ form y}` by fs[] >>
-   `{y | y ∈ s ∧ equiv0 μ form y} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
-   `(CHOICE {y | y ∈ s ∧ equiv0 μ form y}) IN {y | y ∈ s ∧ equiv0 μ form y}` by metis_tac[CHOICE_DEF] >>
+   `equiv0 (:β) form form` by metis_tac[equiv0_REFL] >>
+   `form IN {y | y ∈ s0 ∧ equiv0 (:β) form y}` by fs[] >>
+   `{y | y ∈ s0 ∧ equiv0 (:β) form y} <> {}` by metis_tac[MEMBER_NOT_EMPTY] >>
+   `(CHOICE {y | y ∈ s0 ∧ equiv0 (:β) form y}) IN {y | y ∈ s0 ∧ equiv0 (:β) form y}` by metis_tac[CHOICE_DEF] >>
    fs[] >>
-   `¬satis M u (CHOICE {y | y ∈ s ∧ equiv0 μ form y})` by metis_tac[equiv0_def] >>
-   `{y | y ∈ s ∧ equiv0 μ form y} IN (s//E μ)`
-       by (rw[partition_def] >> qexists_tac `form` >> rw[]) >> metis_tac[]));
-*)
-
+   `¬satis M u (CHOICE {y | y ∈ s0 ∧ equiv0 (:β) form y})` by metis_tac[equiv0_def] >>
+   `{y | y ∈ s0 ∧ equiv0 (:β) form y} IN (s0//E (:β))`
+       by (rw[partition_def] >> qexists_tac `form` >> rw[]) >> metis_tac[])
+QED
 
 
 val _ = export_theory();
