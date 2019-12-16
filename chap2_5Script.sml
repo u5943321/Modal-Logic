@@ -183,6 +183,21 @@ qexists_tac `λn1 n2. (!form. satis M n1 form <=> satis M' n2 form)` >> rw[]
         metis_tac[]))
 >- metis_tac[modal_eq_tau]);
 
+
+Theorem M_sat_bisim_modal_eq:
+∀M M' w:'b w':'c.
+ (M_sat M ∧ M_sat M' ∧ w ∈ M.frame.world ∧ w' ∈ M'.frame.world) ==>
+        (modal_eq M M' w w' <=>
+        bisim_world M M' w w')
+Proof
+rw[EQ_IMP_THM] (* 2 *)
+>- metis_tac[prop_2_54_DIST_TYPE]
+>- metis_tac[thm_2_20]
+QED
+
+
+
+
 val can_see_def = Define`
 can_see M X = {w | w IN M.frame.world /\ ?x. x IN X /\ M.frame.rel w x}`;
 

@@ -1,10 +1,10 @@
 structure ppLib =
 struct
 
-open HolKernel Parse boolLib set_relationTheory chap2_1Theory chap2_2Theory
-     chap2_3Theory chap2_4revisedTheory chap2_5Theory chap2_6Theory
+open HolKernel Parse boolLib set_relationTheory chap2_1Theory chap2_2Theory prop2_29Theory
+     chap2_3revisedTheory chap2_4revisedTheory chap2_5Theory chap2_6Theory
      chap2_7Theory folLangTheory folModelsTheory
-     IBCDNFrevisedTheory ultrafilterTheory ultraproductTheory lemma2_73Theory
+     ultrafilterTheory ultraproductTheory lemma2_73Theory
      prettyPrintingTheory
 
 val _ = temp_remove_termtok { tok = "=", term_name ="="}

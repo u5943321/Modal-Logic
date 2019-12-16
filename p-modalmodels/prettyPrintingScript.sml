@@ -1,10 +1,9 @@
 open HolKernel Parse boolLib bossLib;
 
-open chap1Theory chap2_1Theory chap2_2Theory chap2_3Theory chap2_4revisedTheory chap2_5Theory chap2_6Theory chap2_7Theory lemma2_73Theory IBCDNFrevisedTheory pred_setTheory pairTheory folLangTheory folModelsTheory ultraproductTheory
+open chap1Theory chap2_1Theory chap2_2Theory chap2_3revisedTheory chap2_4revisedTheory chap2_5Theory chap2_6Theory chap2_7Theory lemma2_73Theory pred_setTheory pairTheory folLangTheory folModelsTheory ultraproductTheory
 
 val _ = new_theory "prettyPrinting";
 
-(* equiv0 2.29 ultraproduct_model_def ppLos_modal_thm ppultraproduct_folmodel_def thm_A_19_ii M_sat_def prop_2_54_DIST_TYPE n_saturated_def lemma_2_73 expansion_shift_feval ultraproduct_comm_fevalomit it thm_2_74_half2 *)
 (* val _ = remove_termtok { tok = " *)
 val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   paren_style = OnlyIfNecessary,
@@ -57,11 +56,6 @@ rw[ultraproduct_model_def,models2worlds_def]
 QED
 
 
-Theorem ppequiv0_def:
-   !f1:chap1$form f2.  equiv0 (:β) f1 f2 <=> !M w:β. satis M w f1 <=> satis M w f2
-Proof
-rw[equiv0_def]
-QED
 
 
 Theorem ppcompactness_thm_L1tau:

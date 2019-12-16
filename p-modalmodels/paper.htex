@@ -97,7 +97,7 @@ If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivale
 \begin{definition}[Notions of equivalence]
 \begin{holmath}
  \HOLthm[def,phi/form]{chap2_1.modal_eq_tau}\\[3mm]
- \HOLthm[def,showtypes,width=60]{IBCDNFrevised.equiv0_thm}
+ \HOLthm[def,showtypes,width=60]{prop2_29.equiv0_def}
 \end{holmath}
 \end{definition}
 We cannot omit the type parameter \HOLtm{(:β)} in the definition, as there would otherwise be a type, namely the type of the underlying set of the models we are talking about, that only appears on the right-hand side but not on the left-hand side of the definition.
@@ -194,9 +194,10 @@ The construction of \HOLtm{M5} requires a lemma:
 \begin{lemma}
 {\upshape\cite[Proposition 2.29]{Blackburn}}
 \begin{holmath}
-  \HOLthm[phi/f,Φ/s,showtypes]{chap2_3.prop_2_29_prop_letters}
+  \HOLthm[phi/f,Φ/s,showtypes]{prop2_29.prop_2_29_prop_letters}
 \end{holmath}
 \end{lemma}
+
 We require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
 This would be easy to prove in set theory.
 However, in simple type theory, the proof of \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires us (in the left-to-right direction) to be able to construct a model with a new world inserted, something only sure to be possible if the \HOLty{:β} universe is infinite.
@@ -205,7 +206,7 @@ As the construction used Proposition \ref{2.15}, we change the type of the model
 \begin{theorem}
 {\upshape\cite[Theorem 2.34 (Finite model property, via selection)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[M/FM,showtypes]{chap2_3.thm_2_34}
+  \HOLthm[M/FM,showtypes]{chap2_3revised.thm_2_34}
 \end{holmath}
 \end{theorem}
 
@@ -340,7 +341,7 @@ For m-saturated models, bisimulation and modal equivalence coincides:
 \begin{proposition}\label{2.54}
 {\upshape\cite[Proposition 2.54]{Blackburn}}
 \begin{holmath}
-  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=60]{chap2_5.prop_2_54_DIST_TYPE}
+  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=60]{chap2_5.M_sat_bisim_modal_eq}
 \end{holmath}
 \end{proposition}
 Given a model \HOLtm{M}, its ultrafilter extension \HOLtm{UE M} is defined as:
@@ -373,7 +374,7 @@ Given a first-order model \HOLtm{M} with no information about interpretation of 
 For our purpose, we are only interested in adding the interpretation of finitely many nullary function symbols, also called \emph{constants}.
 We write \HOLtm{expand M A f} to denote the model that is the result of adding each element in $A$ to \HOLtm{M} as a new constant.
 Further, the function $f$ is a bijection between $\{0,\cdots,n-1\}$ and $A$, which is assumed to be finite, so that each nullary function symbol $c$ will be interpreted as \HOLtm{f c} in \HOLtm{M'}.
-\begin{definition}
+\begin{definition}\label{2.73}
 {\upshape\cite[Definition A.9 (Expansion)]{Blackburn}}
 \begin{holmath}
   \HOLthm[def,l/args,c/n,width=65]{lemma2_73.expand_def}
@@ -413,7 +414,7 @@ To deal with this issue, the key observation is that constants are nothing more 
 
 The shifting construction gets us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first-order model. To apply \los's theorem on such a model, we prove that `taking the ultraproduct first-order model commutes with the convertion from modal to a first-order model on certain formulas', in the sense that the resulting models satisfies the same first-order formulas without function symbols. 
 
-After these two steps as described above, we can prove Lemma \ref{2.37} using the proof in \cite{ChangKeisler1990}.
+After these two steps as described above, we can prove Lemma \ref{2.73} using the proof in \cite{ChangKeisler1990}.
 
 
 
@@ -429,7 +430,7 @@ Note that the standard translation of any modal formula can only contain unary p
 
 Because of the same problem we met when defining equivalence of formulas, the type parameters here is necessasy. Although it is possible to prove theorems for different types $\alpha$ and $\beta$ in the above definition, we will only consider the case that $\alpha$ and $\beta$ are the same when proving theorems.
 
-The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula with at most one free variable $x$ is invariant under bisimulation precisely when it is equivalent to the standard translation of some modal formula at $x$. It is immediate from \ref{2.47} that every such formula which is equivalent to a standard translation is invariant for bisimulation. We cannot prove it as an `if and only if' statement, since according to the proofs in \cite{Blackburn}, we can only prove the two directions separately as:
+The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula with at most one free variable $x$ is invariant under bisimulation precisely when it is equivalent to the standard translation of some modal formula at $x$. It is immediate from Proposition \ref{2.47} that every such formula which is equivalent to a standard translation is invariant for bisimulation. We cannot prove it as an `if and only if' statement, since according to the proofs in \cite{Blackburn}, we can only prove the two directions separately as:
 \begin{proposition}
 {\upshape\cite[Theorem 2.68, as two separate directions]{Blackburn}}
 \begin{holmath}
@@ -456,6 +457,10 @@ The above lemma relies on Lemma \ref{2.73} and its mathematical proof can be fou
 
 
 \section{Conclusion [$<$1p]}
+
+In summary, all the results (appear as propositions, lemmas and theorems) in the first two chapters in \cite{Blackburn} that can be captured by HOL logic and is about the basic modal language are formalized in HOL. However, the result in chapter 2.6 about `definability' is a result about `class of models that is closed under iterated ultraproducts'. If we try to approximate this definition, we will need a type which is closed under taking ultraproducts, which is not doable in HOL. The result about `safety' in section 2.7 is a result about the PDL language, which has infinitely many modal operators and hence is not possible to be captured by the basic modal languge. Hence these two parts are not formalized. 
+
+The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The later has a proof that is similar to the proof of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. 
 
 \subsection{Related Work}
 We believe that we are the first to mechanize the bulk of the results in this paper. 
