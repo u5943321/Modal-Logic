@@ -474,10 +474,16 @@ The proof of this theorem is where we use the work on compactness in~\cite{Harri
 
 \section{Conclusion [$<$1p]}
 
-In summary, all the results (appear as propositions, lemmas and theorems) in the first two chapters in \cite{Blackburn} that can be captured by HOL logic and is about the basic modal language are formalized in HOL. However, the result in chapter 2.6 about `definability' requires a definition of `class of models which is closed under taking ultraproducts'. Simple type theory cannot capture a proper class, hence we can only have such a set instead. But then as every element in a set has the same type, we then require a type which is closed undertaking ultraproducts, that is, a type such that has subset with arbitarily large cardinality. However, HOL can only capture cardinality up to $2^{\mathbb N}$.
+To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language. 
+The exceptions are:
+\begin{itemize}
+\item The result in Section~2.6 about `definability', which requires a definition of `class of models closed under taking ultraproducts'. Simple type theory cannot capture a proper class, hence we can only have such a set instead. But then as every element in a set has the same type, we then require a type which is closed undertaking ultraproducts, that is, a type such that has subset with arbitarily large cardinality. However, HOL can only capture cardinality up to $2^{\mathbb N}$.
 %is a result about `class of models that is closed under iterated ultraproducts'. If we try to approximate this definition, we will need a type which is closed under taking ultraproducts, which is not doable in HOL.
 %
-The result about `safety' in section 2.7 is a result about the PDL language, which has infinitely many modal operators and hence is not possible to be captured by the basic modal languge. Hence these two parts are not formalized.
+\item 
+The result about `safety' in Section~2.7 is a result about the PDL language, which has infinitely many modal operators. 
+For the moment, we have restricted our attention to the basic modal language, with only $\Diamond$ (and the derived $\Box$).
+\end{itemize}
 
 The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. It relies on the modal version of Theorem \ref{folcpn}, which is straightfoward to prove from Theorem \ref{folcpn} and Proposition \ref{2.47}.
 
