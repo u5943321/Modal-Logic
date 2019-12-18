@@ -222,7 +222,7 @@ The filtration approach is also formalised. The advantage of filtration is that 
 
 All the results proved above can be captured using \HOLty{:num} models everywhere.
 
-\section{Mechanizing Ultrafilters and Ultraproducts}[3p]
+\section{Mechanizing Ultrafilters and Ultraproducts[3p]}
 A number of results in Blackburn~\emph{et al.}~\cite[\S2.5--\S2.7]{Blackburn} rely on theorems about ultrafilters and ultraproducts.
 \subsection{Ultrafilters}
 Given a non-empty set $J$, a set \HOLtm{L SUBSET POW J} is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward.
@@ -334,7 +334,7 @@ The semantic behavior of ultraproduct models is characterized by \los's theorem:
 where \HOLtm{wffm M} means the functions of \HOLtm{M} never map a list out of the domain of \HOLtm{M}.
 
 
-\section{Ultrafilter Extensions}[2p]
+\section{Ultrafilter Extensions[2p]}
 The first application of the theory of ultrafilters above is to construct the ultrafilter extension of a model, which has the nice property of being \emph{modally saturated} (m-saturated hereafter).
 To define m-saturation, we give the following three definitions (the first two are called \emph{finitely satisfiable}, \emph{satisfiable}) consecutively:
 \begin{definition}
@@ -376,7 +376,7 @@ In particular, every world \HOLtm{w IN M.frame.world} is embedded as the princip
 \end{theorem}
 
 
-\section{Countable Saturatedness of Ultrapower Models}[2p]
+\section{Countable Saturatedness of Ultrapower Models[2p]}
 
 Given a first-order model \HOLtm{M} with no information about interpretation of its function symbols, we can expand the model \HOLtm{M} by adding an interpretation of some function symbols.
 For our purpose, we are only interested in adding the interpretation of finitely many nullary function symbols, also called \emph{constants}.
