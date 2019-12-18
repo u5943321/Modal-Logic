@@ -30,7 +30,7 @@ The focus on models is novel: previous work in formalisations of modal logic hav
 We have formalised a number of fundamental results from the first two chapters of a standard textbook (Blackburn \emph{et al.}~\cite{Blackburn}).
 Among others, one important result, the Van Benthem characterisation theorem, characterizes the connection between modal logic and first order logic.
 This latter captures the desired saturation property of ultraproduct models on countably incomplete ultrafilters.
-The first-order side of the connection is built on Harrison's earlier work~\cite{Harrison} on first-order model theory, in particular his proof of compactness.
+%The first-order side of the connection is built on Harrison's earlier work~\cite{Harrison} on first-order model theory, in particular his proof of compactness.
 \end{abstract}
 
 
