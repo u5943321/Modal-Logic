@@ -63,6 +63,8 @@ All of our theorems have been pretty-printed to \LaTeX{} from the HOL theory fil
 We hope that most of the basic syntax is easy to follow.
 In a few places we use \HOLtm{CHOICE s} to denote the arbitrary choice of an element from set \HOLtm{s} (appealing to the Axiom of Choice).
 The power-set of a set \HOLtm{s} is written \HOLtm{POW s}.
+In a number of places, we use HOL's ``itself'' type to allow us to explicitly mention a type \emph{via} a term. 
+The type \HOLty{:'a itself} has just one value inhabiting it for any given choice of \HOLty{:'a}, and it is written \HOLtm{(:'a)}.
 
 \section{Syntax, Semantics and the Standard Translation[1.5p]}
 In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
