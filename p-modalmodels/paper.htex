@@ -25,11 +25,11 @@
 
 \maketitle
 \begin{abstract}
-In this paper, we discuss the formalisation of some fundamental propositional modal model theory. 
-The focus on models is novel: previous work in formalisations of modal logic have centered on proof systems and applications in model-checking. 
+In this paper, we discuss the formalisation of some fundamental propositional modal model theory.
+The focus on models is novel: previous work in formalisations of modal logic have centered on proof systems and applications in model-checking.
 We have formalised a number of fundamental results from the first two chapters of a standard textbook (Blackburn \emph{et al.}~\cite{Blackburn}).
 Among others, one important result, the Van Benthem characterisation theorem, characterizes the connection between modal logic and first order logic.
-This latter captures the desired saturation property of ultraproduct models on countably incomplete ultrafilters. 
+This latter captures the desired saturation property of ultraproduct models on countably incomplete ultrafilters.
 The first-order side of the connection is built on Harrison's earlier work~\cite{Harrison} on first-order model theory, in particular his proof of compactness.
 \end{abstract}
 
@@ -57,6 +57,12 @@ This paper presents the first mechanised proofs of a number of basic results fro
 \item a close approximation of Van Benthem's Characterization Theorem.
 \end{itemize}
 We also discuss where HOL's simple type theory lets us down: some standard results (including the best possible statement of Van Benthem's Characterization Theorem) seem impossible to prove in our setting.
+
+\paragraph{HOL4 Notation}
+All of our theorems have been pretty-printed to \LaTeX{} from the HOL theory files.
+We hope that most of the basic syntax is easy to follow.
+In a few places we use \HOLtm{CHOICE s} to denote the arbitrary choice of an element from set \HOLtm{s} (appealing to the Axiom of Choice).
+The power-set of a set \HOLtm{s} is written \HOLtm{POW s}.
 
 \section{Syntax, Semantics and the Standard Translation[1.5p]}
 In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
@@ -91,7 +97,7 @@ We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOL
 \end{definition}
 By requiring \HOLtm{w ∈ M.frame.world} in the clauses above, we ensure that models' world sets must be non-empty if they are to satisfy any formulas.
 
-Two worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are \emph{modal equivalent} (written \HOLtm{modal_eq M1 M2 w1 w2}) if they satisfy the same set of modal formulas. 
+Two worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are \emph{modal equivalent} (written \HOLtm{modal_eq M1 M2 w1 w2}) if they satisfy the same set of modal formulas.
 %%(1)
 If \HOLtm{phi1}, \HOLtm{phi2} are modal formulas, we say they are \emph{equivalent} over \HOLty{:β} models (written \HOLtm{equiv0 (:β) phi1 phi2}) if they are satisfied in the same worlds in every model:
 \begin{definition}[Notions of equivalence]
@@ -109,7 +115,6 @@ Therefore, this definition is not exactly encoding the equivalence in the usual 
 A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalize this translation, we take the work of Harrison in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A first order model \HOLtm{M:'a folModels$model} is a set \HOLtm{M.Dom} with interpretation of function symbols \HOLtm{M.Fun} and predicate symbols \HOLtm{M.Pred}. A valuation \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
 %
 If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning free variables of \HOLtm{phi} elements in the domain of \HOLtm{M}, we write \HOLtm{feval M σ phi}.
-
 
 For a modal formula \HOLtm{phi}, \HOLtm{ST x phi} is the standard translation of \HOLtm{phi} using \HOLtm{x} as the only free variable that may occur:
 \begin{definition}
@@ -170,8 +175,8 @@ Though apparently verbose, the definition of bisimulation in HOL is straightforw
   \HOLthm[def]{chap2_2.bisim_world_def}
 \end{holmath}
 \end{definition}
-It is trivial to prove by induction that bisimilar worlds are modal equivalent. As the most significant theorem on the basic theory of bisimulations, we proved the Hennessy-Milner theorem, which states  that modal equivalence and bisimulation on \emph{image finite} models are the same thing. 
-An image-finite model is a model where every world can only be related to finitely many worlds. 
+It is trivial to prove by induction that bisimilar worlds are modal equivalent. As the most significant theorem on the basic theory of bisimulations, we proved the Hennessy-Milner theorem, which states  that modal equivalence and bisimulation on \emph{image finite} models are the same thing.
+An image-finite model is a model where every world can only be related to finitely many worlds.
 In HOL, we get:
 \begin{theorem}
 {\upshape\cite[Theorem 2.24 (Hennessy-Milner Theorem)]{Blackburn}}
@@ -413,7 +418,7 @@ To deal with this issue, the key observation is that constants are nothing more 
 \end{holmath}
 \end{definition}
 
-The shifting construction gets us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first-order model. To apply \los's theorem on such a model, we prove that `taking the ultraproduct first-order model commutes with the convertion from modal to a first-order model on certain formulas', in the sense that the resulting models satisfies the same first-order formulas without function symbols. 
+The shifting construction gets us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first-order model. To apply \los's theorem on such a model, we prove that `taking the ultraproduct first-order model commutes with the convertion from modal to a first-order model on certain formulas', in the sense that the resulting models satisfies the same first-order formulas without function symbols.
 
 After these two steps as described above, we can prove Lemma \ref{2.73} using the proof in \cite{ChangKeisler1990}.
 
@@ -429,7 +434,7 @@ Note that the standard translation of any modal formula can only contain unary p
 \end{holmath}
 \end{definition}
 
-Because of the same problem we met when defining equivalence of formulas, the type parameters are necessary here. 
+Because of the same problem we met when defining equivalence of formulas, the type parameters are necessary here.
 However, although it is possible to prove theorems for different types $\alpha$ and $\beta$ in the above definition, in the theorems to come, we will only consider the case where $\alpha$ and $\beta$ are the same.
 
 The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula with at most one free variable $x$ is invariant under bisimulation precisely when it is equivalent to the standard translation of some modal formula at $x$. It is immediate from Proposition~\ref{2.47} that every such formula which is equivalent to a standard translation is invariant for bisimulation. We cannot prove it as an `if and only if' statement, since according to the proofs in \cite{Blackburn}, we can only prove the two directions separately as:
@@ -455,7 +460,7 @@ For the proof of the two theorems above, the first one is immediate from Proposi
 \end{theorem}
 The proof of the above relies on Lemma~\ref{2.73}.
 
-The second one is a consequence of the compactness theorem of first-order logic, saying that if \HOLtm{A} is a set of \HOLtm{L1tau}-formulas such that every finite subset has a \HOLty{:β}-model, then \HOLtm{A} itself has a \HOLty{:β}-model. 
+The second one is a consequence of the compactness theorem of first-order logic, saying that if \HOLtm{A} is a set of \HOLtm{L1tau}-formulas such that every finite subset has a \HOLty{:β}-model, then \HOLtm{A} itself has a \HOLty{:β}-model.
 \begin{theorem}[Result needed about first-order compactness]\label{folcpn}
 \begin{holmath}
   \HOLthm[width=65,A0/ss,phi/ff,phi/f,showtypes]{prettyPrinting.ppcompactness_thm_L1tau}
@@ -467,20 +472,20 @@ The proof of this theorem is where we use the work on compactness in~\cite{Harri
 
 \section{Conclusion [$<$1p]}
 
-In summary, all the results (appear as propositions, lemmas and theorems) in the first two chapters in \cite{Blackburn} that can be captured by HOL logic and is about the basic modal language are formalized in HOL. However, the result in chapter 2.6 about `definability' requires a definition of `class of models which is closed under taking ultraproducts'. Simple type theory cannot capture a proper class, hence we can only have such a set instead. But then as every element in a set has the same type, we then require a type which is closed undertaking ultraproducts, that is, a type such that has subset with arbitarily large cardinality. However, HOL can only capture cardinality up to $2^{\mathbb N}$. 
-%is a result about `class of models that is closed under iterated ultraproducts'. If we try to approximate this definition, we will need a type which is closed under taking ultraproducts, which is not doable in HOL. 
+In summary, all the results (appear as propositions, lemmas and theorems) in the first two chapters in \cite{Blackburn} that can be captured by HOL logic and is about the basic modal language are formalized in HOL. However, the result in chapter 2.6 about `definability' requires a definition of `class of models which is closed under taking ultraproducts'. Simple type theory cannot capture a proper class, hence we can only have such a set instead. But then as every element in a set has the same type, we then require a type which is closed undertaking ultraproducts, that is, a type such that has subset with arbitarily large cardinality. However, HOL can only capture cardinality up to $2^{\mathbb N}$.
+%is a result about `class of models that is closed under iterated ultraproducts'. If we try to approximate this definition, we will need a type which is closed under taking ultraproducts, which is not doable in HOL.
 %
-The result about `safety' in section 2.7 is a result about the PDL language, which has infinitely many modal operators and hence is not possible to be captured by the basic modal languge. Hence these two parts are not formalized. 
+The result about `safety' in section 2.7 is a result about the PDL language, which has infinitely many modal operators and hence is not possible to be captured by the basic modal languge. Hence these two parts are not formalized.
 
-The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. It relies on the modal version of Theorem \ref{folcpn}, which is straightfoward to prove from Theorem \ref{folcpn} and Proposition \ref{2.47}. 
+The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. It relies on the modal version of Theorem \ref{folcpn}, which is straightfoward to prove from Theorem \ref{folcpn} and Proposition \ref{2.47}.
 
-For each of the formalized definition and result, we write the statement in HOL  to be as close as possible to the original statement in\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalizing other results in \cite{Blackburn} to continue using our work as a starting point. The work on ultraproduct up to \los's theorem is independent of our work on modal model theory, and hence is generally applicatible for proving other model-theoretic theorems. 
+For each of the formalized definition and result, we write the statement in HOL  to be as close as possible to the original statement in\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalizing other results in \cite{Blackburn} to continue using our work as a starting point. The work on ultraproduct up to \los's theorem is independent of our work on modal model theory, and hence is generally applicatible for proving other model-theoretic theorems.
 
 
 \subsection{Related Work}
-We believe that we are the first to mechanize the bulk of the results in this paper. 
-We \emph{have} built on Harrison's mechanization of foundational results about first order model theory~\cite{Harrison}, in particular compactness. 
-The connections between modal logic and process algebra are well-understood and there has been a great deal of mechanised work on the operational theory of such (co-)algebraic systems, starting at least as far back as Nesi~\cite{Nesi96}. 
+We believe that we are the first to mechanize the bulk of the results in this paper.
+We \emph{have} built on Harrison's mechanization of foundational results about first order model theory~\cite{Harrison}, in particular compactness.
+The connections between modal logic and process algebra are well-understood and there has been a great deal of mechanised work on the operational theory of such (co-)algebraic systems, starting at least as far back as Nesi~\cite{Nesi96}.
 Our proof of the Hennessy-Milner theorem~(Theorem~\ref{hennessy-milner}) is a gesture in this direction, but Van Benthem's theorem is much deeper and uses bisimulations as a tool to understanding the connection between modal and first order logics, rather than as a connection to process algebras.
 
 Mechanised work with ultrafilters began with Fleuriot's use of them to mechanise non-standard analysis~\cite{Fleuriot2001}.
