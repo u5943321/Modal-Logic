@@ -72,7 +72,7 @@ We define a data type called `form' to represent the formulas of this modal lang
 \begin{definition}
 {\upshape\cite[Definition 1.9]{Blackburn}}
 \begin{holmath}
-  \HOLthm{chap1.datatype_form}
+  \HOLthm[nodollarparens]{chap1.datatype_form}
 \end{holmath}
 \end{definition}
 
