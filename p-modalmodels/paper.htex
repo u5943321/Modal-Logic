@@ -444,8 +444,7 @@ The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula w
 
 which cannot be put together into a double implication. To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more then one free variable, by the second theorem above, if \HOLtm{phi} is invariant under bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds, then $\phi$ is equivalent to a standard translation on model with $\alpha$-worlds. However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-world. But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. If the type universe of \HOLty{:(num -> α) -> bool} is small enough to be embedded into $\alpha$, then we will also done. However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds. If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterization theorem.
 
-For the proof of the two theorems above, the first one is immediate from Proposition~\ref{2.47}, and the second one requires another critical lemma on `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models':
-If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}.
+For the proof of the two theorems above, the first one is immediate from Proposition~\ref{2.47}, and the second one requires two another critical lemmas. The first one says `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models'. More precisely, if two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}.
 
 \begin{theorem}
 {\upshape\cite[Theorem 2.74, one direction]{Blackburn}}
@@ -454,15 +453,29 @@ If two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are moda
   \HOLthm[J/I,j/i,f/fw,g/fv]{chap2_6.thm_2_74_half2}
 \end{holmath}
 \end{theorem}
-The proof relies on Lemma~\ref{2.73}.
+The proof of the above relies on Lemma~\ref{2.73}.
+
+The second one is a consequence of the compactness theorem of first-order logic, saying that if \HOLtm{A} is a set of \HOLtm{L1tau}-formulas such that every finite subset has a \HOLty{:β}-model, then \HOLtm{A} itself has a \HOLty{:β}-model. 
+\begin{theorem}[Result needed about first-order compactness]\label{folcpn}
+\begin{holmath}
+  \HOLthm[width=65,A0/ss,phi/ff,phi/f,showtypes]{prettyPrinting.ppcompactness_thm_L1tau}
+\end{holmath}
+\end{theorem}
+The proof of this theorem is where we use the work on compactness in~\cite{Harrison}.
+
+
 
 \section{Conclusion [$<$1p]}
 
-In summary, all the results (appear as propositions, lemmas and theorems) in the first two chapters in \cite{Blackburn} that can be captured by HOL logic and is about the basic modal language are formalized in HOL. However, the result in chapter 2.6 about `definability' is a result about `class of models that is closed under iterated ultraproducts'. If we try to approximate this definition, we will need a type which is closed under taking ultraproducts, which is not doable in HOL. The result about `safety' in section 2.7 is a result about the PDL language, which has infinitely many modal operators and hence is not possible to be captured by the basic modal languge. Hence these two parts are not formalized. 
+In summary, all the results (appear as propositions, lemmas and theorems) in the first two chapters in \cite{Blackburn} that can be captured by HOL logic and is about the basic modal language are formalized in HOL. However, the result in chapter 2.6 about `definability' requires a definition of `class of models which is closed under taking ultraproducts'. Simple type theory cannot capture a proper class, hence we can only have such a set instead. But then as every element in a set has the same type, we then require a type which is closed undertaking ultraproducts, that is, a type such that has subset with arbitarily large cardinality. However, HOL can only capture cardinality up to $2^{\mathbb N}$. 
+%is a result about `class of models that is closed under iterated ultraproducts'. If we try to approximate this definition, we will need a type which is closed under taking ultraproducts, which is not doable in HOL. 
+%
+The result about `safety' in section 2.7 is a result about the PDL language, which has infinitely many modal operators and hence is not possible to be captured by the basic modal languge. Hence these two parts are not formalized. 
 
-The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The later has a proof that is similar to the proof of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. 
+The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. It relies on the modal version of Theorem \ref{folcpn}, which is straightfoward to prove from Theorem \ref{folcpn} and Proposition \ref{2.47}. 
 
-Although our work aims to formalize modal model theory, significant amount of our work relies on Harrison's previous work, namely the formalization of section 2.4, 2.6 and 2.7. 
+For each of the formalized definition and result, we write the statement in HOL  to be as close as possible to the original statement in\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalizing other results in \cite{Blackburn} to continue using our work as a starting point. The work on ultraproduct up to \los's theorem is independent of our work on modal model theory, and hence is generally applicatible for proving other model-theoretic theorems. 
+
 
 \subsection{Related Work}
 We believe that we are the first to mechanize the bulk of the results in this paper. 
