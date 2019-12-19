@@ -199,14 +199,19 @@ Given \HOLtm{satis M1 w1 phi}, where $\phi$ has degree $k$, we can construct \HO
 \item \HOLtm{M4} is obtained from \HOLtm{M3} by modifying the valuation into \HOLtm{\p v. if (p IN (prop_letters phi)) then (M3.valt p v) else F}.
 \end{itemize}
 The construction of \HOLtm{M5} requires a lemma:
-\begin{lemma}
+\begin{lemma}\label{2.29}
 {\upshape\cite[Proposition 2.29]{Blackburn}}
 \begin{holmath}
   \HOLthm[phi/f,Φ/s,showtypes]{prop2_29.prop_2_29_prop_letters}
 \end{holmath}
 \end{lemma}
-
-We require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
+%
+The proof of Lemma \ref{2.29} further relies on the fact that if we combine a set \HOLtm{A} of non-equivalent modal formulas using connectives other than \HOLtm{DIAM}, then we get only finitely many non-equivalent formulas. To prove this fact, we prove that the map sending a equivalence class of such combinations to the set of assignments of truth values to formulas in $A$ that make the representative of the equivalence class true is a injection, where the later set is finite as a power set of a finite set. 
+%
+For the antecedent of Lemma \ref{2.29}, we require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
+%
+In order to prove Lemma \ref{2.29}, we reduce our goal into proving that combining finitely non-equivalent modal formulas using connectives other than \HOLtm{DIAM} yields only finitely many non-equivalent formulas. 
+ 
 This would be easy to prove in set theory.
 However, in simple type theory, the proof of \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires us (in the left-to-right direction) to be able to construct a model with a new world inserted, something only sure to be possible if the \HOLty{:β} universe is infinite.
 %%(2 deleted things)
