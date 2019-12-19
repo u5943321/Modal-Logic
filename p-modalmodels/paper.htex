@@ -399,11 +399,8 @@ Further, the function $f$ is a bijection between $\{0,\cdots,n-1\}$ and $A$, whi
 As is apparent from the definition, the only difference between a model and its expansion is the interpretation of function symbols.
 
 A set \HOLtm{Σ} of first-order formulas is called \emph{consistent} with a model \HOLtm{M} if for every finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a valuation of \HOLtm{M} such that all elements of \HOLtm{Σ0} are satisfied, in this case, we write \HOLtm{consistent M Σ}. A set \HOLtm{Γ} of first-order formula is an $x$-\emph{type} if for each formula in \HOLtm{Γ}, the only free variable that may contain is $x$. In this case, we write `\HOLtm{ftype x Γ}' in HOL. If \HOLtm{Γ} is an $x$-type, when evaluating formulas in \HOLtm{Γ}, the valuations will only control where the only free variable $x$ goes to. We say \HOLtm{Γ} is \emph{realized} in \HOLtm{M} if there is an element $w$ in the domain of \HOLtm{M} such that \HOLtm{feval M (\v.w) phi} for all \HOLtm{phi IN Γ}. In this case, we write `\HOLtm{frealizes M x Γ}' in HOL.
-Let \HOLtm{M} be a model and \HOLtm{n} be a natural number.
-%
-For every \HOLtm{A ⊆ M.Dom}, with $|A|<n$ and for every $f:{\mathbb N}\to $ \HOLtm{M.Dom}, there is a unique \HOLtm{M'} such that  \HOLtm{expansion M A M' f}.
-%
-If every such \HOLtm{M'} realizes every $x$-type \HOLtm{Γ}, then we say \HOLtm{M} is $n$-saturated. In HOL:
+Let \HOLtm{M} be a model and \HOLtm{n} be a natural number. If for every
+ \HOLtm{A ⊆ M.Dom} with $|A|<n$ and every $f:{\mathbb N}\to $ \HOLtm{M.Dom}, the model \HOLtm{expand M A f} realizes every $x$-type \HOLtm{Γ} that is consistent with  \HOLtm{expand M A f}, then we say \HOLtm{M} is $n$-saturated. In HOL:
 \begin{definition}
 {\upshape\cite[Definition 2.63 ($n$-Saturated)]{Blackburn}}
 \begin{holmath}
