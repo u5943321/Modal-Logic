@@ -352,7 +352,15 @@ For m-saturated models, bisimulation and modal equivalence coincide:
   \HOLthm[M1/M,M2/M',w1/w,w2/w',width=60]{chap2_5.M_sat_bisim_modal_eq}
 \end{holmath}
 \end{proposition}
-Given a model \HOLtm{M}, its ultrafilter extension \HOLtm{UE M} is defined as:
+Given a model \HOLtm{M} and a set \HOLtm{X} of worlds of \HOLtm{M}, the set of worlds that `can see' $X$ (notation: \HOLtm{can_see M X}) is the set of worlds \HOLtm{w} of \HOLtm{M} such that there exists some \HOLtm{v IN X} such that \HOLtm{M.frame.rel w v}. 
+%
+We define the ultrafilter extension \HOLtm{UE M} of \HOLtm{M} as:
+\begin{itemize}
+\item The world set is the set of all ultrafilters on \HOLtm{M.frame.world}.
+\item Two ultrafilters \HOLtm{u}, \HOLtm{v} on \HOLtm{M} are related in the ultrafilter extension of \HOLtm{M} if for every \HOLtm{X IN v}, the set of worlds that can see \HOLtm{X} is in \HOLtm{u}. 
+\item A propositional letter $p$ to be satisfied at an ultrafilter $v$ if and only if the set of worlds in \HOLtm{M} which satisfies $p$ is in $v$. 
+\end{itemize}
+In HOL: 
 \begin{definition}
 {\upshape\cite[Definition 2.57 (Ultrafilter Extension)]{Blackburn}}
 \begin{holmath}
@@ -399,7 +407,7 @@ If every such \HOLtm{M'} realizes every $x$-type \HOLtm{Γ}, then we say \HOLtm{
 \begin{definition}
 {\upshape\cite[Definition 2.63 ($n$-Saturated)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,Γ/G,FM/M]{lemma2_73.n_saturated_def}\\[3mm]
+  \HOLthm[def,Γ/G]{lemma2_73.n_saturated_def}\\[3mm]
 \end{holmath}
 \end{definition}
 We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterization theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.
@@ -412,17 +420,7 @@ We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every 
 Here a countably incomplete ultrafilter is an ultrafilter that contains a countably infinite family that intersects to the empty set. We prove in HOL that such ultrafilters do exist using Theorem \ref{A.14}. The above theorem is not simply a direct consequence of \los's theorem:
 that result is about ultraproducts of first-order models, and it says nothing about expansion. But to prove Lemma \ref{2.73}, we must prove a statement for an expanded first-order model, and this first order model is itself obtained by converting a ultraproduct of modal models.
 
-To deal with this issue, the key observation is that constants are nothing more than forcing some symbols to be sent to some points in a model under every valuation, hence rather than use nullary function symbols, we fix a set of variable letters, each corresponding to a function symbol, and only consider the valuations that send these variable letters to certain fixed points. With this idea, we can remove all the constants in a formula, and hence change our scope from an expanded model back to the unexpanded model. To get rid of the constants $\{0,\cdots , n-1\}$, we replace every \HOLtm{VAR m} with \HOLtm{VAR (m+n)}, and replace every constant \HOLtm{Fn c []} by \HOLtm{VAR c}. This operation is done by the function \HOLtm{shift_form} which takes a natural number (the number of constants we want to remove), and a first-order formula (where the only function symbols may appear are the constants $0,\cdots, n-1$). Since $0,\cdots,n-1$ in a shifted formula are now designed to be sent to fixed places $f \ 0,\cdots,f \ (n-1)$, it does not make sense to assign these variable symbols anywhere else. Therefore, to talk about evaluation of shifted formula, the first thing is to make sure that the valuations we are considering send the variables which actually denote constants to the right place. Hence we shift the valuations accordingly. The definition of shifting on valuation together with the semantical behaviour are displayed below:
-\begin{definition}[Shifting construction]\label{k1}
-\begin{holmath}
-  \HOLthm[def,v/m]{lemma2_73.shift_valuation_def}\\[2mm]
-  \HOLthm[width=80]{prettyPrinting.ppexpansion_shift_feval}
-\end{holmath}
-\end{definition}
-
-The shifting construction gets us out of the expansion, leaving us a model obtained by converting a ultraproduct modal model to a first-order model. To apply \los's theorem on such a model, we prove that `taking the ultraproduct first-order model commutes with the convertion from modal to a first-order model on certain formulas', in the sense that the resulting models satisfies the same first-order formulas without function symbols.
-
-After these two steps as described above, we can prove Lemma \ref{2.73} using the proof in \cite{ChangKeisler1990}.
+To deal with this issue, the key observation is that constants are nothing more than forcing some symbols to be sent to some points in a model under every valuation, hence rather than use nullary function symbols, we fix a set of variable letters, each corresponding to a function symbol, and only consider the valuations that send these variable letters to certain fixed points. With this idea, we can remove all the constants in a formula, and hence change our scope from an expanded model back to the unexpanded model. To get rid of the constants $\{0,\cdots , n-1\}$, we replace every \HOLtm{fV m} with \HOLtm{fV (m+n)}, and replace every constant \HOLtm{Fn c []} by \HOLtm{fV c}. This operation is done by the function \HOLtm{shift_form} which takes a natural number (the number of constants we want to remove), and a first-order formula (where the only function symbols may appear are the constants $0,\cdots, n-1$). Since $0,\cdots,n-1$ in a shifted formula are now designed to be sent to fixed places $f \ 0,\cdots,f \ (n-1)$, it does not make sense to assign these variable symbols anywhere else. Therefore, to talk about evaluation of shifted formula, the first thing is to make sure that the valuations we are considering send the variables which actually denote constants to the right place. Hence we shift the valuations accordingly, and then prove that a formula is satisfied on an expanded model is satisfied under a valuation if and only if the shifted formula is satisfied under the shifted valuation. Also, we prove that `taking the ultraproduct first-order model commutes with the convertion from modal to a first-order model on certain formulas', in the sense that the resulting models satisfies the same first-order formulas without function symbols. By putting these two results together, we prove Lemma \ref{2.73} using the proof in \cite{ChangKeisler1990}.
 
 
 
@@ -451,7 +449,7 @@ The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula w
 
 which cannot be put together into a double implication. To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more then one free variable, by the second theorem above, if \HOLtm{phi} is invariant under bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds, then $\phi$ is equivalent to a standard translation on model with $\alpha$-worlds. However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-world. But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. If the type universe of \HOLty{:(num -> α) -> bool} is small enough to be embedded into $\alpha$, then we will also done. However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds. If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterization theorem.
 
-For the proof of the two theorems above, the first one is immediate from Proposition~\ref{2.47}, and the second one requires two another critical lemmas. The first one says `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models'. More precisely, if two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}.
+For the proof of the two theorems above, the first one is immediate from Proposition~\ref{2.47}, and the second one requires another critical lemma saying `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models'. More precisely, if two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}.
 
 \begin{theorem}
 {\upshape\cite[Theorem 2.74, one direction]{Blackburn}}
@@ -462,19 +460,9 @@ For the proof of the two theorems above, the first one is immediate from Proposi
 \end{theorem}
 The proof of the above relies on Lemma~\ref{2.73}.
 
-The second one is a consequence of the compactness theorem of first-order logic, saying that if \HOLtm{A} is a set of \HOLtm{L1tau}-formulas such that every finite subset has a \HOLty{:β}-model, then \HOLtm{A} itself has a \HOLty{:β}-model.
-\begin{theorem}[Result needed about first-order compactness]\label{folcpn}
-\begin{holmath}
-  \HOLthm[width=65,A0/ss,phi/ff,phi/f,showtypes]{prettyPrinting.ppcompactness_thm_L1tau}
-\end{holmath}
-\end{theorem}
-The proof of this theorem is where we use the work on compactness in~\cite{Harrison}.
-
-
-
 \section{Conclusion [$<$1p]}
 
-To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language. 
+To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language\footnote{Available at https://github.com/u5943321/Modal-Logic}. 
 The exceptions are:
 \begin{itemize}
 \item The result in Section~2.6 about `definability', which requires a definition of `class of models closed under taking ultraproducts'. Simple type theory cannot capture a proper class, hence we can only have such a set instead. But then as every element in a set has the same type, we then require a type which is closed undertaking ultraproducts, that is, a type such that has subset with arbitarily large cardinality. However, HOL can only capture cardinality up to $2^{\mathbb N}$.
@@ -485,7 +473,7 @@ The result about `safety' in Section~2.7 is a result about the PDL language, whi
 For the moment, we have restricted our attention to the basic modal language, with only $\Diamond$ (and the derived $\Box$).
 \end{itemize}
 
-The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. It relies on the modal version of Theorem \ref{folcpn}, which is straightfoward to prove from Theorem \ref{folcpn} and Proposition \ref{2.47}.
+The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. 
 
 For each of the formalized definition and result, we write the statement in HOL  to be as close as possible to the original statement in\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalizing other results in \cite{Blackburn} to continue using our work as a starting point. The work on ultraproduct up to \los's theorem is independent of our work on modal model theory, and hence is generally applicatible for proving other model-theoretic theorems.
 
