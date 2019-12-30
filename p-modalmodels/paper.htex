@@ -63,7 +63,7 @@ All of our theorems have been pretty-printed to \LaTeX{} from the HOL theory fil
 We hope that most of the basic syntax is easy to follow.
 In a few places we use \HOLtm{CHOICE s} to denote the arbitrary choice of an element from set \HOLtm{s} (appealing to the Axiom of Choice).
 The power-set of a set \HOLtm{s} is written \HOLtm{POW s}.
-In a number of places, we use HOL's ``itself'' type to allow us to explicitly mention a type \emph{via} a term. 
+In a number of places, we use HOL's ``itself'' type to allow us to explicitly mention a type \emph{via} a term.
 The type \HOLty{:'a itself} has just one value inhabiting it for any given choice of \HOLty{:'a}, and it is written \HOLtm{(:'a)}.
 
 \section{Syntax, Semantics and the Standard Translation[1.5p]}
@@ -140,7 +140,7 @@ Here \HOLtm{mm2folm} is the function that turns a modal model into a first-order
 \begin{holmath}
   \HOLthm[def,w1/w,w3/v10,ws/v11,l/args]{chap2_4revised.mm2folm_def}
 \end{holmath}
-That is, the model obtained by convertering a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, maps every term \HOLtm{Fn f l} into an arbitary world, each propositional letter maps to distinct predicates on worlds, and there is one binary predicate encoding the frame relation.
+That is, the model obtained by converting a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, maps every term \HOLtm{Fn f l} into an arbitary world, maps each propositional letter to distinct predicates on worlds, and uses one binary predicate to encode the frame relation.
 
 
 \section{Basic Results}%[2p]
@@ -206,12 +206,12 @@ The construction of \HOLtm{M5} requires a lemma:
 \end{holmath}
 \end{lemma}
 %
-The proof of Lemma \ref{2.29} further relies on the fact that if we combine a set \HOLtm{A} of non-equivalent modal formulas using connectives other than \HOLtm{DIAM}, then we get only finitely many non-equivalent formulas. To prove this fact, we prove that the map sending a equivalence class of such combinations to the set of assignments of truth values to formulas in $A$ that make the representative of the equivalence class true is a injection, where the later set is finite as a power set of a finite set. 
+The proof of Lemma \ref{2.29} further relies on the fact that if we combine a set \HOLtm{A} of non-equivalent modal formulas using connectives other than \HOLtm{DIAM}, then we get only finitely many non-equivalent formulas. To prove this fact, we prove that the map sending a equivalence class of such combinations to the set of assignments of truth values to formulas in $A$ that make the representative of the equivalence class true is a injection, where the later set is finite as a power set of a finite set.
 %
 For the antecedent of Lemma \ref{2.29}, we require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
 %
-In order to prove Lemma \ref{2.29}, we reduce our goal into proving that combining finitely non-equivalent modal formulas using connectives other than \HOLtm{DIAM} yields only finitely many non-equivalent formulas. 
- 
+In order to prove Lemma \ref{2.29}, we reduce our goal into proving that combining finitely non-equivalent modal formulas using connectives other than \HOLtm{DIAM} yields only finitely many non-equivalent formulas.
+
 This would be easy to prove in set theory.
 However, in simple type theory, the proof of \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires us (in the left-to-right direction) to be able to construct a model with a new world inserted, something only sure to be possible if the \HOLty{:β} universe is infinite.
 %%(2 deleted things)
@@ -357,15 +357,15 @@ For m-saturated models, bisimulation and modal equivalence coincide:
   \HOLthm[M1/M,M2/M',w1/w,w2/w',width=60]{chap2_5.M_sat_bisim_modal_eq}
 \end{holmath}
 \end{proposition}
-Given a model \HOLtm{M} and a set \HOLtm{X} of worlds of \HOLtm{M}, the set of worlds that `can see' $X$ (notation: \HOLtm{can_see M X}) is the set of worlds \HOLtm{w} of \HOLtm{M} such that there exists some \HOLtm{v IN X} such that \HOLtm{M.frame.rel w v}. 
+Given a model \HOLtm{M} and a set \HOLtm{X} of worlds of \HOLtm{M}, the set of worlds that `can see' $X$ (notation: \HOLtm{can_see M X}) is the set of worlds \HOLtm{w} of \HOLtm{M} such that there exists some \HOLtm{v IN X} such that \HOLtm{M.frame.rel w v}.
 %
 We define the ultrafilter extension \HOLtm{UE M} of \HOLtm{M} as:
 \begin{itemize}
 \item The world set is the set of all ultrafilters on \HOLtm{M.frame.world}.
-\item Two ultrafilters \HOLtm{u}, \HOLtm{v} on \HOLtm{M} are related in the ultrafilter extension of \HOLtm{M} if for every \HOLtm{X IN v}, the set of worlds that can see \HOLtm{X} is in \HOLtm{u}. 
-\item A propositional letter $p$ to be satisfied at an ultrafilter $v$ if and only if the set of worlds in \HOLtm{M} which satisfies $p$ is in $v$. 
+\item Two ultrafilters \HOLtm{u}, \HOLtm{v} on \HOLtm{M} are related in the ultrafilter extension of \HOLtm{M} if for every \HOLtm{X IN v}, the set of worlds that can see \HOLtm{X} is in \HOLtm{u}.
+\item A propositional letter $p$ to be satisfied at an ultrafilter $v$ if and only if the set of worlds in \HOLtm{M} which satisfies $p$ is in $v$.
 \end{itemize}
-In HOL: 
+In HOL:
 \begin{definition}
 {\upshape\cite[Definition 2.57 (Ultrafilter Extension)]{Blackburn}}
 \begin{holmath}
@@ -464,18 +464,18 @@ The proof of the above relies on Lemma~\ref{2.73}.
 
 \section{Conclusion [$<$1p]}
 
-To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language\footnote{Available at https://github.com/u5943321/Modal-Logic}. 
+To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language\footnote{Available at https://github.com/u5943321/Modal-Logic}.
 The exceptions are:
 \begin{itemize}
 \item The result in Section~2.6 about `definability', which requires a definition of `class of models closed under taking ultraproducts'. Simple type theory cannot capture a proper class, hence we can only have such a set instead. But then as every element in a set has the same type, we then require a type which is closed undertaking ultraproducts, that is, a type such that has subset with arbitarily large cardinality. However, HOL can only capture cardinality up to $2^{\mathbb N}$.
 %is a result about `class of models that is closed under iterated ultraproducts'. If we try to approximate this definition, we will need a type which is closed under taking ultraproducts, which is not doable in HOL.
 %
-\item 
-The result about `safety' in Section~2.7 is a result about the PDL language, which has infinitely many modal operators. 
+\item
+The result about `safety' in Section~2.7 is a result about the PDL language, which has infinitely many modal operators.
 For the moment, we have restricted our attention to the basic modal language, with only $\Diamond$ (and the derived $\Box$).
 \end{itemize}
 
-The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated. 
+The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated.
 
 For each of the formalized definition and result, we write the statement in HOL  to be as close as possible to the original statement in\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalizing other results in \cite{Blackburn} to continue using our work as a starting point. The work on ultraproduct up to \los's theorem is independent of our work on modal model theory, and hence is generally applicatible for proving other model-theoretic theorems.
 
