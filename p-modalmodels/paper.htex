@@ -68,7 +68,7 @@ The type \HOLty{:'a itself} has just one value inhabiting it for any given choic
 
 \section{Syntax, Semantics and the Standard Translation[1.5p]}
 In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
-We define a data type called `form' to represent the formulas of this modal language.
+We define a data type called \HOLty{:form} to represent the formulas of this modal language.
 \begin{definition}
 {\upshape\cite[Definition 1.9]{Blackburn}}
 \begin{holmath}
