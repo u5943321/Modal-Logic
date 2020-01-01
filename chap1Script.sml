@@ -91,7 +91,7 @@ val _ = Hol_datatype`
 val satis_def =
   Define
   `(satis M w (VAR p) <=> w IN M.frame.world /\ w IN M.valt p)
-  /\ (satis M w FALSE <=> w IN M.frame.world /\ F)
+  /\ (satis M w FALSE <=> F)
   /\ (satis M w (NOT form) <=> w IN M.frame.world /\ ¬ satis M w form)
   /\ (satis M w (DISJ form1 form2) <=> satis M w form1 \/ satis M w form2)
   /\ (satis M w (DIAM form) <=> w IN M.frame.world /\ ?v. M.frame.rel w v /\ v IN M.frame.world /\ satis M v form)`;
