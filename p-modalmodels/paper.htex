@@ -52,7 +52,7 @@ The fact that mechanizing only as far as \cite[Chapter 2]{Blackburn} requires wh
 \paragraph{Contributions}
 This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al.}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
 \begin{itemize}
-\item Two versions of \los's  theorem the saturation of ultraproduct models;
+\item Two versions of \los's  theorem on the saturation of ultraproduct models;
 \item modal equivalence as bisimilarity between ultrafilter extensions; and
 \item a close approximation of Van Benthem's Characterization Theorem.
 \end{itemize}
@@ -64,10 +64,11 @@ We hope that most of the basic syntax is easy to follow.
 In a few places we use \HOLtm{CHOICE s} to denote the arbitrary choice of an element from set \HOLtm{s} (appealing to the Axiom of Choice).
 The power-set of a set \HOLtm{s} is written \HOLtm{POW s}.
 In a number of places, we use HOL's ``itself'' type to allow us to explicitly mention a type \emph{via} a term.
-The type \HOLty{:'a itself} has just one value inhabiting it for any given choice of \HOLty{:'a}, and it is written \HOLtm{(:'a)}.
+The type \HOLty{:'a itself} has just one value inhabiting it for any given choice of \HOLty{:'a}; that value is written \HOLtm{(:'a)}.
 
 \section{Syntax, Semantics and the Standard Translation[1.5p]}
-In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'. For a type $\alpha$, an $\alpha$-modal formula is either of form \HOLtm{VAR p}, where $p$ is of type $\alpha$, or a disjunction $\phi\lor \psi$ of two $\alpha$-modal formulas, or the falsity $\bot$, or a negation $\lnot \phi$ of an $\alpha$-modal formula $\phi$, or, finally, of the form $\Diamond \phi$ where $\phi$ is an $\alpha$-modal formula.
+In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'.
+A modal formula is either of form \HOLtm{VAR p}, where $p$ is of type \HOLty{:num}, enumerating all the possible variable symbols, a disjunction \HOLtm[-disj]{DISJ ϕ ψ} (pretty-printed to \HOLtm{DISJ ϕ ψ} in most places), the falsity \HOLtm{FALSE}, a negation \HOLtm{~ ϕ:form}, or, finally, of the form \HOLtm{DIAM ϕ}.
 We define a data type called \HOLty{:form} to represent the formulas of this modal language.
 \begin{definition}
 {\upshape\cite[Definition 1.9]{Blackburn}}
@@ -97,7 +98,7 @@ We read `\HOLtm{satis M w phi}' as `$\phi$ is satisfied at the world $w$ in \HOL
 \end{array}
 \end{holmath}
 \end{definition}
-By requiring \HOLtm{w ∈ M.frame.world} in the clauses above, we ensure that models' world sets must be non-empty if they are to satisfy any formulas.
+By requiring \HOLtm{w ∈ M.frame.world} in various clauses above, we ensure that models' world sets must be non-empty if they are to satisfy any formulas.
 
 Two worlds \HOLtm{w1 IN M1.frame.world} and \HOLtm{w2 IN M2.frame.world} are \emph{modal equivalent} (written \HOLtm{modal_eq M1 M2 w1 w2}) if they satisfy the same set of modal formulas.
 %%(1)
@@ -467,17 +468,18 @@ The proof of the above relies on Lemma~\ref{2.73}.
 To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language\footnote{Available at https://github.com/u5943321/Modal-Logic}.
 The exceptions are:
 \begin{itemize}
-\item The result in Section~2.6 about `definability', which requires a definition of `class of models closed under taking ultraproducts'. Simple type theory cannot capture a proper class, hence we can only have such a set instead. But then as every element in a set has the same type, we then require a type which is closed undertaking ultraproducts, that is, a type such that has subset with arbitarily large cardinality. However, HOL can only capture cardinality up to $2^{\mathbb N}$.
-%is a result about `class of models that is closed under iterated ultraproducts'. If we try to approximate this definition, we will need a type which is closed under taking ultraproducts, which is not doable in HOL.
-%
+\item The result in Section~2.6 about `definability', which requires a definition of the `models closed under taking ultraproducts'.
+Simple type theory cannot capture such large sets.
 \item
 The result about `safety' in Section~2.7 is a result about the PDL language, which has infinitely many modal operators.
 For the moment, we have restricted our attention to the basic modal language, with only $\Diamond$ (and the derived $\Box$).
 \end{itemize}
 
-The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in \cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement. The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated.
+The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in~\cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement.
+The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated.
 
-For each of the formalized definition and result, we write the statement in HOL  to be as close as possible to the original statement in\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalizing other results in \cite{Blackburn} to continue using our work as a starting point. The work on ultraproduct up to \los's theorem is independent of our work on modal model theory, and hence is generally applicatible for proving other model-theoretic theorems.
+For each of the formalized definition and result, we write the statement in HOL  to be as close as possible to the original statement in~\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalizing other results in \cite{Blackburn} to continue using our work as a starting point.
+The work on ultraproducts up to \los's theorem is independent of our work on modal model theory, and should be generally useful in other model-theoretic applications.
 
 
 \subsection{Related Work}
