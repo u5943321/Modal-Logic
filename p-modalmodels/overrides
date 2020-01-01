@@ -1,6 +1,6 @@
 $Turnstile$ 5 \ensuremath{\HOLTokenTurnstile}
-VAR 1 \ensuremath{{}^{\sf m}{\sf V}}
-⊥ 1 \ensuremath{{}^{\sf m}\bot}
+VAR 1 \ensuremath{\mathsf{V}\sb{\mathsf{m}}}
+⊥ 1 \ensuremath{\bot\sb{\mathsf{m}}}
 ◇ 1 \ensuremath{\Diamond}
 □ 1 \ensuremath{\Box}
 -> 2 \ensuremath{\rightarrow}
@@ -113,8 +113,8 @@ folmodels2Doms 4 Doms
 (cp2) 0 }
 (cp3) 1 \sb{j}
 
-(disj) 1 \ensuremath{\ {}^{\sf m} {\lor} \ }
-¬ 1 \ensuremath{{^{\sf m}}{\lnot}}
+(disj) 1 \ensuremath{\lor\sb{\mathsf{m}}}
+¬ 1 \ensuremath{\lnot\sb{\mathsf{m}}}
 
 
 (ad) 1 \ensuremath{\land}
