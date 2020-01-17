@@ -34,7 +34,7 @@ This latter captures the desired saturation property of ultraproduct models on c
 \end{abstract}
 
 
-\section{Introduction [1p]}
+\section{Introduction}
 
 % stress that previous work tends to focus on proof theory, e.g. tableaux
 % focus on model theory is novel
@@ -66,7 +66,7 @@ The power-set of a set \HOLtm{s} is written \HOLtm{POW s}.
 In a number of places, we use HOL's ``itself'' type to allow us to explicitly mention a type \emph{via} a term.
 The type \HOLty{:'a itself} has just one value inhabiting it for any given choice of \HOLty{:'a}; that value is written \HOLtm{(:'a)}.
 
-\section{Syntax, Semantics and the Standard Translation[1.5p]}
+\section{Syntax, Semantics and the Standard Translation}
 In our formalisation, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'.
 A modal formula is either of form \HOLtm{VAR p}, where $p$ is of type \HOLty{:num}, enumerating all the possible variable symbols, a disjunction \HOLtm[-disj]{DISJ ϕ ψ} (pretty-printed to \HOLtm{DISJ ϕ ψ} in most places), the falsity \HOLtm{FALSE}, a negation \HOLtm{~ ϕ:form}, or, finally, of the form \HOLtm{DIAM ϕ}.
 We define a data type called \HOLty{:form} to represent the formulas of this modal language.
@@ -144,7 +144,7 @@ Here \HOLtm{mm2folm} is the function that turns a modal model into a first-order
 That is, the model obtained by converting a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, maps every term \HOLtm{Fn f l} into an arbitary world, maps each propositional letter to distinct predicates on worlds, and uses one binary predicate to encode the frame relation.
 
 
-\section{Basic Results}%[2p]
+\section{Basic Results}
 We discuss some highlights of formalised results from Blackburn~\emph{at al.}~\cite[\S2.1--\S2.3]{Blackburn} below.
 \subsection{Tree-like property}
 A tree-like model is a model whose underlying frame is a tree.
@@ -228,7 +228,7 @@ The filtration approach is also formalised. The advantage of filtration is that 
 
 All the results proved above can be captured using \HOLty{:num} models everywhere.
 
-\section{Mechanising Ultrafilters and Ultraproducts[3p]}
+\section{Mechanising Ultrafilters and Ultraproducts}
 A number of results in Blackburn~\emph{et al.}~\cite[\S2.5--\S2.7]{Blackburn} rely on theorems about ultrafilters and ultraproducts.
 \subsection{Ultrafilters}
 Given a non-empty set $J$, a set \HOLtm{L SUBSET POW J} is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward.
@@ -340,7 +340,7 @@ The semantic behavior of ultraproduct models is characterised by \los's theorem:
 where \HOLtm{wffm M} means the functions of \HOLtm{M} never map a list out of the domain of \HOLtm{M}.
 
 
-\section{Ultrafilter Extensions[2p]}
+\section{Ultrafilter Extensions}
 The first application of the theory of ultrafilters above is to construct the ultrafilter extension of a model, which has the nice property of being \emph{modally saturated} (m-saturated hereafter).
 To define m-saturation, we give the following three definitions (the first two are called \emph{finitely satisfiable}, \emph{satisfiable}) consecutively:
 \begin{definition}
@@ -390,7 +390,7 @@ In particular, every world \HOLtm{w IN M.frame.world} is embedded as the princip
 \end{theorem}
 
 
-\section{Countable Saturatedness of Ultrapower Models[2p]}
+\section{Countable Saturatedness of Ultrapower Models}
 
 Given a first-order model \HOLtm{M} with no information about interpretation of its function symbols, we can expand the model \HOLtm{M} by adding an interpretation of some function symbols.
 For our purpose, we are only interested in adding the interpretation of finitely many nullary function symbols, also called \emph{constants}.
@@ -428,7 +428,7 @@ To deal with this issue, the key observation is that constants are nothing more 
 
 
 
-\section{Van Benthem's Characterisation Theorem [2p]}
+\section{Van Benthem's Characterisation Theorem}
 Note that the standard translation of any modal formula can only contain unary predicate symbols which correspond to propositional letters, one binary predicate symbol which corresponds to the relation, and no function symbols. A first-order formula which only use these symbols is called an ${\mathcal L}_{\tau}^1$-formula. An ${\mathcal L}_{\tau}^1$-formula which contains only one free variable is called \emph{invariant under bisimulation} if for all models \HOLtm{M} and \HOLtm{N} with \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world}, if there exists a bisimulation relation between \HOLtm{M} and \HOLtm{N} relating $w$ and $v$, then $\phi$ holds at \HOLtm{w} if and only if it holds at \HOLtm{v} when both \HOLtm{M} and \HOLtm{N} are viewed as first-order models.
 \begin{definition}
 {\upshape\cite[Definition 2.67 (Invariant for Bisimulations)]{Blackburn}}
@@ -463,7 +463,7 @@ For the proof of the two theorems above, the first one is immediate from Proposi
 \end{theorem}
 The proof of the above relies on Lemma~\ref{2.73}.
 
-\section{Conclusion [$<$1p]}
+\section{Conclusion}
 
 To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language\footnote{Available at https://github.com/u5943321/Modal-Logic}.
 The exceptions are:
