@@ -25,9 +25,9 @@
 
 \maketitle
 \begin{abstract}
-In this paper, we discuss the formalisation of some fundamental propositional modal model theory.
-The focus on models is novel: previous work in formalisations of modal logic have centered on proof systems and applications in model-checking.
-We have formalised a number of fundamental results from the first two chapters of a standard textbook (Blackburn \emph{et al.}~\cite{Blackburn}).
+In this paper, we discuss the mechanisation of some fundamental propositional modal model theory.
+The focus on models is novel: previous work in mechanisations of modal logic have centered on proof systems and applications in model-checking.
+We have mechanised a number of fundamental results from the first two chapters of a standard textbook (Blackburn \emph{et al.}~\cite{Blackburn}).
 Among others, one important result, the Van Benthem characterisation theorem, characterises the connection between modal logic and first order logic.
 This latter captures the desired saturation property of ultraproduct models on countably incomplete ultrafilters.
 %The first-order side of the connection is built on Harrison's earlier work~\cite{Harrison} on first-order model theory, in particular his proof of compactness.
@@ -67,7 +67,7 @@ In a number of places, we use HOL's ``itself'' type to allow us to explicitly me
 The type \HOLty{:'a itself} has just one value inhabiting it for any given choice of \HOLty{:'a}; that value is written \HOLtm{(:'a)}.
 
 \section{Syntax, Semantics and the Standard Translation}
-In our formalisation, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'.
+In our mechanisation, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'.
 A modal formula is either of form \HOLtm{VAR p}, where $p$ is of type \HOLty{:num}, enumerating all the possible variable symbols, a disjunction \HOLtm[-disj]{DISJ ϕ ψ} (pretty-printed to \HOLtm{DISJ ϕ ψ} in most places), the falsity \HOLtm{FALSE}, a negation \HOLtm{~ ϕ:form}, or, finally, of the form \HOLtm{DIAM ϕ}.
 We define a data type called \HOLty{:form} to represent the formulas of this modal language.
 \begin{definition}
@@ -115,7 +115,7 @@ HOL forbids such definitions for soundness reasons.
 Also, HOL does not permit quantification over types, so it is impossible to write \HOLtm{!μ. equiv μ phi1 phi2}, with $\mu$ a type.
 Therefore, this definition is not exactly encoding the equivalence in the usual sense: when we mention equivalence of formulas in usual mathematical language, we are implicitly referring to the class of all models, but the constraint here bans us from talking about all models of all possible types at once.
 
-A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalise this translation, we take the work of Harrison in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A first order model \HOLtm{M:'a folModels$model} is a set \HOLtm{M.Dom} with interpretation of function symbols \HOLtm{M.Fun} and predicate symbols \HOLtm{M.Pred}. A valuation \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
+A modal formula can be translated into a first-order formula via the \emph{standard translation}. To mechanise this translation, we take the work of Harrison in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A first order model \HOLtm{M:'a folModels$model} is a set \HOLtm{M.Dom} with interpretation of function symbols \HOLtm{M.Fun} and predicate symbols \HOLtm{M.Pred}. A valuation \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
 %
 If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning free variables of \HOLtm{phi} elements in the domain of \HOLtm{M}, we write \HOLtm{feval M σ phi}.
 
@@ -145,7 +145,7 @@ That is, the model obtained by converting a modal model \HOLtm{M} has domain \HO
 
 
 \section{Basic Results}
-We discuss some highlights of formalised results from Blackburn~\emph{at al.}~\cite[\S2.1--\S2.3]{Blackburn} below.
+We discuss some highlights of mechanised results from Blackburn~\emph{at al.}~\cite[\S2.1--\S2.3]{Blackburn} below.
 \subsection{Tree-like property}
 A tree-like model is a model whose underlying frame is a tree.
 If $H$, a frame, is also a tree with root $r$, we write \HOLtm{tree H r}:
@@ -228,7 +228,7 @@ As the construction used Proposition~\ref{2.15}, we change the type of the model
 \end{holmath}
 \end{theorem}
 
-The filtration approach is also formalised. The advantage of filtration is that we can make the finite model we get to be of the same type as the model we start with.
+The filtration approach is also mechanised. The advantage of filtration is that we can make the finite model we get to be of the same type as the model we start with.
 
 All the results proved above can be captured using \HOLty{:num} models everywhere.
 
@@ -479,10 +479,10 @@ The result about `safety' in Section~2.7 is a result about the PDL language, whi
 For the moment, we have restricted our attention to the basic modal language, with only $\Diamond$ (and the derived $\Box$).
 \end{itemize}
 
-The two characterisation theorems, namely Theorem 2.68 (Van Benthem's Characterisation Theorem) and Theorem 2.78 in~\cite{Blackburn}, are the only two formalised theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement.
+The two characterisation theorems, namely Theorem 2.68 (Van Benthem's Characterisation Theorem) and Theorem 2.78 in~\cite{Blackburn}, are the only two mechanised theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement.
 The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterisation Theorem that we have discussed before, and is less complicated.
 
-For each of the formalised definition and result, we write the statement in HOL  to be as close as possible to the original statement in~\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalising other results in \cite{Blackburn} to continue using our work as a starting point.
+For each of the mechanised definition and result, we write the statement in HOL  to be as close as possible to the original statement in~\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in mechinasing other results in \cite{Blackburn} to continue using our work as a starting point.
 The work on ultraproducts up to \los's theorem is independent of our work on modal model theory, and should be generally useful in other model-theoretic applications.
 
 
