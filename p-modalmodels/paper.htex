@@ -207,7 +207,11 @@ The construction of \HOLtm{M5} requires a lemma:
 \end{holmath}
 \end{lemma}
 %
-The proof of Lemma \ref{2.29} further relies on the fact that if we combine a set \HOLtm{A} of non-equivalent modal formulas using connectives other than \HOLtm{DIAM}, then we get only finitely many non-equivalent formulas. To prove this fact, we prove that the map sending a equivalence class of such combinations to the set of assignments of truth values to formulas in $A$ that make the representative of the equivalence class true is a injection, where the later set is finite as a power set of a finite set.
+The proof of Lemma \ref{2.29} further relies on the following fact: Given a set \HOLtm{A} of modal-formulas that is finite up to equivalence, if we combine the elements of \HOLtm{A} using only connectives other than \HOLtm{DIAM}, then we get only finitely many non-equivalent formulas.
+%
+To prove this fact, we prove that there is an injection from the set of equivalence classes of such combinations to a finite set.
+%assignments of truth values to formulas in $A$ that make the representative of the equivalence class true is a injection
+%the map sending a equivalence class of such combinations to the set of assignments of truth values to formulas in $A$ that make the representative of the equivalence class true is a injection, where the later set is finite as a power set of a finite set.
 %
 For the antecedent of Lemma~\ref{2.29}, we require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
 %
