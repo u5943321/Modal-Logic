@@ -28,7 +28,7 @@
 In this paper, we discuss the formalisation of some fundamental propositional modal model theory.
 The focus on models is novel: previous work in formalisations of modal logic have centered on proof systems and applications in model-checking.
 We have formalised a number of fundamental results from the first two chapters of a standard textbook (Blackburn \emph{et al.}~\cite{Blackburn}).
-Among others, one important result, the Van Benthem characterisation theorem, characterizes the connection between modal logic and first order logic.
+Among others, one important result, the Van Benthem characterisation theorem, characterises the connection between modal logic and first order logic.
 This latter captures the desired saturation property of ultraproduct models on countably incomplete ultrafilters.
 %The first-order side of the connection is built on Harrison's earlier work~\cite{Harrison} on first-order model theory, in particular his proof of compactness.
 \end{abstract}
@@ -47,16 +47,16 @@ As our experience demonstrates, it is also clear that modern theorem-proving sys
 Harrison~\cite{Harrison} complained in 1998 that the very notion of validity is awkward to capture in HOL, and our own work shows up further failings in simple type theory.
 
 Nonetheless, there is much interesting mathematics to be found even in the early chapters of a standard text such as Blackburn~\emph{et al.}~\cite{Blackburn}.
-The fact that mechanizing only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanization of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground.
+The fact that mechanising only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanisation of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground.
 
 \paragraph{Contributions}
 This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al.}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
 \begin{itemize}
 \item Two versions of \los's  theorem on the saturation of ultraproduct models;
 \item modal equivalence as bisimilarity between ultrafilter extensions; and
-\item a close approximation of Van Benthem's Characterization Theorem.
+\item a close approximation of Van Benthem's Characterisation Theorem.
 \end{itemize}
-We also discuss where HOL's simple type theory lets us down: some standard results (including the best possible statement of Van Benthem's Characterization Theorem) seem impossible to prove in our setting.
+We also discuss where HOL's simple type theory lets us down: some standard results (including the best possible statement of Van Benthem's Characterisation Theorem) seem impossible to prove in our setting.
 
 \paragraph{HOL4 Notation}
 All of our theorems have been pretty-printed to \LaTeX{} from the HOL theory files.
@@ -67,7 +67,7 @@ In a number of places, we use HOL's ``itself'' type to allow us to explicitly me
 The type \HOLty{:'a itself} has just one value inhabiting it for any given choice of \HOLty{:'a}; that value is written \HOLtm{(:'a)}.
 
 \section{Syntax, Semantics and the Standard Translation[1.5p]}
-In our formalization, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'.
+In our formalisation, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'.
 A modal formula is either of form \HOLtm{VAR p}, where $p$ is of type \HOLty{:num}, enumerating all the possible variable symbols, a disjunction \HOLtm[-disj]{DISJ ϕ ψ} (pretty-printed to \HOLtm{DISJ ϕ ψ} in most places), the falsity \HOLtm{FALSE}, a negation \HOLtm{~ ϕ:form}, or, finally, of the form \HOLtm{DIAM ϕ}.
 We define a data type called \HOLty{:form} to represent the formulas of this modal language.
 \begin{definition}
@@ -115,7 +115,7 @@ HOL forbids such definitions for soundness reasons.
 Also, HOL does not permit quantification over types, so it is impossible to write \HOLtm{!μ. equiv μ phi1 phi2}, with $\mu$ a type.
 Therefore, this definition is not exactly encoding the equivalence in the usual sense: when we mention equivalence of formulas in usual mathematical language, we are implicitly referring to the class of all models, but the constraint here bans us from talking about all models of all possible types at once.
 
-A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalize this translation, we take the work of Harrison in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A first order model \HOLtm{M:'a folModels$model} is a set \HOLtm{M.Dom} with interpretation of function symbols \HOLtm{M.Fun} and predicate symbols \HOLtm{M.Pred}. A valuation \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
+A modal formula can be translated into a first-order formula via the \emph{standard translation}. To formalise this translation, we take the work of Harrison in \cite{Harrison} as the construction of first-order logic. The first-order connectives will be decorated with an $\sf f$ on the left upper corner. A first order model \HOLtm{M:'a folModels$model} is a set \HOLtm{M.Dom} with interpretation of function symbols \HOLtm{M.Fun} and predicate symbols \HOLtm{M.Pred}. A valuation \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
 %
 If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning free variables of \HOLtm{phi} elements in the domain of \HOLtm{M}, we write \HOLtm{feval M σ phi}.
 
@@ -145,7 +145,7 @@ That is, the model obtained by converting a modal model \HOLtm{M} has domain \HO
 
 
 \section{Basic Results}%[2p]
-We discuss some highlights of formalized results from Blackburn~\emph{at al.}~\cite[\S2.1--\S2.3]{Blackburn} below.
+We discuss some highlights of formalised results from Blackburn~\emph{at al.}~\cite[\S2.1--\S2.3]{Blackburn} below.
 \subsection{Tree-like property}
 A tree-like model is a model whose underlying frame is a tree.
 If $H$, a frame, is also a tree with root $r$, we write \HOLtm{tree H r}:
@@ -189,7 +189,7 @@ In HOL, we get:
 \label{hennessy-milner}
 \end{theorem}
 
-Bisimulation is an interesting topic in modal logic. Three other significant theorems on bisimulations (including an approximation of Van Benthem Characterization theorem) are discussed later.
+Bisimulation is an interesting topic in modal logic. Three other significant theorems on bisimulations (including an approximation of Van Benthem Characterisation theorem) are discussed later.
 
 \subsection{Finite model property}
 There are two classical approaches to constructing finite models using model theory, namely via selection and via filtration. The complicated one is the former:
@@ -197,7 +197,7 @@ Given \HOLtm{satis M1 w1 phi}, where $\phi$ has degree $k$, we can construct \HO
 \begin{itemize}
 \item \HOLtm{M2} is the tree-like model obtained from Proposition~\ref{2.15} with root \HOLtm{w2} such that \HOLtm{satis M2 w2 phi}.
 \item \HOLtm{M3} is the restriction of \HOLtm{M2} to height $k$.
-\item \HOLtm{M4} is obtained from \HOLtm{M3} by modifying the valuation into \HOLtm{\p v. if (p IN (prop_letters phi)) then (M3.valt p v) else F}.
+\item \HOLtm{M4} is obtained from \HOLtm{M3} by modifying the valuation into \HOLtm{\p v. if (p IN (prop_letters phi)) then (M3.valt p v) else F}, where \HOLtm{prop_letters phi} is the set of all propositional letters used by \HOLtm{phi}.
 \end{itemize}
 The construction of \HOLtm{M5} requires a lemma:
 \begin{lemma}\label{2.29}
@@ -228,7 +228,7 @@ The filtration approach is also formalised. The advantage of filtration is that 
 
 All the results proved above can be captured using \HOLty{:num} models everywhere.
 
-\section{Mechanizing Ultrafilters and Ultraproducts[3p]}
+\section{Mechanising Ultrafilters and Ultraproducts[3p]}
 A number of results in Blackburn~\emph{et al.}~\cite[\S2.5--\S2.7]{Blackburn} rely on theorems about ultrafilters and ultraproducts.
 \subsection{Ultrafilters}
 Given a non-empty set $J$, a set \HOLtm{L SUBSET POW J} is a \emph{filter} if it contains $J$ itself, is closed under binary intersection, and is closed upward.
@@ -330,7 +330,7 @@ Here we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm
  \HOLthm[def]{prettyPrinting.Pred_component_def}
 \end{holmath}
 
-The semantic behavior of ultraproduct models is characterized by \los's theorem: for the ultraproduct of a family \HOLtm{MS} of first-order models over an ultrafilter \HOLtm{U} on $J$, a formula \HOLtm{phi} is satisfied under a valuation \HOLtm{σ} if and only if the set indexing the models \HOLtm{MS j} in the family where \HOLtm{phi} is true under the valuation \HOLtm{(\v. (CHOICE (σ v)) j)} is in the ultrafilter $U$.
+The semantic behavior of ultraproduct models is characterised by \los's theorem: for the ultraproduct of a family \HOLtm{MS} of first-order models over an ultrafilter \HOLtm{U} on $J$, a formula \HOLtm{phi} is satisfied under a valuation \HOLtm{σ} if and only if the set indexing the models \HOLtm{MS j} in the family where \HOLtm{phi} is true under the valuation \HOLtm{(\v. (CHOICE (σ v)) j)} is in the ultrafilter $U$.
 \begin{theorem}
 {\upshape\cite[Theorem A.19 (\los's theorem)]{Blackburn}}
 \begin{holmath}
@@ -381,7 +381,7 @@ Using the ultrafilter theorem and some basic properties about ultrafilters, we d
   \HOLthm[width=60]{chap2_5.prop_2_59_i}
 \end{holmath}
 \end{proposition}
-In particular, every world \HOLtm{w IN M.frame.world} is embedded as the principal filter \HOLtm{principle_UF w M.frame.world} on \HOLtm{M.frame.world} generated by \HOLtm{w} in the ultrafilter extension or \HOLtm{M}. Also, the above leads to the proof of the fact that the ultrafilter extension of every model is m-saturated. The m-saturatedness of ultrafilter extensions together with Proposition~\ref{2.54} immediately gives the central result about ultrafilter extension: bisimilarity of worlds in a model \HOLtm{M} can be characterized as bisimilarity in \HOLtm{UE M}.
+In particular, every world \HOLtm{w IN M.frame.world} is embedded as the principal filter \HOLtm{principle_UF w M.frame.world} on \HOLtm{M.frame.world} generated by \HOLtm{w} in the ultrafilter extension or \HOLtm{M}. Also, the above leads to the proof of the fact that the ultrafilter extension of every model is m-saturated. The m-saturatedness of ultrafilter extensions together with Proposition~\ref{2.54} immediately gives the central result about ultrafilter extension: bisimilarity of worlds in a model \HOLtm{M} can be characterised as bisimilarity in \HOLtm{UE M}.
 \begin{theorem}
 {\upshape\cite[Proposition 2.62]{Blackburn}}
 \begin{holmath}
@@ -404,16 +404,16 @@ Further, the function $f$ is a bijection between $\{0,\cdots,n-1\}$ and $A$, whi
 \end{definition}
 As is apparent from the definition, the only difference between a model and its expansion is the interpretation of function symbols.
 
-A set \HOLtm{Σ} of first-order formulas is called \emph{consistent} with a model \HOLtm{M} if for every finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a valuation of \HOLtm{M} such that all elements of \HOLtm{Σ0} are satisfied, in this case, we write \HOLtm{consistent M Σ}. A set \HOLtm{Γ} of first-order formula is an $x$-\emph{type} if for each formula in \HOLtm{Γ}, the only free variable that may contain is $x$. In this case, we write `\HOLtm{ftype x Γ}' in HOL. If \HOLtm{Γ} is an $x$-type, when evaluating formulas in \HOLtm{Γ}, the valuations will only control where the only free variable $x$ goes to. We say \HOLtm{Γ} is \emph{realized} in \HOLtm{M} if there is an element $w$ in the domain of \HOLtm{M} such that \HOLtm{feval M (\v.w) phi} for all \HOLtm{phi IN Γ}. In this case, we write `\HOLtm{frealizes M x Γ}' in HOL.
+A set \HOLtm{Σ} of first-order formulas is called \emph{consistent} with a model \HOLtm{M} if for every finite subset \HOLtm{Σ0 ⊆ Σ}, there exists a valuation of \HOLtm{M} such that all elements of \HOLtm{Σ0} are satisfied, in this case, we write \HOLtm{consistent M Σ}. A set \HOLtm{Γ} of first-order formula is an $x$-\emph{type} if for each formula in \HOLtm{Γ}, the only free variable that may contain is $x$. In this case, we write `\HOLtm{ftype x Γ}' in HOL. If \HOLtm{Γ} is an $x$-type, when evaluating formulas in \HOLtm{Γ}, the valuations will only control where the only free variable $x$ goes to. We say \HOLtm{Γ} is \emph{realised} in \HOLtm{M} if there is an element $w$ in the domain of \HOLtm{M} such that \HOLtm{feval M (\v.w) phi} for all \HOLtm{phi IN Γ}. In this case, we write `\HOLtm{frealizes M x Γ}' in HOL.
 Let \HOLtm{M} be a model and \HOLtm{n} be a natural number. If for every
- \HOLtm{A ⊆ M.Dom} with $|A|<n$ and every $f:{\mathbb N}\to $ \HOLtm{M.Dom}, the model \HOLtm{expand M A f} realizes every $x$-type \HOLtm{Γ} that is consistent with  \HOLtm{expand M A f}, then we say \HOLtm{M} is $n$-saturated. In HOL:
+ \HOLtm{A ⊆ M.Dom} with $|A|<n$ and every $f:{\mathbb N}\to $ \HOLtm{M.Dom}, the model \HOLtm{expand M A f} realises every $x$-type \HOLtm{Γ} that is consistent with  \HOLtm{expand M A f}, then we say \HOLtm{M} is $n$-saturated. In HOL:
 \begin{definition}
 {\upshape\cite[Definition 2.63 ($n$-Saturated)]{Blackburn}}
 \begin{holmath}
   \HOLthm[def,Γ/G]{lemma2_73.n_saturated_def}\\[3mm]
 \end{holmath}
 \end{definition}
-We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterization theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.
+We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterisation theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.
 \begin{lemma}\label{2.73}
 {\upshape\cite[Lemma 2.73]{Blackburn}}
 \begin{holmath}
@@ -428,7 +428,7 @@ To deal with this issue, the key observation is that constants are nothing more 
 
 
 
-\section{Van Benthem's Characterization Theorem [2p]}
+\section{Van Benthem's Characterisation Theorem [2p]}
 Note that the standard translation of any modal formula can only contain unary predicate symbols which correspond to propositional letters, one binary predicate symbol which corresponds to the relation, and no function symbols. A first-order formula which only use these symbols is called an ${\mathcal L}_{\tau}^1$-formula. An ${\mathcal L}_{\tau}^1$-formula which contains only one free variable is called \emph{invariant under bisimulation} if for all models \HOLtm{M} and \HOLtm{N} with \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world}, if there exists a bisimulation relation between \HOLtm{M} and \HOLtm{N} relating $w$ and $v$, then $\phi$ holds at \HOLtm{w} if and only if it holds at \HOLtm{v} when both \HOLtm{M} and \HOLtm{N} are viewed as first-order models.
 \begin{definition}
 {\upshape\cite[Definition 2.67 (Invariant for Bisimulations)]{Blackburn}}
@@ -440,7 +440,7 @@ Note that the standard translation of any modal formula can only contain unary p
 Because of the same problem we met when defining equivalence of formulas, the type parameters are necessary here.
 However, although it is possible to prove theorems for different types $\alpha$ and $\beta$ in the above definition, in the theorems to come, we will only consider the case where $\alpha$ and $\beta$ are the same.
 
-The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula with at most one free variable $x$ is invariant under bisimulation precisely when it is equivalent to the standard translation of some modal formula at $x$. It is immediate from Proposition~\ref{2.47} that every such formula which is equivalent to a standard translation is invariant for bisimulation. We cannot prove it as an `if and only if' statement, since according to the proofs in \cite{Blackburn}, we can only prove the two directions separately as:
+The Van Benthem characterisation theorem says an $\mathcal L_{\tau}^1$ formula with at most one free variable $x$ is invariant under bisimulation precisely when it is equivalent to the standard translation of some modal formula at $x$. It is immediate from Proposition~\ref{2.47} that every such formula which is equivalent to a standard translation is invariant for bisimulation. We cannot prove it as an `if and only if' statement, since according to the proofs in \cite{Blackburn}, we can only prove the two directions separately as:
 
 \begin{proposition}
 {\upshape\cite[Theorem 2.68, as two separate directions]{Blackburn}}
@@ -450,7 +450,7 @@ The Van Benthem characterization theorem says an $\mathcal L_{\tau}^1$ formula w
 \end{holmath}
 \end{proposition}
 
-which cannot be put together into a double implication. To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more then one free variable, by the second theorem above, if \HOLtm{phi} is invariant under bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds, then $\phi$ is equivalent to a standard translation on model with $\alpha$-worlds. However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-world. But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. If the type universe of \HOLty{:(num -> α) -> bool} is small enough to be embedded into $\alpha$, then we will also done. However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds. If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterization theorem.
+which cannot be put together into a double implication. To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more then one free variable, by the second theorem above, if \HOLtm{phi} is invariant under bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds, then $\phi$ is equivalent to a standard translation on model with $\alpha$-worlds. However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-world. But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. If the type universe of \HOLty{:(num -> α) -> bool} is small enough to be embedded into $\alpha$, then we will also done. However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds. If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterisation theorem.
 
 For the proof of the two theorems above, the first one is immediate from Proposition~\ref{2.47}, and the second one requires another critical lemma saying `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models'. More precisely, if two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}.
 
@@ -475,16 +475,16 @@ The result about `safety' in Section~2.7 is a result about the PDL language, whi
 For the moment, we have restricted our attention to the basic modal language, with only $\Diamond$ (and the derived $\Box$).
 \end{itemize}
 
-The two characterization theorems, namely Theorem 2.68 (Van Benthem's Characterization Theorem) and Theorem 2.78 in~\cite{Blackburn}, are the only two formalized theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement.
-The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterization Theorem that we have discussed before, and is less complicated.
+The two characterisation theorems, namely Theorem 2.68 (Van Benthem's Characterisation Theorem) and Theorem 2.78 in~\cite{Blackburn}, are the only two formalised theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement.
+The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterisation Theorem that we have discussed before, and is less complicated.
 
-For each of the formalized definition and result, we write the statement in HOL  to be as close as possible to the original statement in~\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalizing other results in \cite{Blackburn} to continue using our work as a starting point.
+For each of the formalised definition and result, we write the statement in HOL  to be as close as possible to the original statement in~\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in formalising other results in \cite{Blackburn} to continue using our work as a starting point.
 The work on ultraproducts up to \los's theorem is independent of our work on modal model theory, and should be generally useful in other model-theoretic applications.
 
 
 \subsection{Related Work}
-We believe that we are the first to mechanize the bulk of the results in this paper.
-We \emph{have} built on Harrison's mechanization of foundational results about first order model theory~\cite{Harrison}, in particular compactness.
+We believe that we are the first to mechanise the bulk of the results in this paper.
+We \emph{have} built on Harrison's mechanisation of foundational results about first order model theory~\cite{Harrison}, in particular compactness.
 The connections between modal logic and process algebra are well-understood and there has been a great deal of mechanised work on the operational theory of such (co-)algebraic systems, starting at least as far back as Nesi~\cite{Nesi96}.
 Our proof of the Hennessy-Milner theorem~(Theorem~\ref{hennessy-milner}) is a gesture in this direction, but Van Benthem's theorem is much deeper and uses bisimulations as a tool to understanding the connection between modal and first order logics, rather than as a connection to process algebras.
 
