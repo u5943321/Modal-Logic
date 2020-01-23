@@ -215,8 +215,6 @@ To show this, we prove that there is an injection from the set of equivalence cl
 %
 For the antecedent of Lemma~\ref{2.29}, we require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
 %
-In order to prove Lemma~\ref{2.29}, we reduce our goal into proving that combining finitely non-equivalent modal formulas using connectives other than \HOLtm{DIAM} yields only finitely many non-equivalent formulas.
-
 This would be easy to prove in set theory.
 However, in simple type theory, the proof of \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires us (in the left-to-right direction) to be able to construct a model with a new world inserted, something only sure to be possible if the \HOLty{:β} universe is infinite.
 %%(2 deleted things)
