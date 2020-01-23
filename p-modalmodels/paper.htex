@@ -224,12 +224,14 @@ As the construction used Proposition~\ref{2.15}, we change the type of the model
 \begin{holmath}
   \HOLthm[M/FM,showtypes]{chap2_3revised.thm_2_34}
 \end{holmath}
+\label{thm:finite-model-by-selection}
 \end{theorem}
 
 We also mechanised the filtration approach, but omit the details for lack of space.
 The advantage of filtration is that the resulting finite model is over worlds of the same type as in the starting model.
 
 All the results proved above can be captured using \HOLty{:num} models everywhere.
+If one takes \HOLty{:'b} to be \HOLty{:num} (or any infinite type) in Theorem~\ref{thm:finite-model-by-selection}, one can also exploit the fact that numbers and lists of numbers have the same cardinality to derive a finite model result that preserves the ``input type''.
 
 \section{Mechanising Ultrafilters and Ultraproducts}
 A number of results in Blackburn~\emph{et al.}~\cite[\S2.5--\S2.7]{Blackburn} rely on theorems about ultrafilters and ultraproducts.
