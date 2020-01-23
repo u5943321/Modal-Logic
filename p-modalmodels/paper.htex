@@ -47,7 +47,7 @@ As our experience demonstrates, it is also clear that modern theorem-proving sys
 Harrison~\cite{Harrison} complained in 1998 that the very notion of validity is awkward to capture in HOL, and our own work shows up further failings in simple type theory.
 
 Nonetheless, there is much interesting mathematics to be found even in the early chapters of a standard text such as Blackburn~\emph{et al.}~\cite{Blackburn}.
-The fact that mechanising only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanisation of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground.
+The fact that mechanising only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanisation of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground for interactive theorem-proving systems.
 
 \paragraph{Contributions}
 This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al.}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
@@ -209,7 +209,7 @@ The construction of \HOLtm{M5} requires a lemma:
 %
 The proof of Lemma \ref{2.29} further relies on the following fact: Given a set \HOLtm{A} of modal-formulas that is finite up to equivalence, if we combine the elements of \HOLtm{A} using only connectives other than \HOLtm{DIAM}, then we get only finitely many non-equivalent formulas.
 %
-To prove this fact, we prove that there is an injection from the set of equivalence classes of such combinations to a finite set.
+To show this, we prove that there is an injection from the set of equivalence classes of such combinations to a finite set.
 %assignments of truth values to formulas in $A$ that make the representative of the equivalence class true is a injection
 %the map sending a equivalence class of such combinations to the set of assignments of truth values to formulas in $A$ that make the representative of the equivalence class true is a injection, where the later set is finite as a power set of a finite set.
 %
@@ -228,7 +228,8 @@ As the construction used Proposition~\ref{2.15}, we change the type of the model
 \end{holmath}
 \end{theorem}
 
-The filtration approach is also mechanised. The advantage of filtration is that we can make the finite model we get to be of the same type as the model we start with.
+We also mechanised the filtration approach, but omit the details for lack of space.
+The advantage of filtration is that the resulting finite model is over worlds of the same type as in the starting model.
 
 All the results proved above can be captured using \HOLty{:num} models everywhere.
 
@@ -453,10 +454,20 @@ The Van Benthem characterisation theorem says an $\mathcal L_{\tau}^1$ formula w
  \HOLthm[δ/a]{chap2_6.thm_2_68_half1'}
 \end{holmath}
 \end{proposition}
+which cannot be put together into a double implication.
+To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more then one free variable, by the second theorem above, if \HOLtm{phi} is invariant under bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds, then $\phi$ is equivalent to a standard translation on a model with $\alpha$-worlds.
+%
+However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds.
+But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$.
+%
+If the type universe of \HOLty{:(num -> α) -> bool} were small enough to be embedded into $\alpha$, then we would also be done.
+%
+However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds.
+%
+If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterisation theorem.
 
-which cannot be put together into a double implication. To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more then one free variable, by the second theorem above, if \HOLtm{phi} is invariant under bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds, then $\phi$ is equivalent to a standard translation on model with $\alpha$-worlds. However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-world. But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$. If the type universe of \HOLty{:(num -> α) -> bool} is small enough to be embedded into $\alpha$, then we will also done. However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds. If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterisation theorem.
-
-For the proof of the two theorems above, the first one is immediate from Proposition~\ref{2.47}, and the second one requires another critical lemma saying `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models'. More precisely, if two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}.
+For the proof of the two theorems above, the first one is immediate from Proposition~\ref{2.47}, and the second one requires another critical lemma saying `modal equivalence between two worlds implies bisimilarity of the two worlds when embedded in some other models'.
+More precisely, if two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are modal equivalent, then we can find an ultrafilter $U$ on $J$ such that in ultrapower models of \HOLtm{M} and \HOLtm{N} on $U$ respectively, there is a bisimulation between the worlds corresponding to \HOLtm{w} and \HOLtm{v}.
 
 \begin{theorem}
 {\upshape\cite[Theorem 2.74, one direction]{Blackburn}}
@@ -479,10 +490,11 @@ The result about `safety' in Section~2.7 is a result about the PDL language, whi
 For the moment, we have restricted our attention to the basic modal language, with only $\Diamond$ (and the derived $\Box$).
 \end{itemize}
 
-The two characterisation theorems, namely Theorem 2.68 (Van Benthem's Characterisation Theorem) and Theorem 2.78 in~\cite{Blackburn}, are the only two mechanised theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement.
-The proof of the later one in~\cite{Blackburn} has the same pattern to that of Van Benthem's Characterisation Theorem that we have discussed before, and is less complicated.
+The two characterisation theorems from Blackburn~\emph{et~al.}~\cite{Blackburn}, namely Theorem 2.68~(Van Benthem's Characterisation Theorem) and Theorem 2.78, are the only two mechanised theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement.
+Blackburn~\emph{et~al.}'s proof of Theorem~2.78 has the same pattern as Van Benthem's Characterisation Theorem (discussed earlier), and is less complicated.
 
-For each of the mechanised definition and result, we write the statement in HOL  to be as close as possible to the original statement in~\cite{Blackburn}. We believe that it makes it as easy as possible for people who are interested in mechinasing other results in \cite{Blackburn} to continue using our work as a starting point.
+For each of the mechanised definitions and results, we write the statement in HOL to be as close as possible to the original statement in~\cite{Blackburn}.
+We believe that this makes it as easy as possible for people who are interested in mechanising other results in~\cite{Blackburn} to continue with our work as a starting point.
 The work on ultraproducts up to \los's theorem is independent of our work on modal model theory, and should be generally useful in other model-theoretic applications.
 
 
