@@ -117,7 +117,7 @@ Therefore, this definition is not exactly encoding the equivalence in the usual 
 
 A modal formula can be translated into a first-order formula via the \emph{standard translation}.
 To mechanise this translation, we build on Harrison's construction of first-order logic~\cite{Harrison}.
-The first-order connectives are decorated with an $\sf f$ on the left upper corner.
+The first-order connectives are decorated with an $\sf f$.
 A first order model \HOLtm{M:'a folModels$model} is a set \HOLtm{M.Dom} with interpretation of function symbols \HOLtm{M.Fun} and predicate symbols \HOLtm{M.Pred}. A valuation \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}.
 %
 If a first-order formula \HOLtm{phi} is satisfied in a first-order model \HOLtm{M} with \HOLtm{σ} a valuation assigning free variables of \HOLtm{phi} elements in the domain of \HOLtm{M}, we write \HOLtm{feval M σ phi}.
@@ -218,8 +218,6 @@ To show this, we prove that there is an injection from the set of equivalence cl
 %
 For the antecedent of Lemma~\ref{2.29}, we require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
 %
-In order to prove Lemma~\ref{2.29}, we reduce our goal into proving that combining finitely non-equivalent modal formulas using connectives other than \HOLtm{DIAM} yields only finitely many non-equivalent formulas.
-
 This would be easy to prove in set theory.
 However, in simple type theory, the proof of \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires us (in the left-to-right direction) to be able to construct a model with a new world inserted, something only sure to be possible if the \HOLty{:β} universe is infinite.
 %%(2 deleted things)
