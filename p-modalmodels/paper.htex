@@ -262,7 +262,7 @@ A subset $A$ of the power set on $J$ has \emph{finite intersection property} if 
 \begin{definition}
 {\upshape\cite[Definition A.13 (Finite Intersection Property)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[J/W,A/S,B/S',width=65]{ultrafilter.FIP_def}
+  \HOLthm[J/W,A/S,B/S',width=60]{ultrafilter.FIP_def}
 \end{holmath}
 \end{definition}
 As a corollary of ultrafilter theorem, a set with finite intersection property is contained in an ultrafilter.
@@ -354,7 +354,7 @@ To define m-saturation, we give the following three definitions (the first two a
 \begin{definition}
 {\upshape\cite[Definition 2.53]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,phi/form,w/x]{chap2_5.satisfiable_in_def}\\[3mm]
+  \HOLthm[def,phi/form,w/x,width=60]{chap2_5.satisfiable_in_def}\\[3mm]
   \HOLthm[def]{chap2_5.fin_satisfiable_in_def}\\[3mm]
   \HOLthm[def]{chap2_5.M_sat_def}
 \end{holmath}
@@ -418,7 +418,7 @@ Let \HOLtm{M} be a model and \HOLtm{n} be a natural number. If for every
 \begin{definition}
 {\upshape\cite[Definition 2.63 ($n$-Saturated)]{Blackburn}}
 \begin{holmath}
-  \HOLthm[def,Γ/G]{lemma2_73.n_saturated_def}\\[3mm]
+  \HOLthm[def,Γ/G,width=65]{lemma2_73.n_saturated_def}\\[3mm]
 \end{holmath}
 \end{definition}
 We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every natural number $n$. The ultimate goal is to prove a lemma to be used in the proof of Van Benthem characterisation theorem: For a family of non-empty models, their ultraproduct on a countably incomplete ultrafilter is \emph{countably saturated}.
@@ -431,13 +431,13 @@ We say \HOLtm{M} is countably saturated if \HOLtm{M} is $n$-saturated for every 
 Here a countably incomplete ultrafilter is an ultrafilter that contains a countably infinite family that intersects to the empty set. We prove in HOL that such ultrafilters do exist using Theorem~\ref{A.14}. The above theorem is not simply a direct consequence of \los's theorem:
 that result is about ultraproducts of first-order models, and it says nothing about expansion. But to prove Lemma~\ref{2.73}, we must prove a statement for an expanded first-order model, and this first order model is itself obtained by converting a ultraproduct of modal models.
 
-To deal with this issue, the key observation is that constants are nothing more than forcing some symbols to be sent to some points in a model under every valuation, hence rather than use nullary function symbols, we fix a set of variable letters, each corresponding to a function symbol, and only consider the valuations that send these variable letters to certain fixed points. With this idea, we can remove all the constants in a formula, and hence change our scope from an expanded model back to the unexpanded model. To get rid of the constants $\{0,\cdots , n-1\}$, we replace every \HOLtm{fV m} with \HOLtm{fV (m+n)}, and replace every constant \HOLtm{Fn c []} by \HOLtm{fV c}. This operation is done by the function \HOLtm{shift_form} which takes a natural number (the number of constants we want to remove), and a first-order formula (where the only function symbols may appear are the constants $0,\cdots, n-1$). Since $0,\cdots,n-1$ in a shifted formula are now designed to be sent to fixed places $f \ 0,\cdots,f \ (n-1)$, it does not make sense to assign these variable symbols anywhere else. Therefore, to talk about evaluation of shifted formula, the first thing is to make sure that the valuations we are considering send the variables which actually denote constants to the right place. Hence we shift the valuations accordingly, and then prove that a formula is satisfied on an expanded model is satisfied under a valuation if and only if the shifted formula is satisfied under the shifted valuation. Also, we prove that `taking the ultraproduct first-order model commutes with the convertion from modal to a first-order model on certain formulas', in the sense that the resulting models satisfies the same first-order formulas without function symbols. By putting these two results together, we prove Lemma~\ref{2.73} using the proof in \cite{ChangKeisler1990}.
+To deal with this issue, the key observation is that constants are nothing more than forcing some symbols to be sent to some points in a model under every valuation, hence rather than use nullary function symbols, we fix a set of variable letters, each corresponding to a function symbol, and only consider the valuations that send these variable letters to certain fixed points. With this idea, we can remove all the constants in a formula, and hence change our scope from an expanded model back to the unexpanded model. To get rid of the constants $\{0,\cdots , n-1\}$, we replace every \HOLtm{fV m} with \HOLtm{fV (m+n)}, and replace every constant \HOLtm{Fn c []} by \HOLtm{fV c}. This operation is done by the function \HOLtm{shift_form} which takes a natural number (the number of constants we want to remove), and a first-order formula (where the only function symbols may appear are the constants $0,\cdots, n-1$). Since $0,\cdots,n-1$ in a shifted formula are now designed to be sent to fixed places $f \ 0,\cdots,f \ (n-1)$, it does not make sense to assign these variable symbols anywhere else. Therefore, to talk about evaluation of shifted formula, the first thing is to make sure that the valuations we are considering send the variables which actually denote constants to the right place. Hence we shift the valuations accordingly, and then prove that a formula is satisfied on an expanded model is satisfied under a valuation if and only if the shifted formula is satisfied under the shifted valuation. Also, we prove that `taking the ultraproduct first-order model commutes with the convertion from modal to a first-order model on certain formulas', in the sense that the resulting models satisfies the same first-order formulas without function symbols. By putting these two results together, we prove Lemma~\ref{2.73} using the proof in Chang and Keisler~\cite{ChangKeisler1990}.
 
 
 
 
 \section{Van Benthem's Characterisation Theorem}
-Note that the standard translation of any modal formula can only contain unary predicate symbols which correspond to propositional letters, one binary predicate symbol which corresponds to the relation, and no function symbols. A first-order formula which only use these symbols is called an ${\mathcal L}_{\tau}^1$-formula. An ${\mathcal L}_{\tau}^1$-formula which contains only one free variable is called \emph{invariant under bisimulation} if for all models \HOLtm{M} and \HOLtm{N} with \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world}, if there exists a bisimulation relation between \HOLtm{M} and \HOLtm{N} relating $w$ and $v$, then $\phi$ holds at \HOLtm{w} if and only if it holds at \HOLtm{v} when both \HOLtm{M} and \HOLtm{N} are viewed as first-order models.
+Note that the standard translation of any modal formula can only contain unary predicate symbols which correspond to propositional letters, one binary predicate symbol which corresponds to the relation, and no function symbols. A first-order formula which only uses these symbols is called an ${\mathcal L}_{\tau}^1$-formula. An ${\mathcal L}_{\tau}^1$-formula which contains only one free variable is called \emph{invariant under bisimulation} if for all models \HOLtm{M} and \HOLtm{N} with \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world}, if there exists a bisimulation relation between \HOLtm{M} and \HOLtm{N} relating $w$ and $v$, then $\phi$ holds at \HOLtm{w} if and only if it holds at \HOLtm{v} when both \HOLtm{M} and \HOLtm{N} are viewed as first-order models.
 \begin{definition}
 {\upshape\cite[Definition 2.67 (Invariant for Bisimulations)]{Blackburn}}
 \begin{holmath}
@@ -508,7 +508,7 @@ The connections between modal logic and process algebra are well-understood and 
 Our proof of the Hennessy-Milner theorem~(Theorem~\ref{hennessy-milner}) is a gesture in this direction, but Van Benthem's theorem is much deeper and uses bisimulations as a tool to understanding the connection between modal and first order logics, rather than as a connection to process algebras.
 
 Mechanised work with ultrafilters began with Fleuriot's use of them to mechanise non-standard analysis~\cite{Fleuriot2001}.
-We are unaware of any previous use of ultraproducts or ultrapowers.
+We are unaware of any previous mechanised use of ultraproducts or ultrapowers.
 
 
 
