@@ -1,0 +1,9 @@
+We thank the reviewers for their careful reading of our paper.
+We agree with the comments from Review 1 and 3 that we could profitably cite more work. In particular, apart from Harrison’s early work on mechanised model theory for predicate logic which we do mention, we might reasonably cite work on soundness and completeness for predicate logic (e.g., Blanchette, Popescu and Traytel’s nice recent work in Isabelle/HOL), as well as a sampling of modal logic mechanisations (such as de Wind’s thesis, a nice early example).
+
+Naturally, we’d be happy to make Review 1’s other suggested changes (move our URL; change gothic M into something less intense).
+
+Review 2 asks about how we might extend our work to multi-modal logics.  Extension to different flavours of unary diamonds would be straightforward: the syntax would feature indexed diamonds (◇_i), and models would include a corresponding indexed family of relations.
+Review 2 also asks about including standard definitions of modal logics; our feeling is that the definitions in §2 (particularly nos. 1 to 3) are just those definitions. Though they are pretty-printed HOL, they link back to Blackburn et al’s originals, and we believe they are about as readable as in their textbook form.
+
+Review 3 asks if we might solve our problem with type quantification by using a fixed base type.  Unfortunately, we don’t believe so.  Though we know that there are always finite models, we can’t carry out constructions like taking ultrafilters and keep a countable carrier set. We can’t then get the desired result.  We will try to make this point more clearly at the end of §7.
