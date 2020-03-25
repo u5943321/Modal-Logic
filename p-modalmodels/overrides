@@ -4,7 +4,7 @@ VAR 1 \ensuremath{\mathsf{V}\sb{\mathsf{m}}}
 ◇ 1 \ensuremath{\Diamond}
 □ 1 \ensuremath{\Box}
 -> 2 \ensuremath{\rightarrow}
-M 1 \ensuremath{\mathfrak{M}}
+M 1 \ensuremath{\itshape{M}}
 N 1 \ensuremath{\mathfrak{N}}
 M' 1 \ensuremath{\mathfrak{M}'}
 M'' 1 \ensuremath{\mathfrak{M}''}

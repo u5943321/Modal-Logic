@@ -14,6 +14,7 @@
 \renewcommand{\HOLTokenBar}{\mbox{$|$}}
 \renewcommand{\BreakableUnderscore}{-}
 \newcommand{\los}{\L{}o\'s}
+
 \begin{document}
 
 \title{Mechanised Modal Model Theory}
@@ -69,6 +70,9 @@ The type \HOLty{:'a itself} has just one value inhabiting it for any given choic
 \section{Syntax, Semantics and the Standard Translation}
 In our mechanisation, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'.
 A modal formula is either of form \HOLtm{VAR p}, where $p$ is of type \HOLty{:num}, enumerating all the possible variable symbols, a disjunction \HOLtm[-disj]{DISJ ϕ ψ} (pretty-printed to \HOLtm{DISJ ϕ ψ} in most places), the falsity \HOLtm{FALSE}, a negation \HOLtm{~ ϕ:form}, or, finally, of the form \HOLtm{DIAM ϕ}.
+%added
+If we wanted to consider modal operators with any arity, an atomic formula with a modal operator should take two parameters: a natural number indexing the operator, and a list of modal formulas.  This would in turn require a well-formedness predicate to be defined over formulas to make sure that modalities were applied to the right number of arguments.
+%
 We define a data type called \HOLty{:form} to represent the formulas of this modal language.
 \begin{definition}
 {\upshape\cite[Definition 1.9]{Blackburn}}
@@ -404,7 +408,7 @@ Given a first-order model \HOLtm{M} with no information about interpretation of 
 For our purpose, we are only interested in adding the interpretation of finitely many nullary function symbols, also called \emph{constants}.
 We write \HOLtm{expand M A f} to denote the model that is the result of adding each element in $A$ to \HOLtm{M} as a new constant.
 Further, the function $f$ is a bijection between $\{0,\cdots,n-1\}$ and $A$, which is assumed to be finite, so that each nullary function symbol $c$ will be interpreted as \HOLtm{f c} in \HOLtm{M'}.
-\begin{definition}\label{2.73}
+\begin{definition}
 {\upshape\cite[Definition A.9 (Expansion)]{Blackburn}}
 \begin{holmath}
   \HOLthm[def,l/args,c/n,width=65]{lemma2_73.expand_def}
@@ -462,8 +466,11 @@ To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more th
 %
 However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds.
 But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$.
+%added
+The point is that it is not the fact that all our desired operations can be taken within a type. For instance, we can’t carry out constructions like taking ultrafilters and keep a countable carrier set. Similarly, we cannot take ultraproducts of models and preserve cardinalities.
 %
-If the type universe of \HOLty{:(num -> α) -> bool} were small enough to be embedded into $\alpha$, then we would also be done.
+%
+If the type universe of \HOLty{:(num -> α) -> bool} were small enough to be embedded into $\alpha$, then we can just fix the `base type' to be \HOLty{(:'a)}.
 %
 However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds.
 %
