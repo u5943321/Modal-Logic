@@ -4,19 +4,19 @@ VAR 1 \ensuremath{\mathsf{V}\sb{\mathsf{m}}}
 ◇ 1 \ensuremath{\Diamond}
 □ 1 \ensuremath{\Box}
 -> 2 \ensuremath{\rightarrow}
-M 1 \ensuremath{\itshape{M}}
-N 1 \ensuremath{\mathfrak{N}}
-M' 1 \ensuremath{\mathfrak{M}'}
-M'' 1 \ensuremath{\mathfrak{M}''}
-M1 1 \ensuremath{\mathfrak{M}}1
-M2 1 \ensuremath{\mathfrak{M}}2
-M3 1 \ensuremath{\mathfrak{M}\sb{\mathrm{3}}}
-M3' 1 \ensuremath{\mathfrak{M}\sb{\mathrm{3}}\sp{\prime}}
-M4 1 \ensuremath{\mathfrak{M}}4
-M5 1 \ensuremath{\mathfrak{M}}5
-MS 1 \ensuremath{\mathfrak{M}\sp{\sf s}}
-FMS 1 \ensuremath{\mathfrak{M}\sp{\sf s}}
-FM 1 \ensuremath{{}\sp{\sf f}\mathfrak{M}}
+M 1 \ensuremath{\mathit{M}}
+N 1 \ensuremath{\mathit{N}}
+M' 1 \ensuremath{\mathit{M}'}
+M'' 1 \ensuremath{\mathit{M}''}
+M1 1 \ensuremath{\mathit{M}}1
+M2 1 \ensuremath{\mathit{M}}2
+M3 1 \ensuremath{\mathit{M}\sb{\mathrm{3}}}
+M3' 1 \ensuremath{\mathit{M}\sb{\mathrm{3}}\sp{\prime}}
+M4 1 \ensuremath{\mathit{M}}4
+M5 1 \ensuremath{\mathit{M}}5
+MS 1 \ensuremath{\mathit{M}\sp{\sf s}}
+FMS 1 \ensuremath{\mathit{M}\sp{\sf s}}
+FM 1 \ensuremath{{}\sp{\sf f}\mathit{M}}
 f1 1 \ensuremath{\phi\sb{1}}
 f2 1 \ensuremath{\phi\sb{2}}
 psi1 1 \ensuremath{\psi\sb{1}}
@@ -51,12 +51,12 @@ lit_list_to_form2 5 l2f
 lit_list_to_form 5 ll2f
 DIAM 1 \ensuremath{\Diamond}
 
-Mst 1 \ensuremath{\mathfrak{M}\sb{*}}
-Nst 1 \ensuremath{\mathfrak{N}\sb{*}}
+Mst 1 \ensuremath{\mathit{M}\sb{*}}
+Nst 1 \ensuremath{\mathit{N}\sb{*}}
 wst 1 \ensuremath{w\sb{*}}
 vst 1 \ensuremath{v\sb{*}}
-σm 1 \ensuremath{\sigma\sb{\mathfrak{M}}}
-σn 1 \ensuremath{\sigma\sb{\mathfrak{N}}}
+σm 1 \ensuremath{\sigma\sb{\mathit{M}}}
+σn 1 \ensuremath{\sigma\sb{\mathit{N}}}
 (Mw) 1 \ensuremath{\sp{W}}
 (Mr) 1 \ensuremath{\sp{R}}
 
@@ -199,7 +199,7 @@ fR 1 \ensuremath{{\sf R}_{\sf f}}
 (bmi1) 0 \overset{
 (bmi2) 0 }\twoheadrightarrow
 
-(M3) 1 \ensuremath{\mathfrak{M}\sb{3}}
+(M3) 1 \ensuremath{\mathit{M}\sb{3}}
 
 (st1) 2 {\sf ST}\sb{
 (st2) 1 }

@@ -48,7 +48,7 @@ As our experience demonstrates, it is also clear that modern theorem-proving sys
 Harrison~\cite{Harrison} complained in 1998 that the very notion of validity is awkward to capture in HOL, and our own work shows up further failings in simple type theory.
 
 Nonetheless, there is much interesting mathematics to be found even in the early chapters of a standard text such as Blackburn~\emph{et al.}~\cite{Blackburn}.
-The fact that mechanising only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanisation of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground for interactive theorem-proving systems.
+The fact that mechanising only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanisation of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground for interactive theorem-proving systems. Our work is available at https://github.com/u5943321/Modal-Logic.
 
 \paragraph{Contributions}
 This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al.}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
@@ -467,12 +467,10 @@ To see the reason: given an $\mathcal L_{\tau}^1$-formula $\phi$ with no more th
 However, if we want to prove the converse of this statement, we need to start with the assumption that $\phi$ is equivalent to a standard translation on models with $\alpha$-worlds, and prove that $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds.
 But by the first theorem above, we can only conclude $\phi$ is invariant for bisimulation for models of type $\alpha$.
 %added
-The point is that it is not the fact that all our desired operations can be taken within a type. For instance, we can’t carry out constructions like taking ultrafilters and keep a countable carrier set. Similarly, we cannot take ultraproducts of models and preserve cardinalities.
+The point is that it is not the fact that all our desired operations can be taken within a type. In partucular, we cannot take ultraproducts of models and preserve cardinalities.
 %
 %
-If the type universe of \HOLty{:(num -> α) -> bool} were small enough to be embedded into $\alpha$, then we can just fix the `base type' to be \HOLty{(:'a)}.
-%
-However, the cardinality of the universe of \HOLty{:(num -> α) -> bool} is larger than that of $\alpha$, and hence we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds.
+The cardinality of the type universe of \HOLty{:(num -> α) -> bool} is too large to be embedded into $\alpha$, so we cannot just fix the `base type' to be \HOLty{:'a} and get an `if and only if' statement-we cannot derive $\phi$ is invariant for bisimulation for models with \HOLty{:(num -> α) -> bool}-worlds from the fact that  $\phi$ is invariant for bisimulation for models with $\alpha$-worlds.
 %
 If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterisation theorem.
 
@@ -490,7 +488,8 @@ The proof of the above relies on Lemma~\ref{2.73}.
 
 \section{Conclusion}
 
-To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language\footnote{Available at https://github.com/u5943321/Modal-Logic}.
+To summarise, we have mechanised all of the results (appearing as propositions, lemmas and theorems) in the first two chapters in Blackburn \emph{at al.}~\cite{Blackburn} that can be captured by the HOL logic, and which are about the basic modal language.
+%\footnote{Available at https://github.com/u5943321/Modal-Logic}
 The exceptions are:
 \begin{itemize}
 \item The result in Section~2.6 about `definability', which requires a definition of the `models closed under taking ultraproducts'.
