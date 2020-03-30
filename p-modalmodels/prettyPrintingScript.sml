@@ -11,6 +11,8 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   term_name = "==>",
                   pp_elements = [HardSpace 1, TOK "⇒", BreakSpace(1,2)]}
 
+Overload NOT = “chap1$NOT”
+
 
 val Fun_component_def = Define`
   Fun_component FMS n fs i = (FMS i).Fun n (MAP (λfc. CHOICE fc i) fs)`;
@@ -441,15 +443,6 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix,
                   pp_elements = [TOK "(st1)", TM, TOK "(st2)"],
                   term_name = "st", paren_style = OnlyIfNecessary}
-(*added*)
-Overload mnot = ``\phi:form. NOT phi``
-
-val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
-                  fixity = Closefix,
-                  pp_elements = [TOK "(mnot1)", TM, TOK "(mnot2)"],
-                  term_name = "mnot", paren_style = OnlyIfNecessary}
-
-		 
 
 Overload fst = ``\M σ f. fsatis M σ f``
 

@@ -204,8 +204,7 @@ fR 1 \ensuremath{{\sf R}_{\sf f}}
 (st1) 2 {\sf ST}\sb{
 (st2) 1 }
 
-(mnot1) 1 {\ensuremath{\lnot\sb{\mathsf{m}}}
-(mnot2) 0 }
+NOT 1 \ensuremath{\neg\sb{m}}
 
 (fst1) 1 ,
 (fst2) 1 \ensuremath{\vDash}
