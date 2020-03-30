@@ -441,8 +441,15 @@ val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
                   fixity = Closefix,
                   pp_elements = [TOK "(st1)", TM, TOK "(st2)"],
                   term_name = "st", paren_style = OnlyIfNecessary}
+(*added*)
+Overload mnot = ``\phi:form. NOT phi``
 
+val _ = add_rule {block_style = (AroundEachPhrase, (PP.CONSISTENT, 0)),
+                  fixity = Closefix,
+                  pp_elements = [TOK "(mnot1)", TM, TOK "(mnot2)"],
+                  term_name = "mnot", paren_style = OnlyIfNecessary}
 
+		 
 
 Overload fst = ``\M σ f. fsatis M σ f``
 

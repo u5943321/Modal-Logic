@@ -168,7 +168,7 @@ The tree-like property says an satisfiable modal formula can be satisfied in a t
   \HOLthm[M'/MODEL,phi/form,r/s,showtypes]{chap2_1.prop_2_15_corollary}
 \end{holmath}
 \end{proposition}
-The world set of the tree-like model constructed from \HOLtm{M} is a set of lists of worlds in \HOLtm{M1} (such lists are effectively paths from the root to various positions within the tree).
+The world set of the tree-like model constructed from \HOLtm{M} is a set of lists of worlds in \HOLtm{M} (such lists are effectively paths from the root to various positions within the tree).
 %
 Thus, passing to a tree-like model does not preserve the model type.
 %
