@@ -154,11 +154,11 @@ That is, the model obtained by converting a modal model \HOLtm{M} has domain \HO
 We discuss some highlights of mechanised results from Blackburn~\emph{at al.}~\cite[\S2.1--\S2.3]{Blackburn} below.
 \subsection{Tree-like property}
 A tree-like model is a model whose underlying frame is a tree.
-If $H$, a frame, is also a tree with root $r$, we write \HOLtm{tree H r}:
+If \HOLtm{Tr}, a frame, is also a tree with root $r$, we write \HOLtm{tree Tr r}:
 \begin{definition}
 {\upshape\cite[Definition 1.7]{Blackburn}}
 \begin{holmath}
-   \HOLthm[def,H/S,w/t,w/r0,w0/t0]{chap2_1.tree_def}
+   \HOLthm[def,Tr/S,w/t,w/r0,w0/t0]{chap2_1.tree_def}
 \end{holmath}
 \end{definition}
 The tree-like property says an satisfiable modal formula can be satisfied in a tree-like model:
@@ -506,7 +506,7 @@ The work on ultraproducts up to \los's theorem is independent of our work on mod
 
 
 \subsection{Related Work}
-We believe that we are the first to mechanise the bulk of the results in this paper.
+We believe that we are the first to mechanise the bulk of the results in this paper. There exists a notable early mechanisation~\cite{deWind} of modal logic, mainly focusing on proving the validity of modal formulas via natural deduction.
 We \emph{have} built on Harrison's mechanisation of foundational results about first order model theory~\cite{Harrison}, in particular compactness.
 The connections between modal logic and process algebra are well-understood and there has been a great deal of mechanised work on the operational theory of such (co-)algebraic systems, starting at least as far back as Nesi~\cite{Nesi96}.
 Our proof of the Hennessy-Milner theorem~(Theorem~\ref{hennessy-milner}) is a gesture in this direction, but Van Benthem's theorem is much deeper and uses bisimulations as a tool to understanding the connection between modal and first order logics, rather than as a connection to process algebras.
