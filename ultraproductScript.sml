@@ -25,22 +25,24 @@ val Uequiv_def = Define`
                      f IN Cart_prod I A /\ g IN Cart_prod I A /\
                      {i | i IN I /\ f i = g i} IN U`;
 
-val prop_A_16 = store_thm(
-  "prop_A_16",
-  ``!U I A. ultrafilter U I ==> (Uequiv U I A) equiv_on Cart_prod I A``,
+Theorem prop_A_16:
+  !U I A. ultrafilter U I ==> (Uequiv U I A) equiv_on Cart_prod I A
+Proof
   rw[Uequiv_def,Cart_prod_def,equiv_on_def] (* 4 *)
   >- metis_tac[MEMBER_NOT_EMPTY]
   >- metis_tac[ultrafilter_def,proper_filter_def,filter_def]
-  >- fs[EQ_SYM_EQ]
-  >- (`{i | i ∈ I' ∧ x i = y i} ∩ {i | i ∈ I' ∧ y i = z i} IN U` by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
-     `{i | i ∈ I' ∧ x i = y i} ∩ {i | i ∈ I' ∧ y i = z i} ⊆ {i | i ∈ I' ∧ x i = z i}` by rw[SUBSET_DEF,INTER_DEF,EXTENSION] >>
-     `{i | i ∈ I' ∧ x i = z i} ⊆ I'` by rw[SUBSET_DEF] >>
-     metis_tac[ultrafilter_def,proper_filter_def,filter_def]));
+  >- simp[EQ_SYM_EQ, Excl "NORMEQ_CONV"]
+  >- (‘{i | i ∈ I' ∧ x i = y i} ∩ {i | i ∈ I' ∧ y i = z i} IN U’
+       by metis_tac[ultrafilter_def,proper_filter_def,filter_def] >>
+     ‘{i | i ∈ I' ∧ x i = y i} ∩ {i | i ∈ I' ∧ y i = z i} ⊆
+      {i | i ∈ I' ∧ x i = z i}’ by rw[SUBSET_DEF,INTER_DEF,EXTENSION] >>
+     ‘{i | i ∈ I' ∧ x i = z i} ⊆ I'’ by rw[SUBSET_DEF] >>
+     metis_tac[ultrafilter_def,proper_filter_def,filter_def])
+QED
 
-
-
-val ultraproduct_def = Define`
-  ultraproduct U I A = partition (Uequiv U I A) (Cart_prod I A)`;
+Definition ultraproduct_def:
+  ultraproduct U I A = partition (Uequiv U I A) (Cart_prod I A)
+End
 
 Theorem ultraproduct_same_eqclass:
   !U I A. ultrafilter U I ==>
@@ -199,7 +201,7 @@ Proof
 `!U J Ms. ultrafilter U J ==>
              !phi fc. fc IN (ultraproduct_model U J Ms).frame.world ==>
                       (satis (ultraproduct_model U J Ms) fc phi <=>
-                      ?f. f IN fc /\ {i | i IN J /\ satis (Ms i) (f i) phi} IN U)` suffices_by metis_tac[] >> 
+                      ?f. f IN fc /\ {i | i IN J /\ satis (Ms i) (f i) phi} IN U)` suffices_by metis_tac[] >>
   strip_tac >> strip_tac >> strip_tac  >> strip_tac >> Induct_on `phi` >> rw[] (* 5 *)
 (*-----------------------------block 1 `` VAR case``------------------------------------- *)
 >-
@@ -1003,10 +1005,10 @@ Proof
              (!i ff ll. i IN I ==> (FMS i).Fun ff ll IN (FMS i).Dom) ==>
                   (feval (ultraproduct_folmodel U I FMS) σ phi <=>
                  {i | i IN I /\ feval (FMS i) (\x. (CHOICE (σ x)) i) phi} IN U)`
-    suffices_by 
+    suffices_by
       (rw[] >> first_x_assum irule >>
  fs[IMAGE_DEF,valuation_def,wffm_def,SUBSET_DEF,ultraproduct_folmodel_def] >>
-metis_tac[]) >> 
+metis_tac[]) >>
 Induct_on `phi` (* 4 *)
 >- (rw[feval_def] >> metis_tac[EMPTY_NOTIN_ultrafilter])
 >- (rw[] >> Cases_on `l = []`
@@ -1590,10 +1592,10 @@ rw[] >> drule thm_A_19_ii >> rw[] >> drule ultraproduct_rep_independence_lemma >
     qexists_tac `\i. σ x'` >> rw[] (* 2 *)
     >- (rw[Cart_prod_def,folmodels2Doms_def] >> fs[IMAGE_DEF,SUBSET_DEF] >> metis_tac[])
     >- (rw[EXTENSION,Uequiv_SYM] >> rw[EQ_IMP_THM,Uequiv_def])) >>
- `valuation (ultraproduct_folmodel U I' FMS) 
+ `valuation (ultraproduct_folmodel U I' FMS)
   (λx. {g | Uequiv U I' (folmodels2Doms FMS) g (λi. σ x)})`
   by (fs[IMAGE_DEF,SUBSET_DEF,valuation_def,ultraproduct_folmodel_def] >> metis_tac[]) >>
- `∀i. i ∈ I' ⇒ wffm (FMS i)` by 
+ `∀i. i ∈ I' ⇒ wffm (FMS i)` by
    (rw[wffm_def] >> metis_tac[]) >>
 first_x_assum drule >> rw[] >>
 first_x_assum drule >> rw[] >>
@@ -1680,10 +1682,10 @@ first_x_assum
 `IMAGE (λv. {g | Uequiv U I' (folmodels2Doms FMS) g (rv v)}) 𝕌(:num) ⊆
         ultraproduct U I' (folmodels2Doms FMS)`
  by metis_tac[rep_give_wf_valuation] >>
-`valuation (ultraproduct_folmodel U I' FMS) 
+`valuation (ultraproduct_folmodel U I' FMS)
   (λv. {g | Uequiv U I' (folmodels2Doms FMS) g (rv v)})`
   by (fs[IMAGE_DEF,SUBSET_DEF,valuation_def,ultraproduct_folmodel_def] >> metis_tac[]) >>
- `∀i. i ∈ I' ⇒ wffm (FMS i)` by 
+ `∀i. i ∈ I' ⇒ wffm (FMS i)` by
    (rw[wffm_def] >> metis_tac[]) >>
 first_x_assum drule >> rw[] >>
 first_x_assum drule >> rw[] >>
