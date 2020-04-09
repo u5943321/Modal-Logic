@@ -45,10 +45,10 @@ It helps also that the subject domain (proof calculi and automata) are well-suit
 
 There has been much less work on the model theory behind modal logic; indeed even in first order logic, most developments concern themselves only with model theory inasmuch as it is required to show completeness of an accompanying proof system.
 As our experience demonstrates, it is also clear that modern theorem-proving systems are not necessarily so well-suited to the mathematics behind model theory.
-Harrison~\cite{Harrison} complained in 1998 that the very notion of validity is awkward to capture in HOL, and our own work~\cite{URL} shows up further failings in simple type theory.
+Harrison~\cite{Harrison} complained in 1998 that the very notion of validity is awkward to capture in HOL, and our own work shows up further failings in simple type theory.
 
 Nonetheless, there is much interesting mathematics to be found even in the early chapters of a standard text such as Blackburn~\emph{et al.}~\cite{Blackburn}.
-The fact that mechanising only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanisation of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground for interactive theorem-proving systems. 
+The fact that mechanising only as far as \cite[Chapter 2]{Blackburn} requires what we believe to be the first mechanisation of the notion of ultraproduct (ultimately leading to \los's theorems and other results), is a strong suggestion that we are exploring novel mathematical ground for interactive theorem-proving systems.
 
 \paragraph{Contributions}
 This paper presents the first mechanised proofs of a number of basic results from the first two chapters of Blackburn~\emph{et al.}~\cite{Blackburn} (e.g., bounded morphisms, bisimulations and the finite model property \emph{via} selection), as well as
@@ -66,6 +66,12 @@ In a few places we use \HOLtm{CHOICE s} to denote the arbitrary choice of an ele
 The power-set of a set \HOLtm{s} is written \HOLtm{POW s}.
 In a number of places, we use HOL's ``itself'' type to allow us to explicitly mention a type \emph{via} a term.
 The type \HOLty{:'a itself} has just one value inhabiting it for any given choice of \HOLty{:'a}; that value is written \HOLtm{(:'a)}.
+
+\paragraph{Source Availability}
+Our HOL4 sources are available from GitHub at
+\begin{center} \url{https://github.com/u5943321/Modal-Logic}
+\end{center}
+The sources build under HOL4 commit with SHA~\texttt{03829d8986f}.
 
 \section{Syntax, Semantics and the Standard Translation}
 In our mechanisation, we consider the basic modal language, in which the only primitive modal operator is the `$\Diamond$'.
