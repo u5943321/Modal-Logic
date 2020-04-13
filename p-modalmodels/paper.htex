@@ -528,7 +528,7 @@ We are unaware of any previous mechanised use of ultraproducts or ultrapowers.
 
 
 \newpage
-\bibliography{../honours-report/everything}
+\bibliography{everything}
 \bibliographystyle{splncs04}
 
 \end{document}
