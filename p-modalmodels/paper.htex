@@ -167,7 +167,7 @@ If \HOLtm{Tr}, a frame, is also a tree with root $r$, we write \HOLtm{tree Tr r}
    \HOLthm[def,Tr/S,w/t,w/r0,w0/t0]{chap2_1.tree_def}
 \end{holmath}
 \end{definition}
-The tree-like property says an satisfiable modal formula can be satisfied in a tree-like model:
+The tree-like property says each satisfiable modal formula can be satisfied in a tree-like model:
 \begin{proposition}
 {\upshape\cite[Proposition 2.15]{Blackburn}}\label{2.15}
 \begin{holmath}
@@ -228,7 +228,7 @@ To show this, we prove that there is an injection from the set of equivalence cl
 For the antecedent of Lemma~\ref{2.29}, we require the assumption that the universe of $\beta$ is infinite since we rely on the fact that two modal formulas \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} are equivalent if and only if \HOLtm{phi1} and \HOLtm{phi2} are equivalent.
 %
 This would be easy to prove in set theory.
-However, in simple type theory, the proof of \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires us (in the left-to-right direction) to be able to construct a model with a new world inserted, something only sure to be possible if the \HOLty{:β} universe is infinite.
+However, in simple type theory, the proof of \HOLtm{equiv (:β) phi1 phi2} iff \HOLtm{equiv (:β) (DIAM phi1) (DIAM phi2)} requires us (in the right-to-left direction) to be able to construct a model with a new world inserted, something only sure to be possible if the \HOLty{:β} universe is infinite.
 %%(2 deleted things)
 As the construction used Proposition~\ref{2.15}, we change the type of the model by passing to a finite model via selection:
 \begin{theorem}
