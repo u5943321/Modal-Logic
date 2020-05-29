@@ -10,11 +10,19 @@ munge.exe: ppLib.uo prettyPrintingTheory.uo
 	$(protect $(HOLDIR)/bin/mkmunge.exe) $<
 
 EXTRA_CLEANS = munge.exe paper.tex paper.pdf paper.aux paper.fls paper.log \
-               holtexbasic.sty
+        slides.tex slides.pdf slides.aux slides.fls slides.log \
+        holtexbasic.sty 
 
 holtexbasic.sty: $(TEXDIR)/holtexbasic.sty
 	$(CP) $< $@
 
 paper.tex: paper.htex munge.exe holtexbasic.sty overrides
+	./munge.exe -w80 -m\; overrides < $< > $@
+
+
+slides.pdf: slides.tex ../honours-report/everything.bib
+	xelatex -pdf slides
+
+slides.tex: slides.htex munge.exe holtexbasic.sty overrides
 	./munge.exe -w80 -m\; overrides < $< > $@
 

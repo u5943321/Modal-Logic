@@ -1,0 +1,29 @@
+\documentclass[xetex,14pt]{beamer}
+\usepackage[mathscr]{euscript}
+\usepackage{holtexbasic}
+\usepackage{upgreek}
+\usepackage{stmaryrd}
+\usepackage{fontspec}
+\usepackage{alltt}
+\usepackage{tikz}
+\usepackage{url}
+
+\setmonofont[Scale=MatchLowercase%,WordSpace={1,0,0}
+]{Menlo}
+
+\begin{document}
+
+\title{Mechanised Modal Model Theory}
+\author{Yiming Xu and Michael Norrish}
+\date{July 2020}
+
+
+
+
+\end{document}
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: xetex
+%%% End:
