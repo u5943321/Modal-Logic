@@ -2,6 +2,9 @@ INCLUDES = ..
 
 TEXDIR = $(HOLDIR)/src/TeX
 
+all: paper.pdf slides.pdf
+.PHONY: all
+
 paper.pdf: paper.tex ../honours-report/everything.bib
 	latexmk -pdf paper
 
@@ -11,7 +14,7 @@ munge.exe: ppLib.uo prettyPrintingTheory.uo
 
 EXTRA_CLEANS = munge.exe paper.tex paper.pdf paper.aux paper.fls paper.log \
         slides.tex slides.pdf slides.aux slides.fls slides.log \
-        holtexbasic.sty 
+        holtexbasic.sty
 
 holtexbasic.sty: $(TEXDIR)/holtexbasic.sty
 	$(CP) $< $@
@@ -25,4 +28,3 @@ slides.pdf: slides.tex ../honours-report/everything.bib
 
 slides.tex: slides.htex munge.exe holtexbasic.sty overrides
 	./munge.exe -w80 -m\; overrides < $< > $@
-
