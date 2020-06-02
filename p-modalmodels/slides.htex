@@ -17,7 +17,9 @@
 \author{Yiming Xu and Michael Norrish}
 \date{July 2020}
 
-
+\begin{frame}
+\maketitle
+\end{frame}
 
 
 \end{document}
