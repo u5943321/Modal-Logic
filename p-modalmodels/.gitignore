@@ -7,4 +7,10 @@ munge.exe
 *.log
 paper.tex
 paper.pdf
+slides.pdf
+slides.tex
+slides.toc
+slides.snm
+slides.out
 holtexbasic.sty
+slides.nav
