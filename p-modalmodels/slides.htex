@@ -7,6 +7,8 @@
 \usepackage{alltt}
 \usepackage{tikz}
 \usepackage{url}
+\newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
+\newcommand{\los}{\L{}o\'s}
 
 \setmonofont[Scale=MatchLowercase%,WordSpace={1,0,0}
 ]{Menlo}
@@ -21,6 +23,189 @@
 \maketitle
 \end{frame}
 
+\begin{frame}{Contribution}
+
+\begin{itemize}
+\item Mechanised a number of results in the first two chapters of Blackburn et al.
+\item Countably saturated model via ultraproducts
+\item A Close approximation to Van Benthem Characterisation theorem (and a similar result in Chapter 2.6 of Blackburn et al.)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Modal formulas and models}
+Create a data type called \HOLty{:form} for formulas of the modal language with only one unary modal operator.
+\begin{holmath}
+  \HOLthm[nodollarparens,width=50]{chap1.datatype_form}
+\end{holmath}
+
+A model where these formulas can be interpreted consists of a \emph{frame} and a \emph{valuation}.
+\begin{holmath}
+  \HOLthm[:'b/:'a]{chap1.datatype_frame}\\
+  \HOLthm{chap1.datatype_model}
+\end{holmath}
+
+\end{frame}
+
+\begin{frame}{Satisfaction and Equivalence}
+\begin{itemize}
+\item Satisfaction is defined inductively.
+\item Modal equivalence of worlds.
+\begin{holmath}
+ \HOLthm[def,phi/form,width=40]{chap2_1.modal_eq_tau}
+\end{holmath}
+\item Have a notion of `logical equivalence of modal formulas', but weaker than the mathematical notion.
+\begin{holmath}
+ \HOLthm[def,showtypes,width=40]{prop2_29.equiv0_def}
+\end{holmath}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Formalised theorems without FOL involved}
+\begin{itemize}
+\item Tree-like property: Any satisfiable formula can be satisfied in a tree-like model (later useful for proving finite modal property via selection).
+\item Hennessy-Milner theorem: Modal equivalence and bisimulation coincides for image-finite models. 
+\item Finite model property:  Any satisfiable formula can be satisfied in a tree-like model (via selection and via filtration).
+\item Bisimulation as modal equivalencein ultrafilter extensions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Reaching out to FOL}
+We built on John Harrison's work on FOL modal theory, where 
+\begin{itemize}
+\item a first-order term is constructed as
+\HOLthm{folLang.datatype_term}
+\item a first-order formula is constructed as:
+\HOLthm[width=40]{folLang.datatype_form}
+\end{itemize}
+In our work, we are only interested in $\mathcal L_{\tau}^1$ formulas, which are first-order formulas without any function symbols (including the constants), only one binary predicate (represented by `0'), countably many unary predicate, and no higher-arity predicates.
+\begin{holmath}
+  \HOLthm[def,width=65]{chap2_6.L1tau_def}
+\end{holmath}
+\end{frame}
+
+\begin{frame}{Reaching out to FOL}
+\begin{itemize}
+\item A FOL model \HOLtm{M:'a folModels$model} is a set \HOLtm{M.Dom} with interpretation of function symbols \HOLtm{M.Fun} and predicate symbols \HOLtm{M.Pred}. A valuation \HOLtm{σ} of \HOLtm{M} is a function that maps all the natural numbers into the domain of \HOLtm{M}. 
+\item Satisfaction of a FOL formula \HOLtm{phi} under valuation \HOLtm{σ} in \HOLtm{M} is written  \HOLtm{feval M σ phi}.
+\item We use the compactness theorem proved in 1998 for two `characterisation theorems' afterwards. 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Standard translation}
+Standard translation allows us to regard a modal formula as a first-order formula and interpret it by regarding modal models as first-order models. The convertion from modal formula to first-order formula is done by the function 
+defined as:
+\begin{holmath}
+\begin{array}{rcl}
+  \HOLthm[aligneddef]{chap2_4revised.ST_def}
+\end{array}
+\end{holmath}
+\end{frame}
+
+\begin{frame}
+Accordingly, we define a function \HOLtm{mm2folm} that converts a modal model into a first-order model. The model obtained by converting a modal model \HOLtm{M} has domain \HOLtm{M.frame.world}, maps every term \HOLtm{Fn f l} into an arbitary world, maps each propositional letter to distinct predicates on worlds, and uses one binary predicate (the ``0th predicate'') to encode the frame relation.
+By induction, easy to prove:
+\begin{holmath}
+  \HOLthm{chap2_4revised.prop_2_47_i0}
+\end{holmath}
+\end{frame}
+
+\begin{frame}{Towards Van Benthem Theorem}
+\begin{itemize}
+\item Van Benthem Theorem says `a first-order $\mathcal L_{\tau}^1$ formula is invariant for bisimulation iff it is equivalent to some formula obtained by standard translation'.
+\item `invariant for bisimulation' defined as:
+\begin{holmath}
+  \HOLthm[def,x/n,width=65,showtypes]{chap2_6.invar4bisim_def'}
+\end{holmath}
+\item Can assume \HOLty{:'a} $=$ \HOLty{:'b} since we can always embed one of these type universes into the other.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ultraproduct (of a family of sets)}
+We write \HOLtm{ultrafilter U J} to mean `$U$ is an ultrafilter on \HOLtm{J}'.
+Given a family \HOLtm{An} indexed by a non-empty set \HOLtm{J} such that each \HOLtm{An j} is non-empty, the ultraproduct of \HOLtm{An} is defined as a quotient of the cartesian product of the family. 
+\begin{itemize}
+\item The Cartesian product of a family \HOLtm{An} is 
+\begin{holmath}
+  \HOLthm[def,j/i,J/I,An/A]{ultraproduct.Cart_prod_def}
+\end{holmath}
+\item If $U$ is an ultrafilter on $J$, for two functions $f,g$ in the Cartesian product \HOLtm{Cart_prod J An}, we say $f$ and $g$ are $U$-equivalent if the set \HOLtm{{j | j IN J /\ f j = g j\}} is in $U$.
+\item The ultraproduct of  \HOLtm{An} modulo $U$ is the quotient of \HOLtm{Cart_prod J An} by $U$-equivalence. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ultraproduct of modal models}
+Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$, the ultraproduct of this family is the model such that:
+\begin{itemize}
+\item The world set is the ultraproduct of world sets of \HOLtm{MS} modulo $U$.
+\item Two equivalence classes $f_U,g_U$ of functions are related iff there exist $f_0\in f_U,g_0\in g_U$, such that \HOLtm{{j IN J | (MS j).frame.rel (f0 j) (g0 j)\}} is in $U$.
+\item A propositional letter $p$ is satisfied at $f_U$ iff there exists $f_0\in f_U$ such that \HOLtm{{j | j IN J /\ (f0 j) IN (MS j).valt p\}} is in $U$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\los's Theorem, modal version}
+The modal version of \los's theorem tells us about the satisfaction of modal formulas in a ultraproduct model.
+\begin{holmath}
+  \HOLthm[MS/Ms,j/i,f0/f,width=65]{ultraproduct.Los_modal_thm}
+\end{holmath}
+`The ultraproduct of a family of modal models satisfies a modal formula if and only if `most of' the models in the family satisfy the formula'
+\end{frame}
+
+\begin{frame}{Ultraproduct of first-order models}
+The corresponding notion of families of first-order models is defined similarly. But for the ultraproduct of first-order models, we fix the representative of each equivalence class \HOLtm{fc} to be \HOLtm{CHOICE fc}. The \los's Theorem is stated as:
+\begin{holmath}
+  \HOLthm[J/I,j/i,v/x,width=65]{ultraproduct.thm_A_19_ii}
+\end{holmath}
+and proved by induction on first-order formulas. 
+All of our constructions about ultraproducts serves to prove a lemma about \emph{saturation}.
+\end{frame}
+
+\begin{frame}{A critical lemma on Saturation}
+For a family of non-empty models, their ultraproduct is countably saturated.
+Following the proof in Chang and Keisler, we can prove the ultraproduct of a non-empty family of modal models on a countably incomplete ultrafilter is countably saturated.
+\begin{holmath}
+  \HOLthm[J/I,j/i]{lemma2_73.lemma_2_73}
+\end{holmath}
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+\item With the lemma about saturation we can use the proof in Blackburn et al. (relies on first-order compactness theorem) to prove the `remaining direction' of Van Benthem's characterisation theorem: `If a first-order formula is invariant under bisimulation, then it is equivalent to the standard translation of some modal formula.'
+\item However, although it seems that we have proved two directions of Van Benthem's Characterisation theorem, we do not really get an `iff'.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Why not `iff'?}
+Following the proof in Blackburn et al, in HOL, we can only prove the two directions separately as:
+\begin{holmath}
+  \HOLthm[δ/a]{chap2_6.feq_thm_2_68_half2} \\[3mm]
+ \HOLthm[δ/a]{chap2_6.thm_2_68_half1'}
+\end{holmath}
+Cannot be put together because the issue on types!
+
+If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type', and hence prove the original statement of Van Benthem characterisation theorem.
+
+\end{frame}
+
+\begin{frame}{Can get ideal result if we are working with dependent type theory}
+If we could quantify over types (as we could in a theorem prover based on dependent type theory), then we can could define `invariant under bisimulation for models of every type' and `equivalence of formulas on any type of models'. If so, using the same proof, we expect we can prove the original statement of Van Benthem Characterisation theorem. 
+\end{frame}
+
+\begin{frame}{Conclusion}
+we have mechanised all of the results in the first two chapters in Blackburn \emph{at al.} that can be captured by the HOL logic, and which are about the basic modal language. The exceptions are:
+\begin{itemize}
+\item The result in Section~2.6 about `definability', which requires a definition of the `models closed under taking ultraproducts'.
+Simple type theory cannot capture such large sets.
+\item
+The result about `safety' in Section~2.7 is a result about the PDL language, which has infinitely many modal operators.
+For the moment, we have restricted our attention to the basic modal language, with only $\Diamond$ (and the derived $\Box$).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+The two characterisation theorems from Blackburn~\emph{et~al.}, namely Theorem 2.68~(Van Benthem's Characterisation Theorem) and Theorem 2.78, are the only two mechanised theorem such that translating the `if and only if' statements from set theory into simple theory theory does not yield an `if and only if' statement.
+\end{frame}
 
 \end{document}
 
