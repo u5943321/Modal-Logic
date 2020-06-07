@@ -7,6 +7,7 @@
 \usepackage{alltt}
 \usepackage{tikz}
 \usepackage{url}
+\usetikzlibrary{arrows,calc,positioning,shapes,fit}
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newcommand{\los}{\L{}o\'s}
 
@@ -56,8 +57,12 @@ Most of them stress on \emph{proof theory}.
   \HOLthm[width=30]{chap1.datatype_model}
 \end{holmath}
 \end{itemize}
-
 \end{frame}
+
+\begin{frame}
+\includegraphics[width=0.8\paperwidth]{modelexample}
+\end{frame}
+
 
 \begin{frame}{Satisfaction and Equivalence}
 \begin{itemize}
@@ -73,8 +78,8 @@ Most of them stress on \emph{proof theory}.
 \end{frame}
 
 \begin{frame}{Tree-like property}
-\begin{holmath}
-   \HOLthm[def,Tr/S,w/t,w/r0,w0/t0,width=45]{chap2_1.tree_def}\\[3mm] \HOLthm[M'/MODEL,phi/form,r/s,showtypes,width=45]{chap2_1.prop_2_15_corollary}
+Tree-like model \includegraphics[width=0.5\paperwidth]{treeexample}
+\begin{holmath} \HOLthm[M'/MODEL,phi/form,r/s,showtypes,width=45]{chap2_1.prop_2_15_corollary}
 \end{holmath}
 \end{frame}
 
