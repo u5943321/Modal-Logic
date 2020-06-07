@@ -11,6 +11,18 @@
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newcommand{\los}{\L{}o\'s}
 
+
+\definecolor{DarkBrown}{RGB}{86,83,55}
+\definecolor{PaperBrown}{RGB}{226,225,199}
+\definecolor{MyPurple}{RGB}{75,30,187}
+\definecolor{TermYellow}{RGB}{255,250,171}
+\setbeamercolor{normal text}{fg=DarkBrown}
+\setbeamercolor{structure}{fg=DarkBrown}
+\setbeamercolor{background canvas}{bg=PaperBrown}
+\setbeamertemplate{frametitle}[default][center]
+
+
+
 \setmonofont[Scale=MatchLowercase%,WordSpace={1,0,0}
 ]{Menlo}
 
