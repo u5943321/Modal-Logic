@@ -36,22 +36,12 @@
 \maketitle
 \end{frame}
 
-\begin{frame}{Previous work on mechanised modal logic}
-\begin{itemize}
-\item de Wind's thesis, natural deduction
-\item Recent work by Blanchette \emph{et al.}, on completeness
-\item Nesi, on process algebra
-\item ...
-\end{itemize}
-Most of them stress on \emph{proof theory}.
-\end{frame}
-
 \begin{frame}{Contribution}
 
 \begin{itemize}
 \item Mechanised a number of results in the first two chapters of Blackburn et al.
 \item Countably saturated model via ultraproducts
-\item A Close approximation to Van Benthem Characterisation theorem (and a similar result in Chapter 2.6 of Blackburn et al.)
+\item A Close approximation to Van Benthem Characterisation theorem.
 \end{itemize}
 
 \end{frame}
@@ -80,69 +70,56 @@ Most of them stress on \emph{proof theory}.
 \begin{itemize}
 \item Satisfaction 
 \begin{holmath}
- \HOLthm[def,phi/form,width=40]{chap1.satis_def}
+ \HOLthm[def,phi/form,width=35]{chap1.satis_def}
 \end{holmath}
-\item `logical equivalence'
+\item Modal equivalence
 \begin{holmath}
- \HOLthm[def,showtypes,width=40]{prop2_29.equiv0_def}
+  \HOLthm[def,phi/form,width=30]{chap2_1.modal_eq_tau}
 \end{holmath}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Tree-like property}
-Tree-like model \includegraphics[width=0.5\paperwidth]{treeexample}
+\begin{frame}{Logical equivalence}
+\begin{holmath}
+ \HOLthm[def,showtypes,width=30]{prop2_29.equiv0_def}
+\end{holmath}
+\begin{itemize}
+\item The type parameter is necessary.
+\item \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} equivalent iff \HOLtm{phi1} an \HOLtm{phi2} are equivalent over \HOLtm{:β} only for infinite types.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Two basic properties}
+\begin{itemize}
+\item Tree-like property
 \begin{holmath} \HOLthm[M'/MODEL,phi/form,r/s,showtypes,width=45]{chap2_1.prop_2_15_corollary}
 \end{holmath}
+\item Finite model property
+\begin{holmath}
+\HOLthm[M/FM,showtypes,width=45]{chap2_3revised.thm_2_34}
+\end{holmath}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Bisimulation}
-Two worlds are \emph{bisimilar} if they 
+Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are \emph{bisimilar} (write \HOLtm{bisim_world M N w v})if they 
 \begin{itemize}
 \item satisfies the same propositional letters.
 \item if we can make a transation from one of the worlds, we can make a corresponding transation from the other one.
 \end{itemize}
 
-Hennessy-Milner theorem
 \begin{holmath}
-  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=40]{chap2_2.thm_2_24}
+ \HOLthm[w1/w,w2/w',M1/M,M2/M',width=40]{chap2_5.thm_2_62}
 \end{holmath}
+
 \end{frame}
 
-\begin{frame}{Finite model property (Via Selection)}
-Key ingredients:
-\begin{itemize}
-\item tree-like property
-\item $n$-bisimulation (approximating bisimulation up to $n$ steps)
-\item Finiteness of equivalence formulas up to any degree:
-\begin{holmath}
-\HOLthm[phi/f,Φ/s,showtypes]{prop2_29.prop_2_29_prop_letters}
-\end{holmath}
-\end{itemize}
-\end{frame}
 
-\begin{frame}{Finite model property}
-\begin{holmath}
-\HOLthm[M/FM,showtypes,width=45]{chap2_3revised.thm_2_34}
-\end{holmath}
-\end{frame}
 
 \begin{frame}{Reaching out to FOL}
 \begin{itemize}
-\item First-order formulas
-\begin{holmath}
-\HOLthm{folLang.datatype_term}
-\HOLthm[width=40]{folLang.datatype_form}
-\end{holmath}
-\item First-order models
-\begin{holmath}
-\HOLthm{folModels.datatype_model}
-\end{holmath}
-\end{itemize}
-Write \HOLtm{feval M σ phi} for satisfaction of \HOLtm{phi} in \HOLtm{M} under \HOLtm{σ}.
-\end{frame}
-
-\begin{frame}{Reaching out to FOL}
-\begin{itemize}
+\item John Harrison's previous work in 1998.
+\item \HOLtm{feval M σ phi} for satisfaction of \HOLtm{phi} in \HOLtm{M} under the assignment \HOLtm{σ} of free variables.
 \item $\mathcal L_{\tau}^1$ formulas
 \begin{itemize}
 \item no functions (incl. constants)
@@ -150,20 +127,13 @@ Write \HOLtm{feval M σ phi} for satisfaction of \HOLtm{phi} in \HOLtm{M} under 
 \item one binary predicate represented by $0$
 \item Unary predicates correspond to propositional letters
 \end{itemize}
-
-\item Compactness theorem (For two characterisation theorems)
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Standard translation}
 \begin{itemize}
-\item On formulas
-\begin{holmath}
-\begin{array}{rcl}
-  \HOLthm[aligneddef]{chap2_4revised.ST_def}
-\end{array}
-\end{holmath}
+\item ${\sf ST}_{\mathit x}$  converts a modal formula into a first-order formula on the free variable $x$.
 \item The function \HOLtm{mm2folm} converts a modal model into a first-order model.
 \item Reformulating satisfaction as
 \begin{holmath}
@@ -175,11 +145,26 @@ Write \HOLtm{feval M σ phi} for satisfaction of \HOLtm{phi} in \HOLtm{M} under 
 
 
 \begin{frame}{Invariant for bisimulation}
-\begin{holmath}
-  \HOLthm[def,x/n,width=65,showtypes]{chap2_6.invar4bisim_def'}
-\end{holmath}
+We have \HOLtm{invar4bisim x (:α) (:β) ϕ} if $\phi$ 
+\begin{itemize}
+\item has no free variable other then $x$.
+\item is ${\mathcal L}^1_{\tau}$.
+\item once \HOLtm{bisim_world M N w v}, \HOLtm{phi} is satisfied at $w$ iff it is satisfied at $v$.
+\end{itemize}
+
 Van Benthem Theorem : `an $\mathcal L_{\tau}^1$ formula is invariant for bisimulation iff it is equivalent to a standard translation'.
 
+\end{frame}
+
+\begin{frame}{Van Benthem Theorem}
+Main ingredients
+\begin{itemize}
+\item Compactness of first-order logic
+\item Ultraproducts, for the critical lemma
+\begin{holmath}
+  \HOLthm[J/I,j/i,width=45]{lemma2_73.lemma_2_73}
+\end{holmath}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Ultraproduct (of set families)}
@@ -208,32 +193,14 @@ Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ 
 \end{itemize}
 \end{frame}
 
-\begin{frame}{\los's Theorem, modal version}
-\begin{holmath}
-  \HOLthm[MS/Ms,j/i,f0/f,width=65]{ultraproduct.Los_modal_thm}
-\end{holmath}
-`The ultraproduct of a family of modal models satisfies a modal formula if and only if `most of' the models in the family satisfy the formula'
-\end{frame}
-
-\begin{frame}{Ultraproduct of first-order models}
+\begin{frame}{\los's Theorem}
 \begin{itemize}
-\item Independent of the main-stream work
-\item Uses John Harrison's FOL
-\item \los's theorem
+\item Modal version
 \begin{holmath}
-  \HOLthm[J/I,j/i,v/x,width=45]{ultraproduct.thm_A_19_ii}
+  \HOLthm[MS/Ms,j/i,f0/f,width=45]{ultraproduct.Los_modal_thm}
 \end{holmath}
-\end{itemize}
-\end{frame}
+\item Also get first-order (standard) version formalized. Both of the two versions are required for the proof of the lemma.
 
-\begin{frame}{Towards Van Benthem Characterisation Theorem}
-\begin{itemize}
-\item Critical lemma
-\begin{holmath}
-  \HOLthm[J/I,j/i,width=45]{lemma2_73.lemma_2_73}
-\end{holmath}
-Proof uses ultraproducts, completes the proof of the hard direction of Van Benthem Characterisation theorem. 
-\item However, still cannot get an `iff' statement in HOL.
 \end{itemize}
 \end{frame}
 
