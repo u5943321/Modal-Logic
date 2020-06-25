@@ -39,7 +39,7 @@
 \begin{frame}{Previous work on mechanised modal logic}
 \begin{itemize}
 \item de Wind's thesis, natural deduction
-\item Recent work by Blanchette \emph{et al.}, on completeness
+\item Recent work by Blanchette Poprscu and Traytel, on completeness
 \item Nesi, on process algebra
 \item ...
 \end{itemize}
@@ -114,7 +114,7 @@ Most of them stress on \emph{proof theory}.
 \begin{frame}{Bisimulation}
 Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are \emph{bisimilar} (write \HOLtm{bisim_world M N w v})if they 
 \begin{itemize}
-\item satisfies the same propositional letters.
+\item satisfy the same propositional letters.
 \item if we can make a transation from one of the worlds, we can make a corresponding transation from the other one.
 \end{itemize}
 Hennessy-Milner Theorem
