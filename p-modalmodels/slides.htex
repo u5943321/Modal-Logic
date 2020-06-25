@@ -36,10 +36,20 @@
 \maketitle
 \end{frame}
 
+\begin{frame}{Previous work on mechanised modal logic}
+\begin{itemize}
+\item de Wind's thesis, natural deduction
+\item Recent work by Blanchette \emph{et al.}, on completeness
+\item Nesi, on process algebra
+\item ...
+\end{itemize}
+Most of them stress on \emph{proof theory}.
+\end{frame}
+
 \begin{frame}{Contribution}
 
 \begin{itemize}
-\item Mechanised a number of results in the first two chapters of Blackburn et al.
+\item Mechanised a number of results in the first two chapters of `Modal Logic' by Blackburn et al.
 \item Countably saturated model via ultraproducts
 \item A Close approximation to Van Benthem Characterisation theorem.
 \end{itemize}
@@ -50,18 +60,18 @@
 \begin{frame}{Modal formulas and models}
 \begin{itemize}
 \item Formulas
-\begin{holmath}
-  \HOLthm[nodollarparens,width=50]{chap1.datatype_form}
-\end{holmath}
+
+  $\sf form = V_m \ num \mid DISJ \ form \ form \mid \bot_m \mid \lnot_m \ form \mid \Diamond \ form$
+  
 \item Models
 \begin{holmath}
-  \HOLthm[:'b/:'a]{chap1.datatype_frame}\\
+  \HOLthm[:'b/:'a,width=30]{chap1.datatype_frame}\\
   \HOLthm[width=30]{chap1.datatype_model}
 \end{holmath}
 \end{itemize}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Example}
 \includegraphics[width=0.8\paperwidth]{modelexample}
 \end{frame}
 
@@ -85,7 +95,7 @@
 \end{holmath}
 \begin{itemize}
 \item The type parameter is necessary.
-\item \HOLtm{DIAM phi1} and \HOLtm{DIAM phi2} equivalent iff \HOLtm{phi1} an \HOLtm{phi2} are equivalent over \HOLtm{:β} only for infinite types.
+\item \HOLtm{DIAM phi1} $\equiv_{(:\beta)}$\HOLtm{DIAM phi2} iff \HOLtm{phi1} $\equiv_{(:\beta)}$ \HOLtm{phi2} when \HOLtm{:β} has infinite type universe.
 \end{itemize}
 \end{frame}
 
@@ -107,9 +117,9 @@ Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are \emph{b
 \item satisfies the same propositional letters.
 \item if we can make a transation from one of the worlds, we can make a corresponding transation from the other one.
 \end{itemize}
-
+Hennessy-Milner Theorem
 \begin{holmath}
- \HOLthm[w1/w,w2/w',M1/M,M2/M',width=40]{chap2_5.thm_2_62}
+  \HOLthm[M1/M,M2/M',w1/w,w2/w',width=40]{chap2_2.thm_2_24}
 \end{holmath}
 
 \end{frame}
@@ -119,21 +129,22 @@ Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are \emph{b
 \begin{frame}{Reaching out to FOL}
 \begin{itemize}
 \item John Harrison's previous work in 1998.
-\item \HOLtm{feval M σ phi} for satisfaction of \HOLtm{phi} in \HOLtm{M} under the assignment \HOLtm{σ} of free variables.
+\item \HOLtm{feval M σ phi} if \HOLtm{phi} is true in \HOLtm{M} under the assignment \HOLtm{σ} of free variables.
 \item $\mathcal L_{\tau}^1$ formulas
 \begin{itemize}
 \item no functions (incl. constants)
 \item no predicate with arity $\textgreater 2$ 
 \item one binary predicate represented by $0$
-\item Unary predicates correspond to propositional letters
+\item Unary predicates correspond to propositional letters.
 \end{itemize}
+\item Equivalence of first-order formulas written as $\phi_1{}^{\sf f}\equiv_{(:\beta)}\phi_2$
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Standard translation}
 \begin{itemize}
-\item ${\sf ST}_{\mathit x}$  converts a modal formula into a first-order formula on the free variable $x$.
+\item ${\sf ST}_{\mathit x}$  converts a modal formula into a first-order formula on the free variable $\mathit x$.
 \item The function \HOLtm{mm2folm} converts a modal model into a first-order model.
 \item Reformulating satisfaction as
 \begin{holmath}
@@ -144,52 +155,56 @@ Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are \emph{b
 \end{frame}
 
 
-\begin{frame}{Invariant for bisimulation}
+\begin{frame}{Van Benthem Theorem, Statement}
 We have \HOLtm{invar4bisim x (:α) (:β) ϕ} if $\phi$ 
 \begin{itemize}
-\item has no free variable other then $x$.
+\item has no free variable other then $\mathit x$.
 \item is ${\mathcal L}^1_{\tau}$.
-\item once \HOLtm{bisim_world M N w v}, \HOLtm{phi} is satisfied at $w$ iff it is satisfied at $v$.
+\item once \HOLtm{bisim_world M N w v}, \HOLtm{phi} is satisfied at $\mathit w$ iff it is satisfied at $\mathit v$.
 \end{itemize}
 
-Van Benthem Theorem : `an $\mathcal L_{\tau}^1$ formula is invariant for bisimulation iff it is equivalent to a standard translation'.
+Van Benthem Characterisation Theorem : `an $\mathcal L_{\tau}^1$ formula $\mathit \delta(\mathit x)$ is invariant for bisimulation iff it is equivalent to a standard translation'.
 
 \end{frame}
 
-\begin{frame}{Van Benthem Theorem}
-Main ingredients
-\begin{itemize}
-\item Compactness of first-order logic
-\item Ultraproducts, for the critical lemma
-\begin{holmath}
-  \HOLthm[J/I,j/i,width=45]{lemma2_73.lemma_2_73}
-\end{holmath}
-\end{itemize}
+\begin{frame}{Van Benthem Theorem, Proof}
+  \begin{itemize}
+  \item Easy direction (Standard translations are invariant for bisimulation) : immediate 
+  \item Hard direction : Requires two main ingredient.
+    \begin{itemize}
+    \item Compactness of first-order logic
+    \item Ultraproducts, for two critical lemmas, including the complicated:
+      \begin{holmath}
+        \HOLthm[J/I,j/i,width=45]{lemma2_73.lemma_2_73}
+      \end{holmath}
+    \end{itemize}
+    
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Ultraproduct (of set families)}
 \begin{itemize}
 \item An \emph{ultrafilter} \HOLtm{U} on a nonempty set \HOLtm{J} is a set of subsets of \HOLtm{J} such that
 \begin{itemize}
-\item $J\in U$
-\item for each $X\subseteq J$, exactly one of $X$ and $J\setminus X$ is in $U$.
+\item $\mathit J\in \mathit U$
+\item for each $\mathit X\subseteq\mathit J$, exactly one of $\mathit X$ and $\mathit J\setminus \mathit X$ is in $\mathit U$.
 \end{itemize}
 \item Cartesian product
 \begin{holmath}
   \HOLthm[def,j/i,J/I,An/A,width=35]{ultraproduct.Cart_prod_def}
 \end{holmath}
-\item $f\sim_Ug$  if  \HOLtm{{j | j IN J /\ f j = g j\} IN U}. 
-\item The ultraproduct of  \HOLtm{An} modulo $U$ is the quotient of \HOLtm{Cart_prod J An} by $U$-equivalence. 
+\item $\mathit f\sim_{\mathit U}\mathit g$  if  \HOLtm{{j | j IN J /\ f j = g j\} IN U}. 
+\item The ultraproduct of  \HOLtm{An} modulo $\mathit U$ is the quotient of \HOLtm{Cart_prod J An} by $\sim_{\mathit U}$. 
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}{Ultraproduct of modal models}
-Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ on $J$, the ultraproduct model of \HOLtm{MS} modulo $U$ is:
+Given a family \HOLtm{MS} of modal models indexed by \HOLtm{J} and an ultrafilter \HOLtm{U} on \HOLtm{J}, the ultraproduct $\prod_{\mathit U}{\mathit M}^s$ is:
 \begin{itemize}
-\item The world set is the ultraproduct of world sets of \HOLtm{MS} modulo $U$.
-\item  $f_URg_U$ iff there exist $f_0\in f_U,g_0\in g_U$, such that \HOLtm{{j IN J | (MS j).frame.rel (f0 j) (g0 j)\} IN U} .
-\item A propositional letter $p$ is satisfied at $f_U$ iff there exists $f_0\in f_U$ such that \HOLtm{{j | j IN J /\ (f0 j) IN (MS j).valt p\}} is in $U$.
+\item The world set is the ultraproduct of world sets of \HOLtm{MS} modulo $\mathit U$.
+\item  $\mathit f_{\mathit U}\mathit R\mathit g_{\mathit U}$ iff there exist $\mathit f_0\in \mathit f_{\mathit U},\mathit g_0\in \mathit g_{\mathit U}$, such that \HOLtm{{j IN J | (MS j).frame.rel (f0 j) (g0 j)\} IN U} .
+\item A propositional letter $\mathit p$ is satisfied at $\mathit f_{\mathit U}$ iff there exists $\mathit f_0\in \mathit f_{\mathit U}$ such that \HOLtm{{j | j IN J /\ (f0 j) IN (MS j).valt p\}} is in $\mathit U$.
 \end{itemize}
 \end{frame}
 
@@ -199,7 +214,7 @@ Given a family \HOLtm{MS} of modal models indexed by $J$ and an ultrafilter $U$ 
 \begin{holmath}
   \HOLthm[MS/Ms,j/i,f0/f,width=45]{ultraproduct.Los_modal_thm}
 \end{holmath}
-\item Also get first-order (standard) version formalized. Both of the two versions are required for the proof of the lemma.
+\item Also get first-order (standard) version formalized. Both of the two versions are required for the proof of the hard direction of VBC.
 
 \end{itemize}
 \end{frame}
@@ -215,7 +230,7 @@ Following the proof in Blackburn et al, in HOL, we can only prove the two direct
 
 \begin{frame}{Conclusion}
 \begin{itemize}
-\item Mechanised any theorem in chapter 1 and 2 of Blackburn \emph{at al.} such that 
+\item Mechanised every theorem in chapter 1 and 2 of Blackburn \emph{et al.} such that 
 \begin{itemize}
 \item can be captured by the HOL logic
 \item about the basic modal language
