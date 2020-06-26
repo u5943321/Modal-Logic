@@ -156,11 +156,11 @@ Hennessy-Milner Theorem
 
 
 \begin{frame}{Van Benthem Theorem, Statement}
-We have \HOLtm{invar4bisim x (:α) (:β) ϕ} if $\phi$
+We have \HOLtm{invar4bisim x (:α) (:β) δ} if $\delta$
 \begin{itemize}
 \item has no free variable other then $\mathit x$.
 \item is ${\mathcal L}^1_{\tau}$.
-\item once \HOLtm{bisim_world M N w v}, \HOLtm{phi} is satisfied at $\mathit w$ iff it is satisfied at $\mathit v$.
+\item if \HOLtm{bisim_world M N w v}, \HOLtm{δ} is satisfied at $\mathit w$ iff it is satisfied at $\mathit v$.
 \end{itemize}
 
 Van Benthem Characterisation Theorem : `an $\mathcal L_{\tau}^1$ formula $\mathit \delta(\mathit x)$ is invariant for bisimulation iff it is equivalent to a standard translation'.
@@ -214,8 +214,10 @@ Given a family \HOLtm{MS} of modal models indexed by \HOLtm{J} and an ultrafilte
 \begin{holmath}
   \HOLthm[MS/Ms,j/i,f0/f,width=45]{ultraproduct.Los_modal_thm}
 \end{holmath}
-\item Also get first-order (standard) version formalized. Both of the two versions are required for the proof of the hard direction of VBC.
-
+\item Have also mechanised well-known first-order version.
+  \begin{itemize}
+  \item Both are required for the proof of the hard direction of VBC.
+  \end{itemize}
 \end{itemize}
 \end{frame}
 
