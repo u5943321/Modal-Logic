@@ -62,7 +62,7 @@ Most of them stress on \emph{proof theory}.
 \item Formulas
 
   $\sf form = V_m \ num \mid DISJ \ form \ form \mid \bot_m \mid \lnot_m \ form \mid \Diamond \ form$
-  
+
 \item Models
 \begin{holmath}
   \HOLthm[:'b/:'a,width=30]{chap1.datatype_frame}\\
@@ -78,7 +78,7 @@ Most of them stress on \emph{proof theory}.
 
 \begin{frame}{Satisfaction and Equivalence}
 \begin{itemize}
-\item Satisfaction 
+\item Satisfaction
 \begin{holmath}
  \HOLthm[def,phi/form,width=35]{chap1.satis_def}
 \end{holmath}
@@ -133,7 +133,7 @@ Hennessy-Milner Theorem
 \item $\mathcal L_{\tau}^1$ formulas
 \begin{itemize}
 \item no functions (incl. constants)
-\item no predicate with arity $\textgreater 2$ 
+\item no predicate with arity $\textgreater 2$
 \item one binary predicate represented by $0$
 \item Unary predicates correspond to propositional letters.
 \end{itemize}
@@ -156,7 +156,7 @@ Hennessy-Milner Theorem
 
 
 \begin{frame}{Van Benthem Theorem, Statement}
-We have \HOLtm{invar4bisim x (:α) (:β) ϕ} if $\phi$ 
+We have \HOLtm{invar4bisim x (:α) (:β) ϕ} if $\phi$
 \begin{itemize}
 \item has no free variable other then $\mathit x$.
 \item is ${\mathcal L}^1_{\tau}$.
@@ -169,7 +169,7 @@ Van Benthem Characterisation Theorem : `an $\mathcal L_{\tau}^1$ formula $\mathi
 
 \begin{frame}{Van Benthem Theorem, Proof}
   \begin{itemize}
-  \item Easy direction (Standard translations are invariant for bisimulation) : immediate 
+  \item Easy direction (Standard translations are invariant for bisimulation) : immediate
   \item Hard direction : Requires two main ingredient.
     \begin{itemize}
     \item Compactness of first-order logic
@@ -178,7 +178,7 @@ Van Benthem Characterisation Theorem : `an $\mathcal L_{\tau}^1$ formula $\mathi
         \HOLthm[J/I,j/i,width=45]{lemma2_73.lemma_2_73}
       \end{holmath}
     \end{itemize}
-    
+
   \end{itemize}
 \end{frame}
 
@@ -193,8 +193,8 @@ Van Benthem Characterisation Theorem : `an $\mathcal L_{\tau}^1$ formula $\mathi
 \begin{holmath}
   \HOLthm[def,j/i,J/I,An/A,width=35]{ultraproduct.Cart_prod_def}
 \end{holmath}
-\item $\mathit f\sim_{\mathit U}\mathit g$  if  \HOLtm{{j | j IN J /\ f j = g j\} IN U}. 
-\item The ultraproduct of  \HOLtm{An} modulo $\mathit U$ is the quotient of \HOLtm{Cart_prod J An} by $\sim_{\mathit U}$. 
+\item $\mathit f\sim_{\mathit U}\mathit g$  if  \HOLtm{{j | j IN J /\ f j = g j\} IN U}.
+\item The ultraproduct of  \HOLtm{An} modulo $\mathit U$ is the quotient of \HOLtm{Cart_prod J An} by $\sim_{\mathit U}$.
 \end{itemize}
 \end{frame}
 
@@ -230,7 +230,7 @@ Following the proof in Blackburn et al, in HOL, we can only prove the two direct
 
 \begin{frame}{Conclusion}
 \begin{itemize}
-\item Mechanised every theorem in chapter 1 and 2 of Blackburn \emph{et al.} such that 
+\item Mechanised every theorem in chapter 1 and 2 of Blackburn \emph{et al.} such that
 \begin{itemize}
 \item can be captured by the HOL logic
 \item about the basic modal language
