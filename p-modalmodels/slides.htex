@@ -112,10 +112,10 @@ Most of them stress on \emph{proof theory}.
 \end{frame}
 
 \begin{frame}{Bisimulation}
-Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are \emph{bisimilar} (write \HOLtm{bisim_world M N w v})if they 
+Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are \emph{bisimilar} (write \HOLtm{bisim_world M N w v}) if they
 \begin{itemize}
 \item satisfy the same propositional letters.
-\item if we can make a transation from one of the worlds, we can make a corresponding transation from the other one.
+\item if we can make a translation from one of the worlds, we can make a corresponding translation from the other one.
 \end{itemize}
 Hennessy-Milner Theorem
 \begin{holmath}
