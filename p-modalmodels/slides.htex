@@ -10,6 +10,8 @@
 \usetikzlibrary{arrows,calc,positioning,shapes,fit}
 \newenvironment{holmath}{\begin{displaymath}\begin{array}{l}}{\end{array}\end{displaymath}\ignorespacesafterend}
 \newcommand{\los}{\L{}o\'s}
+\usefonttheme{serif}
+
 
 
 \definecolor{DarkBrown}{RGB}{86,83,55}
@@ -36,24 +38,17 @@
 \maketitle
 \end{frame}
 
-\begin{frame}{Previous work on mechanised modal logic}
-\begin{itemize}
-\item de Wind's thesis, natural deduction
-\item Recent work by Blanchette Poprscu and Traytel, on completeness
-\item Nesi, on process algebra
-\item ...
-\end{itemize}
-Most of them stress on \emph{proof theory}.
-\end{frame}
-
 \begin{frame}{Contribution}
-
 \begin{itemize}
-\item Mechanised a number of results in the first two chapters of `Modal Logic' by Blackburn et al.
-\item Countably saturated model via ultraproducts
-\item A Close approximation to Van Benthem Characterisation theorem.
+\item Mechanised a number of results\\ in the first two chapters of \\ `Modal Logic' by Blackburn et al.
+\item Countably saturated model \\ via ultraproducts
+\item A Close approximation to Van \\ Benthem Characterisation theorem.
 \end{itemize}
 
+\begin{tikzpicture}[remember picture, overlay]
+  \node (a) at (9.7,3)
+    {\includegraphics[height=.4\textheight]{bookcover}};
+\end{tikzpicture}
 \end{frame}
 
 
@@ -115,7 +110,7 @@ Most of them stress on \emph{proof theory}.
 Two worlds \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are \emph{bisimilar} (write \HOLtm{bisim_world M N w v}) if they
 \begin{itemize}
 \item satisfy the same propositional letters.
-\item if we can make a translation from one of the worlds, we can make a corresponding translation from the other one.
+\item if we can make a transition from one of the worlds, we can make a corresponding transition from the other one.
 \end{itemize}
 Hennessy-Milner Theorem
 \begin{holmath}
@@ -156,21 +151,20 @@ Hennessy-Milner Theorem
 
 
 \begin{frame}{Van Benthem Theorem, Statement}
-We have \HOLtm{invar4bisim x (:α) (:β) δ} if $\delta$
+  An $\mathcal L_{\tau}^1$ formula $\delta(\mathit x)$ is \emph{invariant for bisimulation} (written as \HOLtm{invar4bisim x (:α) (:β) δ}) if:
+  
+  Once \HOLtm{w IN M.frame.world} and \HOLtm{v IN N.frame.world} are bisimilar, \HOLtm{δ} is satisfied at $\mathit w$ iff it is satisfied at $\mathit v$. 
+
 \begin{itemize}
-\item has no free variable other then $\mathit x$.
-\item is ${\mathcal L}^1_{\tau}$.
-\item if \HOLtm{bisim_world M N w v}, \HOLtm{δ} is satisfied at $\mathit w$ iff it is satisfied at $\mathit v$.
+\item VBC: `for an $\mathcal L_{\tau}^1$ formula $\mathit \delta(\mathit x)$, it is invariant for bisimulation iff it is equivalent to a standard translation'.
+\item HM: `for a image-finite model, two worlds are bisimilar iff they are modal equivalent'.
 \end{itemize}
-
-Van Benthem Characterisation Theorem : `an $\mathcal L_{\tau}^1$ formula $\mathit \delta(\mathit x)$ is invariant for bisimulation iff it is equivalent to a standard translation'.
-
 \end{frame}
 
 \begin{frame}{Van Benthem Theorem, Proof}
   \begin{itemize}
   \item Easy direction (Standard translations are invariant for bisimulation) : immediate
-  \item Hard direction : Requires two main ingredient.
+  \item Hard direction : Requires two main ingredients.
     \begin{itemize}
     \item Compactness of first-order logic
     \item Ultraproducts, for two critical lemmas, including the complicated:
