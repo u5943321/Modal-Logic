@@ -224,6 +224,17 @@ Following the proof in Blackburn et al, in HOL, we can only prove the two direct
 \end{holmath}
 \end{frame}
 
+\begin{frame}{Why in HOL?}
+  \begin{tikzpicture}[remember picture, overlay]
+  \node (a) at (10.2,-4.2)
+    {\includegraphics[height=.25\textheight]{logo}};
+\end{tikzpicture}
+  \begin{itemize}
+  \item In the case that everything can be proved, we confirm that simple type theory is enough for capturing all these results.
+  \item In the case that we have problems, then we get some interesting problems to solve.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Conclusion}
 \begin{itemize}
 \item Mechanised every theorem in chapter 1 and 2 of Blackburn \emph{et al.} such that
