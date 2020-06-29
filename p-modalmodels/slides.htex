@@ -42,7 +42,7 @@
 \begin{itemize}
 \item Mechanised a number of results\\ in the first two chapters of \\ `Modal Logic' by Blackburn et al.
 \item Countably saturated model \\ via ultraproducts
-\item A Close approximation to Van \\ Benthem Characterisation theorem.
+\item A close approximation to Van \\ Benthem Characterisation theorem.
 \end{itemize}
 
 \begin{tikzpicture}[remember picture, overlay]
